@@ -91,6 +91,10 @@ public:
 
 	virtual bool setTransposedMatrixArray(const std::string& var, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdate = false);
 
+	virtual bool setSampler(const std::string& varname, ISampler* sampler);
+
+	virtual bool existSampler(const std::string& varname) const;
+
 	bool applyConstantBuffer(ID3D11DeviceContext* pd3dDeviceContext, u32 index);
 
 	virtual void update(bool forceUpdate = false);
@@ -100,6 +104,11 @@ public:
 	virtual u32 getTextureCount() const
 	{
 		return mSrvNum;
+	}
+
+	virtual u32 getSamplerCount() const
+	{
+		return mSamplerNum;
 	}
 
 	virtual void reset();
@@ -118,11 +127,13 @@ protected:
 	std::string							mName;
 	ID3D11Buffer*						md3dConstantBuffers[16];
 	u32									mSrvNum;
+	u32									mSamplerNum;
 
 	std::vector<std::unique_ptr<SShaderConstantBuffer>>		mConstantBuffers;
 	std::map<std::string, SShaderConstantVariable>			mConstantVariables;
 
 	std::map<std::string, D3D11_SHADER_INPUT_BIND_DESC>		mShaderResourceDescs;
+	std::map<std::string, D3D11_SHADER_INPUT_BIND_DESC>		mShaderSamplerDescs;
 
 };
 

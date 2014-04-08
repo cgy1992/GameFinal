@@ -1,0 +1,23 @@
+<pipelines>
+  <pipeline name="test/gs_pipeline">
+    <primitive-type value="POINT_LIST"/>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="COLOR" format="float4"></element>
+      <element semantic="SIZE" format="float"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="GSDemo.hlsl" main="VS">
+      </vertex-shader>
+      <geometry-shader file="GSDemo.hlsl" main="GS">
+        <variable name="gWVP" value="worldviewproj_matrix"/>
+      </geometry-shader>
+      <pixel-shader file="GSDemo.hlsl" main="PS">
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+    </render-states>
+
+  </pipeline>
+</pipelines>

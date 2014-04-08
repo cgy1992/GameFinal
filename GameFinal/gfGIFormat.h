@@ -9,6 +9,7 @@ enum E_GI_FORMAT
 	EGF_R32G32B32A32_FLOAT,
 	EGF_R32G32B32_FLOAT,
 	EGF_R32G32_FLOAT,
+	EGF_R32_FLOAT,
 	EGF_R8_UINT,
 	EGF_R8G8_UINT,
 	EGF_R8G8B8_UINT,
@@ -22,6 +23,7 @@ inline u32 getFormatOffset(E_GI_FORMAT format)
 	case EGF_R32G32B32A32_FLOAT:		return 16;
 	case EGF_R32G32B32_FLOAT:			return 12;
 	case EGF_R32G32_FLOAT:				return 8;
+	case EGF_R32_FLOAT:					return 4;
 	case EGF_R8_UINT:					return 1;
 	case EGF_R8G8_UINT:					return 2;
 	case EGF_R8G8B8_UINT:				return 3;

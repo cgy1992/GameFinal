@@ -11,7 +11,8 @@ CResourceLoader::CResourceLoader(IResourceGroupManager* ResourceGroupManager,
 	IRenderStateManager* RenderStateManager,
 	IPipelineManager* PipelineManager,
 	IMaterialManager* MaterialManager,
-	IMeshManager* MeshManager)
+	IMeshManager* MeshManager,
+	ISamplerManager* SamplerManager)
 	:mResourceGroupManager(ResourceGroupManager)
 	, mTextureManager(TextureManager)
 	, mShaderManager(ShaderManager)
@@ -20,6 +21,7 @@ CResourceLoader::CResourceLoader(IResourceGroupManager* ResourceGroupManager,
 	, mPipelineManager(PipelineManager)
 	, mMaterialManager(MaterialManager)
 	, mMeshManager(MeshManager)
+	, mSamplerManager(SamplerManager)
 {
 	mResourceXmlParser = new CResourceXmlParser;
 	mModelFileParser = new CModelFileParser;
@@ -51,7 +53,7 @@ bool CResourceLoader::loadPipeline(const std::string& fullpath, const IResourceX
 	{
 		GF_PRINT_CONSOLE_INFO("Pipeline '%s' (in the file '%s') has already been loaded. It can't been loaded again. \
 							  			Do you put the pipelines with same names in different files ?\n",
-										createParams.Name, fullpath.c_str());
+										createParams.Name.c_str(), fullpath.c_str());
 		return false;
 	}
 
@@ -159,6 +161,18 @@ bool CResourceLoader::loadPipeline(const std::string& fullpath, const IResourceX
 	for (u32 i = 0; i < createParams.ShaderAutoVariables.size(); i++)
 	{
 		pipeline->addShaderAutoVariable(createParams.ShaderAutoVariables[i]);
+	}
+
+	/* create sampler object */
+	for (auto it = createParams.SamplerDescs.begin(); it != createParams.SamplerDescs.end(); it++)
+	{
+		const std::string samplerName = createParams.Name + "-" + it->first;
+		ISampler* sampler = mSamplerManager->get(samplerName);
+		if (!sampler)
+		{
+			sampler = mSamplerManager->create(samplerName, it->second);
+		}
+		pipeline->setSampler(it->first, sampler);
 	}
 
 	return true;

@@ -3,6 +3,7 @@
 
 #include "gfTypes.h"
 #include "IReferenceCounted.h"
+#include "xnacollision/xnacollision.h"
 #include <list>
 
 class ISceneManager;
@@ -304,6 +305,12 @@ public:
 	virtual u64 getSortCode() const
 	{
 		return mSortCode;
+	}
+
+	virtual XNA::AxisAlignedBox getAabb() const
+	{
+		XNA::AxisAlignedBox aabb;
+		return aabb;
 	}
 
 

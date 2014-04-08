@@ -3,11 +3,11 @@
 
 #include "gfTypes.h"
 #include "gfUtil.h"
-#include "IShaderContext.h"
+#include "ISampler.h"
+#include "ITexture.h"
 #include <string>
 #include <iostream>
 
-class IShaderContext;
 
 enum E_SHADER_TYPE
 {
@@ -57,6 +57,10 @@ public:
 
 	virtual bool setTransposedMatrixArray(const std::string& var, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdate = false) = 0;
 
+	virtual bool setSampler(const std::string& varname, ISampler* sampler) = 0;
+
+	virtual bool existSampler(const std::string& varname) const = 0;
+
 	virtual void update(bool forceUpdate = false) = 0;
 
 	virtual bool isAlreadyUpdated(const std::string& varname) = 0;
@@ -67,6 +71,8 @@ public:
 	}
 
 	virtual u32 getTextureCount() const = 0;
+
+	virtual u32 getSamplerCount() const = 0;
 
 	virtual void reset() = 0;
 

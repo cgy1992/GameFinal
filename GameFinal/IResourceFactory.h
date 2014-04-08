@@ -25,6 +25,10 @@ public:
 
 	virtual IRenderState* createRenderState(const std::string& name) = 0;
 
+	virtual ISampler* createSampler(
+		const std::string& name,
+		const SSamplerDesc& desc) = 0;
+
 	virtual IPipeline* createPipeline(const std::string& name,
 		IShader** shaders,
 		u32 shaderCount,

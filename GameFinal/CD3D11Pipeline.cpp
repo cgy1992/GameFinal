@@ -37,8 +37,8 @@ void CD3D11Pipeline::apply()
 		}
 	}
 
-
 	CD3D11Driver::SD3D11DriverState& currentState = md3d11Driver->D3D11DriverState;
+
 
 	/* if previous pipeline is the same, 
 	then shaders, inputlayout, primivite type must also be same.
@@ -48,16 +48,22 @@ void CD3D11Pipeline::apply()
 	{
 		currentState.Pipeline = this;
 
+		// set samplers
+		applySamplers();
+
 		// set shaders
 		for (u32 i = 0; i < 5; i++)
 		{
 			IShader* shader = mShaders[i];
 			if (shader != nullptr && currentState.Shaders[i] != shader)
 			{
+				md3d11Driver->bindSampler(shader->getType(), shader->getSamplerCount());
 				shader->submit();
 				currentState.Shaders[i] = shader;
 			}
 		}
+
+		
 
 		//set input layout (vertex format)
 		if (currentState.InputLayout != mInputLayout)

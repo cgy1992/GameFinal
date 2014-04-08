@@ -84,6 +84,9 @@
     <ClInclude Include="CAnimatedMeshNode.h" />
     <ClInclude Include="CAnimatedMesh.h" />
     <ClInclude Include="CCameraNode.h" />
+    <ClInclude Include="CD3D11DomainShader.h" />
+    <ClInclude Include="CD3D11GeometryShader.h" />
+    <ClInclude Include="CD3D11HullShader.h" />
     <ClInclude Include="CD3D11MeshBuffer.h" />
     <ClInclude Include="CD3D11AnimatedMeshBuffer.h" />
     <ClInclude Include="CD3D11Driver.h" />
@@ -93,6 +96,8 @@
     <ClInclude Include="CD3D11RenderState.h" />
     <ClInclude Include="CD3D11RenderStateCache.h" />
     <ClInclude Include="CD3D11ResourceFactory.h" />
+    <ClInclude Include="CD3D11Sampler.h" />
+    <ClInclude Include="CD3D11SamplerStateCache.h" />
     <ClInclude Include="CD3D11SimpleMesh.h" />
     <ClInclude Include="CD3D11Texture.h" />
     <ClInclude Include="CD3D11VertexShader.h" />
@@ -106,6 +111,7 @@
     <ClInclude Include="CModelFileParser.h" />
     <ClInclude Include="CModelMesh.h" />
     <ClInclude Include="CModelMeshNode.h" />
+    <ClInclude Include="COctreeNode.h" />
     <ClInclude Include="CPipeline.h" />
     <ClInclude Include="CD3D11Shader.h" />
     <ClInclude Include="CD3D11ShaderContext.h" />
@@ -113,6 +119,7 @@
     <ClInclude Include="CResourceGroupManager.h" />
     <ClInclude Include="CResourceLoader.h" />
     <ClInclude Include="CResourceXmlParser.h" />
+    <ClInclude Include="CSamplerManager.h" />
     <ClInclude Include="CShaderManager.h" />
     <ClInclude Include="CPipelineManager.h" />
     <ClInclude Include="CRenderStateManager.h" />
@@ -120,6 +127,7 @@
     <ClInclude Include="CShaderVariableInjection.h" />
     <ClInclude Include="CSimpleMesh.h" />
     <ClInclude Include="CSortCodeAllocator.h" />
+    <ClInclude Include="COctreeManager.h" />
     <ClInclude Include="CTextureManager.h" />
     <ClInclude Include="CWin32Device.h" />
     <ClInclude Include="CWin32Timer.h" />
@@ -147,6 +155,8 @@
     <ClInclude Include="IModelFileParser.h" />
     <ClInclude Include="IModelMesh.h" />
     <ClInclude Include="IModelMeshNode.h" />
+    <ClInclude Include="IOctreeManager.h" />
+    <ClInclude Include="IOctreeNode.h" />
     <ClInclude Include="IPipeline.h" />
     <ClInclude Include="IPipelineManager.h" />
     <ClInclude Include="IReferenceCounted.h" />
@@ -156,6 +166,8 @@
     <ClInclude Include="IResourceGroupManager.h" />
     <ClInclude Include="IResourceLoader.h" />
     <ClInclude Include="IResourceXmlParser.h" />
+    <ClInclude Include="ISampler.h" />
+    <ClInclude Include="ISamplerManager.h" />
     <ClInclude Include="ISceneManager.h" />
     <ClInclude Include="ISceneNode.h" />
     <ClInclude Include="IShader.h" />
@@ -181,6 +193,9 @@
     <ClCompile Include="CAnimatedMesh.cpp" />
     <ClCompile Include="CAnimatedMeshNode.cpp" />
     <ClCompile Include="CCameraNode.cpp" />
+    <ClCompile Include="CD3D11DomainShader.cpp" />
+    <ClCompile Include="CD3D11GeometryShader.cpp" />
+    <ClCompile Include="CD3D11HullShader.cpp" />
     <ClCompile Include="CD3D11MeshBuffer.cpp" />
     <ClCompile Include="CD3D11AnimatedMeshBuffer.cpp" />
     <ClCompile Include="CD3D11Driver.cpp" />
@@ -190,6 +205,8 @@
     <ClCompile Include="CD3D11RenderState.cpp" />
     <ClCompile Include="CD3D11RenderStateCache.cpp" />
     <ClCompile Include="CD3D11ResourceFactory.cpp" />
+    <ClCompile Include="CD3D11Sampler.cpp" />
+    <ClCompile Include="CD3D11SamplerStateCache.cpp" />
     <ClCompile Include="CD3D11ShaderContext.cpp" />
     <ClCompile Include="CFpsCameraNode.cpp" />
     <ClCompile Include="CInputLayoutManager.cpp" />
@@ -201,6 +218,7 @@
     <ClCompile Include="CResourceGroupManager.cpp" />
     <ClCompile Include="CResourceLoader.cpp" />
     <ClCompile Include="CResourceXmlParser.cpp" />
+    <ClCompile Include="CSamplerManager.cpp" />
     <ClCompile Include="CShaderManager.cpp" />
     <ClCompile Include="CD3D11SimpleMesh.cpp" />
     <ClCompile Include="CD3D11Shader.cpp" />
@@ -216,6 +234,7 @@
     <ClCompile Include="CSceneManager.cpp" />
     <ClCompile Include="CShaderVariableInjection.cpp" />
     <ClCompile Include="CSimpleMesh.cpp" />
+    <ClCompile Include="COctreeManager.cpp" />
     <ClCompile Include="CTextureManager.cpp" />
     <ClCompile Include="CWin32Device.cpp" />
     <ClCompile Include="CWin32Timer.cpp" />
@@ -230,6 +249,7 @@
     </ClCompile>
     <ClCompile Include="GameFinal.cpp" />
     <ClCompile Include="gfMath.cpp" />
+    <ClCompile Include="COctreeNode.cpp" />
     <ClCompile Include="SBoneAnimation.cpp" />
     <ClCompile Include="SMaterial.cpp" />
     <ClCompile Include="stdafx.cpp">

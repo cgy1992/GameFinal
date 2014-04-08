@@ -123,7 +123,7 @@ void CSceneManager::registerNodeForRendering(IMeshNode* node, E_NODE_TYPE nodeTy
 
 void CSceneManager::render()
 {
-
+	
 }
 
 void CSceneManager::drawAll()

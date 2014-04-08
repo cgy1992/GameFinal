@@ -6,9 +6,13 @@
 #include "CD3D11Driver.h"
 #include "CD3D11VertexShader.h"
 #include "CD3D11PixelShader.h"
+#include "CD3D11GeometryShader.h"
 #include "CD3D11InputLayout.h"
 #include "CD3D11MeshBuffer.h"
 #include "CD3D11AnimatedMeshBuffer.h"
+#include "CD3D11SamplerStateCache.h"
+#include "CD3D11HullShader.h"
+#include "CD3D11DomainShader.h"
 #include "gfUtil.h"
 
 CD3D11ResourceFactory::CD3D11ResourceFactory(ID3D11Device* pd3dDevice,
@@ -19,6 +23,7 @@ CD3D11ResourceFactory::CD3D11ResourceFactory(ID3D11Device* pd3dDevice,
 	, md3dDriver(d3dDriver)
 {
 	md3dRenderStateCache = new CD3D11RenderStateCache(pd3dDevice);
+	md3dSamplerStateCache = new CD3D11SamplerStateCache(pd3dDevice);
 }
 
 
@@ -45,6 +50,27 @@ IRenderState* CD3D11ResourceFactory::createRenderState(const std::string& name)
 {
 	CD3D11RenderState* pRenderState = new CD3D11RenderState(name, md3dRenderStateCache);
 	return pRenderState;
+}
+
+ISampler* CD3D11ResourceFactory::createSampler(const std::string& name, const SSamplerDesc& desc)
+{
+	D3D11_SAMPLER_DESC d3d11desc;
+	d3d11desc.Filter = static_cast<D3D11_FILTER>(desc.Filter);
+	d3d11desc.AddressU = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(desc.AddressU);
+	d3d11desc.AddressV = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(desc.AddressV);
+	d3d11desc.AddressW = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(desc.AddressW);
+	memcpy(&d3d11desc.BorderColor, &desc.BorderColor, sizeof(f32)* 4);
+
+	/* set default values of d3d11desc struct */
+	d3d11desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	
+	d3d11desc.MaxAnisotropy = 16;
+	d3d11desc.MaxLOD = FLT_MAX;
+	d3d11desc.MinLOD = -FLT_MAX;
+	d3d11desc.MipLODBias = 0.0f;
+
+	ISampler* sampler = new CD3D11Sampler(name, md3dSamplerStateCache, d3d11desc);
+	return sampler;
 }
 
 IPipeline* CD3D11ResourceFactory::createPipeline(const std::string& name,
@@ -80,6 +106,15 @@ IShader* CD3D11ResourceFactory::createShaderFromFile(
 		break;
 	case EST_PIXEL_SHADER:
 		shader = new CD3D11PixelShader(id, shaderName, md3dDevice, md3dDeviceContext, md3dDriver);
+		break;
+	case EST_GEOMETRY_SHADER:
+		shader = new CD3D11GeometryShader(id, shaderName, md3dDevice, md3dDeviceContext, md3dDriver);
+		break;
+	case EST_HULL_SHADER:
+		shader = new CD3D11HullShader(id, shaderName, md3dDevice, md3dDeviceContext, md3dDriver);
+		break;
+	case EST_DOMAIN_SHADER:
+		shader = new CD3D11DomainShader(id, shaderName, md3dDevice, md3dDeviceContext, md3dDriver);
 		break;
 	}
 

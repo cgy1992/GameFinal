@@ -10,6 +10,7 @@
 #include "IRenderStateManager.h"
 #include "IPipelineManager.h"
 #include "IResourceXmlParser.h"
+#include "ISamplerManager.h"
 
 
 enum E_RESOURCE_STORE_METHOD
@@ -70,7 +71,8 @@ public:
 		IRenderStateManager* RenderStateManager,
 		IPipelineManager* PipelineManager,
 		IMaterialManager* MaterialManager,
-		IMeshManager* MeshManager);
+		IMeshManager* MeshManager,
+		ISamplerManager* SamplerManager);
 
 	virtual ~CResourceGroupManager();
 

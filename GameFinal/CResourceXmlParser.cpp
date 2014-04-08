@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CResourceXmlParser.h"
+#include <algorithm>
 
 CResourceXmlParser::CResourceXmlParser()
 {
@@ -12,6 +13,7 @@ CResourceXmlParser::CResourceXmlParser()
 	mVertexFormatMapping["R32G32"] = EGF_R32G32_FLOAT;
 	mVertexFormatMapping["R8G8B8A8_UINT"] = EGF_R8G8B8A8_UINT;
 	mVertexFormatMapping["BYTE4"] = EGF_R8G8B8A8_UINT;
+	mVertexFormatMapping["FLOAT"] = EGF_R32_FLOAT;
 
 	mPrimitiveTypeMapping["POINTLIST"] = EPT_POINTLIST;
 	mPrimitiveTypeMapping["POINT_LIST"] = EPT_POINTLIST;
@@ -25,6 +27,23 @@ CResourceXmlParser::CResourceXmlParser()
 	mPrimitiveTypeMapping["TRIANGLE"] = EPT_TRIANGLELIST;
 	mPrimitiveTypeMapping["TRIANGLESTRIP"] = EPT_TRIANGLESTRIP;
 	mPrimitiveTypeMapping["TRIANGLE_STRIP"] = EPT_TRIANGLESTRIP;
+	mPrimitiveTypeMapping["1_CONTROL_POINT_PATCHLIST"] = EPT_1_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["2_CONTROL_POINT_PATCHLIST"] = EPT_2_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["3_CONTROL_POINT_PATCHLIST"] = EPT_3_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["4_CONTROL_POINT_PATCHLIST"] = EPT_4_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["5_CONTROL_POINT_PATCHLIST"] = EPT_5_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["6_CONTROL_POINT_PATCHLIST"] = EPT_6_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["7_CONTROL_POINT_PATCHLIST"] = EPT_7_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["8_CONTROL_POINT_PATCHLIST"] = EPT_8_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["9_CONTROL_POINT_PATCHLIST"] = EPT_9_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["10_CONTROL_POINT_PATCHLIST"] = EPT_10_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["11_CONTROL_POINT_PATCHLIST"] = EPT_11_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["12_CONTROL_POINT_PATCHLIST"] = EPT_12_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["13_CONTROL_POINT_PATCHLIST"] = EPT_13_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["14_CONTROL_POINT_PATCHLIST"] = EPT_14_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["15_CONTROL_POINT_PATCHLIST"] = EPT_15_CONTROL_POINT_PATCHLIST;
+	mPrimitiveTypeMapping["16_CONTROL_POINT_PATCHLIST"] = EPT_16_CONTROL_POINT_PATCHLIST;
+
 
 	// init shader variables mapping
 	mShaderVariableMapping["world_matrix"] = SShaderVariableAttribute(ESAVT_WORLD_MATRIX);
@@ -49,6 +68,7 @@ CResourceXmlParser::CResourceXmlParser()
 	mShaderVariableMapping["inverse_transpose_viewproj_matrix"] = SShaderVariableAttribute(ESAVT_INVERSE_TRANSPOSE_VIEW_PROJ_MATRIX, EUF_PER_FRAME);
 	mShaderVariableMapping["camera_position"] = SShaderVariableAttribute(ESAVT_CAMERA_POSITION, EUF_PER_FRAME);
 	mShaderVariableMapping["bone_transforms"] = SShaderVariableAttribute(ESAVT_BONE_TRANSFORMS, EUF_PER_OBJECT);
+	mShaderVariableMapping["worldviewproj_matrix"] = SShaderVariableAttribute(ESAVT_WORLD_VIEW_PROJ_MATRIX, EUF_PER_OBJECT);
 
 	mShaderVariableMapping["light"] = SShaderVariableAttribute(ESAVT_LIGHT, EUF_PER_FRAME);
 	mShaderVariableMapping["material"] = SShaderVariableAttribute(ESAVT_MATERIAL, EUF_PER_OBJECT);
@@ -140,6 +160,30 @@ CResourceXmlParser::CResourceXmlParser()
 	mStencilOpMapping["INVERT"] = ESO_INVERT;
 	mStencilOpMapping["INCR"] = ESO_INCR;
 	mStencilOpMapping["DECR"] = ESO_DECR;
+
+	mAddressModeMapping["WRAP"] = EAM_WRAP;
+	mAddressModeMapping["BORDER"] = EAM_BORDER;
+	mAddressModeMapping["MIRROR"] = EAM_MIRROR;
+	mAddressModeMapping["CLAMP"] = EAM_CLAMP;
+
+	mSamplerFilterMapping["MIN_MAG_MIP_POINT"] = ESF_FILTER_MIN_MAG_MIP_POINT;
+	mSamplerFilterMapping["MIN_MAG_POINT_MIP_LINEAR"] = ESF_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+	mSamplerFilterMapping["MIN_POINT_MAG_LINEAR_MIP_POINT"] = ESF_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT;
+	mSamplerFilterMapping["MIN_POINT_MAG_MIP_LINEAR"] = ESF_FILTER_MIN_POINT_MAG_MIP_LINEAR;
+	mSamplerFilterMapping["MIN_LINEAR_MAG_MIP_POINT"] = ESF_FILTER_MIN_LINEAR_MAG_MIP_POINT;
+	mSamplerFilterMapping["MIN_LINEAR_MAG_POINT_MIP_LINEAR"] = ESF_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR;
+	mSamplerFilterMapping["MIN_MAG_LINEAR_MIP_POINT"] = ESF_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+	mSamplerFilterMapping["MIN_MAG_MIP_LINEAR"] = ESF_FILTER_MIN_MAG_MIP_LINEAR;
+	mSamplerFilterMapping["ANISOTROPIC"] = ESF_FILTER_ANISOTROPIC;
+	mSamplerFilterMapping["COMPARISON_MIN_MAG_MIP_POINT"] = ESF_FILTER_COMPARISON_MIN_MAG_MIP_POINT;
+	mSamplerFilterMapping["COMPARISON_MIN_MAG_POINT_MIP_LINEAR"] = ESF_FILTER_COMPARISON_MIN_MAG_POINT_MIP_LINEAR;
+	mSamplerFilterMapping["COMPARISON_MIN_POINT_MAG_LINEAR_MIP_POINT"] = ESF_FILTER_COMPARISON_MIN_POINT_MAG_LINEAR_MIP_POINT;
+	mSamplerFilterMapping["COMPARISON_MIN_POINT_MAG_MIP_LINEAR"] = ESF_FILTER_COMPARISON_MIN_POINT_MAG_MIP_LINEAR;
+	mSamplerFilterMapping["COMPARISON_MIN_LINEAR_MAG_MIP_POINT"] = ESF_FILTER_COMPARISON_MIN_LINEAR_MAG_MIP_POINT;
+	mSamplerFilterMapping["COMPARISON_MIN_LINEAR_MAG_POINT_MIP_LINEAR"] = ESF_FILTER_COMPARISON_MIN_LINEAR_MAG_POINT_MIP_LINEAR;
+	mSamplerFilterMapping["COMPARISON_MIN_MAG_LINEAR_MIP_POINT"] = ESF_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+	mSamplerFilterMapping["COMPARISON_MIN_MAG_MIP_LINEAR"] = ESF_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+	mSamplerFilterMapping["COMPARISON_ANISOTROPIC"] = ESF_FILTER_COMPARISON_ANISOTROPIC;
 }
 
 bool CResourceXmlParser::handlePipelineNode(const std::string& filepath, tinyxml2::XMLElement* pipeline_node, SPipelineCreateParams& createParams) const
@@ -232,7 +276,7 @@ bool CResourceXmlParser::handlePipelineNode(const std::string& filepath, tinyxml
 
 	//get geometry shader
 	tinyxml2::XMLElement* geometry_shader_node = shaders_node->FirstChildElement("geometry-shader");
-	if (domain_shader_node)
+	if (geometry_shader_node)
 	{
 		handleShaderNode(filepath, EST_GEOMETRY_SHADER, geometry_shader_node, createParams);
 	}
@@ -246,6 +290,18 @@ bool CResourceXmlParser::handlePipelineNode(const std::string& filepath, tinyxml
 		{
 			handleRenderStateNode(filepath, render_state_node, createParams);
 			render_state_node = render_state_node->NextSiblingElement("render-state");
+		}
+	}
+
+	/* get samplers */
+	tinyxml2::XMLElement* samplers_node = pipeline_node->FirstChildElement("samplers");
+	if (samplers_node)
+	{
+		tinyxml2::XMLElement* sampler_node = samplers_node->FirstChildElement("sampler");
+		while (sampler_node)
+		{
+			handleSamplerNode(filepath, sampler_node, createParams);
+			sampler_node = sampler_node->NextSiblingElement("sampler");
 		}
 	}
 
@@ -566,6 +622,79 @@ bool CResourceXmlParser::handleRenderStateNode(const std::string& filepath,
 	return bValidRenderState;
 }
 
+bool CResourceXmlParser::handleSamplerNode(const std::string& filepath,
+	tinyxml2::XMLElement* node,
+	SPipelineCreateParams& createParams) const
+{
+	const char* name = node->Attribute("name");
+	if (!name)
+	{
+		GF_PRINT_CONSOLE_INFO("The sampler must have 'name' attribute in pipeline file %s.\n", filepath.c_str());
+		return false;
+	}
+
+	/* set default values */
+	SSamplerDesc desc;
+	desc.Filter = ESF_FILTER_MIN_MAG_MIP_LINEAR;
+	desc.AddressU = EAM_WRAP;
+	desc.AddressV = EAM_WRAP;
+	desc.AddressW = EAM_WRAP;
+	desc.BorderColor = XMFLOAT4(0, 0, 0, 1.0f);
+
+	const char* value_str = NULL;
+	/* filter */
+	value_str = node->Attribute("filter");
+	if (value_str)
+	{
+		std::string s = value_str;
+		std::transform(s.begin(), s.end(), s.begin(), std::toupper);
+		auto it = mSamplerFilterMapping.find(s);
+		if (it != mSamplerFilterMapping.end())
+			desc.Filter = it->second;
+	}
+
+	/* addressU */
+	value_str = node->Attribute("addressU");
+	if (value_str)
+	{
+		std::string s = value_str;
+		std::transform(s.begin(), s.end(), s.begin(), std::toupper);
+		auto it = mAddressModeMapping.find(s);
+		if (it != mAddressModeMapping.end())
+			desc.AddressU = it->second;
+	}
+
+	/* addressV */
+	value_str = node->Attribute("addressV");
+	if (value_str)
+	{
+		std::string s = value_str;
+		std::transform(s.begin(), s.end(), s.begin(), std::toupper);
+		auto it = mAddressModeMapping.find(s);
+		if (it != mAddressModeMapping.end())
+			desc.AddressV = it->second;
+	}
+
+	/* addressW */
+	value_str = node->Attribute("addressW");
+	if (value_str)
+	{
+		std::string s = value_str;
+		std::transform(s.begin(), s.end(), s.begin(), std::toupper);
+		auto it = mAddressModeMapping.find(s);
+		if (it != mAddressModeMapping.end())
+			desc.AddressW = it->second;
+	}
+
+	/* borderColor */
+	value_str = node->Attribute("border-color");
+	if (value_str)
+		desc.BorderColor = getColorFromString(value_str);
+	
+	createParams.SamplerDescs.insert(std::make_pair(name, desc));
+	return true;
+}
+
 E_RENDER_STATE CResourceXmlParser::getRenderStateType(std::string& s) const
 {
 	std::transform(s.begin(), s.end(), s.begin(), std::toupper);
@@ -767,21 +896,9 @@ bool CResourceXmlParser::handleMaterialTextureNode(const std::string& filepath,
 	return true;
 }
 
-
-bool CResourceXmlParser::handleMaterialColorNode(const std::string& filepath,
-	const std::string& materialName,
-	tinyxml2::XMLElement* node, 
-	XMFLOAT4& color) const
+XMFLOAT4 CResourceXmlParser::getColorFromString(const char* color_str) const
 {
-	const char* color_str = node->Attribute("color");
-	if (!color_str)
-	{
-		GF_PRINT_CONSOLE_INFO("The <%s> element doesn't have a 'color' attribute, which is a must.\
-							  							  in the material(%s) and the file(%s)",
-														  node->Name(), materialName.c_str(), filepath.c_str());
-		return false;
-	}
-
+	XMFLOAT4 color;
 	/* set default color values. */
 	color.x = color.y = color.z = 0.0f;
 	color.w = 1.0f;
@@ -802,7 +919,24 @@ bool CResourceXmlParser::handleMaterialColorNode(const std::string& filepath,
 	}
 
 	sscanf_s(s, "%f,%f,%f,%f", &color.x, &color.y, &color.z, &color.w);
+	return color;
+}
 
+bool CResourceXmlParser::handleMaterialColorNode(const std::string& filepath,
+	const std::string& materialName,
+	tinyxml2::XMLElement* node, 
+	XMFLOAT4& color) const
+{
+	const char* color_str = node->Attribute("color");
+	if (!color_str)
+	{
+		GF_PRINT_CONSOLE_INFO("The <%s> element doesn't have a 'color' attribute, which is a must.\
+							  							  in the material(%s) and the file(%s)",
+														  node->Name(), materialName.c_str(), filepath.c_str());
+		return false;
+	}
+
+	color = getColorFromString(color_str);
 	return true;
 }
 

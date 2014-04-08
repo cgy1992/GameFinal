@@ -60,6 +60,10 @@ public:
 
 	virtual void addShaderAutoVariable(const SShaderAutoVariable& var);
 
+	virtual bool setSampler(const std::string& varname, ISampler* sampler);
+
+	virtual void applySamplers() const;
+
 	virtual const std::vector<SShaderAutoVariable>& getShaderAutoVariables() const;
 
 	virtual ~CPipeline();
@@ -78,7 +82,11 @@ protected:
 
 	E_PRIMITIVE_TYPE	mPrimitiveType;
 
-	std::vector<SShaderAutoVariable> mShaderAutoVariables;
+	std::vector<SShaderAutoVariable>		mShaderAutoVariables;
+	std::vector<SShaderSamplerVariable>		mSamplerVariables;
+
+	//std::vector<> mShader;
+
 
 private:
 	

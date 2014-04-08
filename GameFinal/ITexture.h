@@ -20,8 +20,6 @@ public:
 		return mSortCode;
 	}
 
-	
-
 	virtual ~ITexture() {}
 protected:
 	std::string		mName;

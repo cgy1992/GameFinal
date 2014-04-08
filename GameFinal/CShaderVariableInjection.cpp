@@ -207,6 +207,16 @@ void CShaderVariableInjection::injectTransformations(const SShaderAutoVariable& 
 			flag = true;
 		}
 		break;
+	case ESAVT_WORLD_VIEW_PROJ_MATRIX:
+		camera = sceneManager->getCameraNode(var.IndexParam);
+		if (camera)
+		{
+			XMMATRIX viewProj = XMLoadFloat4x4(&camera->getViewProjMatrix());
+			XMMATRIX world = node->getAbsoluteTransformation();
+			M = XMMatrixMultiply(world, viewProj);
+			flag = true;
+		}
+		break;
 	}
 
 	if (flag)

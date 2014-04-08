@@ -14,6 +14,9 @@ public:
 		IShader*					Shaders[5];
 		ID3D11ShaderResourceView*	ShaderResourceViews[5][32];
 		bool						ShaderResourceViewIsDirty[5];
+		ID3D11SamplerState*			SamplerStates[5][32];
+		bool						SamplerStateIsDirty[5];
+
 		IInputLayout*				InputLayout;
 		E_PRIMITIVE_TYPE			PrimitiveType;
 		ID3D11DepthStencilState*	DepthStencilState;
@@ -28,6 +31,9 @@ public:
 			memset(Shaders, 0, sizeof(Shaders));
 			memset(ShaderResourceViews, 0, sizeof(ShaderResourceViews));
 			memset(ShaderResourceViewIsDirty, 0, sizeof(ShaderResourceViewIsDirty));
+			memset(SamplerStates, 0, sizeof(SamplerStates));
+			memset(SamplerStateIsDirty, 0, sizeof(SamplerStateIsDirty));
+
 			InputLayout = NULL;
 			PrimitiveType = EPT_TRIANGLELIST;
 			DepthStencilState = NULL;
@@ -59,7 +65,11 @@ public:
 
 	void setTexture(E_SHADER_TYPE shadertype, u32 slot, ITexture* texture);
 
+	void setSampler(E_SHADER_TYPE shadertype, u32 slot, ISampler* sampler);
+
 	void bindTexture(E_SHADER_TYPE shaderType, u32 textureCount);
+
+	void bindSampler(E_SHADER_TYPE shaderType, u32 samplerCount);
 
 	virtual ~CD3D11Driver();
 

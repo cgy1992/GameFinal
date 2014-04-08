@@ -1,0 +1,24 @@
+<pipelines>
+  <pipeline name="test/ts_pipeline">
+    <primitive-type value="4_CONTROL_POINT_PATCHLIST"/>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="Tessellation.hlsl" main="VS">
+      </vertex-shader>
+      <hull-shader file="Tessellation.hlsl" main="HS">
+        <variable name="gEyePos" value="camera_position"/>
+      </hull-shader>
+      <domain-shader file="Tessellation.hlsl" main="DS">
+        <variable name="gWVP" value="worldviewproj_matrix"/>
+      </domain-shader>
+      <pixel-shader file="Tessellation.hlsl" main="PS">
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+      <render-state name="FILL_MODE" value="WIREFRAME"/>
+    </render-states>
+  </pipeline>
+</pipelines>

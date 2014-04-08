@@ -81,6 +81,15 @@
     <Filter Include="src\dependencies\xnacollision">
       <UniqueIdentifier>{e50c0a1b-f1fd-4c09-8a93-717c74910a55}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\SceneManager">
+      <UniqueIdentifier>{efb58c36-7c0b-4f92-bc4e-96c55872c669}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\SceneManager\Interface">
+      <UniqueIdentifier>{ad81fa69-7a8a-487d-a319-1d649bffeeb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\SceneManager\Class">
+      <UniqueIdentifier>{b6cfab44-b1b6-4d4a-9fcf-4cfd5dfd0b9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -371,6 +380,42 @@
     <ClInclude Include="CD3D11AnimatedMeshBuffer.h">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
+    <ClInclude Include="ISampler.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Sampler.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11SamplerStateCache.h">
+      <Filter>src\ResourceManager\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="ISamplerManager.h">
+      <Filter>src\ResourceManager\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CSamplerManager.h">
+      <Filter>src\ResourceManager\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11GeometryShader.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11HullShader.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11DomainShader.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="COctreeManager.h">
+      <Filter>src\SceneManager\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="IOctreeNode.h">
+      <Filter>src\SceneManager\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="IOctreeManager.h">
+      <Filter>src\SceneManager\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="COctreeNode.h">
+      <Filter>src\SceneManager\Class</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -522,6 +567,30 @@
     </ClCompile>
     <ClCompile Include="SMaterial.cpp">
       <Filter>src\ResourceObject\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Sampler.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11SamplerStateCache.cpp">
+      <Filter>src\ResourceManager\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="CSamplerManager.cpp">
+      <Filter>src\ResourceManager\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11GeometryShader.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11HullShader.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11DomainShader.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="COctreeManager.cpp">
+      <Filter>src\SceneManager\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="COctreeNode.cpp">
+      <Filter>src\SceneManager\Class</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

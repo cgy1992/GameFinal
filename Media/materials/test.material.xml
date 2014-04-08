@@ -43,4 +43,36 @@
       <texture name="stones.jpg" index="0"/>
     </textures>
   </material>
+
+
+  <material name="test/gs_material">
+    <pipelines>
+      <pipeline name="test/gs_pipeline"/>
+    </pipelines>
+  </material>
+
+  <material name="test/ts_material">
+    <pipelines>
+      <pipeline name="test/ts_pipeline"/>
+    </pipelines>
+  </material>
+
+  <material name="test/wave_material">
+    <ambient  color="0.3f, 0.6f, 0.8f, 1.0f"/>
+    <diffuse  color="0.8f, 0.8f, 0.8f, 1.0f"/>
+    <specular color="0.3f, 0.3f, 0.3f, 64.0f"/>
+    <emissive color="0.3f, 0.3f, 0.3f, 1.0f"/>
+    <pipelines>
+      <pipeline name="test/wave_pipeline"/>
+    </pipelines>
+    <textures>
+      <texture name="water3.png" index="0"/>
+      <texture name="water3_NRM.png" index="1"/>
+      <texture name="water3_DISP.png" index="2"/>
+      <texture name="water3.png" index="3"/>
+      <texture name="water3_NRM.png" index="4"/>
+      <texture name="water3_DISP.png" index="5"/>
+    </textures>
+  </material>
+  
 </materials>

@@ -29,6 +29,9 @@ f32 getFps(float dt)
 
 int main()
 {
+	//int avg = 2 * 90 + 3 * 88 + 4 * 87 + 3 * 84 + 4 * 92 + 2 * 93 + 2 * 83 + 2 * 80 + 2 * 95;
+	//std::cout << "Avg : " << avg << std::endl;
+
 	SDeviceContextSettings settings;
 	settings.MultiSamplingCount = 4;
 	settings.MultiSamplingQuality = 32;
@@ -48,7 +51,7 @@ int main()
 	cubeMeshNode->setMaterialName("test/material01");
 	//cubeMeshNode->remove();
 
-	ISimpleMesh* planeMesh = meshManager->createPlaneMesh("plane1", 10.0, 10.0f, 50, 50, 1.0f, 1.0f);
+	ISimpleMesh* planeMesh = meshManager->createPlaneMesh("plane1", 10.0, 10.0f, 50, 50, 10.0f, 10.0f);
 	IMeshNode* planeMeshNode = smgr->addMeshNode(planeMesh, nullptr);
 	planeMeshNode->setMaterialName("test/ground_material");
 
@@ -60,6 +63,17 @@ int main()
 	
 	heroNode->scale(0.01f, 0.01f, 0.01f);
 	heroNode->translate(2.0f, 0.5f, 0);
+
+	// create sampler state
+	SSamplerDesc samplerDesc;
+	samplerDesc.Filter = ESF_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = EAM_WRAP;
+	samplerDesc.AddressV = EAM_WRAP;
+	samplerDesc.AddressW = EAM_WRAP;
+	ISampler* sampler = driver->getSamplerManager()->create(std::string("sampler1"), samplerDesc);
+
+	IPipeline* pipeline = driver->getPipelineManager()->get("test/pipeline01");
+	//pipeline->setSampler(std::string("sampleType"), sampler);
 
 	ILightNode* light = smgr->addLightNode(1);
 	light->setType(ELT_POINT);

@@ -13,6 +13,7 @@
 #include "CMeshManager.h"
 #include "CGeometryCreator.h"
 #include "CResourceGroupManager.h"
+#include "CSamplerManager.h"
 
 CD3D11Driver::CD3D11Driver(IDevice* device)
 :mDevice(device)
@@ -344,10 +345,13 @@ bool CD3D11Driver::init()
 	//create mesh manager
 	mMeshManager = new CMeshManager(mResourceFactory, mGeometryCreator);
 
+	//create sampler manager
+	mSamplerManager = new CSamplerManager(mResourceFactory);
+
 	//create resource group manager
 	mResourceGroupManager = new CResourceGroupManager(mTextureManager, mShaderManager,
-		mInputLayoutManager, mRenderStateManager, mPipeManager, mMaterialManager, mMeshManager);
-	
+		mInputLayoutManager, mRenderStateManager, mPipeManager, mMaterialManager, mMeshManager, mSamplerManager);
+
 	return true;
 }
 
@@ -362,8 +366,7 @@ CD3D11Driver::~CD3D11Driver()
 	  5, shader,
 	  6, inputlayout
 	  7, render-state
-	*/
-	
+	*/	
 	
 	ReleaseReferenceCounted(mMeshManager);
 	ReleaseReferenceCounted(mMaterialManager);
@@ -405,9 +408,15 @@ void CD3D11Driver::endScene()
 void CD3D11Driver::bindPrimitiveType(E_PRIMITIVE_TYPE primitiveType)
 {
 	D3D11_PRIMITIVE_TOPOLOGY pt;
+
+	/*
 	if (primitiveType == EPT_TRIANGLELIST)
 		pt = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
+	else if (primitiveType == EPT_POINTLIST)
+		pt = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
+	*/
+	
+	pt = static_cast<D3D11_PRIMITIVE_TOPOLOGY>(primitiveType);
 	md3dDeviceContext->IASetPrimitiveTopology(pt);
 }
 
@@ -419,6 +428,16 @@ void CD3D11Driver::setTexture(E_SHADER_TYPE shadertype, u32 slot, ITexture* text
 	{
 		D3D11DriverState.ShaderResourceViews[shadertype][slot] = d3d11Texture->getShaderResourceView();
 		D3D11DriverState.ShaderResourceViewIsDirty[shadertype] = true;
+	}
+}
+
+void CD3D11Driver::setSampler(E_SHADER_TYPE shadertype, u32 slot, ISampler* sampler)
+{
+	CD3D11Sampler* d3d11Sampler = dynamic_cast<CD3D11Sampler*>(sampler);
+	if (d3d11Sampler->getSamplerState() != D3D11DriverState.SamplerStates[shadertype][slot])
+	{
+		D3D11DriverState.SamplerStates[shadertype][slot] = d3d11Sampler->getSamplerState();
+		D3D11DriverState.SamplerStateIsDirty[shadertype] = true;
 	}
 }
 
@@ -459,6 +478,48 @@ void CD3D11Driver::bindTexture(E_SHADER_TYPE shaderType, u32 textureCount)
 		{
 			md3dDeviceContext->PSSetShaderResources(0, textureCount, D3D11DriverState.ShaderResourceViews[EST_PIXEL_SHADER]);
 			D3D11DriverState.ShaderResourceViewIsDirty[EST_PIXEL_SHADER] = false;
+		}
+		break;
+	}
+}
+
+void CD3D11Driver::bindSampler(E_SHADER_TYPE shaderType, u32 samplerCount)
+{
+	switch (shaderType)
+	{
+	case EST_VERTEX_SHADER:
+		if (D3D11DriverState.SamplerStateIsDirty[EST_VERTEX_SHADER])
+		{
+			md3dDeviceContext->VSSetSamplers(0, samplerCount, D3D11DriverState.SamplerStates[EST_VERTEX_SHADER]);
+			D3D11DriverState.SamplerStateIsDirty[EST_VERTEX_SHADER] = false;
+		}
+		break;
+	case EST_HULL_SHADER:
+		if (D3D11DriverState.SamplerStateIsDirty[EST_HULL_SHADER])
+		{
+			md3dDeviceContext->HSSetSamplers(0, samplerCount, D3D11DriverState.SamplerStates[EST_HULL_SHADER]);
+			D3D11DriverState.SamplerStateIsDirty[EST_HULL_SHADER] = false;
+		}
+		break;
+	case EST_DOMAIN_SHADER:
+		if (D3D11DriverState.SamplerStateIsDirty[EST_DOMAIN_SHADER])
+		{
+			md3dDeviceContext->DSSetSamplers(0, samplerCount, D3D11DriverState.SamplerStates[EST_DOMAIN_SHADER]);
+			D3D11DriverState.SamplerStateIsDirty[EST_DOMAIN_SHADER] = false;
+		}
+		break;
+	case EST_GEOMETRY_SHADER:
+		if (D3D11DriverState.SamplerStateIsDirty[EST_GEOMETRY_SHADER])
+		{
+			md3dDeviceContext->GSSetSamplers(0, samplerCount, D3D11DriverState.SamplerStates[EST_GEOMETRY_SHADER]);
+			D3D11DriverState.SamplerStateIsDirty[EST_GEOMETRY_SHADER] = false;
+		}
+		break;
+	case EST_PIXEL_SHADER:
+		if (D3D11DriverState.SamplerStateIsDirty[EST_PIXEL_SHADER])
+		{
+			md3dDeviceContext->PSSetSamplers(0, samplerCount, D3D11DriverState.SamplerStates[EST_PIXEL_SHADER]);
+			D3D11DriverState.SamplerStateIsDirty[EST_PIXEL_SHADER] = false;
 		}
 		break;
 	}

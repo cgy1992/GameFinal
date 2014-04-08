@@ -77,6 +77,8 @@ struct SInputLayoutElement
 			return 96;
 		case EGF_R32G32_FLOAT:
 			return 64;
+		case EGF_R32_FLOAT:
+			return 32;
 		}
 		return 0;
 	}

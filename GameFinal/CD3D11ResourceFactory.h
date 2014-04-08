@@ -3,6 +3,7 @@
 
 #include "CResourceFactory.h"
 #include "CD3D11RenderState.h"
+#include "CD3D11Sampler.h"
 
 class CD3D11Driver;
 
@@ -19,6 +20,10 @@ public:
 		u32 sortcode);
 	
 	virtual IRenderState* createRenderState(const std::string& name);
+
+	virtual ISampler* createSampler(
+		const std::string& name,
+		const SSamplerDesc& desc);
 
 	virtual IPipeline* createPipeline(const std::string& name,
 		IShader** shaders,
@@ -69,6 +74,7 @@ private:
 
 	CD3D11Driver*					md3dDriver;
 	CD3D11RenderStateCache*			md3dRenderStateCache;
+	CD3D11SamplerStateCache*		md3dSamplerStateCache;
 };
 
 #endif

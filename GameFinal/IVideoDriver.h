@@ -15,6 +15,7 @@
 #include "IGeometryCreator.h"
 #include "IResourceGroupManager.h"
 #include "IShaderVariableInjection.h"
+#include "ISamplerManager.h"
 
 class IVideoDriver : public IReferenceCounted
 {
@@ -104,7 +105,10 @@ public:
 		return mResourceGroupManager;
 	}
 
-
+	ISamplerManager*		getSamplerManager()
+	{
+		return mSamplerManager;
+	}
 
 protected:
 	int								mVideoCardMemory;
@@ -119,6 +123,7 @@ protected:
 	IRenderStateManager*			mRenderStateManager;
 	IMeshManager*					mMeshManager;
 	IResourceGroupManager*			mResourceGroupManager;
+	ISamplerManager*				mSamplerManager;
 //	IShaderVariableInjection*		mShaderVariableInjector;
 };
 

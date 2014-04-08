@@ -52,15 +52,14 @@ bool CD3D11Shader::initContext()
 	D3D11_SHADER_DESC shaderDesc;
 	shaderReflection->GetDesc(&shaderDesc);
 
-	ID3D11ShaderReflectionVariable* var = shaderReflection->GetVariableByName("gTexture1");
-
 	D3D11_SHADER_INPUT_BIND_DESC resourceDesc;
-	s32 uiMaxBindPoint = -1;
+	s32 uiMaxTextureBindPoint = -1;
+	s32 uiMaxSamplerBindPoint = -1;
 	for (u32 i = 0; i < shaderDesc.BoundResources; i++)
 	{
 		shaderReflection->GetResourceBindingDesc(i, &resourceDesc);
 
-		std::cout << resourceDesc.Name << std::endl;
+		//std::cout << resourceDesc.Name << std::endl;
 
 		if (resourceDesc.Type == D3D10_SIT_TEXTURE)
 		{
@@ -68,15 +67,22 @@ bool CD3D11Shader::initContext()
 			mShaderResourceDescs.insert(std::make_pair(name, resourceDesc));
 
 			s32 bindPoint = resourceDesc.BindPoint;
-			if (bindPoint > uiMaxBindPoint)
-				uiMaxBindPoint = bindPoint;
+			if (bindPoint > uiMaxTextureBindPoint)
+				uiMaxTextureBindPoint = bindPoint;
+		}
+		else if (resourceDesc.Type == D3D_SIT_SAMPLER)
+		{
+			std::string name = resourceDesc.Name;
+			mShaderSamplerDescs.insert(std::make_pair(name, resourceDesc));
+
+			s32 bindPoint = resourceDesc.BindPoint;
+			if (bindPoint > uiMaxSamplerBindPoint)
+				uiMaxSamplerBindPoint = bindPoint;
 		}
 	}
 
-	if (uiMaxBindPoint >= 0)
-		mSrvNum = uiMaxBindPoint + 1;
-	else
-		mSrvNum = 0;
+	mSrvNum = (uiMaxTextureBindPoint >= 0) ? uiMaxTextureBindPoint + 1 : 0;
+	mSamplerNum = (uiMaxSamplerBindPoint >= 0) ? uiMaxSamplerBindPoint + 1 : 0;
 
 	for (u32 i = 0; i < shaderDesc.ConstantBuffers; i++)
 	{
@@ -260,6 +266,9 @@ bool CD3D11Shader::setMatrix(const std::string& varname, const XMFLOAT4X4& matri
 	return setRawData(cv, (void*)&transposeMat, sizeof(f32)* 16);
 }
 
+
+
+
 bool CD3D11Shader::setTransposedMatrixArray(const std::string& varname, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdate)
 {
 	SShaderConstantVariable* cv = getConstantVariable(varname);
@@ -296,6 +305,23 @@ bool CD3D11Shader::setTexture(const std::string& varname, ITexture* texture)
 
 	return true;
 }
+
+bool CD3D11Shader::setSampler(const std::string& varname, ISampler* sampler)
+{
+	auto it = mShaderSamplerDescs.find(varname);
+	if (it == mShaderSamplerDescs.end())
+		return false;
+
+	const D3D11_SHADER_INPUT_BIND_DESC& desc = it->second;
+	md3dDriver->setSampler(getType(), desc.BindPoint, sampler);
+	return true;
+}
+
+bool CD3D11Shader::existSampler(const std::string& name) const
+{
+	return mShaderSamplerDescs.find(name) != mShaderSamplerDescs.end();
+}
+
 
 bool CD3D11Shader::setRawData(SShaderConstantVariable* cv, void* data, u32 size)
 {

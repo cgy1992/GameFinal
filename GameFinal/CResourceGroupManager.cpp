@@ -9,7 +9,8 @@ CResourceGroupManager::CResourceGroupManager(ITextureManager* TextureManager,
 	IRenderStateManager* RenderStateManager,
 	IPipelineManager* PipelineManager,
 	IMaterialManager* MaterialManager,
-	IMeshManager* MeshManager)
+	IMeshManager* MeshManager,
+	ISamplerManager* SamplerManager)
 {
 	// init shader file exts.
 	mResourceFileExtensions[ERFT_SHADER].push_back("vs");
@@ -44,7 +45,7 @@ CResourceGroupManager::CResourceGroupManager(ITextureManager* TextureManager,
 
 	// create the resource loader object.
 	mResourceLoader = new CResourceLoader(this, TextureManager, ShaderManager, InputlayoutManager,
-		RenderStateManager, PipelineManager, MaterialManager, MeshManager);
+		RenderStateManager, PipelineManager, MaterialManager, MeshManager, SamplerManager);
 }
 
 CResourceGroupManager::~CResourceGroupManager()

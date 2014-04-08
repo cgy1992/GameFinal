@@ -22,6 +22,21 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Box2", "Box2\Box2.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MeshConverter", "MeshConverter\MeshConverter.vcxproj", "{DEBE4326-869C-4DB5-BE46-12F23AE4463E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GSDemo", "GSDemo\GSDemo.vcxproj", "{9B749D34-6BDF-4A0B-8C57-2D36AFDC94DA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F764B441-35DB-4ADD-859F-D5DE5B6727F2} = {F764B441-35DB-4ADD-859F-D5DE5B6727F2}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TessellationDemo", "TessellationDemo\TessellationDemo.vcxproj", "{9BD403FF-62E2-42F4-98F1-D86E00497427}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F764B441-35DB-4ADD-859F-D5DE5B6727F2} = {F764B441-35DB-4ADD-859F-D5DE5B6727F2}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WaterWave", "WaterWave\WaterWave.vcxproj", "{441BAEF9-FD18-4653-B0B8-05E4C5243538}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F764B441-35DB-4ADD-859F-D5DE5B6727F2} = {F764B441-35DB-4ADD-859F-D5DE5B6727F2}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -48,6 +63,18 @@ Global
 		{DEBE4326-869C-4DB5-BE46-12F23AE4463E}.Debug|Win32.Build.0 = Debug|Win32
 		{DEBE4326-869C-4DB5-BE46-12F23AE4463E}.Release|Win32.ActiveCfg = Release|Win32
 		{DEBE4326-869C-4DB5-BE46-12F23AE4463E}.Release|Win32.Build.0 = Release|Win32
+		{9B749D34-6BDF-4A0B-8C57-2D36AFDC94DA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9B749D34-6BDF-4A0B-8C57-2D36AFDC94DA}.Debug|Win32.Build.0 = Debug|Win32
+		{9B749D34-6BDF-4A0B-8C57-2D36AFDC94DA}.Release|Win32.ActiveCfg = Release|Win32
+		{9B749D34-6BDF-4A0B-8C57-2D36AFDC94DA}.Release|Win32.Build.0 = Release|Win32
+		{9BD403FF-62E2-42F4-98F1-D86E00497427}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9BD403FF-62E2-42F4-98F1-D86E00497427}.Debug|Win32.Build.0 = Debug|Win32
+		{9BD403FF-62E2-42F4-98F1-D86E00497427}.Release|Win32.ActiveCfg = Release|Win32
+		{9BD403FF-62E2-42F4-98F1-D86E00497427}.Release|Win32.Build.0 = Release|Win32
+		{441BAEF9-FD18-4653-B0B8-05E4C5243538}.Debug|Win32.ActiveCfg = Debug|Win32
+		{441BAEF9-FD18-4653-B0B8-05E4C5243538}.Debug|Win32.Build.0 = Debug|Win32
+		{441BAEF9-FD18-4653-B0B8-05E4C5243538}.Release|Win32.ActiveCfg = Release|Win32
+		{441BAEF9-FD18-4653-B0B8-05E4C5243538}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

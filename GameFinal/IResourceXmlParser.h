@@ -34,6 +34,7 @@ public:
 		std::vector<SInputLayoutElement>		InputLayoutElements;
 		E_PRIMITIVE_TYPE						PrimitiveType;
 		std::vector<SRenderStateCreateParams>	RenderStates;
+		std::map<std::string, SSamplerDesc>		SamplerDescs;
 
 		SPipelineCreateParams()
 		{

@@ -10,7 +10,7 @@
 #include "ITextureManager.h"
 #include "IRenderStateManager.h"
 #include "IPipelineManager.h"
-
+#include "ISamplerManager.h"
 
 class CResourceLoader : public IResourceLoader
 {
@@ -22,7 +22,8 @@ public:
 		IRenderStateManager* RenderStateManager,
 		IPipelineManager* PipelineManager,
 		IMaterialManager* MaterialManager,
-		IMeshManager* MeshManager);
+		IMeshManager* MeshManager,
+		ISamplerManager* SamplerManager);
 
 	virtual bool loadTexture(const std::string& name);
 
@@ -45,6 +46,7 @@ private:
 	IPipelineManager*					mPipelineManager;
 	IMaterialManager*					mMaterialManager;
 	IMeshManager*						mMeshManager;
+	ISamplerManager*					mSamplerManager;
 	IResourceXmlParser*					mResourceXmlParser;
 	IModelFileParser*					mModelFileParser;
 };

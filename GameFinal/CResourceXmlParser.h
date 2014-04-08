@@ -66,9 +66,15 @@ private:
 		tinyxml2::XMLElement* node,
 		SPipelineCreateParams& createParams) const;
 
+	bool handleSamplerNode(const std::string& filepath, 
+		tinyxml2::XMLElement* node, 
+		SPipelineCreateParams& createParams) const;
+
 	bool handleMaterialNode(const std::string& filepath,
 		tinyxml2::XMLElement* node,
 		SMaterialCreateParams& createParams) const;
+
+	XMFLOAT4 getColorFromString(const char* s) const;
 
 	/* handle <ambient> <diffuse> <specular> <emissive> element in material file */
 	bool handleMaterialColorNode(const std::string& filepath,
@@ -79,6 +85,8 @@ private:
 	bool handleMaterialTextureNode(const std::string& filepath,
 		const std::string& materialName,
 		tinyxml2::XMLElement* node, SMaterialTextureParam& param) const;
+
+	
 	
 
 	/* 顶点格式的文本形式与枚举类型的映射 */
@@ -110,6 +118,12 @@ private:
 
 	/* E_STENCIL_OP 类型的文本形式与枚举类型的映射 */
 	std::map<std::string, u32>						mStencilOpMapping;
+
+	/* E_ADDRESS_MODE 类型的文本形式与枚举类型的映射 */
+	std::map<std::string, E_ADDRESS_MODE>			mAddressModeMapping;
+
+	/* E_SAMPLER_FILTER 类型的文本形式与枚举类型的映射 */
+	std::map<std::string, E_SAMPLER_FILTER>			mSamplerFilterMapping;
 };
 
 #endif

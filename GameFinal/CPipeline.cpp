@@ -175,3 +175,55 @@ const std::vector<SShaderAutoVariable>& CPipeline::getShaderAutoVariables() cons
 {
 	return mShaderAutoVariables;
 }
+
+bool CPipeline::setSampler(const std::string& varname, ISampler* sampler)
+{
+	if (!sampler)
+		return false;
+
+	u32 shaderType = 0;
+
+	/* test if already have the sampler with the same name. */
+	for (u32 i = 0; i < mSamplerVariables.size(); i++)
+	{
+		if (mSamplerVariables[i].VariableName == varname)
+			return false;
+	}
+
+	/* test which shaders exist the sampler. */
+	for (u32 i = 0; i < EST_SHADER_COUNT; i++)
+	{
+		if (mShaders[i] && mShaders[i]->existSampler(varname))
+			shaderType |= (1 << i);
+	}
+
+	/* if no shader contains this sampler. */
+	if (shaderType == 0)
+		return false;
+
+	SShaderSamplerVariable var;
+	var.VariableName = varname;
+	var.ShaderTypes = shaderType;
+	var.Sampler = sampler;
+	mSamplerVariables.push_back(var);
+
+	return true;
+}
+
+void CPipeline::applySamplers() const
+{
+	for (u32 i = 0; i < mSamplerVariables.size(); i++)
+	{
+		const SShaderSamplerVariable& var = mSamplerVariables[i];
+		// foreach shader
+
+		for (u32 shaderType = 0; shaderType < EST_SHADER_COUNT; shaderType++)
+		{
+			if (var.ShaderTypes & (1 << shaderType) && mShaders[shaderType])
+			{
+				mShaders[shaderType]->setSampler(var.VariableName, var.Sampler);
+			}
+		}
+	}
+}
+
