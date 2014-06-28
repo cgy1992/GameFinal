@@ -5,33 +5,36 @@
 #include "ISceneManager.h"
 #include "ILightNode.h"
 
-class CShaderVariableInjection
+namespace gf
 {
-public:
-	
-	CShaderVariableInjection(){}
+	class CShaderVariableInjection
+	{
+	public:
 
-	static void inject(IMeshNode* mesh, IPipeline* pipeline, u32 subset = 0);
+		CShaderVariableInjection(){}
 
-	static void injectBoneTransforms(IPipeline* pipeline, const f32* matrixs, u32 count);
+		static void inject(IMeshNode* mesh, IPipeline* pipeline, u32 subset = 0);
 
-	static void injectMaterial(IMaterial* material, IPipeline* pipeline);
+		static void injectBoneTransforms(IPipeline* pipeline, const f32* matrixs, u32 count);
 
-	/* inject just one variable*/
-	static void injectVariable(const SShaderAutoVariable& var, IMeshNode* mesh, IPipeline* pipeline, u32 subset);
+		static void injectMaterial(IMaterial* material, IPipeline* pipeline);
 
-	/* inject world, view, proj transforms. */
-	static void injectTransformations(const SShaderAutoVariable& var, ISceneNode* node, IPipeline* pipeline);
+		/* inject just one variable*/
+		static void injectVariable(const SShaderAutoVariable& var, IMeshNode* mesh, IPipeline* pipeline, u32 subset);
 
-	/* inject materials. */
-	static void injectMaterial(const SShaderAutoVariable& var, IPipeline* pipeline, IMaterial* material);
+		/* inject world, view, proj transforms. */
+		static void injectTransformations(const SShaderAutoVariable& var, ISceneNode* node, IPipeline* pipeline);
 
-	/* inject scene informations */
-	static void injectSceneInfo(const SShaderAutoVariable& var, ISceneNode* node, IPipeline* pipeline);
+		/* inject materials. */
+		static void injectMaterial(const SShaderAutoVariable& var, IPipeline* pipeline, IMaterial* material);
+
+		/* inject scene informations */
+		static void injectSceneInfo(const SShaderAutoVariable& var, ISceneNode* node, IPipeline* pipeline);
 
 
-private:
+	private:
 
-};
+	};
+}
 
 #endif

@@ -4,21 +4,23 @@
 #include "ITextureManager.h"
 #include "IResourceFactory.h"
 #include "CSortCodeAllocator.h"
-
-class CTextureManager : public ITextureManager
+namespace gf
 {
-public:
-	CTextureManager(IResourceFactory* pResourceFactory);
+	class CTextureManager : public ITextureManager
+	{
+	public:
+		CTextureManager(IResourceFactory* pResourceFactory);
 
-	virtual ITexture* load(const std::string& name, const std::string& filepath);
-	virtual ITexture* get(const std::string& name) const;
+		virtual ITexture* load(const std::string& name, const std::string& filepath);
+		virtual ITexture* get(const std::string& name) const;
 
-	_DEFINE_RESOURCE_DESTROY_METHODS(CTextureManager, mTextureMap, ITexture);
-private:
-	IResourceFactory*						mResourceFactory;
-	std::map<std::string, ITexture*>		mTextureMap;
-	CSortCodeAllocator<255>					mCodeAllocator;
+		_DEFINE_RESOURCE_DESTROY_METHODS(CTextureManager, mTextureMap, ITexture);
+	private:
+		IResourceFactory*						mResourceFactory;
+		std::map<std::string, ITexture*>		mTextureMap;
+		CSortCodeAllocator<255>					mCodeAllocator;
 
-};
+	};
+}
 
 #endif

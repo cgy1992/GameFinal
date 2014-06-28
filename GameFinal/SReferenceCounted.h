@@ -2,53 +2,54 @@
 #define __REFERENCE_COUNTED_STRUCT_H__
 
 #include "gfTypes.h"
-
-class SReferenceCounted
+namespace gf
 {
-public:
-
-	//! Constructor.
-	SReferenceCounted()
-		:ReferenceCounter(1)
+	class SReferenceCounted
 	{
+	public:
 
-	}
-
-	void grab() const
-	{
-		++ReferenceCounter;
-	}
-
-	bool drop() const
-	{
-		// someone is doing bad reference counting.
-		//assert(ReferenceCounter > 0);
-
-		--ReferenceCounter;
-		if (!ReferenceCounter)
+		//! Constructor.
+		SReferenceCounted()
+			:ReferenceCounter(1)
 		{
-			// The difference between IReferenceCounted and SReferenceCounted is 
-			// here is no 'delete this' sentence.
-			//delete this;
-			return true;
+
 		}
 
-		return false;
-	}
+		void grab() const
+		{
+			++ReferenceCounter;
+		}
 
-	//! Get the reference count.
-	/** \return Current value of the reference counter. */
-	s32 getReferenceCount() const
-	{
-		return ReferenceCounter;
-	}
+		bool drop() const
+		{
+			// someone is doing bad reference counting.
+			//assert(ReferenceCounter > 0);
 
-private:
+			--ReferenceCounter;
+			if (!ReferenceCounter)
+			{
+				// The difference between IReferenceCounted and SReferenceCounted is 
+				// here is no 'delete this' sentence.
+				//delete this;
+				return true;
+			}
 
-	//! The reference counter. Mutable to do reference counting on const objects.
-	mutable s32 ReferenceCounter;
-};
+			return false;
+		}
 
+		//! Get the reference count.
+		/** \return Current value of the reference counter. */
+		s32 getReferenceCount() const
+		{
+			return ReferenceCounter;
+		}
+
+	private:
+
+		//! The reference counter. Mutable to do reference counting on const objects.
+		mutable s32 ReferenceCounter;
+	};
+}
 
 
 #endif

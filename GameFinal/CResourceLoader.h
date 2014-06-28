@@ -11,46 +11,48 @@
 #include "IRenderStateManager.h"
 #include "IPipelineManager.h"
 #include "ISamplerManager.h"
-
-class CResourceLoader : public IResourceLoader
+namespace gf
 {
-public:
-	CResourceLoader(IResourceGroupManager* ResourceGroupManager,
-		ITextureManager* TextureManager,
-		IShaderManager* ShaderManager,
-		IInputLayoutManager* InputlayoutManager,
-		IRenderStateManager* RenderStateManager,
-		IPipelineManager* PipelineManager,
-		IMaterialManager* MaterialManager,
-		IMeshManager* MeshManager,
-		ISamplerManager* SamplerManager);
+	class CResourceLoader : public IResourceLoader
+	{
+	public:
+		CResourceLoader(IResourceGroupManager* ResourceGroupManager,
+			ITextureManager* TextureManager,
+			IShaderManager* ShaderManager,
+			IInputLayoutManager* InputlayoutManager,
+			IRenderStateManager* RenderStateManager,
+			IPipelineManager* PipelineManager,
+			IMaterialManager* MaterialManager,
+			IMeshManager* MeshManager,
+			ISamplerManager* SamplerManager);
 
-	virtual bool loadTexture(const std::string& name);
+		virtual bool loadTexture(const std::string& name);
 
-	virtual bool loadPipelinesFromFile(const std::string& name);
+		virtual bool loadPipelinesFromFile(const std::string& name);
 
-	virtual bool loadMaterialsFromFile(const std::string& name);
+		virtual bool loadMaterialsFromFile(const std::string& name);
 
-	virtual bool loadPipeline(const std::string& fullpath, const IResourceXmlParser::SPipelineCreateParams& createParams) const;
+		virtual bool loadPipeline(const std::string& fullpath, const IResourceXmlParser::SPipelineCreateParams& createParams) const;
 
-	virtual bool loadMaterial(const std::string& fullpath, const IResourceXmlParser::SMaterialCreateParams& createParams) const;
+		virtual bool loadMaterial(const std::string& fullpath, const IResourceXmlParser::SMaterialCreateParams& createParams) const;
 
-	virtual bool loadMeshFromFile(const std::string& name);
+		virtual bool loadMeshFromFile(const std::string& name);
 
-private:
-	IResourceGroupManager*				mResourceGroupManager;
-	ITextureManager*					mTextureManager;
-	IShaderManager*						mShaderManager;
-	IInputLayoutManager*				mInputlayoutManager;
-	IRenderStateManager*				mRenderStateManager;
-	IPipelineManager*					mPipelineManager;
-	IMaterialManager*					mMaterialManager;
-	IMeshManager*						mMeshManager;
-	ISamplerManager*					mSamplerManager;
-	IResourceXmlParser*					mResourceXmlParser;
-	IModelFileParser*					mModelFileParser;
-};
+	private:
+		IResourceGroupManager*				mResourceGroupManager;
+		ITextureManager*					mTextureManager;
+		IShaderManager*						mShaderManager;
+		IInputLayoutManager*				mInputlayoutManager;
+		IRenderStateManager*				mRenderStateManager;
+		IPipelineManager*					mPipelineManager;
+		IMaterialManager*					mMaterialManager;
+		IMeshManager*						mMeshManager;
+		ISamplerManager*					mSamplerManager;
+		IResourceXmlParser*					mResourceXmlParser;
+		IModelFileParser*					mModelFileParser;
+	};
 
+}
 
 #endif
 

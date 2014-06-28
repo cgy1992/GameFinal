@@ -3,31 +3,34 @@
 
 #include "ISimpleMesh.h"
 #include "IMaterialManager.h"
-
-class CSimpleMesh : public ISimpleMesh
+namespace gf
 {
-public:
-	CSimpleMesh(const std::string& name,
-		u32 sortcode,
-		IMeshBuffer* buffer)
-		:ISimpleMesh(name, sortcode)
-		, mMeshBuffer(buffer)
+	class CSimpleMesh : public ISimpleMesh
 	{
+	public:
+		CSimpleMesh(const std::string& name,
+			u32 sortcode,
+			const math::SAxisAlignedBox& aabb,
+			IMeshBuffer* buffer)
+			:ISimpleMesh(name, sortcode, aabb)
+			, mMeshBuffer(buffer)
+		{
 
-	}
+		}
 
-	virtual void bind();
+		virtual void bind();
 
-	virtual void draw() const;
+		virtual void draw() const;
 
-	virtual E_MESH_TYPE getType() const
-	{
-		return EMT_SIMPLE_MESH;
-	}
+		virtual E_MESH_TYPE getType() const
+		{
+			return EMT_SIMPLE_MESH;
+		}
 
-private:
-	IMeshBuffer*			mMeshBuffer;
+	private:
+		IMeshBuffer*			mMeshBuffer;
 
-};
+	};
+}
 
 #endif

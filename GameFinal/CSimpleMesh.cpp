@@ -1,12 +1,14 @@
 #include "stdafx.h"
 #include "CSimpleMesh.h"
-
-void CSimpleMesh::bind()
+namespace gf
 {
-	mMeshBuffer->bind();
-}
+	void CSimpleMesh::bind()
+	{
+		mMeshBuffer->bind();
+	}
 
-void CSimpleMesh::draw() const
-{
-	mMeshBuffer->draw();
+	void CSimpleMesh::draw() const
+	{
+		mMeshBuffer->draw();
+	}
 }

@@ -13,36 +13,39 @@ enum E_MESH_ATTRIBUTE
 };
 */
 
-
-
-class IMeshBuffer : public IReferenceCounted
+namespace gf
 {
-public:
-	IMeshBuffer(E_MEMORY_USAGE usage)
-		: mMemoryUsage(usage)
+
+	class IMeshBuffer : public IReferenceCounted
 	{
+	public:
+		IMeshBuffer(E_MEMORY_USAGE usage)
+			: mMemoryUsage(usage)
+		{
 
-	}
+		}
 
-	virtual bool init(void* vertices,
-		void* indices,
-		u32 vertexCount,
-		u32 indicesCount,
-		u32 vertexStride, 
-		bool bit32Index) = 0;
+		virtual bool init(void* vertices,
+			void* indices,
+			u32 vertexCount,
+			u32 indicesCount,
+			u32 vertexStride,
+			bool bit32Index) = 0;
 
-	virtual void bind() = 0;
+		virtual void bind() = 0;
 
-	virtual void draw() const = 0;
+		virtual void draw() const = 0;
 
-	virtual void drawIndexed(u32 start, u32 count, u32 baseVertex) const = 0;
+		virtual void drawIndexed(u32 start, u32 count, u32 baseVertex) const = 0;
 
-	virtual void draw(u32 start, u32 count) const = 0;
+		virtual void draw(u32 start, u32 count) const = 0;
 
-	
 
-protected:
-	E_MEMORY_USAGE		mMemoryUsage;
-};
+
+	protected:
+		E_MEMORY_USAGE		mMemoryUsage;
+	};
+
+}
 
 #endif

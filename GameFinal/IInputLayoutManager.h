@@ -6,15 +6,17 @@
 #include "IShader.h"
 #include <vector>
 #include <map>
-
-class IInputLayoutManager : public IReferenceCounted
+namespace gf
 {
-public:
-	virtual IInputLayout* create(
-		const std::vector<SInputLayoutElement>& elements,
-		IShader* shader) = 0;
+	class IInputLayoutManager : public IReferenceCounted
+	{
+	public:
+		virtual IInputLayout* create(
+			const std::vector<SInputLayoutElement>& elements,
+			IShader* shader) = 0;
 
-	virtual IInputLayout* get(const std::vector<SInputLayoutElement>& elements) = 0;
-};
+		virtual IInputLayout* get(const std::vector<SInputLayoutElement>& elements) = 0;
+	};
+}
 
 #endif

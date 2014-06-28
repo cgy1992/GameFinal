@@ -6,16 +6,21 @@
 #include "IResourceXmlParser.h"
 #include "IModelFileParser.h"
 
-class IResourceLoader : public IReferenceCounted
+namespace gf
 {
-public:
-	virtual bool loadTexture(const std::string& name) = 0;
 
-	virtual bool loadPipelinesFromFile(const std::string& name) = 0;
+	class IResourceLoader : public IReferenceCounted
+	{
+	public:
+		virtual bool loadTexture(const std::string& name) = 0;
 
-	virtual bool loadMaterialsFromFile(const std::string& name) = 0;
+		virtual bool loadPipelinesFromFile(const std::string& name) = 0;
 
-	virtual bool loadMeshFromFile(const std::string& name) = 0;
-};
+		virtual bool loadMaterialsFromFile(const std::string& name) = 0;
+
+		virtual bool loadMeshFromFile(const std::string& name) = 0;
+	};
+
+}
 
 #endif

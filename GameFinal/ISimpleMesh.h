@@ -4,21 +4,26 @@
 #include "IMesh.h"
 #include "IMaterial.h"
 
-class ISimpleMesh : public IMesh
+namespace gf
 {
-public:
-	ISimpleMesh(const std::string& name,
-		u32 sortcode)
-		:IMesh(name, sortcode)
+
+	class ISimpleMesh : public IMesh
 	{
+	public:
+		ISimpleMesh(const std::string& name,
+			u32 sortcode, 
+			const math::SAxisAlignedBox& aabb)
+			:IMesh(name, sortcode, aabb)
+		{
 
-	}
-	
-	virtual void bind() = 0;
+		}
 
-	virtual void draw() const = 0;
+		virtual void bind() = 0;
 
-};
+		virtual void draw() const = 0;
 
+	};
+
+}
 
 #endif

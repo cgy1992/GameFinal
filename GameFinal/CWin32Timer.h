@@ -3,28 +3,32 @@
 
 #include "ITimer.h"
 
-class CWin32Timer : public ITimer
+namespace gf
 {
-public:
-	CWin32Timer();
+	class CWin32Timer : public ITimer
+	{
+	public:
+		CWin32Timer();
 
-	virtual f32 tick();
-	virtual f32 getElapseTime() const;
+		virtual f32 tick();
+		virtual f32 getElapseTime() const;
 
-	virtual void start(); // Call when unpaused.
-	virtual void stop();  // Call when paused.
+		virtual void start(); // Call when unpaused.
+		virtual void stop();  // Call when paused.
 
-	virtual void reset();
-private:
+		virtual void reset();
+	private:
 
-	u32			mBaseTime;
-	u32			mPausedTime;
-	u32			mStopTime;
-	u32			mPrevTime;
-	u32			mCurrTime;
+		u32			mBaseTime;
+		u32			mPausedTime;
+		u32			mStopTime;
+		u32			mPrevTime;
+		u32			mCurrTime;
 
 
-	bool mStopped;
-};
+		bool mStopped;
+	};
+
+}
 
 #endif

@@ -4,77 +4,79 @@
 #include "CResourceFactory.h"
 #include "CD3D11RenderState.h"
 #include "CD3D11Sampler.h"
-
-class CD3D11Driver;
-
-class CD3D11ResourceFactory : public CResourceFactory
+namespace gf
 {
-public:
-	CD3D11ResourceFactory(ID3D11Device* pd3dDevice, 
-		ID3D11DeviceContext* pd3dDeviceContext,
-		CD3D11Driver* md3dDriver);
+	class CD3D11Driver;
 
-	virtual ITexture* loadTextureFromFile(
-		const std::string& name,
-		const std::string& filename, 
-		u32 sortcode);
-	
-	virtual IRenderState* createRenderState(const std::string& name);
+	class CD3D11ResourceFactory : public CResourceFactory
+	{
+	public:
+		CD3D11ResourceFactory(ID3D11Device* pd3dDevice,
+			ID3D11DeviceContext* pd3dDeviceContext,
+			CD3D11Driver* md3dDriver);
 
-	virtual ISampler* createSampler(
-		const std::string& name,
-		const SSamplerDesc& desc);
+		virtual ITexture* loadTextureFromFile(
+			const std::string& name,
+			const std::string& filename,
+			u32 sortcode);
 
-	virtual IPipeline* createPipeline(const std::string& name,
-		IShader** shaders,
-		u32 shaderCount,
-		IInputLayout* inputlayout,
-		E_PRIMITIVE_TYPE primitiveType,
-		IRenderState* renderState);
+		virtual IRenderState* createRenderState(const std::string& name);
 
-	virtual IShader* createShaderFromFile(
-		E_SHADER_TYPE shaderType,
-		const char* szFilename,
-		const char* szFunctionName,
-		u32 id,
-		const std::string& shaderName);
+		virtual ISampler* createSampler(
+			const std::string& name,
+			const SSamplerDesc& desc);
 
-	virtual IInputLayout* createInputLayout(
-		u32 sortCode,
-		const std::vector<SInputLayoutElement>& elements,
-		IShader* shader,
-		u32 hashcode);
+		virtual IPipeline* createPipeline(const std::string& name,
+			IShader** shaders,
+			u32 shaderCount,
+			IInputLayout* inputlayout,
+			E_PRIMITIVE_TYPE primitiveType,
+			IRenderState* renderState);
 
-	virtual IAnimatedMeshBuffer* createAnimatedMeshBuffer(
-		E_MEMORY_USAGE usage,
-		void* vertices,
-		void* animateVertices,
-		void* indices,
-		u32 vertexCount,
-		u32 animateVertexCount,
-		u32 indicesCount,
-		u32 vertexStride,
-		u32 animateVertexStride,
-		bool bit32Index);
+		virtual IShader* createShaderFromFile(
+			E_SHADER_TYPE shaderType,
+			const char* szFilename,
+			const char* szFunctionName,
+			u32 id,
+			const std::string& shaderName);
 
-	virtual IMeshBuffer* createMeshBuffer(
-		E_MEMORY_USAGE usage,
-		void* vertices,
-		void* indices,
-		u32 vertexCount,
-		u32 indicesCount,
-		u32 vertexStride,
-		bool bit32Index);
+		virtual IInputLayout* createInputLayout(
+			u32 sortCode,
+			const std::vector<SInputLayoutElement>& elements,
+			IShader* shader,
+			u32 hashcode);
 
-	virtual ~CD3D11ResourceFactory();
+		virtual IAnimatedMeshBuffer* createAnimatedMeshBuffer(
+			E_MEMORY_USAGE usage,
+			void* vertices,
+			void* animateVertices,
+			void* indices,
+			u32 vertexCount,
+			u32 animateVertexCount,
+			u32 indicesCount,
+			u32 vertexStride,
+			u32 animateVertexStride,
+			bool bit32Index);
 
-private:
-	ID3D11Device*					md3dDevice;
-	ID3D11DeviceContext*			md3dDeviceContext;
+		virtual IMeshBuffer* createMeshBuffer(
+			E_MEMORY_USAGE usage,
+			void* vertices,
+			void* indices,
+			u32 vertexCount,
+			u32 indicesCount,
+			u32 vertexStride,
+			bool bit32Index);
 
-	CD3D11Driver*					md3dDriver;
-	CD3D11RenderStateCache*			md3dRenderStateCache;
-	CD3D11SamplerStateCache*		md3dSamplerStateCache;
-};
+		virtual ~CD3D11ResourceFactory();
+
+	private:
+		ID3D11Device*					md3dDevice;
+		ID3D11DeviceContext*			md3dDeviceContext;
+
+		CD3D11Driver*					md3dDriver;
+		CD3D11RenderStateCache*			md3dRenderStateCache;
+		CD3D11SamplerStateCache*		md3dSamplerStateCache;
+	};
+}
 
 #endif

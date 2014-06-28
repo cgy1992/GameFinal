@@ -3,26 +3,36 @@
 
 #include "IMeshNode.h"
 
-class IAnimatedMeshNode : public IMeshNode
+namespace gf
 {
-public:
-	IAnimatedMeshNode(ISceneNode* parent,
-		ISceneManager* smgr,
-		const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
-		const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
-		const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
-		:IMeshNode(parent, smgr, position, rotation, scale)
+
+
+	class IAnimatedMeshNode : public IMeshNode
 	{
+	public:
+		IAnimatedMeshNode(ISceneNode* parent,
+			ISceneManager* smgr,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
+			:IMeshNode(parent, smgr, position, rotation, scale)
+		{
 
-	}
+		}
 
 
-	virtual bool setAnimation(u32 id) = 0;
+		virtual bool setAnimation(u32 id) = 0;
 
-	virtual bool setAnimation(const std::string& name) = 0;
+		virtual bool setAnimation(const std::string& name) = 0;
 
-	virtual void addTime(f32 t) = 0;
-};
+		virtual void addTime(f32 t) = 0;
 
+		virtual E_SCENE_NODE_TYPE getNodeType() const
+		{
+			return ESNT_ANIMATED_MESH;
+		}
+	};
+
+}
 
 #endif

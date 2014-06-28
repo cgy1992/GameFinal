@@ -42,8 +42,13 @@ if (FAILED(hr))                                         \
 #include "gfGIFormat.h"
 #include "EMemoryUsage.h"
 
-DXGI_FORMAT getDxgiFormat(E_GI_FORMAT format);
+namespace gf
+{
+	DXGI_FORMAT getDxgiFormat(E_GI_FORMAT format);
 
-D3D11_USAGE getD3d11Usage(E_MEMORY_USAGE usage);
+	D3D11_USAGE getD3d11Usage(E_MEMORY_USAGE usage);
+}
+
+
 
 #endif

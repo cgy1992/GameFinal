@@ -4,78 +4,94 @@
 #include "IAnimatedMeshNode.h"
 #include "IAnimatedMesh.h"
 
-class CAnimatedMeshNode : public IAnimatedMeshNode
+namespace gf
 {
-public:
-	CAnimatedMeshNode(ISceneNode* parent,
-		ISceneManager* smgr,
-		IAnimatedMesh* mesh,
-		const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
-		const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
-		const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
-		:IAnimatedMeshNode(parent, smgr, position, rotation, scale)
-		, mMesh(mesh)
-		, mAbsoluteBoneTransforms(mesh->getBoneCount())
-		, mRelativeBoneTransforms(mesh->getBoneCount())
-		, mMaterials(mesh->getSubsetCount())
-	{
-		u32 maxBoneCountInSubset = 0;
-		const std::vector<SAnimatedModelSubset>& subsets = mMesh->getSubsets();
 
-		for (u32 i = 0; i < subsets.size(); i++)
+	class CAnimatedMeshNode : public IAnimatedMeshNode
+	{
+	public:
+		CAnimatedMeshNode(ISceneNode* parent,
+			ISceneManager* smgr,
+			IAnimatedMesh* mesh,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
+			:IAnimatedMeshNode(parent, smgr, position, rotation, scale)
+			, mMesh(mesh)
+			, mAbsoluteBoneTransforms(mesh->getBoneCount())
+			, mRelativeBoneTransforms(mesh->getBoneCount())
+			, mMaterials(mesh->getSubsetCount())
 		{
-			if (subsets[i].Skinned && subsets[i].Bones.size() > maxBoneCountInSubset)
-				maxBoneCountInSubset = subsets[i].Bones.size();
+			u32 maxBoneCountInSubset = 0;
+			const std::vector<SAnimatedModelSubset>& subsets = mMesh->getSubsets();
+
+			for (u32 i = 0; i < subsets.size(); i++)
+			{
+				if (subsets[i].Skinned && subsets[i].Bones.size() > maxBoneCountInSubset)
+					maxBoneCountInSubset = subsets[i].Bones.size();
+			}
+
+			mSubsetBoneTransforms.resize(maxBoneCountInSubset);
+
+			for (u32 i = 0; i < subsets.size(); i++)
+			{
+				mMaterials[i] = subsets[i].Material;
+			}
+
+			mMesh->getRelativeBoneTransforms(mRelativeBoneTransforms);
+			mTimePos = 0;
+			mCurrAnimationId = 0;
 		}
 
-		mSubsetBoneTransforms.resize(maxBoneCountInSubset);
+		virtual bool setMaterial(IMaterial* material, u32 subset = 0);
 
-		for (u32 i = 0; i < subsets.size(); i++)
+		virtual IMaterial* getMaterial(u32 subset = 0);
+
+		virtual bool setMaterialName(const std::string& name, u32 subset = 0);
+
+		virtual void render();
+
+		virtual void OnRegisterSceneNode(bool bRecursion = true);
+
+		virtual void calcSortCode();
+
+		virtual u32 getSubsetCount() const
 		{
-			mMaterials[i] = subsets[i].Material;
+			return mMesh->getSubsetCount();
 		}
 
-		mMesh->getRelativeBoneTransforms(mRelativeBoneTransforms);
-		mTimePos = 0;
-		mCurrAnimationId = 0;
-	}
+		virtual bool setAnimation(u32 id);
 
-	virtual bool setMaterial(IMaterial* material, u32 subset = 0);
+		virtual bool setAnimation(const std::string& name);
 
-	virtual IMaterial* getMaterial(u32 subset = 0);
+		virtual void addTime(f32 t);
 
-	virtual bool setMaterialName(const std::string& name, u32 subset = 0);
+		void updateAbsoluteBoneTransforms();
 
-	virtual void render();
 
-	virtual void OnRegisterSceneNode();
+		virtual void updateAbsoluteTransformation()
+		{
+			ISceneNode::updateAbsoluteTransformation();
 
-	virtual void calcSortCode();
+			const math::SAxisAlignedBox& aabb = mMesh->getAabb();
+			getLocalAxis(mOBB.Axis);
+			mOBB.Center = getAbsolutePosition();
+			mOBB.Extents = aabb.Extents;
+		}
 
-	virtual u32 getSubsetCount() const
-	{
-		return mMesh->getSubsetCount();
-	}
+	private:
+		void updateSubsetBones(const std::vector<SModelSubsetBone>& bones);
 
-	virtual bool setAnimation(u32 id);
+		IAnimatedMesh*						mMesh;
+		std::vector<XMFLOAT4X4>				mSubsetBoneTransforms;
+		std::vector<XMFLOAT4X4>				mAbsoluteBoneTransforms;
+		std::vector<XMFLOAT4X4>				mRelativeBoneTransforms;
+		std::vector<IMaterial*>				mMaterials;
 
-	virtual bool setAnimation(const std::string& name);
+		f32									mTimePos;
+		u32									mCurrAnimationId;
+	};
 
-	virtual void addTime(f32 t);
-
-	void updateAbsoluteBoneTransforms();
-
-private:
-	void updateSubsetBones(const std::vector<SModelSubsetBone>& bones);
-
-	IAnimatedMesh*						mMesh;
-	std::vector<XMFLOAT4X4>				mSubsetBoneTransforms;
-	std::vector<XMFLOAT4X4>				mAbsoluteBoneTransforms;
-	std::vector<XMFLOAT4X4>				mRelativeBoneTransforms;
-	std::vector<IMaterial*>				mMaterials;
-
-	f32									mTimePos;
-	u32									mCurrAnimationId;
-};
+}
 
 #endif

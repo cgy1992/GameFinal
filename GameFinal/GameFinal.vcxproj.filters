@@ -416,6 +416,9 @@
     <ClInclude Include="COctreeNode.h">
       <Filter>src\SceneManager\Class</Filter>
     </ClInclude>
+    <ClInclude Include="CEmptyNode.h">
+      <Filter>src\SceneNode\Class</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">

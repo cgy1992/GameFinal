@@ -2,102 +2,118 @@
 #define __CAMERA_NODE_INTERFACE_H__
 
 #include "ISceneNode.h"
+#include "gfMath.h"
 
-class ICameraNode : public ISceneNode
+namespace gf
 {
-public:
-	ICameraNode(ISceneNode* parent, ISceneManager* smgr,
-		const XMFLOAT3& position,
-		f32 aspectRatio,
-		f32 fov,
-		f32 nearZ,
-		f32 farZ)
-		:ISceneNode(parent, smgr, position)
-		, mFovAngleY(fov)
-		, mNearZ(nearZ)
-		, mFarZ(farZ)
-		, mAspectRatio(aspectRatio)
+
+	class ICameraNode : public ISceneNode
 	{
+	public:
+		ICameraNode(ISceneNode* parent, ISceneManager* smgr,
+			const XMFLOAT3& position,
+			f32 aspectRatio,
+			f32 fov,
+			f32 nearZ,
+			f32 farZ)
+			:ISceneNode(parent, smgr, position)
+			, mFovAngleY(fov)
+			, mNearZ(nearZ)
+			, mFarZ(farZ)
+			, mAspectRatio(aspectRatio)
+		{
 
-	}
+		}
 
-	virtual void walk(f32 unit) = 0;
-	virtual void fly(f32 unit) = 0;
-	virtual void strafe(f32 unit) = 0;
-	
-	virtual XMFLOAT4X4 getViewMatrix() const
-	{
-		return mViewMatrix;
-	}
+		virtual void walk(f32 unit) = 0;
+		virtual void fly(f32 unit) = 0;
+		virtual void strafe(f32 unit) = 0;
 
-	virtual XMFLOAT4X4 getProjMatrix() const
-	{
-		return mProjMatrix;
-	}
+		virtual XMFLOAT4X4 getViewMatrix() const
+		{
+			return mViewMatrix;
+		}
 
-	virtual XMFLOAT4X4 getViewProjMatrix() const
-	{
-		return mViewProjMatrix;
-	}
+		virtual XMFLOAT4X4 getProjMatrix() const
+		{
+			return mProjMatrix;
+		}
 
-	void setFovAngle(f32 fov)
-	{
-		mFovAngleY = fov;
-	}
+		virtual XMFLOAT4X4 getViewProjMatrix() const
+		{
+			return mViewProjMatrix;
+		}
 
-	f32 getFovAngle() const
-	{
-		return mFovAngleY;
-	}
+		void setFovAngle(f32 fov)
+		{
+			mFovAngleY = fov;
+		}
 
-	void setNearZ(f32 nearZ)
-	{
-		mNearZ = nearZ;
-	}
+		f32 getFovAngle() const
+		{
+			return mFovAngleY;
+		}
 
-	f32 getNearZ() const
-	{
-		return mNearZ;
-	}
+		void setNearZ(f32 nearZ)
+		{
+			mNearZ = nearZ;
+		}
 
-	void setFarZ(f32 farZ)
-	{
-		mFarZ = farZ;
-	}
+		f32 getNearZ() const
+		{
+			return mNearZ;
+		}
 
-	f32 getFarZ() const
-	{
-		return mFarZ;
-	}
+		void setFarZ(f32 farZ)
+		{
+			mFarZ = farZ;
+		}
 
-	void setAspectRatio(f32 aspectRatio)
-	{
-		mAspectRatio = aspectRatio;
-	}
+		f32 getFarZ() const
+		{
+			return mFarZ;
+		}
 
-	f32 getAspectRatio() const
-	{
-		return mAspectRatio;
-	}
+		void setAspectRatio(f32 aspectRatio)
+		{
+			mAspectRatio = aspectRatio;
+		}
 
-	XMMATRIX calcProjMatrix() const
-	{
-		XMMATRIX proj = XMMatrixPerspectiveFovLH(mFovAngleY, mAspectRatio, mNearZ, mFarZ);
-		return proj;
-	}
+		f32 getAspectRatio() const
+		{
+			return mAspectRatio;
+		}
 
-	const static u32 ACTIVE_CAMERA_ID = 128;
+		XMMATRIX calcProjMatrix() const
+		{
+			XMMATRIX proj = XMMatrixPerspectiveFovLH(mFovAngleY, mAspectRatio, mNearZ, mFarZ);
+			return proj;
+		}
 
-protected:
-	XMFLOAT4X4		mViewMatrix;
-	XMFLOAT4X4		mProjMatrix;
-	XMFLOAT4X4		mViewProjMatrix;
-	
-	f32				mFovAngleY;
-	f32				mAspectRatio;
-	f32				mNearZ;
-	f32				mFarZ;
-};
+		const math::SFrustum& getFrustum() const
+		{
+			return mFrustum;
+		}
 
+		virtual E_SCENE_NODE_TYPE getNodeType() const
+		{
+			return ESNT_CAMERA;
+		}
+
+		const static u32 ACTIVE_CAMERA_ID = 128;
+
+	protected:
+		XMFLOAT4X4		mViewMatrix;
+		XMFLOAT4X4		mProjMatrix;
+		XMFLOAT4X4		mViewProjMatrix;
+		math::SFrustum		mFrustum;
+
+		f32				mFovAngleY;
+		f32				mAspectRatio;
+		f32				mNearZ;
+		f32				mFarZ;
+	};
+
+}
 
 #endif

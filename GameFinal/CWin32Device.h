@@ -3,28 +3,30 @@
 
 #include "IDevice.h"
 #include "IVideoDriver.h"
-
-static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
-class CWin32Device : public IDevice 
+namespace gf
 {
-public:
-	CWin32Device(SCreationParameters& params);
-	
-	HRESULT init();
-	
-	bool run();
 
-	LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-	virtual ITimer* createTimer() const;
-	
-	virtual void setWindowCaption(const char* caption);
+	class CWin32Device : public IDevice
+	{
+	public:
+		CWin32Device(SCreationParameters& params);
 
-	virtual ~CWin32Device();
-private:
-	HWND			mHwnd;
-	HINSTANCE		m_hInstance;
-};
+		HRESULT init();
 
+		bool run();
+
+		LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+
+		virtual ITimer* createTimer() const;
+
+		virtual void setWindowCaption(const char* caption);
+
+		virtual ~CWin32Device();
+	private:
+		HWND			mHwnd;
+		HINSTANCE		m_hInstance;
+	};
+}
 #endif

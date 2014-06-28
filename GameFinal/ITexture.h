@@ -3,28 +3,31 @@
 
 #include "IReferenceCounted.h"
 
-
-class ITexture : public IReferenceCounted
+namespace gf
 {
-public:
-	ITexture(const std::string& name, u32 sortcode)
-		:mName(name), mSortCode(sortcode){}
 
-	const std::string& getName()
+	class ITexture : public IReferenceCounted
 	{
-		return mName;
-	}
+	public:
+		ITexture(const std::string& name, u32 sortcode)
+			:mName(name), mSortCode(sortcode){}
 
-	u32 getSortCode() const
-	{
-		return mSortCode;
-	}
+		const std::string& getName()
+		{
+			return mName;
+		}
 
-	virtual ~ITexture() {}
-protected:
-	std::string		mName;
-	u32				mSortCode;
-};
+		u32 getSortCode() const
+		{
+			return mSortCode;
+		}
 
+		virtual ~ITexture() {}
+	protected:
+		std::string		mName;
+		u32				mSortCode;
+	};
+
+}
 
 #endif

@@ -4,49 +4,68 @@
 #include "IMeshNode.h"
 #include "IModelMesh.h"
 
-class CModelMeshNode : public IMeshNode
+namespace gf
 {
-public:
-	CModelMeshNode(ISceneNode* parent,
-		ISceneManager* smgr,
-		IModelMesh* mesh,
-		const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
-		const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
-		const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
-		:IMeshNode(parent, smgr, position, rotation, scale)
-		, mMesh(mesh)
-		, mMaterials(mesh->getSubsetCount())
+
+	class CModelMeshNode : public IMeshNode
 	{
-		for (u32 i = 0; i < mesh->getSubsetCount(); i++)
+	public:
+		CModelMeshNode(ISceneNode* parent,
+			ISceneManager* smgr,
+			IModelMesh* mesh,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
+			:IMeshNode(parent, smgr, position, rotation, scale)
+			, mMesh(mesh)
+			, mMaterials(mesh->getSubsetCount())
 		{
-			mMaterials[i] = mesh->getMaterial(i);
-			AddReferenceCounted(mMaterials[i]);
+			for (u32 i = 0; i < mesh->getSubsetCount(); i++)
+			{
+				mMaterials[i] = mesh->getMaterial(i);
+				AddReferenceCounted(mMaterials[i]);
+			}
 		}
-	}
 
-	virtual bool setMaterial(IMaterial* material, u32 subset = 0);
+		virtual bool setMaterial(IMaterial* material, u32 subset = 0);
 
-	virtual IMaterial* getMaterial(u32 subset = 0);
+		virtual IMaterial* getMaterial(u32 subset = 0);
 
-	virtual bool setMaterialName(const std::string& name, u32 subset = 0);
+		virtual bool setMaterialName(const std::string& name, u32 subset = 0);
 
-	virtual void render();
+		virtual void render();
 
-	virtual void OnRegisterSceneNode();
+		virtual void OnRegisterSceneNode(bool bRecursion = true);
 
-	virtual void calcSortCode();
+		virtual void calcSortCode();
 
-	virtual u32 getSubsetCount() const
-	{
-		return mMesh->getSubsetCount();
-	}
+		virtual u32 getSubsetCount() const
+		{
+			return mMesh->getSubsetCount();
+		}
 
-private:
-	
-	IModelMesh*						mMesh;
-	
-	std::vector<IMaterial*>			mMaterials;
-};
+		virtual void updateAbsoluteTransformation()
+		{
+			ISceneNode::updateAbsoluteTransformation();
+
+			const math::SAxisAlignedBox& aabb = mMesh->getAabb();
+			getLocalAxis(mOBB.Axis);
+			mOBB.Center = getAbsolutePosition();
+			mOBB.Extents = aabb.Extents;
+		}
+
+		virtual E_SCENE_NODE_TYPE getNodeType() const
+		{
+			return ESNT_MODEL_MESH;
+		}
+
+	private:
+
+		IModelMesh*						mMesh;
+
+		std::vector<IMaterial*>			mMaterials;
+	};
+}
 
 
 #endif

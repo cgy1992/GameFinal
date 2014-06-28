@@ -5,61 +5,66 @@
 #include "ILightNode.h"
 #include "CShaderVariableInjection.h"
 
-void CMeshNode::render()
+namespace gf
 {
-	if (!mMaterial)
-		return;
 
-	mMesh->bind();
-
-	u32 pipelineCount = mMaterial->getPipelineCount();
-	for (u32 i = 0; i < pipelineCount; i++)
+	void CMeshNode::render()
 	{
-		if (mMaterial->isPipelineEnabled(i))
+		if (!mMaterial)
+			return;
+
+		mMesh->bind();
+
+		u32 pipelineCount = mMaterial->getPipelineCount();
+		for (u32 i = 0; i < pipelineCount; i++)
 		{
-			IPipeline* pipeline = mMaterial->getPipeline(i);
-			
-			CShaderVariableInjection::inject(this, pipeline, 0);
+			if (mMaterial->isPipelineEnabled(i))
+			{
+				IPipeline* pipeline = mMaterial->getPipeline(i);
 
-			pipeline->apply();
+				CShaderVariableInjection::inject(this, pipeline, 0);
 
-			mMesh->draw();
+				pipeline->apply();
+
+				mMesh->draw();
+			}
 		}
 	}
-}
 
-void CMeshNode::OnRegisterSceneNode()
-{
-	if (mVisible)
+	void CMeshNode::OnRegisterSceneNode(bool bRecursion)
 	{
-		calcSortCode();
-		mSceneManager->registerNodeForRendering(this);
-		ISceneNode::OnRegisterSceneNode();
+		if (mVisible)
+		{
+			calcSortCode();
+			mSceneManager->registerNodeForRendering(this);
+			if (bRecursion)
+				ISceneNode::OnRegisterSceneNode();
+		}
 	}
-}
 
-bool CMeshNode::setMaterialName(const std::string& name, u32 subset)
-{
-	IMaterial* material = mSceneManager->getVideoDriver()->getMaterialManager()->get(name);
-	if (material == nullptr)
-		return false;
+	bool CMeshNode::setMaterialName(const std::string& name, u32 subset)
+	{
+		IMaterial* material = mSceneManager->getVideoDriver()->getMaterialManager()->get(name);
+		if (material == nullptr)
+			return false;
 
-	ReleaseReferenceCounted(mMaterial);
-	mMaterial = material;
-	AddReferenceCounted(mMaterial);
-	return true;
-}
+		ReleaseReferenceCounted(mMaterial);
+		mMaterial = material;
+		AddReferenceCounted(mMaterial);
+		return true;
+	}
 
-void CMeshNode::calcSortCode()
-{
-	/* mesh - 8 bit
-	pipeline - 48 bit
-	material - 8 bit
-	*/
-	mSortCode = ((u64)mMesh->getSortCode() << 56) | (mMaterial->getPipeline(0)->getSortCode() << 8);
-	ITexture* pTexture = mMaterial->getTexture(0);
-	if (pTexture != nullptr)
-		mSortCode |= pTexture->getSortCode();
+	void CMeshNode::calcSortCode()
+	{
+		/* mesh - 8 bit
+		pipeline - 48 bit
+		material - 8 bit
+		*/
+		mSortCode = ((u64)mMesh->getSortCode() << 56) | (mMaterial->getPipeline(0)->getSortCode() << 8);
+		ITexture* pTexture = mMaterial->getTexture(0);
+		if (pTexture != nullptr)
+			mSortCode |= pTexture->getSortCode();
+	}
 }
 
 

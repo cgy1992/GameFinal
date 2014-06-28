@@ -29,13 +29,15 @@
 #ifndef GAMEFINAL_H
 #define GAMEFINAL_H
 
-extern GAMEFINAL_API int nGameFinal;
+namespace gf
+{
+	extern GAMEFINAL_API int nGameFinal;
 
-GAMEFINAL_API int fnGameFinal(void);
+	GAMEFINAL_API int fnGameFinal(void);
 
-GAMEFINAL_API IDevice* createDevice(E_DRIVER_TYPE driver, u32 width, u32 height, 
-	u32 style = EWS_NONE, bool vsync = false, 
-	const SDeviceContextSettings& settings = SDeviceContextSettings());
-
+	GAMEFINAL_API IDevice* createDevice(E_DRIVER_TYPE driver, u32 width, u32 height,
+		u32 style = EWS_NONE, bool vsync = false,
+		const SDeviceContextSettings& settings = SDeviceContextSettings());
+}
 
 #endif

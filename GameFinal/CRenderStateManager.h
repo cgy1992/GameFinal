@@ -3,19 +3,20 @@
 
 #include "IResourceFactory.h"
 #include "IRenderStateManager.h"
-
-class CRenderStateManager : public IRenderStateManager
+namespace gf
 {
-public:
-	CRenderStateManager(IResourceFactory* pResourceFactory);
-	virtual IRenderState* create(const std::string& name);
-	virtual IRenderState* get(const std::string& name, bool addIfNotFound = true);
+	class CRenderStateManager : public IRenderStateManager
+	{
+	public:
+		CRenderStateManager(IResourceFactory* pResourceFactory);
+		virtual IRenderState* create(const std::string& name);
+		virtual IRenderState* get(const std::string& name, bool addIfNotFound = true);
 
-	_DEFINE_RESOURCE_DESTROY_METHODS(CRenderStateManager, mRenderStatesMap, IRenderState);
+		_DEFINE_RESOURCE_DESTROY_METHODS(CRenderStateManager, mRenderStatesMap, IRenderState);
 
-private:
-	IResourceFactory*						mResourceFactory;
-	std::map<std::string, IRenderState*>	mRenderStatesMap;
-};
-
+	private:
+		IResourceFactory*						mResourceFactory;
+		std::map<std::string, IRenderState*>	mRenderStatesMap;
+	};
+}
 #endif

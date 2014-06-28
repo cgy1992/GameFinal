@@ -16,115 +16,117 @@
 #include "IResourceGroupManager.h"
 #include "IShaderVariableInjection.h"
 #include "ISamplerManager.h"
-
-class IVideoDriver : public IReferenceCounted
+namespace gf
 {
-public:
-	IVideoDriver()
-		:mResourceFactory(nullptr)
-		, mShaderManager(nullptr)
-		, mInputLayoutManager(nullptr)
-		, mPipeManager(nullptr)
-		, mTextureManager(nullptr)
-		, mRenderStateManager(nullptr)
-		, mMeshManager(nullptr)
+	class IVideoDriver : public IReferenceCounted
 	{
-		
-	}
+	public:
+		IVideoDriver()
+			:mResourceFactory(nullptr)
+			, mShaderManager(nullptr)
+			, mInputLayoutManager(nullptr)
+			, mPipeManager(nullptr)
+			, mTextureManager(nullptr)
+			, mRenderStateManager(nullptr)
+			, mMeshManager(nullptr)
+		{
 
-	virtual ~IVideoDriver()
-	{
+		}
 
-	}
-	
-	virtual bool init() = 0;
+		virtual ~IVideoDriver()
+		{
 
-	virtual void beginScene(
-		bool backBuffer,
-		bool zBuffer, 
-		const f32 color[],
-		f32 depthValue = 1.0f,
-		u8 stencilValue = 0) = 0;
-	
-	virtual void endScene() = 0;
+		}
 
-	const char* getVideoCardDescription() const
-	{
-		return mVideoCardDescription;
-	}
+		virtual bool init() = 0;
 
-	virtual void bindPrimitiveType(E_PRIMITIVE_TYPE primitiveType) = 0;
+		virtual void beginScene(
+			bool backBuffer,
+			bool zBuffer,
+			const f32 color[],
+			f32 depthValue = 1.0f,
+			u8 stencilValue = 0) = 0;
 
-	IResourceFactory*		getResourceFactory()
-	{
-		return mResourceFactory;
-	}
+		virtual void endScene() = 0;
 
-	IGeometryCreator* getGeometryCreator()
-	{
-		return mGeometryCreator;
-	}
+		const char* getVideoCardDescription() const
+		{
+			return mVideoCardDescription;
+		}
 
-	IMaterialManager* getMaterialManager()
-	{
-		return mMaterialManager;
-	}
+		virtual void bindPrimitiveType(E_PRIMITIVE_TYPE primitiveType) = 0;
 
-	ITextureManager*		getTextureManager()
-	{
-		return mTextureManager;
-	}
+		IResourceFactory*		getResourceFactory()
+		{
+			return mResourceFactory;
+		}
 
-	IRenderStateManager*	getRenderStateManager()
-	{
-		return mRenderStateManager;
-	}
+		IGeometryCreator* getGeometryCreator()
+		{
+			return mGeometryCreator;
+		}
 
-	IMeshManager*			getMeshManager()
-	{
-		return mMeshManager;
-	}
+		IMaterialManager* getMaterialManager()
+		{
+			return mMaterialManager;
+		}
 
-	IShaderManager*			getShaderManager()
-	{
-		return mShaderManager;
-	}
+		ITextureManager*		getTextureManager()
+		{
+			return mTextureManager;
+		}
 
-	IInputLayoutManager*	getInputLayoutManager()
-	{
-		return mInputLayoutManager;
-	}
+		IRenderStateManager*	getRenderStateManager()
+		{
+			return mRenderStateManager;
+		}
 
-	IPipelineManager*		getPipelineManager()
-	{
-		return mPipeManager;
-	}
+		IMeshManager*			getMeshManager()
+		{
+			return mMeshManager;
+		}
 
-	IResourceGroupManager*	getResourceGroupManager()
-	{
-		return mResourceGroupManager;
-	}
+		IShaderManager*			getShaderManager()
+		{
+			return mShaderManager;
+		}
 
-	ISamplerManager*		getSamplerManager()
-	{
-		return mSamplerManager;
-	}
+		IInputLayoutManager*	getInputLayoutManager()
+		{
+			return mInputLayoutManager;
+		}
 
-protected:
-	int								mVideoCardMemory;
-	char							mVideoCardDescription[128];
-	IResourceFactory*				mResourceFactory;
-	IGeometryCreator*				mGeometryCreator;
-	IMaterialManager*				mMaterialManager;
-	IShaderManager*					mShaderManager;
-	IInputLayoutManager*			mInputLayoutManager;
-	IPipelineManager*				mPipeManager;
-	ITextureManager*				mTextureManager;
-	IRenderStateManager*			mRenderStateManager;
-	IMeshManager*					mMeshManager;
-	IResourceGroupManager*			mResourceGroupManager;
-	ISamplerManager*				mSamplerManager;
-//	IShaderVariableInjection*		mShaderVariableInjector;
-};
+		IPipelineManager*		getPipelineManager()
+		{
+			return mPipeManager;
+		}
+
+		IResourceGroupManager*	getResourceGroupManager()
+		{
+			return mResourceGroupManager;
+		}
+
+		ISamplerManager*		getSamplerManager()
+		{
+			return mSamplerManager;
+		}
+
+	protected:
+		int								mVideoCardMemory;
+		char							mVideoCardDescription[128];
+		IResourceFactory*				mResourceFactory;
+		IGeometryCreator*				mGeometryCreator;
+		IMaterialManager*				mMaterialManager;
+		IShaderManager*					mShaderManager;
+		IInputLayoutManager*			mInputLayoutManager;
+		IPipelineManager*				mPipeManager;
+		ITextureManager*				mTextureManager;
+		IRenderStateManager*			mRenderStateManager;
+		IMeshManager*					mMeshManager;
+		IResourceGroupManager*			mResourceGroupManager;
+		ISamplerManager*				mSamplerManager;
+		//	IShaderVariableInjection*		mShaderVariableInjector;
+	};
+}
 
 #endif
