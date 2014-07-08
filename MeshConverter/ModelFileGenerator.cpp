@@ -26,7 +26,9 @@ bool isAnimatedMaterial(const SModelMaterial& material, const std::vector<SModel
 	return false;
 }
 
-bool generateMaterialFile(const std::string& file_name_without_ext, std::vector<SModelMaterial>& materials, 
+bool generateMaterialFile(const std::string& file_name_without_ext, 
+	const std::string& dest_dir, 
+	std::vector<SModelMaterial>& materials,
 	const std::vector<SModelSubsetWrapper>& subsets)
 {
 	char color_str[128];
@@ -120,7 +122,7 @@ bool generateMaterialFile(const std::string& file_name_without_ext, std::vector<
 		root_node->InsertEndChild(material_node);
 	}
 
-	const std::string& material_file_name = file_name_without_ext + std::string(".material.xml");
+	const std::string& material_file_name = dest_dir + file_name_without_ext + std::string(".material.xml");
 	doc.SaveFile(material_file_name.c_str());
 
 	return true;
@@ -147,7 +149,9 @@ const char* getBoneIndicesFormat(u32 count)
 		return "byte3";
 }
 
-bool generatePipelineFile(const std::string& file_name_without_ext, const SModelFileHeader& header, bool animated)
+bool generatePipelineFile(const std::string& file_name_without_ext, 
+	const std::string& dest_dir,
+	const SModelFileHeader& header, bool animated)
 {
 	char					pipeline_name[128];
 	char					shader_file_name[128];
@@ -163,9 +167,9 @@ bool generatePipelineFile(const std::string& file_name_without_ext, const SModel
 
 	// generate pipeline file's name
 	if (animated)
-		sprintf_s(pipeline_file_name, "%s_skeleton.pipeline.xml", file_name_without_ext.c_str());
+		sprintf_s(pipeline_file_name, "%s%s_skeleton.pipeline.xml", dest_dir.c_str(), file_name_without_ext.c_str());
 	else
-		sprintf_s(pipeline_file_name, "%s.pipeline.xml", file_name_without_ext.c_str());
+		sprintf_s(pipeline_file_name, "%s%s.pipeline.xml", dest_dir.c_str(), file_name_without_ext.c_str());
 
 	tinyxml2::XMLElement* root_node = doc.NewElement("pipelines");
 	doc.InsertEndChild(root_node);
@@ -263,9 +267,11 @@ bool generatePipelineFile(const std::string& file_name_without_ext, const SModel
 	return true;
 }
 
-bool generateShaderFile(const std::string& file_name_without_ext, const SModelFileHeader& header)
+bool generateShaderFile(const std::string& file_name_without_ext, 
+	const std::string& dest_dir, 
+	const SModelFileHeader& header)
 {
-	std::string	shader_file_name = file_name_without_ext + std::string(".hlsl");
+	std::string	shader_file_name = dest_dir + file_name_without_ext + std::string(".hlsl");
 
 	std::ofstream file;
 	file.open(shader_file_name, std::ios::out);
@@ -436,6 +442,7 @@ void writeSubsets(FILE* fp, const std::vector<SModelSubsetWrapper>& subset_wrapp
 }
 
 bool generateMeshFile(const std::string& file_name_without_ext,
+	const std::string& dest_dir,
 	const SModelFileHeader& header,
 	const std::vector<SModelSubsetWrapper>& subset_wrappers,
 	const std::vector<SModelBoneWrapper>& bones,
@@ -445,7 +452,7 @@ bool generateMeshFile(const std::string& file_name_without_ext,
 	u8* indice_buffer)
 {
 	char		mesh_file_name[128];
-	sprintf_s(mesh_file_name, "%s.mesh", file_name_without_ext.c_str());
+	sprintf_s(mesh_file_name, "%s%s.mesh", dest_dir.c_str(), file_name_without_ext.c_str());
 
 	FILE* fp = fopen(mesh_file_name, "wb");
 	if (!fp)

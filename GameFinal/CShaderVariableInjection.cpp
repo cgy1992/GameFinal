@@ -3,14 +3,14 @@
 
 namespace gf
 {
-	void CShaderVariableInjection::inject(IMeshNode* mesh, IPipeline* pipeline, u32 subset)
+	void CShaderVariableInjection::inject(IMeshNode* node, IPipeline* pipeline, u32 subset)
 	{
 		const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
 		u32 shaderVariableCount = shaderVariables.size();
 
 		for (u32 i = 0; i < shaderVariableCount; i++)
 		{
-			injectVariable(shaderVariables[i], mesh, pipeline, subset);
+			injectVariable(shaderVariables[i], node, pipeline, subset);
 		}
 	}
 
@@ -48,6 +48,10 @@ namespace gf
 		else if (type >= ESAVT_SCENE_BEGIN && type <= ESAVT_SCENE_END)
 		{
 			injectSceneInfo(var, mesh, pipeline);
+		}
+		else if (type >= ESAVT_WINDOW_SYSTEM_BEGIN && type <= ESAVT_WINDOW_SYSTEM_END)
+		{
+			injectWindowSystemInfo(var, mesh, pipeline);
 		}
 	}
 
@@ -237,51 +241,63 @@ namespace gf
 
 		E_SHADER_TYPE shaderType = var.ShaderType;
 		bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
+		ITexture* pTexture = nullptr;
 
-		/* 如果是注入整个Material结构体 */
-		if (var.Type == ESAVT_MATERIAL)
-		{
-			pipeline->setRawValue(shaderType, var.VariableName, &material->Colors, sizeof(material->Colors), ignoreIfAlreadyUpdate);
-			return;
-		}
-
-
-		/* 如果是注入Material中的某个颜色分量 (Ambient, Diffuse, Specular, Emissive) */
-		XMFLOAT4 materialComponent;
-		bool flag = false;
+		
 		switch (var.Type)
 		{
+		case ESAVT_MATERIAL:
+			pipeline->setRawValue(shaderType, var.VariableName, &material->Colors, sizeof(material->Colors), ignoreIfAlreadyUpdate);
+			break;
 		case ESAVT_MATERIAL_AMBIENT:
-			materialComponent = material->Colors.Ambient;
-			flag = true;
+			pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&material->Colors.Ambient), ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_MATERIAL_DIFFUSE:
-			materialComponent = material->Colors.Diffuse;
-			flag = true;
+			pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&material->Colors.Diffuse), ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_MATERIAL_SPECULAR:
-			materialComponent = material->Colors.Specular;
-			flag = true;
+			pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&material->Colors.Specular), ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_MATERIAL_EMISSIVE:
-			materialComponent = material->Colors.Emissive;
-			flag = true;
+			pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&material->Colors.Emissive), ignoreIfAlreadyUpdate);
 			break;
-		}
-
-		if (flag)
-		{
-			pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<const f32*>(&materialComponent), ignoreIfAlreadyUpdate);
-		}
-
-		/* 如果是需要注入材质 */
-		if (var.Type == ESAVT_TEXTURE)
-		{
-			ITexture* texture = material->getTexture(var.IndexParam);
-			if (texture != nullptr)
+		case ESAVT_TEXTURE:
+			pTexture = material->getTexture(var.IndexParam);
+			if (pTexture)
 			{
-				pipeline->setTexture(shaderType, var.VariableName, texture);
+				pipeline->setTexture(shaderType, var.VariableName, pTexture);
 			}
+			break;
+		case ESAVT_TEXTURE_WIDTH:
+			pTexture = material->getTexture(var.IndexParam);
+			if (pTexture)
+			{
+				pipeline->setUint(shaderType, var.VariableName, pTexture->getWidth(), ignoreIfAlreadyUpdate);
+			}
+			break;
+		case ESAVT_TEXTURE_HEIGHT:
+			pTexture = material->getTexture(var.IndexParam);
+			if (pTexture)
+			{
+				pipeline->setUint(shaderType, var.VariableName, pTexture->getHeight(), ignoreIfAlreadyUpdate);
+			}
+			break;
+		case ESAVT_INVERSE_TEXTURE_WIDTH:
+			pTexture = material->getTexture(var.IndexParam);
+			if (pTexture)
+			{
+				f32 invWidth = 1.0f / pTexture->getWidth();
+				pipeline->setFloat(shaderType, var.VariableName, invWidth, ignoreIfAlreadyUpdate);
+			}
+			break;
+		case ESAVT_INVERSE_TEXTURE_HEIGHT:
+			pTexture = material->getTexture(var.IndexParam);
+			if (pTexture)
+			{
+				f32 invHeight = 1.0f / pTexture->getHeight();
+				pipeline->setFloat(shaderType, var.VariableName, invHeight, ignoreIfAlreadyUpdate);
+			}
+			break;
 		}
 	}
 
@@ -304,6 +320,17 @@ namespace gf
 			}
 			return;
 		}
+		else if (var.Type == ESAVT_CAMERA_FRUSTUM)
+		{
+			ICameraNode* camera = sceneManager->getCameraNode(var.IndexParam);
+			if (camera)
+			{
+				math::SFrustum frustum = camera->getFrustum();
+				pipeline->setRawValue(shaderType, var.VariableName, &frustum, sizeof(math::SFrustum), ignoreIfAlreadyUpdate);
+			}
+			return;
+		}
+
 
 		/* 注入整个光照结构体 */
 		bool flag = false;
@@ -323,4 +350,111 @@ namespace gf
 		}
 	}
 
+	void CShaderVariableInjection::injectForTerrainNode(ITerrainNode* node, IPipeline* pipeline)
+	{
+		const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
+		u32 shaderVariableCount = shaderVariables.size();
+
+		for (u32 i = 0; i < shaderVariableCount; i++)
+		{
+			injectVariable(shaderVariables[i], node, pipeline, 0);
+			injectTerrainVariable(shaderVariables[i], node->getTerrainMesh(), pipeline);
+		}
+	}
+
+	void CShaderVariableInjection::injectTerrainVariable(const SShaderAutoVariable& var, ITerrainMesh* mesh, IPipeline* pipeline)
+	{
+		bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
+
+		if (var.Type == ESAVT_TERRAIN_ROW_CELL)
+		{
+			u32 cellNum = mesh->getRowCellNum();
+			pipeline->setUint(var.ShaderType, var.VariableName, cellNum, ignoreIfAlreadyUpdate);
+		}
+		else if (var.Type == ESAVT_INVERSE_TERRAIN_ROW_CELL)
+		{
+			f32 cellNumReciprocal = 1.0f / mesh->getRowCellNum();
+			pipeline->setFloat(var.ShaderType, var.VariableName, cellNumReciprocal, ignoreIfAlreadyUpdate);
+		}
+		else if (var.Type == ESAVT_TERRAIN_ROW_VERTEX)
+		{
+			u32 vertexNum = mesh->getRowVertexNum();
+			pipeline->setUint(var.ShaderType, var.VariableName, vertexNum, ignoreIfAlreadyUpdate);
+		}
+		else if (var.Type == ESAVT_TERRAIN_HEIGHT_SCALE)
+		{
+			f32 heightScale = mesh->getHeightScale();
+			pipeline->setFloat(var.ShaderType, var.VariableName, heightScale, ignoreIfAlreadyUpdate);
+		}
+		else if (var.Type == ESAVT_TERRAIN_VERTEX_SPACE)
+		{
+			f32 vertexSpace = mesh->getVertexSpace();
+			pipeline->setFloat(var.ShaderType, var.VariableName, vertexSpace, ignoreIfAlreadyUpdate);
+		}
+		else if (var.Type == ESAVT_TERRAIN_TEXCOORD_SCALE)
+		{
+			f32 texcoordScale = mesh->getTexcoordScale();
+			pipeline->setFloat(var.ShaderType, var.VariableName, texcoordScale, ignoreIfAlreadyUpdate);
+		}
+		else if (var.Type == ESAVT_TERRAIN_HEIGHTMAP_TEXTURE)
+		{
+			ITexture* texture = mesh->getHeightMapTexture();
+			pipeline->setTexture(var.ShaderType, var.VariableName, texture);
+		}
+		else if (var.Type == ESAVT_TERRAIN_WIDTH)
+		{
+			f32 width = mesh->getTotalWidth();
+			pipeline->setFloat(var.ShaderType, var.VariableName, width, ignoreIfAlreadyUpdate);
+		}
+		else if (var.Type == ESAVT_TERRAIN_PATCH_WIDTH)
+		{
+			f32 patchWidth = mesh->getPatchWidth();
+			pipeline->setFloat(var.ShaderType, var.VariableName, patchWidth, ignoreIfAlreadyUpdate);
+		}
+		else if (var.Type == ESAVT_TERRAIN_ROW_PATCH)
+		{
+			u32 patchNum = mesh->getRowPatchNum();
+			pipeline->setUint(var.ShaderType, var.VariableName, patchNum, ignoreIfAlreadyUpdate);
+		}
+	}
+
+	void CShaderVariableInjection::injectWindowSystemInfo(const SShaderAutoVariable& var, ISceneNode* node, IPipeline* pipeline)
+	{
+		bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
+
+		ISceneManager* smgr = node->getSceneManager();
+		IVideoDriver* driver = smgr->getVideoDriver();
+		IDevice* device = smgr->getDevice();
+
+		switch (var.Type)
+		{
+		case ESAVT_VIEWPORT_WIDTH:
+			pipeline->setFloat(var.ShaderType, var.VariableName, driver->getViewport().Width, ignoreIfAlreadyUpdate);
+			break;
+		case ESAVT_VIEWPORT_HEIGHT:
+			pipeline->setFloat(var.ShaderType, var.VariableName, driver->getViewport().Height, ignoreIfAlreadyUpdate);
+			break;
+		case ESAVT_INVERSE_VIEWPORT_WIDTH:
+			pipeline->setFloat(var.ShaderType, var.VariableName, 1.0f / driver->getViewport().Width, ignoreIfAlreadyUpdate);
+			break;
+		case ESAVT_INVERSE_VIEWPORT_HEIGHT:
+			pipeline->setFloat(var.ShaderType, var.VariableName, 1.0f / driver->getViewport().Height, ignoreIfAlreadyUpdate);
+			break;
+		case ESAVT_WINDOW_WIDTH:
+			pipeline->setUint(var.ShaderType, var.VariableName, device->getClientWidth(), ignoreIfAlreadyUpdate);
+			break;
+		case ESAVT_WINDOW_HEIGHT:
+			pipeline->setUint(var.ShaderType, var.VariableName, device->getClientHeight(), ignoreIfAlreadyUpdate);
+			break;
+		case ESAVT_INVERSE_WINDOW_WIDTH:
+			pipeline->setFloat(var.ShaderType, var.VariableName, 1.0f / device->getClientWidth(), ignoreIfAlreadyUpdate);
+			break;
+		case ESAVT_INVERSE_WINDOW_HEIGHT:
+			pipeline->setFloat(var.ShaderType, var.VariableName, 1.0f / device->getClientHeight(), ignoreIfAlreadyUpdate);
+			break;
+		}
+	}
+
 }
+
+

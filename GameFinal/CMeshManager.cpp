@@ -2,9 +2,12 @@
 #include "CMeshManager.h"
 namespace gf
 {
-	CMeshManager::CMeshManager(IResourceFactory* pResourceFactory, IGeometryCreator* pGeometryCreator)
+	CMeshManager::CMeshManager(IResourceFactory* pResourceFactory, 
+		IGeometryCreator* pGeometryCreator,
+		ITextureManager* pTextureManager)
 		: mResourceFactory(pResourceFactory)
 		, mGeometryCreator(pGeometryCreator)
+		, mTextureManager(pTextureManager)
 	{
 
 	}
@@ -31,7 +34,7 @@ namespace gf
 			else
 			{
 				GF_PRINT_CONSOLE_INFO("WARNING: The mesh named '%s' has already existed. \
-									  				Fortheremore it is not a simple mesh.\n", name.c_str());
+									  				Futhermore it is not a simple mesh.\n", name.c_str());
 				return nullptr;
 			}
 		}
@@ -74,7 +77,7 @@ namespace gf
 			else
 			{
 				GF_PRINT_CONSOLE_INFO("WARNING: The mesh named '%s' has already existed. \
-									  				Fortheremore it is not a model mesh.\n", name.c_str());
+									  				Futhermore it is not a model mesh.\n", name.c_str());
 				return nullptr;
 			}
 		}
@@ -139,6 +142,18 @@ namespace gf
 			return nullptr;
 
 		return dynamic_cast<IAnimatedMesh*>(it->second);
+	}
+
+	ITerrainMesh* CMeshManager::getTerrainMesh(const std::string& name)
+	{
+		auto it = mMeshMap.find(name);
+		if (it == mMeshMap.end())
+			return nullptr;
+
+		if (it->second->getType() != EMT_TERRAIN_MESH)
+			return nullptr;
+
+		return dynamic_cast<ITerrainMesh*>(it->second);
 	}
 
 	ISimpleMesh* CMeshManager::createCubeMesh(
@@ -226,7 +241,7 @@ namespace gf
 			else
 			{
 				GF_PRINT_CONSOLE_INFO("WARNING: The mesh named '%s' has already existed. \
-									  								  				Fortheremore it is not a animated mesh.\n", name.c_str());
+					Futhermore it is not a animated mesh.\n", name.c_str());
 				return nullptr;
 			}
 		}
@@ -246,6 +261,45 @@ namespace gf
 		mMeshMap.insert(std::make_pair(name, mesh));
 		return mesh;
 
+	}
+
+	ITerrainMesh* CMeshManager::createTerrainMesh(
+		const std::string& name,
+		const std::string& szRawFileName,
+		f32 vertexSpace,
+		f32 heightScale,
+		bool bCreateTessellationMesh,
+		bool bCreateNormal,
+		f32 fTexcoordScale,
+		u32 cellsPerPatch,
+		E_MEMORY_USAGE usage)
+	{
+		auto it = mMeshMap.find(name);
+
+		if (it != mMeshMap.end())
+		{
+			if (it->second->getType() == EMT_TERRAIN_MESH)
+			{
+				GF_PRINT_CONSOLE_INFO("WARNING: The terrain mesh named '%s' has already existed.\n", name.c_str());
+				return dynamic_cast<ITerrainMesh*>(it->second);
+			}
+			else
+			{
+				GF_PRINT_CONSOLE_INFO("WARNING: The mesh named '%s' has already existed. \
+									 Furtheremore it is not a animated mesh.\n", name.c_str());
+				return nullptr;
+			}
+		}
+
+		u32 sortcode = mCodeAllocator.allocate();
+
+		ITerrainMesh* mesh = mResourceFactory->createTerrainMesh(name, sortcode, szRawFileName, vertexSpace,
+			heightScale, bCreateTessellationMesh, bCreateNormal, fTexcoordScale, cellsPerPatch, usage, mTextureManager);
+
+		if (!mesh)
+			mCodeAllocator.release(sortcode);
+
+		return mesh;
 	}
 
 }

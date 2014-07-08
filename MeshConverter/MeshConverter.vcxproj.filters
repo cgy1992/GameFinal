@@ -36,6 +36,9 @@
     <ClCompile Include="AnimationWriter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="CommandParser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ModelReader.h">

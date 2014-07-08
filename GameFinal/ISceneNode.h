@@ -29,6 +29,7 @@ namespace gf
 		ESNT_MESH = 0x10,			// 10000 
 		ESNT_MODEL_MESH = 0x11,		// 10001
 		ESNT_ANIMATED_MESH = 0x12,	// 10010
+		ESNT_TERRAIN_MESH = 0x13,   // 10011
 
 		ESNT_CAMERA = 0x20,			// 100000
 		ESNT_FPS_CAMERA = 0x21,		// 100001
@@ -50,6 +51,7 @@ namespace gf
 			, mScale(scale)
 			, mVisible(true)
 			, mSortCode(0)
+			, mNeedCulling(true)
 
 		{
 			XMMATRIX rot = XMMatrixIdentity();
@@ -319,7 +321,7 @@ namespace gf
 			return XMFLOAT3(mAbsoluteTransformation._41, mAbsoluteTransformation._42, mAbsoluteTransformation._43);
 		}
 
-		virtual void OnAnimate(u32 timeMs = 0)
+		virtual void update(u32 delta = 0)
 		{
 			if (mVisible)
 			{
@@ -327,7 +329,7 @@ namespace gf
 
 				auto it = mChildren.begin();
 				for (; it != mChildren.end(); ++it)
-					(*it)->OnAnimate(timeMs);
+					(*it)->update(delta);
 			}
 		}
 
@@ -367,6 +369,16 @@ namespace gf
 
 		virtual E_SCENE_NODE_TYPE getNodeType() const = 0;
 
+		virtual bool needCulling()
+		{
+			return mNeedCulling;
+		}
+
+
+		virtual void setNeedCulling(bool cull)
+		{
+			mNeedCulling = cull;
+		}
 
 		class CSceneNodeIterator
 		{
@@ -389,6 +401,8 @@ namespace gf
 				mIt++;
 				return node;
 			}
+
+
 
 		private:
 			const std::list<ISceneNode*>&			mNodeList;
@@ -419,6 +433,8 @@ namespace gf
 		XMFLOAT3 mScale;
 
 		bool mVisible;
+
+		bool mNeedCulling;
 
 		u64 mSortCode;
 	};

@@ -27,7 +27,7 @@ namespace gf
 
 	// Returns the total time elapsed since Reset() was called, NOT counting any
 	// time when the clock is stopped.
-	f32 CWin32Timer::getElapseTime() const
+	u32 CWin32Timer::getElapseTime() const
 	{
 		// If we are stopped, do not count the time that has passed since we stopped.
 		// Moreover, if we previously already had a pause, the distance 
@@ -40,7 +40,7 @@ namespace gf
 
 		if (mStopped)
 		{
-			return (f32)(((mStopTime - mPausedTime) - mBaseTime) * 0.001f);
+			return (mStopTime - mPausedTime) - mBaseTime;
 		}
 
 		// The distance mCurrTime - mBaseTime includes paused time,
@@ -55,31 +55,29 @@ namespace gf
 
 		else
 		{
-			return (f32)(((mCurrTime - mPausedTime) - mBaseTime) * 0.001f);
+			return (mCurrTime - mPausedTime) - mBaseTime;
 		}
 	}
 
-	f32 CWin32Timer::tick()
+	u32 CWin32Timer::tick()
 	{
 		if (mStopped)
 		{
-			return 0.0f;
+			return 0;
 		}
-
-
 
 		mCurrTime = timeGetTime();
 		// Time difference between this frame and the previous.
-		f32 deltaTime = ((mCurrTime - mPrevTime) * 0.001f);
+		u32 deltaTime = mCurrTime - mPrevTime;
 
 		// Prepare for next frame.
 		mPrevTime = mCurrTime;
 		// Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the 
 		// processor goes into a power save mode or we get shuffled to another
 		// processor, then mDeltaTime can be negative.
-		if (deltaTime < 0.0)
+		if (deltaTime < 0)
 		{
-			deltaTime = 0.0;
+			deltaTime = 0;
 		}
 
 		return deltaTime;

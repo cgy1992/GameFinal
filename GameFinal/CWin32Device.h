@@ -19,8 +19,6 @@ namespace gf
 
 		LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-		virtual ITimer* createTimer() const;
-
 		virtual void setWindowCaption(const char* caption);
 
 		virtual ~CWin32Device();

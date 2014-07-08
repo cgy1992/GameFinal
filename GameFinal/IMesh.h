@@ -13,7 +13,8 @@ namespace gf
 	{
 		EMT_SIMPLE_MESH = 0,
 		EMT_MODEL_MESH,
-		EMT_ANIMATE_MODEL_MESH
+		EMT_ANIMATE_MODEL_MESH,
+		EMT_TERRAIN_MESH
 	};
 
 	class IMesh : public IReferenceCounted

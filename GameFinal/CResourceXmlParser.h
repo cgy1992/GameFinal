@@ -30,6 +30,10 @@ namespace gf
 
 		virtual bool parseMaterialFile(const std::string& filepath, std::vector<SMaterialCreateParams>& createParamsArray) const;
 
+		virtual bool parseTextureXmlFile(const std::string& filepath, 
+			std::vector<SRenderTargetParams>& renderTargetParamsArray,
+			std::vector<SDepthStencilSurfaceParams>& depthStencilParamsArray) const;
+
 	private:
 
 		virtual bool handlePipelineNode(const std::string& filepath, tinyxml2::XMLElement* node, SPipelineCreateParams& createParams) const;
@@ -74,6 +78,15 @@ namespace gf
 		bool handleMaterialNode(const std::string& filepath,
 			tinyxml2::XMLElement* node,
 			SMaterialCreateParams& createParams) const;
+
+		bool handleRenderTargetNode(const std::string& filepath,
+			tinyxml2::XMLElement* node,
+			SRenderTargetParams& createParams) const;
+
+		bool handleDepthStencilSurfaceNode(const std::string& filepath,
+			tinyxml2::XMLElement* node,
+			SDepthStencilSurfaceParams& createParams) const;
+
 
 		XMFLOAT4 getColorFromString(const char* s) const;
 

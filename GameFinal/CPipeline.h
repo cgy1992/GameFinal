@@ -28,6 +28,10 @@ namespace gf
 
 		virtual bool setVector(E_SHADER_TYPE shaderType, const std::string& varname, const f32* v, bool ignoreIfAlreadyUpdated = false);
 
+		virtual u32 setUint(const std::string& varname, u32 v, bool ignoreIfAlreadyUpdated = false);
+
+		virtual bool setUint(E_SHADER_TYPE shaderType, const std::string& varname, u32 v, bool ignoreIfAlreadyUpdated = false);
+
 		virtual u32 setFloat(const std::string& varname, f32 v, bool ignoreIfAlreadyUpdated = false);
 
 		virtual bool setFloat(E_SHADER_TYPE shaderType, const std::string& varname, f32 v, bool ignoreIfAlreadyUpdated = false);

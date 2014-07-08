@@ -13,6 +13,7 @@
 #include "IFpsCameraNode.h"
 #include "IAnimatedMeshNode.h"
 #include "IOctreeManager.h"
+#include "ITerrainNode.h"
 
 namespace gf
 {
@@ -34,6 +35,8 @@ namespace gf
 		}
 
 		virtual void drawAll() = 0;
+
+		virtual void draw(ISceneNode* node) = 0;
 
 		IDevice* getDevice()
 		{
@@ -78,6 +81,12 @@ namespace gf
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f)) = 0;
+
+		virtual ITerrainNode* addTerrainNode(
+			ITerrainMesh* mesh,
+			IMaterial* material = nullptr,
+			ISceneNode* parent = nullptr,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0)) = 0;
 
 		virtual ILightNode* addLightNode(u32 id,
 			ISceneNode* parent = nullptr,

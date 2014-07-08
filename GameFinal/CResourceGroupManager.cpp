@@ -28,6 +28,12 @@ namespace gf
 		mResourceFileExtensions[ERFT_TEXTURE].push_back("png");
 		mResourceFileExtensions[ERFT_TEXTURE].push_back("bmp");
 
+		// init texture xml exts.
+		mResourceFileExtensions[ERFT_TEXTURE_XML].push_back("texture");
+		mResourceFileExtensions[ERFT_TEXTURE_XML].push_back("texture.xml");
+		mResourceFileExtensions[ERFT_TEXTURE_XML].push_back("tex");
+		mResourceFileExtensions[ERFT_TEXTURE_XML].push_back("tex.xml");
+
 		// init pipeline file exts
 		mResourceFileExtensions[ERFT_PIPELINE].push_back("pipeline");
 		mResourceFileExtensions[ERFT_PIPELINE].push_back("pipe");
@@ -43,6 +49,8 @@ namespace gf
 		// init mesh file exts.
 		mResourceFileExtensions[ERFT_MESH].push_back("mesh");
 
+		// init raw file exts.
+		mResourceFileExtensions[ERFT_RAW].push_back("raw");
 
 		// create the resource loader object.
 		mResourceLoader = new CResourceLoader(this, TextureManager, ShaderManager, InputlayoutManager,
@@ -255,7 +263,7 @@ namespace gf
 		{
 			for (u32 j = 0; j < mResourceFileExtensions[i].size(); j++)
 			{
-				if (stricmp(ext, mResourceFileExtensions[i][j]) == 0)
+				if (_stricmp(ext, mResourceFileExtensions[i][j]) == 0)
 					return (E_RESOURCE_FILE_TYPE)i;
 			}
 		}
@@ -271,7 +279,7 @@ namespace gf
 		{
 			for (u32 j = 0; j < mResourceFileExtensions[i].size(); j++)
 			{
-				if (stricmp(ext, mResourceFileExtensions[i][j]) == 0)
+				if (_stricmp(ext, mResourceFileExtensions[i][j]) == 0)
 					return (E_RESOURCE_FILE_TYPE)i;
 			}
 		}
@@ -294,6 +302,8 @@ namespace gf
 		case ERFT_PIPELINE:
 		case ERFT_MATERIAL:
 		case ERFT_MESH:
+		case ERFT_RAW:
+		case ERFT_TEXTURE_XML:
 		{
 						  SResourceFile file;
 						  file.Name = filename;
@@ -343,6 +353,9 @@ namespace gf
 			{
 			case ERFT_TEXTURE:
 				mResourceLoader->loadTexture(file.Name);
+				break;
+			case ERFT_TEXTURE_XML:
+				mResourceLoader->loadTexturesFromXml(file.Name);
 				break;
 			case ERFT_PIPELINE:
 				mResourceLoader->loadPipelinesFromFile(file.Name);

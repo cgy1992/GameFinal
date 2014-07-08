@@ -105,7 +105,7 @@ int main()
 
 	//octree->addChild(emptyNode);
 
-	ITimer* timer = device->createTimer();
+	ITimer* timer = device->getTimer();
 	timer->reset();
 
 	while (device->run())
@@ -113,7 +113,7 @@ int main()
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		float dt = timer->tick();
+		float dt = timer->tick() * 0.001f;
 
 		rotx += dt * 2.0f;
 		roty += dt * 1.0f;
@@ -132,8 +132,8 @@ int main()
 		octree->addChild(centerCubeNode);
 
 		updateCamera(camera, dt);
-		//	std::cout << dt << std::endl;
 
+		smgr->update(dt);
 		smgr->drawAll();
 
 		driver->endScene();

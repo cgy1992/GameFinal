@@ -27,6 +27,12 @@ namespace gf
 			return EMT_SIMPLE_MESH;
 		}
 
+
+		virtual ~CSimpleMesh()
+		{
+			ReleaseReferenceCounted(mMeshBuffer);
+		}
+
 	private:
 		IMeshBuffer*			mMeshBuffer;
 

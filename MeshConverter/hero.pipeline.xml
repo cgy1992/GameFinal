@@ -9,6 +9,7 @@
             <vertex-shader file="hero.hlsl" main="vs_main">
                 <variable name="gWorld" value="world_matrix"/>
                 <variable name="gViewProj" value="viewproj_matrix"/>
+                <variable name="gLight" value="light" index="1"/>
             </vertex-shader>
             <pixel-shader file="hero.hlsl" main="ps_main">
                 <variable name="gTexture" value="texture"/>

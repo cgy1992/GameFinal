@@ -8,7 +8,7 @@ namespace gf
 	void COctreeManager::addChild(ISceneNode* child)
 	{
 		ISceneNode::addChild(child);
-		child->OnAnimate();
+		child->update();
 
 		// if this manager is a static octree manager,
 		// child should be classified into concrete sub-space of octree according to its position IMMEDIATELY!
@@ -61,7 +61,7 @@ namespace gf
 		mRootNode.registerVisibleNodes(frustum);
 	}
 
-	void COctreeManager::OnAnimate(u32 timeMs)
+	void COctreeManager::update(u32 delta)
 	{
 		if (mVisible && !mStaticOctree)
 		{
@@ -69,7 +69,7 @@ namespace gf
 
 			auto it = mChildren.begin();
 			for (; it != mChildren.end(); ++it)
-				(*it)->OnAnimate(timeMs);
+				(*it)->update();
 		}
 	}
 

@@ -80,7 +80,14 @@ namespace gf
 	class IDevice : public IReferenceCounted
 	{
 	public:
-		IDevice(SCreationParameters& params) :m_CreationParams(params){}
+		IDevice(SCreationParameters& params) 
+			:m_CreationParams(params)
+			, mVideoDriver(nullptr)
+			, mSceneManager(nullptr)
+			, mTimer(nullptr)
+		{
+
+		}
 
 		virtual bool run() = 0;
 
@@ -111,17 +118,32 @@ namespace gf
 
 		virtual void setWindowCaption(const char* caption) = 0;
 
-		virtual ITimer* createTimer() const = 0;
+		u32 getClientWidth()
+		{
+			return m_CreationParams.ClientWidth;
+		}
+
+		u32 getClientHeight()
+		{
+			return m_CreationParams.ClientHeight;
+		}
+
+		virtual ITimer* getTimer() const
+		{
+			return mTimer;
+		}
 
 		virtual ~IDevice()
 		{
 
 		}
 
+
 	protected:
 		SCreationParameters		m_CreationParams;
 		IVideoDriver*			mVideoDriver;
 		ISceneManager*			mSceneManager;
+		ITimer*					mTimer;
 	};
 
 }

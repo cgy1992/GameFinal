@@ -31,9 +31,6 @@ f32 getFps(float dt)
 
 int main()
 {
-	//int avg = 2 * 90 + 3 * 88 + 4 * 87 + 3 * 84 + 4 * 92 + 2 * 93 + 2 * 83 + 2 * 80 + 2 * 95;
-	//std::cout << "Avg : " << avg << std::endl;
-
 	SDeviceContextSettings settings;
 	settings.MultiSamplingCount = 4;
 	settings.MultiSamplingQuality = 32;
@@ -43,6 +40,7 @@ int main()
 	ISceneManager* smgr = device->getSceneManager();
 	IMeshManager* meshManager = driver->getMeshManager();
 	IMaterialManager* materialManager = driver->getMaterialManager();
+	ITextureManager* textureManager = driver->getTextureManager();
 
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
@@ -65,11 +63,16 @@ int main()
 	IAnimatedMesh* animMesh = meshManager->getAnimatedMesh("lxq.mesh");
 	IAnimatedMeshNode* animNode = smgr->addAnimatedMeshNode(animMesh);
 	animNode->scale(0.02f, 0.02f, 0.02f);
+
 	IModelMesh* heroMesh = meshManager->getModelMesh("hero.mesh");
 	IMeshNode* heroNode = smgr->addModelMeshNode(heroMesh);	
 	
 	heroNode->scale(0.01f, 0.01f, 0.01f);
 	heroNode->translate(2.0f, 0.5f, 0);
+
+	ISceneNode* node1 = smgr->addEmptyNode();
+	node1->addChild(heroNode);
+	node1->addChild(animNode);
 
 	// create sampler state
 	SSamplerDesc samplerDesc;
@@ -91,10 +94,9 @@ int main()
 	light->setAttenuation(1.0f, 0.0f, 0.0f);
 	light->setRange(100.0f);
 
-	materialManager->destroy(std::string("test/material02"));
-
 	//ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f));
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f));
+
 
 	f32 rotx = 0;
 	f32 roty = 0;
@@ -104,15 +106,17 @@ int main()
 
 	//FILE* fp = fopen("log.txt", "w");
 
-	ITimer* timer = device->createTimer();
+	ITimer* timer = device->getTimer();
 	timer->reset();
+
+	const f32 color2[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
 	while (device->run())
 	{
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		float dt = timer->tick();
+		float dt = timer->tick() * 0.001f;
 		
 		rotx += dt * 2.0f;
 		roty += dt * 1.0f;
@@ -127,11 +131,11 @@ int main()
 		XMMATRIX rotM = Mx * My * Mz;
 
 		cubeMeshNode->setOrientation(rotM);
-	//	heroNode->yaw(dt);
 		animNode->addTime(dt * 3000.0f);
 
 		updateCamera(camera, dt);
-	//	std::cout << dt << std::endl;
+
+		smgr->update(dt);
 
 		smgr->drawAll();
 

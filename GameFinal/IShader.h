@@ -42,6 +42,8 @@ namespace gf
 
 		virtual bool setRawData(const std::string& varname, void* data, u32 size, bool ignoreIfAlreadyUpdate = false) = 0;
 
+		virtual bool setUint(const std::string& varname, u32 val, bool ignoreIfAlreadyUpdate = false) = 0;
+
 		virtual bool setFloat(const std::string& varname, f32 val, bool ignoreIfAlreadyUpdate = false) = 0;
 
 		virtual bool setVector(const std::string& varname, const f32* val, bool ignoreIfAlreadyUpdate = false) = 0;

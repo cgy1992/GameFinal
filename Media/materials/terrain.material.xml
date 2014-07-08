@@ -1,0 +1,28 @@
+<materials>
+  <material name="terrain/terrain_material">
+    <ambient  color="0.3f, 0.6f, 0.8f, 1.0f"/>
+    <diffuse  color="0.8f, 0.8f, 0.8f, 1.0f"/>
+    <specular color="0.3f, 0.3f, 0.3f, 32.0f"/>
+    <emissive color="0.3f, 0.3f, 0.3f, 1.0f"/>
+    <pipelines>
+      <pipeline name="terrain/simple_pipeline"/>
+    </pipelines>
+    <textures>
+      <texture name="grass_1024.jpg" index="0"/>
+    </textures>
+  </material>
+
+  <material name="terrain/tessellation_material">
+    <ambient  color="0.3f, 0.6f, 0.8f, 1.0f"/>
+    <diffuse  color="0.8f, 0.8f, 0.8f, 1.0f"/>
+    <specular color="0.3f, 0.3f, 0.3f, 32.0f"/>
+    <emissive color="0.3f, 0.3f, 0.3f, 1.0f"/>
+    <pipelines>
+      <pipeline name="terrain/tessellation_pipeline"/>
+    </pipelines>
+    <textures>
+      <texture name="grass_1024.jpg" index="0"/>
+    </textures>
+  </material>
+  
+</materials>

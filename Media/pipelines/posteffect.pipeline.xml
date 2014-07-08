@@ -1,0 +1,60 @@
+<pipelines>
+  <!-- This pipeline uses no multisampling render target -->
+  <pipeline name="test/posteffect_pipeline">
+    <primitive-type value="triangle_list"/>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="posteffect.hlsl" main="vs_main">
+        
+      </vertex-shader>
+      <pixel-shader file="posteffect.hlsl" main="ps_main">
+        <variable name="gTexture" value="texture" index="0"/>
+        <variable name="gInverseWindowWidth" value="inverse_window_width"/>
+        <variable name="gInverseWindowHeight" value="inverse_window_height"/>
+      </pixel-shader>
+    </shaders>
+    <samplers>
+      <sampler name="gSamplerState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    </samplers>
+  </pipeline>
+  
+  <!-- This pipeline uses multisampling render target -->
+  <pipeline name="test/posteffect_pipeline2">
+    <primitive-type value="triangle_list"/>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="posteffect2.hlsl" main="vs_main">
+      </vertex-shader>
+      <pixel-shader file="posteffect2.hlsl" main="ps_main">
+        <variable name="gTexture" value="texture" index="0"/>
+        <variable name="gTextureWidth" value="texture_width" index="0"/>
+        <variable name="gTextureHeight" value="texture_height" index="0"/>
+        <variable name="gInverseTextureWidth" value="inverse_texture_width"/>
+        <variable name="gInverseTextureHeight" value="inverse_texture_height"/>
+        <variable name="gViewportWidth" value="viewport_width"/>
+        <variable name="gViewportHeight" value="viewport_height"/>
+        <variable name="gWindowWidth" value="window_width"/>
+        <variable name="gWindowHeight" value="window_height"/>
+        <variable name="gInverseWindowWidth" value="inverse_window_width"/>
+        <variable name="gInverseWindowHeight" value="inverse_window_height"/>
+      </pixel-shader>
+    </shaders>
+    <samplers>
+      <sampler name="gSamplerState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    </samplers>
+  </pipeline>
+
+  
+</pipelines>

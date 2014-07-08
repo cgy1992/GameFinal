@@ -13,13 +13,17 @@
 #include "CD3D11SamplerStateCache.h"
 #include "CD3D11HullShader.h"
 #include "CD3D11DomainShader.h"
+#include "CD3D11RenderTarget.h"
+#include "CD3D11DepthStencilSurface.h"
+
 #include "gfUtil.h"
 namespace gf
 {
-	CD3D11ResourceFactory::CD3D11ResourceFactory(ID3D11Device* pd3dDevice,
+	CD3D11ResourceFactory::CD3D11ResourceFactory(
+		ID3D11Device* pd3dDevice,
 		ID3D11DeviceContext* pd3dDeviceContext,
 		CD3D11Driver* d3dDriver)
-		:md3dDevice(pd3dDevice)
+		: md3dDevice(pd3dDevice)
 		, md3dDeviceContext(pd3dDeviceContext)
 		, md3dDriver(d3dDriver)
 	{
@@ -45,6 +49,69 @@ namespace gf
 		}
 
 		return pTexture;
+	}
+
+	ITexture* CD3D11ResourceFactory::createTexture(
+		const std::string& name,
+		u32 sortcode,
+		u32 width,
+		u32 height,
+		void* data,
+		u32 mipLevel,
+		E_GI_FORMAT format,
+		u32 pitch)
+	{
+		CD3D11Texture* pTexture = new CD3D11Texture(md3dDevice, md3dDeviceContext, name, sortcode);
+		if (!pTexture->create(width, height, data, mipLevel, format, pitch))
+		{
+			pTexture->drop();
+			pTexture = nullptr;
+		}
+
+		return pTexture;
+	}
+
+	IRenderTarget* CD3D11ResourceFactory::createRenderTarget(
+		const std::string& name,
+		u32 sortcode,
+		u32 width,
+		u32 height,
+		E_GI_FORMAT format,
+		bool multiSampling,
+		u32 multiSamplingCount,
+		u32 multiSamplingQuality)
+	{
+		CD3D11RenderTarget* pRenderTarget = new CD3D11RenderTarget(md3dDevice, md3dDeviceContext, name, sortcode);
+		if (!pRenderTarget->create(width, height, format, multiSampling, multiSamplingCount, multiSamplingQuality))
+		{
+			pRenderTarget->drop();
+			pRenderTarget = nullptr;
+		}
+
+		return pRenderTarget;
+	}
+
+	IDepthStencilSurface* CD3D11ResourceFactory::createDepthStencilSurface(
+		const std::string& name,
+		u32 sortcode,
+		u32 width,
+		u32 height,
+		u32 depthBitNum,
+		u32 stencilBitNum,
+		bool multiSampling,
+		u32 multiSamplingCount,
+		u32 multiSamplingQuality,
+		bool bShaderBound,
+		bool bindDepthToShader)
+	{
+		CD3D11DepthStencilSurface* pDepthStencilSurface = new CD3D11DepthStencilSurface(md3dDevice, md3dDeviceContext, name, sortcode);
+		if (!pDepthStencilSurface->create(width, height, depthBitNum, stencilBitNum, multiSampling, multiSamplingCount, 
+			multiSamplingQuality, bShaderBound, bindDepthToShader))
+		{
+			pDepthStencilSurface->drop();
+			pDepthStencilSurface = nullptr;
+		}
+		return pDepthStencilSurface;
 	}
 
 	IRenderState* CD3D11ResourceFactory::createRenderState(const std::string& name)

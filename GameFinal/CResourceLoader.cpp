@@ -222,6 +222,33 @@ namespace gf
 		return true;
 	}
 
+	bool CResourceLoader::loadTexturesFromXml(const std::string& name)
+	{
+		std::string fullpath;
+		if (!mResourceGroupManager->getFullPath(name, fullpath))
+		{
+			GF_PRINT_CONSOLE_INFO("The texture xml file named %s doesn't exist.\n", name.c_str());
+			return false;
+		}
+
+		std::vector<IResourceXmlParser::SRenderTargetParams> renderTargetParamsArray;
+		std::vector<IResourceXmlParser::SDepthStencilSurfaceParams> depthStencilParamsArray;
+		if (!mResourceXmlParser->parseTextureXmlFile(fullpath, renderTargetParamsArray, depthStencilParamsArray))
+			return false;
+
+		for (u32 i = 0; i < renderTargetParamsArray.size(); i++)
+		{
+			createRenderTarget(fullpath, renderTargetParamsArray[i]);
+		}
+
+		for (u32 i = 0; i < depthStencilParamsArray.size(); i++)
+		{
+			createDepthStencilSurface(fullpath, depthStencilParamsArray[i]);
+		}
+
+		return true;
+	}
+
 	bool CResourceLoader::loadMaterial(const std::string& fullpath,
 		const IResourceXmlParser::SMaterialCreateParams& createParams) const
 	{
@@ -375,6 +402,39 @@ namespace gf
 
 			if (!mesh)
 				return false;
+		}
+
+		return true;
+	}
+
+	bool CResourceLoader::createRenderTarget(const std::string& fullpath, const IResourceXmlParser::SRenderTargetParams& createParams) const
+	{
+		IRenderTarget* renderTarget = mTextureManager->createRenderTarget(createParams.Name,
+			createParams.MultiSampling, createParams.Width, createParams.Height, 
+			createParams.Format, createParams.Count, createParams.Quality);
+
+		if (!renderTarget)
+		{
+			GF_PRINT_CONSOLE_INFO("Texture xml file location: %s\n", fullpath.c_str());
+			return false;
+		}
+
+
+		return true;
+	}
+
+	bool CResourceLoader::createDepthStencilSurface(const std::string& fullpath, 
+		const IResourceXmlParser::SDepthStencilSurfaceParams& createParams) const
+	{
+		IDepthStencilSurface* surface = mTextureManager->createDepthStencilSurface(createParams.Name,
+			createParams.Width, createParams.Height, createParams.DepthBits,
+			createParams.StencilBits, createParams.MultiSampling,
+			createParams.Count, createParams.Quality, createParams.BindingShader, createParams.BindDepthToShader);
+
+		if (!surface)
+		{
+			GF_PRINT_CONSOLE_INFO("Texture file location: %s\n", fullpath.c_str());
+			return false;
 		}
 
 		return true;

@@ -13,6 +13,8 @@ namespace gf
 		, md3dDeviceContext(pd3dDeviceContext)
 		, m_pd3dTexture(NULL)
 		, m_pd3dSRV(NULL)
+		, mTextureWidth(0)
+		, mTextureHeight(0)
 	{
 
 	}
@@ -64,6 +66,68 @@ namespace gf
 
 		m_pd3dTexture = pd3dTexture;
 		m_pd3dSRV = pd3dSRV;
+
+		// update width and height
+		mTextureWidth = texDesc.Width;
+		mTextureHeight = texDesc.Height;
+
+		return true;
+	}
+
+	bool CD3D11Texture::create(u32 width, u32 height, void* rawData, u32 miplevel, E_GI_FORMAT format, u32 pitch)
+	{
+		HRESULT hr;
+		ID3D11Texture2D* pd3dTexture = NULL;
+		ID3D11ShaderResourceView* pd3dSRV = NULL;
+
+		D3D11_TEXTURE2D_DESC texDesc;
+		texDesc.Width = width;
+		texDesc.Height = height;
+		texDesc.MipLevels = miplevel;
+		texDesc.ArraySize = 1;
+		texDesc.Format = getDxgiFormat(format);
+		texDesc.SampleDesc.Count = 1;
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		texDesc.CPUAccessFlags = 0;
+		texDesc.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA texData;
+		texData.pSysMem = rawData;
+		if (pitch == 0)
+			pitch = getFormatOffset(format) * width;
+
+		texData.SysMemPitch = pitch;
+		texData.SysMemSlicePitch = 0;
+
+		hr = md3dDevice->CreateTexture2D(&texDesc, &texData, &pd3dTexture);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		srvDesc.Format = texDesc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		srvDesc.Texture2D.MipLevels = -1;
+		
+		hr = md3dDevice->CreateShaderResourceView(pd3dTexture, &srvDesc, &pd3dSRV);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		ReleaseCOM(m_pd3dTexture);
+		ReleaseCOM(m_pd3dSRV);
+
+		m_pd3dTexture = pd3dTexture;
+		m_pd3dSRV = pd3dSRV;
+
+		// update width and height member
+		mTextureWidth = width;
+		mTextureHeight = height;
 
 		return true;
 	}

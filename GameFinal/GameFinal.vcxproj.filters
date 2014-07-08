@@ -419,6 +419,30 @@
     <ClInclude Include="CEmptyNode.h">
       <Filter>src\SceneNode\Class</Filter>
     </ClInclude>
+    <ClInclude Include="ITerrainMesh.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CTerrainMesh.h">
+      <Filter>src\ResourceObject\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="ITerrainNode.h">
+      <Filter>src\SceneNode\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CTerrainNode.h">
+      <Filter>src\SceneNode\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderTarget.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11RenderTarget.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="IDepthStencilSurface.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11DepthStencilSurface.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -594,6 +618,18 @@
     </ClCompile>
     <ClCompile Include="COctreeNode.cpp">
       <Filter>src\SceneManager\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CTerrainMesh.cpp">
+      <Filter>src\ResourceObject\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CTerrainNode.cpp">
+      <Filter>src\SceneNode\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11RenderTarget.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11DepthStencilSurface.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

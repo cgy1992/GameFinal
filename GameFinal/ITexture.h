@@ -5,6 +5,13 @@
 
 namespace gf
 {
+	enum E_TEXTURE_TYPE
+	{
+		ETT_TEXTURE_2D,
+		ETT_RENDER_TARGET,
+		ETT_DEPTH_STENCIL
+	};
+
 
 	class ITexture : public IReferenceCounted
 	{
@@ -22,10 +29,19 @@ namespace gf
 			return mSortCode;
 		}
 
+		virtual u32 getWidth() const = 0;
+
+		virtual u32 getHeight() const = 0;
+
+		virtual E_TEXTURE_TYPE getType() const = 0;
+
 		virtual ~ITexture() {}
 	protected:
 		std::string		mName;
 		u32				mSortCode;
+		
+
+
 	};
 
 }

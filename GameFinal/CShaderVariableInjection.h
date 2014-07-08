@@ -4,6 +4,7 @@
 #include "IShaderVariableInjection.h"
 #include "ISceneManager.h"
 #include "ILightNode.h"
+#include "ITerrainMesh.h"
 
 namespace gf
 {
@@ -28,8 +29,15 @@ namespace gf
 		/* inject materials. */
 		static void injectMaterial(const SShaderAutoVariable& var, IPipeline* pipeline, IMaterial* material);
 
-		/* inject scene informations */
+		/* inject scene information */
 		static void injectSceneInfo(const SShaderAutoVariable& var, ISceneNode* node, IPipeline* pipeline);
+
+		/* inject window and system information */
+		static void injectWindowSystemInfo(const SShaderAutoVariable& var, ISceneNode* node, IPipeline* pipeline);
+
+		static void injectForTerrainNode(ITerrainNode* node, IPipeline* pipeline);
+
+		static void injectTerrainVariable(const SShaderAutoVariable& var, ITerrainMesh* mesh, IPipeline* pipeline);
 
 
 	private:

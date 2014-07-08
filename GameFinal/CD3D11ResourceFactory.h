@@ -11,7 +11,8 @@ namespace gf
 	class CD3D11ResourceFactory : public CResourceFactory
 	{
 	public:
-		CD3D11ResourceFactory(ID3D11Device* pd3dDevice,
+		CD3D11ResourceFactory(
+			ID3D11Device* pd3dDevice,
 			ID3D11DeviceContext* pd3dDeviceContext,
 			CD3D11Driver* md3dDriver);
 
@@ -19,6 +20,39 @@ namespace gf
 			const std::string& name,
 			const std::string& filename,
 			u32 sortcode);
+
+		virtual ITexture* createTexture(
+			const std::string& name,
+			u32 sortcode,
+			u32 width,
+			u32 height,
+			void* data,
+			u32 mipLevel,
+			E_GI_FORMAT format,
+			u32 pitch = 0);
+
+		virtual IRenderTarget* createRenderTarget(
+			const std::string& name,
+			u32 sortcode,
+			u32 width,
+			u32 height,
+			E_GI_FORMAT format,
+			bool multiSampling,
+			u32 multiSamplingCount,
+			u32 multiSamplingQuality);
+
+		virtual IDepthStencilSurface* createDepthStencilSurface(
+			const std::string& name,
+			u32 sortcode,
+			u32 width,
+			u32 height,
+			u32 depthBitNum,
+			u32 stencilBitNum,
+			bool multiSampling,
+			u32 multiSamplingCount,
+			u32 multiSamplingQuality,
+			bool bShaderBound,
+			bool bindDepthToShader);
 
 		virtual IRenderState* createRenderState(const std::string& name);
 

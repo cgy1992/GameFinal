@@ -21,7 +21,11 @@ namespace gf
 			, mBonesTree(bones)
 			, mAnimationClips(animateClips)
 		{
-
+			for (u32 i = 0; i < mSubsets.size(); i++)
+			{
+				IMaterial* material = mSubsets[i].Material;
+				AddReferenceCounted(material);
+			}
 		}
 
 		virtual u32 getSubsetCount() const
@@ -97,6 +101,18 @@ namespace gf
 		virtual bool getAnimationName(u32 id, std::string& name) const;
 
 		virtual s32 getAnimationId(const std::string& name) const;
+
+		virtual ~CAnimatedMesh()
+		{
+			ReleaseReferenceCounted(mRenderBuffer);
+			for (u32 i = 0; i < mSubsets.size(); i++)
+			{
+				IMaterial* material = mSubsets[i].Material;
+				if (material)
+					material->drop();
+			}
+		}
+
 
 	private:
 

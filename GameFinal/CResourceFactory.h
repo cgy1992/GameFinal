@@ -7,6 +7,7 @@ namespace gf
 	class CResourceFactory : public IResourceFactory
 	{
 	public:
+
 		virtual ISimpleMesh* createSimpleMesh(
 			const std::string& name,
 			u32 sortcode,
@@ -50,6 +51,18 @@ namespace gf
 			const std::vector<SModelBone>& bones,
 			const std::vector<SBoneAnimationClip>& animateClips);
 
+		virtual ITerrainMesh* createTerrainMesh(
+			const std::string& name,
+			u32 sortcode,
+			const std::string& szRawFileName,
+			f32 vertexSpace,
+			f32 heightScale,
+			bool bCreateTessellationMesh,
+			bool bCreateNormal,
+			f32 fTexcoordScale,
+			u32 cellsPerPatch,
+			E_MEMORY_USAGE usage,
+			ITextureManager* textureManager);
 	};
 }
 #endif

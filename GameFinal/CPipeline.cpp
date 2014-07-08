@@ -134,6 +134,22 @@ namespace gf
 		return mShaders[shaderType] != nullptr && mShaders[shaderType]->setFloat(varname, value, ignoreIfAlreadyUpdated);
 	}
 
+	u32 CPipeline::setUint(const std::string& varname, u32 v, bool ignoreIfAlreadyUpdated)
+	{
+		u32 result = 0;
+		for (u32 i = 0; i < 5; i++)
+		{
+			if (mShaders[i] != nullptr && mShaders[i]->setUint(varname, v, ignoreIfAlreadyUpdated))
+				result++;
+		}
+		return result;
+	}
+
+	bool CPipeline::setUint(E_SHADER_TYPE shaderType, const std::string& varname, u32 v, bool ignoreIfAlreadyUpdated)
+	{
+		return mShaders[shaderType] != nullptr && mShaders[shaderType]->setUint(varname, v, ignoreIfAlreadyUpdated);
+	}
+
 	u32 CPipeline::setRawValue(const std::string& varname, void* raw, u32 size, bool ignoreIfAlreadyUpdated)
 	{
 		u32 result = 0;

@@ -4,6 +4,8 @@
 #pragma comment(lib, "GameFinal.lib")
 #pragma comment(lib, "winmm.lib")
 
+using namespace gf;
+
 const u32 SCREEN_WIDTH = 800;
 const u32 SCREEN_HEIGHT = 600;
 const f32 CAMERA_MOVE_UNIT = 50.0f;
@@ -61,12 +63,11 @@ int main()
 	ILightNode* light = smgr->addLightNode(1);
 	light->setType(ELT_POINT);
 	light->setAmbient(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
-	light->setPosition(10.0f, 200.0f, -10.0f);
+	light->setPosition(10.0f, 50.0f, -10.0f);
 	light->setSpecular(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 	light->setDiffuse(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 	light->setAttenuation(1.0f, 0.0f, 0.0f);
 	light->setRange(1000.0f);
-
 
 	// gTangentWorldMatrix
 	XMVECTOR normal = XMVectorSet(0, 1.0f, 0, 0);
@@ -79,7 +80,7 @@ int main()
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 40.0f, -4.0f), XMFLOAT3(0, 40.0f, 0.0f));
 	char caption[200];
 
-	ITimer* timer = device->createTimer();
+	ITimer* timer = device->getTimer();
 	timer->reset();
 
 	static float t1 = 0.0f;
@@ -105,7 +106,7 @@ int main()
 		}
 		*/
 
-		float dt = timer->tick();
+		float dt = timer->tick() * 0.001f;
 		t1 += dt * 0.032f;
 		t2 += dt * 0.02f;
 		if (t1 > 1.0f)
@@ -121,6 +122,7 @@ int main()
 
 		updateCamera(camera, dt);
 
+		smgr->update(dt);
 		smgr->drawAll();
 
 		driver->endScene();
@@ -173,7 +175,7 @@ ISimpleMesh* createWaterMesh(IMeshManager* meshManager, const std::string& name,
 		}
 	}
 
-	ISimpleMesh* mesh = meshManager->createSimpleMesh(name, vertices, indices, iVertexNum, sizeof(Vertex), iIndiceNum, false);
+	ISimpleMesh* mesh = meshManager->createSimpleMesh(name, vertices, indices, iVertexNum, sizeof(Vertex), iIndiceNum, math::SAxisAlignedBox(), false);
 
 	delete vertices;
 	delete indices;

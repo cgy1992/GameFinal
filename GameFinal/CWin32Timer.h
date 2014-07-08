@@ -10,8 +10,8 @@ namespace gf
 	public:
 		CWin32Timer();
 
-		virtual f32 tick();
-		virtual f32 getElapseTime() const;
+		virtual u32 tick();
+		virtual u32 getElapseTime() const;
 
 		virtual void start(); // Call when unpaused.
 		virtual void stop();  // Call when paused.

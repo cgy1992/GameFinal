@@ -130,6 +130,8 @@ namespace gf
 			return mName;
 		}
 
+		
+
 	protected:
 		std::string				mName;
 		u32						mSortCode;

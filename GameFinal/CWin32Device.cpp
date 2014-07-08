@@ -110,7 +110,7 @@ namespace gf
 		if (m_CreationParams.DriverType == EDT_DIRECT3D11)
 		{
 			mVideoDriver = new CD3D11Driver(this);
-			if (!mVideoDriver->init())
+			if (!mVideoDriver->init(m_CreationParams))
 			{
 				throw std::runtime_error("Video Driver init failed!");
 			}
@@ -119,6 +119,10 @@ namespace gf
 		{
 			throw std::runtime_error("The Driver is not supported so far!");
 		}
+
+		// create timer
+		mTimer = new CWin32Timer;
+		mTimer->reset();
 
 		mSceneManager = new CSceneManager(this);
 
@@ -156,13 +160,6 @@ namespace gf
 		}
 
 		return true;
-	}
-
-	ITimer* CWin32Device::createTimer() const
-	{
-		ITimer* timer = new CWin32Timer;
-		timer->reset();
-		return timer;
 	}
 
 	void CWin32Device::setWindowCaption(const char* caption)

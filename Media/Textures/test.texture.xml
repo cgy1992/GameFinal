@@ -1,0 +1,21 @@
+<textures>
+  <render-target name="target1">
+    <size width="0" height="0"></size>
+    <multisample enabled="false" count="1" quality="0"></multisample>
+    <format value="r32g32b32b32"/>
+  </render-target>
+
+  <render-target name="target2">
+    <size width="0" height="0"></size>
+    <multisample enabled="true" count="0" quality="0"></multisample>
+    <format value="r32g32b32b32"/>
+  </render-target>
+  
+  <depth-stencil name="depth_stencil_01">
+    <size width="0" height="0"></size>
+    <format depth="32" stencil="0"></format>
+    <multisample enabled="false" count="0" quality="0"></multisample>
+    <bind-shader value="depth"></bind-shader>
+  </depth-stencil>
+  
+</textures>

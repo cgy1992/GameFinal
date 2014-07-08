@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>../GameFinal/;../xnamath/;E:\Game Engine\Assimp\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\Game Engine\Assimp\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>../GameFinal/;../xnamath/;C:\Program Files\Assimp\include\;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files\Assimp\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -80,6 +80,7 @@
   <ItemGroup>
     <ClCompile Include="AnimationReader.cpp" />
     <ClCompile Include="AnimationWriter.cpp" />
+    <ClCompile Include="CommandParser.cpp" />
     <ClCompile Include="ModelFileGenerator.cpp" />
     <ClCompile Include="ModelReader.cpp" />
     <ClCompile Include="main.cpp" />

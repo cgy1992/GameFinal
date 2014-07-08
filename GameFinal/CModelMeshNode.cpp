@@ -64,11 +64,8 @@ namespace gf
 					//当且仅当材质也不同于上一个时才注入
 					if (preMaterial != material)
 					{
-						f32 t = timeGetTime();
 						CShaderVariableInjection::injectMaterial(material, pipeline);
 						pipeline->apply();
-
-						//fprintf(fp, "%d ", timeGetTime() - t);
 					}
 				}
 				else // 如果两条流水线不同，全部变量都需要更新

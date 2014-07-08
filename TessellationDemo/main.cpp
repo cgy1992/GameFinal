@@ -4,6 +4,8 @@
 #pragma comment(lib, "GameFinal.lib")
 #pragma comment(lib, "winmm.lib")
 
+using namespace gf;
+
 const u32 SCREEN_WIDTH = 800;
 const u32 SCREEN_HEIGHT = 600;
 const f32 CAMERA_MOVE_UNIT = 5.0f;
@@ -48,14 +50,14 @@ int main()
 	vertices[2] = XMFLOAT3(-10.0f, 0.0f, -10.0f);
 	vertices[3] = XMFLOAT3(10.0f, 0.0f, -10.0f);
 
-	ISimpleMesh* mesh = meshManager->createSimpleMesh("pointlist", vertices, NULL, 4, sizeof(XMFLOAT3), 0, false);
+	ISimpleMesh* mesh = meshManager->createSimpleMesh("pointlist", vertices, NULL, 4, sizeof(XMFLOAT3), 0, math::SAxisAlignedBox(), false);
 	IMeshNode* meshNode = smgr->addMeshNode(mesh, nullptr, nullptr);
 	meshNode->setMaterialName("test/ts_material");
 
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f));
 	char caption[200];
 
-	ITimer* timer = device->createTimer();
+	ITimer* timer = device->getTimer();
 	timer->reset();
 
 	while (device->run())
@@ -63,10 +65,10 @@ int main()
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		float dt = timer->tick();
+		float dt = timer->tick() * 0.001f;
 		updateCamera(camera, dt);
 
-
+		smgr->update(dt);
 		smgr->drawAll();
 
 		driver->endScene();

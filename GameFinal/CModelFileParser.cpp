@@ -5,8 +5,10 @@ namespace gf
 {
 	bool CModelFileParser::parseModelFile(const std::string& filepath, SModelMeshCreateParams& createParams)
 	{
-		FILE* fp = fopen(filepath.c_str(), "rb");
-		if (!fp)
+		errno_t err;
+		FILE* fp = nullptr;
+		err = fopen_s(&fp, filepath.c_str(), "rb");
+		if (err != 0)
 		{
 			GF_PRINT_CONSOLE_INFO("The mesh file '%s' doesn't exist.\n", filepath.c_str());
 			return false;

@@ -84,6 +84,7 @@
     <ClInclude Include="CAnimatedMeshNode.h" />
     <ClInclude Include="CAnimatedMesh.h" />
     <ClInclude Include="CCameraNode.h" />
+    <ClInclude Include="CD3D11DepthStencilSurface.h" />
     <ClInclude Include="CD3D11DomainShader.h" />
     <ClInclude Include="CD3D11GeometryShader.h" />
     <ClInclude Include="CD3D11HullShader.h" />
@@ -95,6 +96,7 @@
     <ClInclude Include="CD3D11PixelShader.h" />
     <ClInclude Include="CD3D11RenderState.h" />
     <ClInclude Include="CD3D11RenderStateCache.h" />
+    <ClInclude Include="CD3D11RenderTarget.h" />
     <ClInclude Include="CD3D11ResourceFactory.h" />
     <ClInclude Include="CD3D11Sampler.h" />
     <ClInclude Include="CD3D11SamplerStateCache.h" />
@@ -129,6 +131,8 @@
     <ClInclude Include="CSimpleMesh.h" />
     <ClInclude Include="CSortCodeAllocator.h" />
     <ClInclude Include="COctreeManager.h" />
+    <ClInclude Include="CTerrainMesh.h" />
+    <ClInclude Include="CTerrainNode.h" />
     <ClInclude Include="CTextureManager.h" />
     <ClInclude Include="CWin32Device.h" />
     <ClInclude Include="CWin32Timer.h" />
@@ -142,6 +146,7 @@
     <ClInclude Include="IAnimatedMeshNode.h" />
     <ClInclude Include="IAnimatedMesh.h" />
     <ClInclude Include="ICameraNode.h" />
+    <ClInclude Include="IDepthStencilSurface.h" />
     <ClInclude Include="IDevice.h" />
     <ClInclude Include="IFpsCameraNode.h" />
     <ClInclude Include="IGeometryCreator.h" />
@@ -163,6 +168,7 @@
     <ClInclude Include="IReferenceCounted.h" />
     <ClInclude Include="IRenderState.h" />
     <ClInclude Include="IRenderStateManager.h" />
+    <ClInclude Include="IRenderTarget.h" />
     <ClInclude Include="IResourceFactory.h" />
     <ClInclude Include="IResourceGroupManager.h" />
     <ClInclude Include="IResourceLoader.h" />
@@ -177,6 +183,8 @@
     <ClInclude Include="IShaderVariableInjection.h" />
     <ClInclude Include="ISimpleMesh.h" />
     <ClInclude Include="IAnimatedMeshBuffer.h" />
+    <ClInclude Include="ITerrainMesh.h" />
+    <ClInclude Include="ITerrainNode.h" />
     <ClInclude Include="ITexture.h" />
     <ClInclude Include="ITextureManager.h" />
     <ClInclude Include="ITimer.h" />
@@ -194,6 +202,7 @@
     <ClCompile Include="CAnimatedMesh.cpp" />
     <ClCompile Include="CAnimatedMeshNode.cpp" />
     <ClCompile Include="CCameraNode.cpp" />
+    <ClCompile Include="CD3D11DepthStencilSurface.cpp" />
     <ClCompile Include="CD3D11DomainShader.cpp" />
     <ClCompile Include="CD3D11GeometryShader.cpp" />
     <ClCompile Include="CD3D11HullShader.cpp" />
@@ -205,6 +214,7 @@
     <ClCompile Include="CD3D11PixelShader.cpp" />
     <ClCompile Include="CD3D11RenderState.cpp" />
     <ClCompile Include="CD3D11RenderStateCache.cpp" />
+    <ClCompile Include="CD3D11RenderTarget.cpp" />
     <ClCompile Include="CD3D11ResourceFactory.cpp" />
     <ClCompile Include="CD3D11Sampler.cpp" />
     <ClCompile Include="CD3D11SamplerStateCache.cpp" />
@@ -236,6 +246,8 @@
     <ClCompile Include="CShaderVariableInjection.cpp" />
     <ClCompile Include="CSimpleMesh.cpp" />
     <ClCompile Include="COctreeManager.cpp" />
+    <ClCompile Include="CTerrainMesh.cpp" />
+    <ClCompile Include="CTerrainNode.cpp" />
     <ClCompile Include="CTextureManager.cpp" />
     <ClCompile Include="CWin32Device.cpp" />
     <ClCompile Include="CWin32Timer.cpp" />

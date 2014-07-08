@@ -177,12 +177,55 @@ namespace gf
 		if (ignoreIfAlreadyUpdate && cv->AlreadyUpdated)
 			return false;
 
-		if (cv->TypeDesc.Class != D3D10_SVC_SCALAR ||
-			cv->TypeDesc.Type != D3D10_SVT_FLOAT)
+		s32 sval;
+		u32 uval;
+
+		if (cv->TypeDesc.Class == D3D10_SVC_SCALAR)
 		{
-			return false;
+			switch (cv->TypeDesc.Type)
+			{
+			case D3D10_SVT_FLOAT:
+				return setRawData(cv, &val, sizeof(f32));
+			case D3D10_SVT_INT:
+				sval = static_cast<s32>(val);
+				return setRawData(cv, &sval, sizeof(s32));
+			case D3D10_SVT_UINT:
+				uval = static_cast<u32>(val);
+				return setRawData(cv, &sval, sizeof(u32));
+			}
 		}
-		return setRawData(cv, &val, sizeof(f32));
+
+		return false;
+	}
+
+	bool CD3D11Shader::setUint(const std::string& varname, u32 val, bool ignoreIfAlreadyUpdate)
+	{
+		SShaderConstantVariable* cv = getConstantVariable(varname);
+		if (cv == nullptr)
+			return false;
+
+		if (ignoreIfAlreadyUpdate && cv->AlreadyUpdated)
+			return false;
+
+		f32 fval;
+		s32 sval;
+
+		if (cv->TypeDesc.Class == D3D10_SVC_SCALAR)
+		{
+			switch (cv->TypeDesc.Type)
+			{
+			case D3D10_SVT_UINT:
+				return setRawData(cv, &val, sizeof(u32));
+			case D3D10_SVT_INT:
+				sval = static_cast<s32>(val);
+				return setRawData(cv, &sval, sizeof(s32));
+			case D3D10_SVT_FLOAT:
+				fval = static_cast<f32>(val);
+				return setRawData(cv, &fval, sizeof(f32));
+			}
+		}
+
+		return false;
 	}
 
 	bool CD3D11Shader::setVector(const std::string& varname, const f32* val, bool ignoreIfAlreadyUpdate)

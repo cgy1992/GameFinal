@@ -5,6 +5,9 @@
 #include "IPipeline.h"
 #include "SReferenceCounted.h"
 
+#define MAX_TEXTURE_COUNT 8
+#define MAX_PIPELINE_COUNT 8
+
 namespace gf
 {
 
@@ -134,8 +137,8 @@ namespace gf
 			return mSortCode;
 		}
 
-		const static u32 MAX_TEXTURE_COUNT;
-		const static u32 MAX_PIPELINE_COUNT;
+	//	const static u32 MAX_TEXTURE_COUNT;
+	//	const static u32 MAX_PIPELINE_COUNT;
 
 
 	public:

@@ -16,8 +16,20 @@
 #include "IResourceGroupManager.h"
 #include "IShaderVariableInjection.h"
 #include "ISamplerManager.h"
+#include "IDepthStencilSurface.h"
+
 namespace gf
 {
+	struct SViewport
+	{
+		f32 TopLeftX;
+		f32 TopLeftY;
+		f32 Width;
+		f32 Height;
+		f32 MinDepth;
+		f32 MaxDepth;
+	};
+
 	class IVideoDriver : public IReferenceCounted
 	{
 	public:
@@ -38,7 +50,7 @@ namespace gf
 
 		}
 
-		virtual bool init() = 0;
+		virtual bool init(SCreationParameters& createParam) = 0;
 
 		virtual void beginScene(
 			bool backBuffer,
@@ -55,6 +67,36 @@ namespace gf
 		}
 
 		virtual void bindPrimitiveType(E_PRIMITIVE_TYPE primitiveType) = 0;
+
+		virtual void clearDepthStencil(f32 depth, u8 stencil) = 0;
+
+		virtual void clearDepth(f32 val) = 0;
+
+		virtual void clearStencil(u8 val) = 0;
+
+		virtual void clearRenderTarget(const f32 color[]) = 0;
+
+		virtual void setRenderTarget(IRenderTarget* pRenderTarget) = 0;
+
+		virtual IRenderTarget* getRenderTarget() = 0;
+
+		virtual void setDefaultRenderTarget() = 0;
+		
+		virtual void setDepthStencilSurface(IDepthStencilSurface* depthStencilSurface) = 0;
+
+		virtual IDepthStencilSurface* getDepthStencilSurface() = 0;
+
+		virtual void setDefaultDepthStencilSurface() = 0;
+
+		virtual void setRenderTargetAndDepthStencil(IRenderTarget* pRenderTarget, IDepthStencilSurface* pDepthStencilSurface) = 0;
+
+		virtual void setDefaultRenderTargetAndDepthStencil() = 0;
+
+		virtual void setViewport(f32 topLeftX, f32 topLeftY, f32 width, f32 height, f32 minDepth = 0.0f, f32 maxDepth = 1.0f) = 0;
+
+		virtual void setViewport(const SViewport& viewport) = 0;
+
+		const SViewport& getViewport() const { return mViewport; }
 
 		IResourceFactory*		getResourceFactory()
 		{
@@ -111,6 +153,8 @@ namespace gf
 			return mSamplerManager;
 		}
 
+		
+
 	protected:
 		int								mVideoCardMemory;
 		char							mVideoCardDescription[128];
@@ -125,6 +169,7 @@ namespace gf
 		IMeshManager*					mMeshManager;
 		IResourceGroupManager*			mResourceGroupManager;
 		ISamplerManager*				mSamplerManager;
+		SViewport						mViewport;
 		//	IShaderVariableInjection*		mShaderVariableInjector;
 	};
 }

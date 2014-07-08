@@ -8,9 +8,12 @@
 #include "ModelReader.h"
 #include "ModelFileGenerator.h"
 
-#pragma comment(lib, "assimp.lib")
+using namespace gf;
 
-int main()
+#pragma comment(lib, "assimp.lib")
+#pragma comment(lib, "shlwapi.lib")
+
+int main(int argc, char *argv[])
 {
 	SModelFileHeader					model_file_header;
 	std::vector<SModelMaterial>			materials;
@@ -18,6 +21,7 @@ int main()
 	std::string							file_name;
 	std::string							file_name_without_ext;
 	std::string							file_extension;
+	std::string							dest_dir;
 	u32									vertex_elements;
 	u8*									vertex_buffer = nullptr;
 	u8*									animate_vertex_buffer = nullptr;
@@ -27,10 +31,13 @@ int main()
 	std::vector<SModelSubsetWrapper>	subset_wrappers;
 	std::vector<SBoneAnimationClip>		animation_clips;
 
-	std::cout << "Please enter file name: " << std::endl;
-	std::cin >> file_full_path;
+	if (!parseCommandLine(argc, argv, file_full_path, dest_dir, vertex_elements, mesh_scale))
+	{
+		system("pause");
+		return 1;
+	}
 
-	vertex_elements = EMVE_POSITION | EMVE_NORMAL | EMVE_TEXCOORD;
+	//vertex_elements = EMVE_POSITION | EMVE_NORMAL | EMVE_TEXCOORD;
 	Assimp::Importer importer;
 
 	const aiScene* scene = importer.ReadFile(file_full_path.c_str(),
@@ -41,6 +48,7 @@ int main()
 	if (!scene)
 	{
 		printf("Can't load %s\n", file_full_path.c_str());
+		system("pause");
 		return 1;
 	}
 
@@ -78,17 +86,17 @@ int main()
 	fillVertexAndIndicesData(scene, model_file_header, mesh_scale,
 		subset_wrappers, vertex_buffer, animate_vertex_buffer, indice_buffer);
 
-	generateMaterialFile(file_name_without_ext, materials, subset_wrappers);
+	generateMaterialFile(file_name_without_ext, dest_dir, materials, subset_wrappers);
 
 	if (model_file_header.AnimateVertexCount > 0)
-		generatePipelineFile(file_name_without_ext, model_file_header, true);
+		generatePipelineFile(file_name_without_ext, dest_dir, model_file_header, true);
 	
 	if (model_file_header.VertexCount > 0)
-		generatePipelineFile(file_name_without_ext, model_file_header, false);
+		generatePipelineFile(file_name_without_ext, dest_dir, model_file_header, false);
 
-	generateShaderFile(file_name_without_ext, model_file_header);
+	generateShaderFile(file_name_without_ext, dest_dir, model_file_header);
 
-	generateMeshFile(file_name_without_ext, model_file_header, subset_wrappers,
+	generateMeshFile(file_name_without_ext, dest_dir, model_file_header, subset_wrappers,
 		bone_wrappers, animation_clips,
 		vertex_buffer, animate_vertex_buffer, indice_buffer);
 

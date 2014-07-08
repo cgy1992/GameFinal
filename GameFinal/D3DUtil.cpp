@@ -15,6 +15,7 @@ namespace gf
 		case EGF_R8G8_UINT:				return DXGI_FORMAT_R8G8_UINT;
 			//	case EGF_R8G8B8_UINT:			return DXGI_FORMAT_R8G8B8_UINT;
 		case EGF_R8G8B8A8_UINT:			return DXGI_FORMAT_R8G8B8A8_UINT;
+		case EGF_R16_FLOAT:				return DXGI_FORMAT_R16_FLOAT;
 		}
 		return DXGI_FORMAT_UNKNOWN;
 	}

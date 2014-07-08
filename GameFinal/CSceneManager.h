@@ -15,6 +15,8 @@ namespace gf
 
 		virtual void drawAll();
 
+		virtual void draw(ISceneNode* node);
+
 		virtual void render();
 
 		virtual ISceneNode* addEmptyNode(
@@ -79,6 +81,12 @@ namespace gf
 			XMFLOAT3 center = XMFLOAT3(0, 0, 0),
 			u32 maxTreeHeight = 8);
 
+		virtual ITerrainNode* addTerrainNode(
+			ITerrainMesh* mesh,
+			IMaterial* material = nullptr,
+			ISceneNode* parent = nullptr,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0));
+
 		virtual ILightNode* getLightNode(u32 id);
 
 		virtual ICameraNode* getActiveCameraNode();
@@ -96,6 +104,8 @@ namespace gf
 			return mRenderedMeshNum;
 		}
 
+		virtual void update(u32 delta = 0);
+
 		bool isCulled(const IMeshNode* node);
 
 	private:
@@ -110,6 +120,10 @@ namespace gf
 		u32								mActiveCameraId;
 
 		u32								mRenderedMeshNum;
+
+		f32								mSecondsDelta;
+		u32								mMillisecondsDelta;
+
 	};
 }
 

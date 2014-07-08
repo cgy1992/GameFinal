@@ -14,6 +14,8 @@ namespace gf
 	public:
 		virtual bool loadTexture(const std::string& name) = 0;
 
+		virtual bool loadTexturesFromXml(const std::string& name) = 0;
+
 		virtual bool loadPipelinesFromFile(const std::string& name) = 0;
 
 		virtual bool loadMaterialsFromFile(const std::string& name) = 0;

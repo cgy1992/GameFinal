@@ -4,15 +4,23 @@
 #include "ModelReader.h"
 #include "tinyxml2.h"
 
+using namespace gf;
+
 bool generateMaterialFile(const std::string& file_name_without_ext, 
+	const std::string& dest_dir,
 	std::vector<SModelMaterial>& materials,
 	const std::vector<SModelSubsetWrapper>& subsets);
 
-bool generatePipelineFile(const std::string& file_name_without_ext, const SModelFileHeader& header, bool animated);
+bool generatePipelineFile(const std::string& file_name_without_ext, 
+	const std::string& dest_dir,
+	const SModelFileHeader& header, bool animated);
 
-bool generateShaderFile(const std::string& file_name_without_ext, const SModelFileHeader& header);
+bool generateShaderFile(const std::string& file_name_without_ext, 
+	const std::string& dest_dir,
+	const SModelFileHeader& header);
 
 bool generateMeshFile(const std::string& file_name_without_ext,
+	const std::string& dest_dir,
 	const SModelFileHeader& header,
 	const std::vector<SModelSubsetWrapper>& subset_wrappers,
 	const std::vector<SModelBoneWrapper>& bones,

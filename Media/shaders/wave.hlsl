@@ -51,8 +51,8 @@ static float3 gSurfaceNormal = {0, 1.0f, 0};
 	static float gMinTessDistance = 200.0f;
 	static float gMaxTessFactor = 16;
 	static float gMinTessFactor = 1;
-	static float gDispScale1 = 2.0f;
-	static float gDispScale2 = 1.8f;
+	static float gDispScale1 = 1.0f;
+	static float gDispScale2 = 1.0f;
 
 /*
 cbuffer cbFixed

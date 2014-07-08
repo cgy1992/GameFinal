@@ -61,6 +61,7 @@ namespace gf
 	enum E_SHADER_AUTO_VARIABLE_TYPE
 	{
 		/* transforms */
+		ESAVT_TRANSFORMS_BEGIN,							/* transform begin */
 		ESAVT_WORLD_MATRIX,
 		ESAVT_INVERSE_WORLD_MATRIX,
 		ESAVT_TRANSPOSE_WORLD_MATRIX,
@@ -84,22 +85,62 @@ namespace gf
 		ESAVT_WORLD_VIEW_PROJ_MATRIX,
 		ESAVT_INVERSE_WORLD_VIEW_PROJ_MATRIX,
 		ESAVT_TRANSPOSE_WORLD_VIEW_PROJ_MATRIX,
-		ESAVT_INVERSE_TRANSPOSE_WORLD_VIEW_PROJ_MATRIX,
+		ESAVT_INVERSE_TRANSPOSE_WORLD_VIEW_PROJ_MATRIX,	
+		ESAVT_TRANSFORMS_END,							/* transform end */
 
 		/* materials */
+		ESAVT_MATERIAL_BEGIN,					/* material begin */
 		ESAVT_MATERIAL,
 		ESAVT_MATERIAL_AMBIENT,
 		ESAVT_MATERIAL_DIFFUSE,
 		ESAVT_MATERIAL_SPECULAR,
 		ESAVT_MATERIAL_EMISSIVE,
 		ESAVT_TEXTURE,
+		ESAVT_TEXTURE_WIDTH,
+		ESAVT_TEXTURE_HEIGHT,
+		ESAVT_INVERSE_TEXTURE_WIDTH,
+		ESAVT_INVERSE_TEXTURE_HEIGHT,
+		ESAVT_MATERIAL_END,						/* material end */
 
 		/* scene info */
+		ESAVT_SCENE_BEGIN,						/* scene info begin */
 		ESAVT_CAMERA_POSITION,
+		ESAVT_CAMERA_FRUSTUM,
 		ESAVT_LIGHT,
+		ESAVT_SCENE_END,						/* scene info end*/
 
 		/* bone transforms. */
-		ESAVT_BONE_TRANSFORMS
+		ESAVT_BONE_TRANSFORMS,					
+
+		/* terrain */
+		ESAVT_TERRAIN_BEGIN,					/* terrain begin */
+		ESAVT_TERRAIN_ROW_CELL,
+		ESAVT_INVERSE_TERRAIN_ROW_CELL,
+		ESAVT_TERRAIN_ROW_VERTEX,
+		ESAVT_TERRAIN_HEIGHT_SCALE,
+		ESAVT_TERRAIN_VERTEX_SPACE,
+		ESAVT_TERRAIN_TEXCOORD_SCALE,
+		ESAVT_TERRAIN_HEIGHTMAP_TEXTURE,
+		ESAVT_TERRAIN_WIDTH,
+		ESAVT_TERRAIN_PATCH_WIDTH,
+		ESAVT_TERRAIN_ROW_PATCH,
+		ESAVT_TERRAIN_END,						/* terrain end */
+
+		/* window and system */
+
+		ESAVT_WINDOW_SYSTEM_BEGIN,				/* window and system begin */
+		ESAVT_VIEWPORT_WIDTH,
+		ESAVT_VIEWPORT_HEIGHT,
+		ESAVT_INVERSE_VIEWPORT_WIDTH,
+		ESAVT_INVERSE_VIEWPORT_HEIGHT,
+		ESAVT_WINDOW_WIDTH,
+		ESAVT_WINDOW_HEIGHT,
+		ESAVT_INVERSE_WINDOW_WIDTH,
+		ESAVT_INVERSE_WINDOW_HEIGHT,
+		ESAVT_WINDOW_SYSTEM_END,				/* window and system end */
+		
+
+
 	};
 
 	enum E_UPDATE_FREQUENCY
@@ -108,14 +149,8 @@ namespace gf
 		EUF_PER_FRAME
 	};
 
-#define ESAVT_TRANSFORMS_BEGIN ESAVT_WORLD_MATRIX
-#define ESAVT_TRANSFORMS_END   ESAVT_INVERSE_TRANSPOSE_WORLD_VIEW_PROJ_MATRIX
 
-#define ESAVT_MATERIAL_BEGIN ESAVT_MATERIAL
-#define ESAVT_MATERIAL_END   ESAVT_TEXTURE
 
-#define ESAVT_SCENE_BEGIN ESAVT_CAMERA_POSITION
-#define ESAVT_SCENE_END   ESAVT_LIGHT
 
 	struct SShaderAutoVariable
 	{
@@ -158,6 +193,11 @@ namespace gf
 		virtual u32 setFloat(const std::string& varname, f32 v, bool ignoreIfAlreadyUpdated = false) = 0;
 
 		virtual bool setFloat(E_SHADER_TYPE shaderType, const std::string& varname, f32 v, bool ignoreIfAlreadyUpdated = false) = 0;
+
+		virtual u32 setUint(const std::string& varname, u32 v, bool ignoreIfAlreadyUpdated = false) = 0;
+
+		virtual bool setUint(E_SHADER_TYPE shaderType, const std::string& varname, u32 v, bool ignoreIfAlreadyUpdated = false) = 0;
+
 
 		virtual u32 setRawValue(const std::string& varname, void* raw, u32 size, bool ignoreIfAlreadyUpdated = false) = 0;
 

@@ -12,8 +12,22 @@
             </vertex-shader>
             <pixel-shader file="hero.hlsl" main="ps_main">
                 <variable name="gTexture" value="texture"/>
+                <variable name="gLight" value="light" index="1"/>
+                <variable name="gMaterial" value="material"/>
+                <variable name="gEyePos" value="camera_position"/>
             </pixel-shader>
         </shaders>
         <!--You can put render-states here.-->
+
+        
+        <samplers>
+          <sampler name="gSampleState"
+                     addressU="wrap"
+                     addressV="wrap"
+                     filter="MIN_MAG_MIP_LINEAR"
+                     border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+        </samplers>
+
+    
     </pipeline>
 </pipelines>

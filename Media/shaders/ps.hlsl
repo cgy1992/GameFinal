@@ -1,3 +1,4 @@
+//Texture2DMS<float4, 4> gTexture1;
 Texture2D gTexture1;
 
 SamplerState sampleType;
@@ -83,7 +84,10 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 	}
 
 	float4 texColor = gTexture1.Sample(sampleType, pin.Tex);
-	Color = (Color + Diffuse) * texColor + Specular;
+	//float width, height, NumberOfSamples;
+	//gTexture1.GetDimensions(width, height, NumberOfSamples);
+	//float4 texColor = gTexture1.Load(pin.Tex * float2(width, height), 1);
+	Color = texColor * (Color + Diffuse) + Specular;
 	Color.a = 0.5f;
 	//float4 color = gTexture1.Sample(sampleType, pin.Tex) * Color;
 	return Color;

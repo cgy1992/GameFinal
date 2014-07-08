@@ -10,6 +10,7 @@ namespace gf
 		mVertexFormatMapping["R32G32B32A32"] = EGF_R32G32B32A32_FLOAT;
 		mVertexFormatMapping["FLOAT3"] = EGF_R32G32B32_FLOAT;
 		mVertexFormatMapping["R32G32B32"] = EGF_R32G32B32_FLOAT;
+		mVertexFormatMapping["R16"] = EGF_R16_FLOAT;
 		mVertexFormatMapping["FLOAT2"] = EGF_R32G32_FLOAT;
 		mVertexFormatMapping["R32G32"] = EGF_R32G32_FLOAT;
 		mVertexFormatMapping["R8G8B8A8_UINT"] = EGF_R8G8B8A8_UINT;
@@ -68,6 +69,7 @@ namespace gf
 		mShaderVariableMapping["transpose_viewproj_matrix"] = SShaderVariableAttribute(ESAVT_TRANSPOSE_VIEW_PROJ_MATRIX, EUF_PER_FRAME);
 		mShaderVariableMapping["inverse_transpose_viewproj_matrix"] = SShaderVariableAttribute(ESAVT_INVERSE_TRANSPOSE_VIEW_PROJ_MATRIX, EUF_PER_FRAME);
 		mShaderVariableMapping["camera_position"] = SShaderVariableAttribute(ESAVT_CAMERA_POSITION, EUF_PER_FRAME);
+		mShaderVariableMapping["frustum"] = SShaderVariableAttribute(ESAVT_CAMERA_FRUSTUM, EUF_PER_FRAME);
 		mShaderVariableMapping["bone_transforms"] = SShaderVariableAttribute(ESAVT_BONE_TRANSFORMS, EUF_PER_OBJECT);
 		mShaderVariableMapping["worldviewproj_matrix"] = SShaderVariableAttribute(ESAVT_WORLD_VIEW_PROJ_MATRIX, EUF_PER_OBJECT);
 
@@ -78,6 +80,33 @@ namespace gf
 		mShaderVariableMapping["material_specular"] = SShaderVariableAttribute(ESAVT_MATERIAL_SPECULAR, EUF_PER_OBJECT);
 		mShaderVariableMapping["material_emissive"] = SShaderVariableAttribute(ESAVT_MATERIAL_EMISSIVE, EUF_PER_OBJECT);
 		mShaderVariableMapping["texture"] = SShaderVariableAttribute(ESAVT_TEXTURE);
+		mShaderVariableMapping["texture_width"] = SShaderVariableAttribute(ESAVT_TEXTURE_WIDTH);
+		mShaderVariableMapping["texture_height"] = SShaderVariableAttribute(ESAVT_TEXTURE_HEIGHT);
+		mShaderVariableMapping["inverse_texture_width"] = SShaderVariableAttribute(ESAVT_INVERSE_TEXTURE_WIDTH);
+		mShaderVariableMapping["inverse_texture_height"] = SShaderVariableAttribute(ESAVT_INVERSE_TEXTURE_HEIGHT);
+
+
+		/* terrain variables */
+		mShaderVariableMapping["terrain_row_cell"] = SShaderVariableAttribute(ESAVT_TERRAIN_ROW_CELL, EUF_PER_FRAME);
+		mShaderVariableMapping["inverse_terrain_row_cell"] = SShaderVariableAttribute(ESAVT_INVERSE_TERRAIN_ROW_CELL, EUF_PER_FRAME);
+		mShaderVariableMapping["terrain_row_vertex"] = SShaderVariableAttribute(ESAVT_TERRAIN_ROW_VERTEX, EUF_PER_FRAME);
+		mShaderVariableMapping["terrain_height_scale"] = SShaderVariableAttribute(ESAVT_TERRAIN_HEIGHT_SCALE, EUF_PER_FRAME);
+		mShaderVariableMapping["terrain_vertex_space"] = SShaderVariableAttribute(ESAVT_TERRAIN_VERTEX_SPACE, EUF_PER_FRAME);
+		mShaderVariableMapping["terrain_texcoord_scale"] = SShaderVariableAttribute(ESAVT_TERRAIN_TEXCOORD_SCALE, EUF_PER_FRAME);
+		mShaderVariableMapping["terrain_heightmap"] = SShaderVariableAttribute(ESAVT_TERRAIN_HEIGHTMAP_TEXTURE, EUF_PER_FRAME);
+		mShaderVariableMapping["terrain_width"] = SShaderVariableAttribute(ESAVT_TERRAIN_WIDTH, EUF_PER_FRAME);
+		mShaderVariableMapping["terrain_patch_width"] = SShaderVariableAttribute(ESAVT_TERRAIN_PATCH_WIDTH, EUF_PER_FRAME);
+		mShaderVariableMapping["terrain_row_patch"] = SShaderVariableAttribute(ESAVT_TERRAIN_ROW_PATCH, EUF_PER_FRAME);
+
+		/* window and system variable */
+		mShaderVariableMapping["viewport_width"] = SShaderVariableAttribute(ESAVT_VIEWPORT_WIDTH, EUF_PER_FRAME);
+		mShaderVariableMapping["viewport_height"] = SShaderVariableAttribute(ESAVT_VIEWPORT_HEIGHT, EUF_PER_FRAME);
+		mShaderVariableMapping["inverse_viewport_width"] = SShaderVariableAttribute(ESAVT_INVERSE_VIEWPORT_WIDTH, EUF_PER_FRAME);
+		mShaderVariableMapping["inverse_viewport_height"] = SShaderVariableAttribute(ESAVT_INVERSE_VIEWPORT_HEIGHT, EUF_PER_FRAME);
+		mShaderVariableMapping["window_width"] = SShaderVariableAttribute(ESAVT_WINDOW_WIDTH, EUF_PER_FRAME);
+		mShaderVariableMapping["window_height"] = SShaderVariableAttribute(ESAVT_WINDOW_HEIGHT, EUF_PER_FRAME);
+		mShaderVariableMapping["inverse_window_width"] = SShaderVariableAttribute(ESAVT_INVERSE_WINDOW_WIDTH, EUF_PER_FRAME);
+		mShaderVariableMapping["inverse_window_height"] = SShaderVariableAttribute(ESAVT_INVERSE_WINDOW_HEIGHT, EUF_PER_FRAME);
 
 		// init render state mapping.
 		mRenderStateMapping["FILL_MODE"] = ERS_FILL_MODE;
@@ -490,9 +519,9 @@ namespace gf
 		const char* freqText = node->Attribute("update-frequency");
 		if (freqText)
 		{
-			if (stricmp(freqText, "frame") == 0)
+			if (_stricmp(freqText, "frame") == 0)
 				freq = EUF_PER_FRAME;
-			else if (stricmp(freqText, "object") == 0)
+			else if (_stricmp(freqText, "object") == 0)
 				freq = EUF_PER_OBJECT;
 		}
 
@@ -537,7 +566,6 @@ namespace gf
 		SRenderStateCreateParams rsCreateParams;
 		rsCreateParams.StateType = renderStateType;
 
-		u32 value;
 		bool boolValue;
 		bool bValidRenderState = false;
 		switch (renderStateType)
@@ -721,13 +749,13 @@ namespace gf
 
 	bool CResourceXmlParser::getBoolValue(const char* s, bool& value) const
 	{
-		if (stricmp(s, "true") == 0)
+		if (_stricmp(s, "true") == 0)
 		{
 			value = true;
 			return true;
 		}
 
-		if (stricmp(s, "false") == 0)
+		if (_stricmp(s, "false") == 0)
 		{
 			value = false;
 			return true;
@@ -784,6 +812,194 @@ namespace gf
 		return true;
 	}
 
+	bool CResourceXmlParser::parseTextureXmlFile(const std::string& filepath, 
+		std::vector<SRenderTargetParams>& renderTargetParamsArray,
+		std::vector<SDepthStencilSurfaceParams>& depthStencilParamsArray) const
+	{
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile(filepath.c_str()) != tinyxml2::XML_NO_ERROR)
+			return false;
+
+		/* get the pipeline root node. */
+		tinyxml2::XMLElement* root_node = doc.FirstChildElement("textures");
+		if (!root_node)
+		{
+			GF_PRINT_CONSOLE_INFO("The <textures> is not the root element in the texture file: %s.\n", filepath.c_str());
+			return false;
+		}
+
+		tinyxml2::XMLElement* node = root_node->FirstChildElement();
+		
+		while (node)
+		{
+			const char* nodeName = node->Name();
+			if (_stricmp(nodeName, "render-target") == 0)
+			{
+				SRenderTargetParams createParams;
+				if (handleRenderTargetNode(filepath, node, createParams))
+					renderTargetParamsArray.push_back(createParams);
+			}
+			else if (_stricmp(nodeName, "depth-stencil") == 0 || _stricmp(nodeName, "depth-stencil-surface") == 0)
+			{
+				SDepthStencilSurfaceParams createParams;
+				if (handleDepthStencilSurfaceNode(filepath, node, createParams))
+					depthStencilParamsArray.push_back(createParams);
+			}
+
+			node = node->NextSiblingElement();
+		}
+		return true;
+	}
+
+	bool CResourceXmlParser::handleRenderTargetNode(const std::string& filepath,
+		tinyxml2::XMLElement* node,
+		SRenderTargetParams& createParams) const
+	{
+		const char* name = node->Attribute("name");
+		if (!name)
+		{
+			GF_PRINT_CONSOLE_INFO("One render-target in file '%s' doesn't have 'name' attribute, which is a must \
+				so it can't be created.", filepath.c_str());
+			return false;
+		}
+
+		createParams.Name = name;
+		
+		tinyxml2::XMLElement* size_node = node->FirstChildElement("size");
+		if (size_node)
+		{
+			if (size_node->QueryUnsignedAttribute("width", &createParams.Width) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
+			{
+				GF_PRINT_CONSOLE_INFO("Render-target's width must be an unsigned integer. File location: %s\n", filepath.c_str());
+				return false;
+			}
+
+			if (size_node->QueryUnsignedAttribute("height", &createParams.Height) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
+			{
+				GF_PRINT_CONSOLE_INFO("Render-target's height must be an unsigned integer. File location: %s\n", filepath.c_str());
+				return false;
+			}
+		}
+
+		tinyxml2::XMLElement* format_node = node->FirstChildElement("format");
+		if (format_node)
+		{
+			const char* value = format_node->Attribute("value");
+			if (value)
+			{
+				std::string szFormat = value;
+				E_GI_FORMAT format = getInputLayoutFormat(szFormat);
+				if (format != EGF_UNKNOWN)
+					createParams.Format = format;
+			}
+		}
+
+		tinyxml2::XMLElement* multisample_node = node->FirstChildElement("multisample");
+		if (multisample_node)
+		{
+			const char* szEnabled = multisample_node->Attribute("enabled");
+			getBoolValue(szEnabled, createParams.MultiSampling);
+
+			if (multisample_node->QueryUnsignedAttribute("count", &createParams.Count) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
+			{
+				GF_PRINT_CONSOLE_INFO("Render-target's Count must be an unsigned integer. File location: %s\n", filepath.c_str());
+				return false;
+			}
+
+			if (multisample_node->QueryUnsignedAttribute("quality", &createParams.Quality) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
+			{
+				GF_PRINT_CONSOLE_INFO("Render-target's Quality must be an unsigned integer. File location: %s\n", filepath.c_str());
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool CResourceXmlParser::handleDepthStencilSurfaceNode(const std::string& filepath,
+		tinyxml2::XMLElement* node,
+		SDepthStencilSurfaceParams& createParams) const
+	{
+		const char* name = node->Attribute("name");
+		if (!name)
+		{
+			GF_PRINT_CONSOLE_INFO("One depth-stencil-surface object in file '%s' doesn't have 'name' attribute, which is a must \
+				so it can't be created.", filepath.c_str());
+			return false;
+		}
+
+		createParams.Name = name;
+
+		tinyxml2::XMLElement* size_node = node->FirstChildElement("size");
+		if (size_node)
+		{
+			if (size_node->QueryUnsignedAttribute("width", &createParams.Width) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
+			{
+				GF_PRINT_CONSOLE_INFO("Render-target's width must be an unsigned integer. File location: %s\n", filepath.c_str());
+				return false;
+			}
+
+			if (size_node->QueryUnsignedAttribute("height", &createParams.Height) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
+			{
+				GF_PRINT_CONSOLE_INFO("Render-target's height must be an unsigned integer. File location: %s\n", filepath.c_str());
+				return false;
+			}
+		}
+
+		tinyxml2::XMLElement* format_node = node->FirstChildElement("format");
+		if (format_node)
+		{
+			if (size_node->QueryUnsignedAttribute("depth", &createParams.DepthBits) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
+			{
+				GF_PRINT_CONSOLE_INFO("Render-target's depth bits must be an unsigned integer. File location: %s\n", filepath.c_str());
+				return false;
+			}
+
+			if (size_node->QueryUnsignedAttribute("stencil", &createParams.StencilBits) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
+			{
+				GF_PRINT_CONSOLE_INFO("Render-target's stencil bits must be an unsigned integer. File location: %s\n", filepath.c_str());
+				return false;
+			}
+		}
+
+		tinyxml2::XMLElement* multisample_node = node->FirstChildElement("multisample");
+		if (multisample_node)
+		{
+			const char* szEnabled = multisample_node->Attribute("enabled");
+			getBoolValue(szEnabled, createParams.MultiSampling);
+
+			if (multisample_node->QueryUnsignedAttribute("count", &createParams.Count) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
+			{
+				GF_PRINT_CONSOLE_INFO("Render-target's Count must be an unsigned integer. File location: %s\n", filepath.c_str());
+				return false;
+			}
+
+			if (multisample_node->QueryUnsignedAttribute("quality", &createParams.Quality) == tinyxml2::XML_WRONG_ATTRIBUTE_TYPE)
+			{
+				GF_PRINT_CONSOLE_INFO("Render-target's Quality must be an unsigned integer. File location: %s\n", filepath.c_str());
+				return false;
+			}
+		}
+
+		tinyxml2::XMLElement* bindshader_node = node->FirstChildElement("bind-shader");
+		if (bindshader_node)
+		{
+			const char* value = bindshader_node->Attribute("value");
+			if (_stricmp(value, "depth") == 0)
+			{
+				createParams.BindingShader = true;
+				createParams.BindDepthToShader = true;
+			}
+			else if (_stricmp(value, "stencil") == 0)
+			{
+				createParams.BindingShader = true;
+				createParams.BindDepthToShader = false;
+			}
+		}
+
+		return true;
+	}
+
 	bool CResourceXmlParser::handleMaterialNode(const std::string& filepath,
 		tinyxml2::XMLElement* node,
 		SMaterialCreateParams& createParams) const
@@ -792,7 +1008,7 @@ namespace gf
 		if (!name)
 		{
 			GF_PRINT_CONSOLE_INFO("One material in file '%s' doesn't have 'name' attribute, which is a must \
-								  							  							  							  so it can't be created.", filepath.c_str());
+				so it can't be created.", filepath.c_str());
 			return false;
 		}
 
@@ -863,7 +1079,7 @@ namespace gf
 			}
 
 			/* check if two textures with the same index. if so, give warning. */
-			for (u32 i = 0; i < SMaterial::MAX_TEXTURE_COUNT; i++)
+			for (u32 i = 0; i < MAX_TEXTURE_COUNT; i++)
 			{
 				if (textureIndexOccupies[i] > 1)
 				{

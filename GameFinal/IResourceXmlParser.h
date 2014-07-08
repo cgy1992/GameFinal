@@ -58,11 +58,55 @@ namespace gf
 			std::vector<SMaterialTextureParam>		TextureParams;
 		};
 
+		struct SRenderTargetParams
+		{
+			std::string								Name;
+			u32										Width;
+			u32										Height;
+			E_GI_FORMAT								Format;
+			bool									MultiSampling;
+			u32										Count;
+			u32										Quality;
+			SRenderTargetParams()
+				:Width(0), Height(0),
+				MultiSampling(false), 
+				Count(1), Quality(0), 
+				Format(EGF_R32G32B32A32_FLOAT)
+			{
+			}
+		};
+
+		struct SDepthStencilSurfaceParams
+		{
+			std::string								Name;
+			u32										Width;
+			u32										Height;
+			u32										DepthBits;
+			u32										StencilBits;
+			bool									MultiSampling;
+			u32										Count;
+			u32										Quality;
+			bool									BindingShader;
+			bool									BindDepthToShader;
+
+			SDepthStencilSurfaceParams()
+				:Width(0), Height(0), DepthBits(24), StencilBits(8),
+				MultiSampling(false), Count(1), Quality(0),
+				BindingShader(false), BindDepthToShader(true)
+			{
+
+			}
+		};
+
 	public:
 
 		virtual bool parsePipelineFile(const std::string& filepath, std::vector<SPipelineCreateParams>& createParamsArray) const = 0;
 
 		virtual bool parseMaterialFile(const std::string& filepath, std::vector<SMaterialCreateParams>& createParamsArray) const = 0;
+
+		virtual bool parseTextureXmlFile(const std::string& filepath, 
+			std::vector<SRenderTargetParams>& renderTargetParamsArray, 
+			std::vector<SDepthStencilSurfaceParams>& depthStencilParamsArray) const = 0;
 
 	};
 }

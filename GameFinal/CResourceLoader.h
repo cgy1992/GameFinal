@@ -28,6 +28,8 @@ namespace gf
 
 		virtual bool loadTexture(const std::string& name);
 
+		virtual bool loadTexturesFromXml(const std::string& name);
+
 		virtual bool loadPipelinesFromFile(const std::string& name);
 
 		virtual bool loadMaterialsFromFile(const std::string& name);
@@ -35,6 +37,10 @@ namespace gf
 		virtual bool loadPipeline(const std::string& fullpath, const IResourceXmlParser::SPipelineCreateParams& createParams) const;
 
 		virtual bool loadMaterial(const std::string& fullpath, const IResourceXmlParser::SMaterialCreateParams& createParams) const;
+
+		virtual bool createRenderTarget(const std::string& fullpath, const IResourceXmlParser::SRenderTargetParams& createParams) const;
+
+		virtual bool createDepthStencilSurface(const std::string& fullpath, const IResourceXmlParser::SDepthStencilSurfaceParams& createParams) const;
 
 		virtual bool loadMeshFromFile(const std::string& name);
 

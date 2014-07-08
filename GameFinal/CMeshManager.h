@@ -5,6 +5,7 @@
 #include "IResourceFactory.h"
 #include "CSortCodeAllocator.h"
 #include "IGeometryCreator.h"
+#include "ITextureManager.h"
 
 namespace gf
 {
@@ -12,7 +13,7 @@ namespace gf
 	class CMeshManager : public IMeshManager
 	{
 	public:
-		CMeshManager(IResourceFactory* pResourceFactory, IGeometryCreator* pGeometryCreator);
+		CMeshManager(IResourceFactory* pResourceFactory, IGeometryCreator* pGeometryCreator, ITextureManager* pTextureManager);
 
 		virtual ISimpleMesh* createSimpleMesh(
 			const std::string& name,
@@ -73,17 +74,73 @@ namespace gf
 			f32 vTiles = 1.0f,
 			E_MEMORY_USAGE usage = EMU_STATIC);
 
+		virtual ITerrainMesh* createTerrainMesh(
+			const std::string& name,
+			const std::string& szRawFileName,
+			f32 vertexSpace,
+			f32 heightScale,
+			bool bCreateTessellationMesh = false,
+			bool bCreateNormal = false,
+			f32 fTexcoordScale = 1.0f,
+			u32 cellsPerPatch = 64,
+			E_MEMORY_USAGE usage = EMU_STATIC);
+
 		virtual ISimpleMesh* getSimpleMesh(const std::string& name);
 
 		virtual IModelMesh* getModelMesh(const std::string& name);
 
 		virtual IAnimatedMesh* getAnimatedMesh(const std::string& name);
 
+		virtual ITerrainMesh* getTerrainMesh(const std::string& name);
+
 		_DEFINE_RESOURCE_DESTROY_METHODS(CMeshManager, mMeshMap, IMesh);
 
+		/*
+		bool destroy(const std::string& name)
+		{
+			auto it = mMeshMap.find(name);
+			if (it == mMeshMap.end()) return false;
+			IMesh* object = it->second;
+			if (object->getReferenceCount() == 1)
+			{
+				object->drop();
+				mMeshMap.erase(it);
+				return true;
+			}
+			return false;
+		}
+		
+		bool destroy(IMesh* object)
+		{
+			if (!object)
+				return false;
+
+			auto it = mMeshMap.find(object->getName());
+			if (it == mMeshMap.end())
+				return false;
+			if (object->getReferenceCount() == 1)
+			{
+				object->drop();
+				mMeshMap.erase(it);
+				return true;
+			}
+			return false;
+		}
+		
+		void destroyAll()								
+		{													
+			for (auto it = mMeshMap.begin(); it != mMeshMap.end(); it++)	
+				ReleaseReferenceCounted(it->second);				
+		}													
+		virtual ~CMeshManager()
+		{
+			destroyAll();
+		}
+		*/
 	private:
 		IResourceFactory*					mResourceFactory;
 		IGeometryCreator*					mGeometryCreator;
+		ITextureManager*					mTextureManager;
 
 		std::map<std::string, IMesh*>		mMeshMap;
 

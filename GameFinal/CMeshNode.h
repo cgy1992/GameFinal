@@ -22,6 +22,7 @@ namespace gf
 			, mMesh(mesh)
 			, mMaterial(material)
 		{
+			AddReferenceCounted(mMesh);
 			AddReferenceCounted(mMaterial);
 		}
 

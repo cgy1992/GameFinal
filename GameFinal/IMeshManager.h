@@ -5,7 +5,8 @@
 #include "IModelMesh.h"
 #include "IAnimatedMesh.h"
 #include "IAnimatedMeshBuffer.h"
-#include "IReferenceCounted.h"
+#include "ITerrainMesh.h"
+
 namespace gf
 {
 	class IMeshManager : public IReferenceCounted
@@ -69,6 +70,17 @@ namespace gf
 			f32 vTiles = 1.0f,
 			E_MEMORY_USAGE usage = EMU_STATIC) = 0;
 
+		virtual ITerrainMesh* createTerrainMesh(
+			const std::string& name,
+			const std::string& szRawFileName,
+			f32 vertexSpace,
+			f32 heightScale,
+			bool bCreateTessellationMesh = false,
+			bool bCreateNormal = false,
+			f32 fTexcoordScale = 1.0f,
+			u32 cellsPerPatch = 64,
+			E_MEMORY_USAGE usage = EMU_STATIC) = 0;
+
 		virtual IMesh* getMesh(const std::string& name) = 0;
 
 		virtual ISimpleMesh* getSimpleMesh(const std::string& name) = 0;
@@ -76,6 +88,9 @@ namespace gf
 		virtual IModelMesh* getModelMesh(const std::string& name) = 0;
 
 		virtual IAnimatedMesh* getAnimatedMesh(const std::string& name) = 0;
+
+		virtual ITerrainMesh* getTerrainMesh(const std::string& name) = 0;
+
 
 		_DECLARE_RESOURCE_DESTROY_METHODS(IMesh);
 

@@ -8,12 +8,15 @@
 #include "CFpsCameraNode.h"
 #include "CModelMeshNode.h"
 #include "COctreeManager.h"
+#include "CTerrainNode.h"
 #include "CEmptyNode.h"
 
 namespace gf
 {
 	CSceneManager::CSceneManager(IDevice* device)
 		:ISceneManager(device)
+		, mMillisecondsDelta(0)
+		, mSecondsDelta(0)
 	{
 		//get Video Driver object
 		mVideoDriver = device->getVideoDriver();
@@ -102,6 +105,23 @@ namespace gf
 		return node;
 	}
 
+	ITerrainNode* CSceneManager::addTerrainNode(
+		ITerrainMesh* mesh,
+		IMaterial* material,
+		ISceneNode* parent,
+		const XMFLOAT3& position)
+	{
+		if (!mesh)
+			return nullptr;
+
+		if (!parent)
+			parent = this;
+
+		ITerrainNode* node = new CTerrainNode(parent, this, mesh, material, position);
+
+		return node;
+	}
+
 	void CSceneManager::collectMeshNodeShaders(IMeshNode* node)
 	{
 		// collect all the shaders ( for per-frame variables optimization)
@@ -133,7 +153,7 @@ namespace gf
 	{
 		if (ENT_SOLID_NODE)
 		{
-			if (!isCulled(node))
+			if (!node->needCulling() || !isCulled(node))
 			{
 				collectMeshNodeShaders(node);
 				mSolidNodes.push_back(node);
@@ -156,28 +176,33 @@ namespace gf
 		return false;
 	}
 
+	void CSceneManager::update(u32 delta)
+	{
+		mMillisecondsDelta = delta;
+		mSecondsDelta = static_cast<f32>(delta)* 0.001f;
+
+		ISceneNode::update(delta);
+	}
+
 	void CSceneManager::render()
 	{
 
 	}
 
-	void CSceneManager::drawAll()
+	void CSceneManager::draw(ISceneNode* node)
 	{
-		OnAnimate(0);
-
 		mSolidNodes.clear();
 		mActiveShaders.clear();
 
 		mRenderedMeshNum = 0;
 
-		OnRegisterSceneNode();
+		node->OnRegisterSceneNode();
 
 		/* reset all the active shaders. (for per-frame variables optimizations.) */
 		for (auto it = mActiveShaders.begin(); it != mActiveShaders.end(); it++)
 		{
 			(*it)->reset();
 		}
-
 
 		/* sort all the solid nodes according to the sort code. */
 		std::sort(mSolidNodes.begin(), mSolidNodes.end(), [](ISceneNode* node1, ISceneNode* node2){
@@ -190,6 +215,11 @@ namespace gf
 		{
 			(*it)->render();
 		}
+	}
+
+	void CSceneManager::drawAll()
+	{
+		draw(this);
 	}
 
 
@@ -376,5 +406,7 @@ namespace gf
 
 		return node;
 	}
+
+	
 
 }

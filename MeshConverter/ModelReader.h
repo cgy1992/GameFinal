@@ -9,6 +9,7 @@
 #include <assimp/postprocess.h>     // Post processing flags
 #include <assimp/material.h>
 
+using namespace gf;
 
 const u32 MATERIAL_NAME_MAX_LENGTH = 128;
 const f32 INF_FLOAT = 1000000.0f;
@@ -97,5 +98,12 @@ void loadAnimations(SModelFileHeader& header,
 XMFLOAT4X4 convertFromAiMatrix(aiMatrix4x4 m);
 
 bool isReallyAnimatedMesh(const aiScene* scene);
+
+
+bool parseCommandLine(int argc, char *argv[],
+	std::string& file_full_path,
+	std::string& dest_dir,
+	u32& vertex_elements,
+	f32& scale);
 
 #endif
