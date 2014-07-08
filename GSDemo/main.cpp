@@ -4,6 +4,8 @@
 #pragma comment(lib, "GameFinal.lib")
 #pragma comment(lib, "winmm.lib")
 
+using namespace gf;
+
 struct Vertex
 {
 	XMFLOAT3 pos;
@@ -37,7 +39,7 @@ int main()
 	vertices[3] = Vertex(XMFLOAT3(1.0f, 1.0f, 0.0f), XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f), 0.5f);
 	vertices[4] = Vertex(XMFLOAT3(1.0f, -1.0f, 0.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f), 0.5f);
 
-	ISimpleMesh* mesh = meshManager->createSimpleMesh("pointlist", vertices, NULL, 5, sizeof(Vertex), 0, false);
+	ISimpleMesh* mesh = meshManager->createSimpleMesh("pointlist", vertices, NULL, 5, sizeof(Vertex), 0, math::SAxisAlignedBox(), false);
 	IMeshNode* meshNode = smgr->addMeshNode(mesh, nullptr, nullptr);
 	meshNode->setMaterialName("test/gs_material");
 
@@ -49,6 +51,7 @@ int main()
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
+		smgr->update();
 		smgr->drawAll();
 
 		driver->endScene();
