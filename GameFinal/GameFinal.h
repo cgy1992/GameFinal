@@ -25,6 +25,7 @@
 #include "ISceneManager.h"
 #include "IMeshNode.h"
 #include "ILightNode.h"
+#include "xnacollision/xnacollision.h"
 
 #ifndef GAMEFINAL_H
 #define GAMEFINAL_H

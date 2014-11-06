@@ -1,11 +1,4 @@
-//Texture2DMS<float4, 4> gTexture;
-Texture2D gTexture;
-
-cbuffer cbPerFrame
-{
-	float gInverseWindowWidth;
-	float gInverseWindowHeight;
-};
+#include "../built-in-resources/GameFinal.hlsl"
 
 SamplerState gSamplerState;
 
@@ -43,8 +36,8 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 
 	for(int i = 0; i < 4; i++)
 	{
-		Color += gSamples[i].w * gTexture.Sample(gSamplerState, pin.Tex + 
-			float2(gSamples[i].x * gInverseWindowWidth, gSamples[i].y * gInverseWindowHeight));
+		Color += gSamples[i].w * GF_TEXTURE_0.Sample(gSamplerState, pin.Tex + 
+			float2(gSamples[i].x * GF_SCREEN_SIZE.z, gSamples[i].y * GF_SCREEN_SIZE.w));
 	}
 
 	return Color;

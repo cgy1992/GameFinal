@@ -12,11 +12,12 @@ namespace gf
 	public:
 		CModelMeshNode(ISceneNode* parent,
 			ISceneManager* smgr,
+			bool bStatic,
 			IModelMesh* mesh,
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
-			:IMeshNode(parent, smgr, position, rotation, scale)
+			:IMeshNode(parent, smgr, bStatic, position, rotation, scale)
 			, mMesh(mesh)
 			, mMaterials(mesh->getSubsetCount())
 		{
@@ -33,7 +34,7 @@ namespace gf
 
 		virtual bool setMaterialName(const std::string& name, u32 subset = 0);
 
-		virtual void render();
+		virtual void render(E_PIPELINE_USAGE usage);
 
 		virtual void OnRegisterSceneNode(bool bRecursion = true);
 
@@ -49,15 +50,15 @@ namespace gf
 			ISceneNode::updateAbsoluteTransformation();
 
 			const math::SAxisAlignedBox& aabb = mMesh->getAabb();
-			getLocalAxis(mOBB.Axis);
-			mOBB.Center = getAbsolutePosition();
-			mOBB.Extents = aabb.Extents;
+			mOBB = computeOrientedBox(aabb);
 		}
 
 		virtual E_SCENE_NODE_TYPE getNodeType() const
 		{
 			return ESNT_MODEL_MESH;
 		}
+
+
 
 	private:
 

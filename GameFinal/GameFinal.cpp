@@ -31,6 +31,9 @@ namespace gf
 		HRESULT hr = device->init();
 		if (FAILED(hr))
 			return NULL;
+
+		IDevice::_setInstance(device);
+
 		return device;
 	}
 }

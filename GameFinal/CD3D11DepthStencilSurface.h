@@ -5,13 +5,67 @@
 #include "gfGIFormat.h"
 #include "gfUtil.h"
 #include "D3DUtil.h"
+#include "CD3D11Driver.h"
 
 namespace gf
 {
 	class CD3D11DepthStencilSurface : public IDepthStencilSurface
 	{
 	public:
-		CD3D11DepthStencilSurface(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext, const std::string& name, u32 sortcode)
+		CD3D11DepthStencilSurface(ID3D11Device* d3d11Device,
+			ID3D11DeviceContext* d3d11DeviceContext)
+			:md3dDevice(d3d11Device)
+			, md3dDeviceContext(d3d11DeviceContext)
+			, md3dDepthStencilView(NULL)
+			, md3dShaderResourceView(NULL)
+		{
+
+		}
+
+		bool create(ITexture* texture, ID3D11Texture2D* pTexture2D,
+			DXGI_FORMAT depthStencilFormat, 
+			ID3D11ShaderResourceView* d3dShaderResourceView,
+			bool multiSampling);
+
+		ID3D11DepthStencilView* getDepthStencilView()
+		{
+			return md3dDepthStencilView;
+		}
+
+		ID3D11ShaderResourceView* getShaderResourceView()
+		{
+			return md3dShaderResourceView; 
+		}
+
+		virtual void clear(f32 depth = 1.0f, u8 stencil = 0);
+
+		virtual void clearDepth(f32 depth = 1.0f);
+
+		virtual void clearStencil(u8 stencil = 0);
+
+		virtual void apply(E_SHADER_TYPE shaderType, u32 slot);
+
+
+
+		virtual ~CD3D11DepthStencilSurface()
+		{
+			ReleaseCOM(md3dDepthStencilView);
+		}
+
+	private:
+
+		ID3D11DepthStencilView*			md3dDepthStencilView;
+		ID3D11Device*					md3dDevice;
+		ID3D11DeviceContext*			md3dDeviceContext;
+		ID3D11ShaderResourceView*		md3dShaderResourceView;
+	};
+
+	/*
+	class CD3D11DepthStencilSurface : public IDepthStencilSurface
+	{
+	public:
+		CD3D11DepthStencilSurface(ID3D11Device* pd3dDevice, ID3D11DeviceContext* pd3dDeviceContext,
+			const std::string& name, u32 sortcode, CD3D11Driver* d3d11Driver)
 			:IDepthStencilSurface(name, sortcode)
 			, md3dDevice(pd3dDevice)
 			, md3dDeviceContext(pd3dDeviceContext)
@@ -20,6 +74,7 @@ namespace gf
 			, md3dShaderResourceView(nullptr)
 			, mTextureWidth(0)
 			, mTextureHeight(0)
+			, md3d11Driver(d3d11Driver)
 		{
 
 		}
@@ -35,10 +90,7 @@ namespace gf
 			return md3dShaderResourceView;
 		}
 
-		ID3D11DepthStencilView* getDepthStencilView()
-		{
-			return md3dDepthStencilView;
-		}
+
 
 		virtual void clear(f32 depth = 1.0f, u8 stencil = 0);
 
@@ -63,9 +115,13 @@ namespace gf
 			return mTextureHeight;
 		}
 
+		virtual void apply(E_SHADER_TYPE shaderType, u32 slot);
+
 	private:
 		ID3D11Device*					md3dDevice;
 		ID3D11DeviceContext*			md3dDeviceContext;
+		CD3D11Driver*					md3d11Driver;
+
 		ID3D11Texture2D*				md3dTexture;
 		ID3D11ShaderResourceView*		md3dShaderResourceView;
 		ID3D11DepthStencilView*			md3dDepthStencilView;
@@ -73,6 +129,7 @@ namespace gf
 		u32								mTextureHeight;
 
 	};
+	*/
 }
 
 #endif

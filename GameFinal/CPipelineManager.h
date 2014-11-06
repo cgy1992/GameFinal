@@ -17,14 +17,17 @@ namespace gf
 			E_PRIMITIVE_TYPE primitiveType,
 			IRenderState* renderState);
 
-		virtual IPipeline* get(const std::string& name);
+		virtual IPipeline* get(const std::string& name, bool bLoadIfNotExist = true);
 
 		_DEFINE_RESOURCE_DESTROY_METHODS(CPipelineManager, mPipelinesCache, IPipeline);
 
 	protected:
 
-		std::map<std::string, IPipeline*>	mPipelinesCache;
-		IResourceFactory*					mResourceFactory;
+		std::map<std::string, IPipeline*>					mPipelinesCache;
+		IResourceFactory*									mResourceFactory;
+
+		std::map<std::string, SShaderVariableAttribute>			mBuiltInVariables;
+		std::map<std::string, ISampler*>						mBuiltInSamplers;
 
 	};
 }

@@ -3,9 +3,12 @@
 #include "gfUtil.h"
 namespace gf
 {
+
 	CRenderStateManager::CRenderStateManager(IResourceFactory* pResourceFactory)
 		:mResourceFactory(pResourceFactory)
 	{
+		
+
 	}
 
 	IRenderState* CRenderStateManager::create(const std::string& name)
@@ -39,4 +42,10 @@ namespace gf
 
 		return nullptr;
 	}
+
+	void CRenderStateManager::createStockRenderStates()
+	{
+		// create shadow map sampler.
+	}
+
 }

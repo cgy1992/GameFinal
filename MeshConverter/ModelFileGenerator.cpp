@@ -56,31 +56,39 @@ bool generateMaterialFile(const std::string& file_name_without_ext,
 		//set the 'name' attribute of <material>
 		material_node->SetAttribute("name", material.Name);
 
+		// create <attributes> node
+		tinyxml2::XMLElement* attributes_node = doc.NewElement("attributes");
+		material_node->InsertFirstChild(attributes_node);
+
 		// create the <ambient> sub-node
-		tinyxml2::XMLElement* ambient_node = doc.NewElement("ambient");
+		tinyxml2::XMLElement* ambient_node = doc.NewElement("attribute");
+		ambient_node->SetAttribute("name", "ambient");
 		generateColorString(material.Ambient, color_str);
-		ambient_node->SetAttribute("color", color_str);
+		ambient_node->SetAttribute("value", color_str);
 
 		// create the <diffuse> sub-node
-		tinyxml2::XMLElement* diffuse_node = doc.NewElement("diffuse");
+		tinyxml2::XMLElement* diffuse_node = doc.NewElement("attribute");
+		diffuse_node->SetAttribute("name", "diffuse");
 		generateColorString(material.Diffuse, color_str);
-		diffuse_node->SetAttribute("color", color_str);
+		diffuse_node->SetAttribute("value", color_str);
 
 		// create the <specular> sub-node
-		tinyxml2::XMLElement* specular_node = doc.NewElement("specular");
+		tinyxml2::XMLElement* specular_node = doc.NewElement("attribute");
+		specular_node->SetAttribute("name", "specular");
 		generateColorString(material.Specular, color_str);
-		specular_node->SetAttribute("color", color_str);
+		specular_node->SetAttribute("value", color_str);
 
 		// create the emissive sub-node 
-		tinyxml2::XMLElement* emissive_node = doc.NewElement("emissive");
+		tinyxml2::XMLElement* emissive_node = doc.NewElement("attribute");
+		emissive_node->SetAttribute("name", "emissive");
 		generateColorString(material.Emissive, color_str);
-		emissive_node->SetAttribute("color", color_str);
+		emissive_node->SetAttribute("value", color_str);
 
 		// add the four colos's node to <material>
-		material_node->InsertEndChild(ambient_node);
-		material_node->InsertEndChild(diffuse_node);
-		material_node->InsertEndChild(specular_node);
-		material_node->InsertEndChild(emissive_node);
+		attributes_node->InsertEndChild(ambient_node);
+		attributes_node->InsertEndChild(diffuse_node);
+		attributes_node->InsertEndChild(specular_node);
+		attributes_node->InsertEndChild(emissive_node);
 
 		// create the <pipelines> node
 		tinyxml2::XMLElement* pipelines_node = doc.NewElement("pipelines");
@@ -272,6 +280,13 @@ bool generateShaderFile(const std::string& file_name_without_ext,
 	const SModelFileHeader& header)
 {
 	std::string	shader_file_name = dest_dir + file_name_without_ext + std::string(".hlsl");
+
+	std::ifstream input;
+	input.open(shader_file_name, std::ios::in);
+	if (!input.fail())
+		return true;
+
+	input.close();
 
 	std::ofstream file;
 	file.open(shader_file_name, std::ios::out);

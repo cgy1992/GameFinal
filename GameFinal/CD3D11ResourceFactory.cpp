@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CD3D11ResourceFactory.h"
-#include "CD3D11Texture.h"
+#include "CD3D11Texture2D.h"
 #include "CD3D11RenderState.h"
 #include "CD3D11Pipeline.h"
 #include "CD3D11Driver.h"
@@ -15,8 +15,10 @@
 #include "CD3D11DomainShader.h"
 #include "CD3D11RenderTarget.h"
 #include "CD3D11DepthStencilSurface.h"
-
+#include "CD3D11TextureCube.h"
+#include "CD3D11Texture3D.h"
 #include "gfUtil.h"
+
 namespace gf
 {
 	CD3D11ResourceFactory::CD3D11ResourceFactory(
@@ -40,7 +42,7 @@ namespace gf
 
 	ITexture* CD3D11ResourceFactory::loadTextureFromFile(const std::string& name, const std::string& filename, u32 sortcode)
 	{
-		CD3D11Texture* pTexture = new CD3D11Texture(md3dDevice, md3dDeviceContext, name, sortcode);
+		CD3D11Texture2D* pTexture = new CD3D11Texture2D(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
 
 		if (!pTexture->loadFromFile(filename))
 		{
@@ -51,18 +53,14 @@ namespace gf
 		return pTexture;
 	}
 
-	ITexture* CD3D11ResourceFactory::createTexture(
+	ITextureCube* CD3D11ResourceFactory::loadCubeTextureFromFile(
 		const std::string& name,
-		u32 sortcode,
-		u32 width,
-		u32 height,
-		void* data,
-		u32 mipLevel,
-		E_GI_FORMAT format,
-		u32 pitch)
+		const std::string& filepath,
+		u32 sortcode)
 	{
-		CD3D11Texture* pTexture = new CD3D11Texture(md3dDevice, md3dDeviceContext, name, sortcode);
-		if (!pTexture->create(width, height, data, mipLevel, format, pitch))
+		CD3D11TextureCube* pTexture = new CD3D11TextureCube(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
+
+		if (!pTexture->loadFromFile(filepath))
 		{
 			pTexture->drop();
 			pTexture = nullptr;
@@ -71,9 +69,75 @@ namespace gf
 		return pTexture;
 	}
 
+	ITexture* CD3D11ResourceFactory::createTexture2D(
+		const std::string& name,
+		u32 sortcode,
+		u32 width,
+		u32 height,
+		u32 bindFlags,
+		void* data,
+		u32 mipLevel,
+		E_GI_FORMAT format,
+		u32 pitch)
+	{
+		CD3D11Texture2D* pTexture = new CD3D11Texture2D(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
+
+		if (!pTexture->create(width, height, bindFlags, data, mipLevel, format, pitch))
+		{
+			pTexture->drop();
+			pTexture = nullptr;
+		}
+
+		return pTexture;
+	}
+
+	ITexture* CD3D11ResourceFactory::createDepthStencilTexture(
+		const std::string& name,
+		u32 sortcode,
+		u32 width,
+		u32 height,
+		u32 depthBitNum,
+		u32 stencilBitNum,
+		bool multiSampling,
+		u32 multiSamplingCount,
+		u32 multiSamplingQuality,
+		bool bShaderBound,
+		bool bindDepthToShader)
+	{
+		CD3D11Texture2D* pTexture = new CD3D11Texture2D(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
+
+		if (!pTexture->createDepthStencilTexture(width, height, depthBitNum, stencilBitNum, 
+			multiSampling, multiSamplingCount, multiSamplingQuality,
+			bShaderBound, bindDepthToShader))
+		{
+			pTexture->drop();
+			pTexture = nullptr;
+		}
+
+		return pTexture;
+	}
+
+	ITexture3D* CD3D11ResourceFactory::createTexture3D(const std::string& name,
+		u32 sortcode, u32 width, u32 height, u32 depth,
+		void* data, u32 mipLevel, E_GI_FORMAT format,
+		u32 pitch /*= 0*/, u32 slicePitch /*= 0*/)
+	{
+		CD3D11Texture3D* pTexture = new CD3D11Texture3D(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
+		if (!pTexture->create(width, height, depth, data, mipLevel, format, pitch, slicePitch))
+		{
+			pTexture->drop();
+			pTexture = nullptr;
+		}
+
+		return pTexture;
+	}
+
+
+	/*
 	IRenderTarget* CD3D11ResourceFactory::createRenderTarget(
 		const std::string& name,
 		u32 sortcode,
+		bool temporay,
 		u32 width,
 		u32 height,
 		E_GI_FORMAT format,
@@ -81,7 +145,24 @@ namespace gf
 		u32 multiSamplingCount,
 		u32 multiSamplingQuality)
 	{
-		CD3D11RenderTarget* pRenderTarget = new CD3D11RenderTarget(md3dDevice, md3dDeviceContext, name, sortcode);
+		if (width == 0)
+			width = IDevice::getInstance()->getClientWidth();
+		if (height == 0)
+			height = IDevice::getInstance()->getClientHeight();
+
+		if (!multiSampling)
+		{
+			multiSamplingCount = 1;
+			multiSamplingQuality = 0;
+		}
+		else if (multiSamplingCount == 0)
+		{
+			const SCreationParameters& param = IDevice::getInstance()->getCreationParameters();
+			multiSamplingCount = param.MultiSamplingCount;
+			multiSamplingQuality = param.MultiSamplingQuality;
+		}
+
+		CD3D11RenderTarget* pRenderTarget = new CD3D11RenderTarget(md3dDevice, md3dDeviceContext, name, sortcode, temporay, md3dDriver);
 		if (!pRenderTarget->create(width, height, format, multiSampling, multiSamplingCount, multiSamplingQuality))
 		{
 			pRenderTarget->drop();
@@ -104,7 +185,7 @@ namespace gf
 		bool bShaderBound,
 		bool bindDepthToShader)
 	{
-		CD3D11DepthStencilSurface* pDepthStencilSurface = new CD3D11DepthStencilSurface(md3dDevice, md3dDeviceContext, name, sortcode);
+		CD3D11DepthStencilSurface* pDepthStencilSurface = new CD3D11DepthStencilSurface(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
 		if (!pDepthStencilSurface->create(width, height, depthBitNum, stencilBitNum, multiSampling, multiSamplingCount, 
 			multiSamplingQuality, bShaderBound, bindDepthToShader))
 		{
@@ -113,6 +194,7 @@ namespace gf
 		}
 		return pDepthStencilSurface;
 	}
+	*/
 
 	IRenderState* CD3D11ResourceFactory::createRenderState(const std::string& name)
 	{
@@ -128,9 +210,9 @@ namespace gf
 		d3d11desc.AddressV = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(desc.AddressV);
 		d3d11desc.AddressW = static_cast<D3D11_TEXTURE_ADDRESS_MODE>(desc.AddressW);
 		memcpy(&d3d11desc.BorderColor, &desc.BorderColor, sizeof(f32)* 4);
+		d3d11desc.ComparisonFunc = getD3d11ComparisonFunc(desc.ComparsionFunc);
 
 		/* set default values of d3d11desc struct */
-		d3d11desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 
 		d3d11desc.MaxAnisotropy = 16;
 		d3d11desc.MaxLOD = FLT_MAX;
@@ -163,26 +245,27 @@ namespace gf
 		const char* szFilename,
 		const char* szFunctionName,
 		u32 id,
-		const std::string& shaderName)
+		const std::string& shaderName,
+		const SShaderMacroSet& macros)
 	{
 		CD3D11Shader* shader = nullptr;
 
 		switch (shaderType)
 		{
 		case EST_VERTEX_SHADER:
-			shader = new CD3D11VertexShader(id, shaderName, md3dDevice, md3dDeviceContext, md3dDriver);
+			shader = new CD3D11VertexShader(id, shaderName, macros, md3dDevice, md3dDeviceContext, md3dDriver);
 			break;
 		case EST_PIXEL_SHADER:
-			shader = new CD3D11PixelShader(id, shaderName, md3dDevice, md3dDeviceContext, md3dDriver);
+			shader = new CD3D11PixelShader(id, shaderName, macros, md3dDevice, md3dDeviceContext, md3dDriver);
 			break;
 		case EST_GEOMETRY_SHADER:
-			shader = new CD3D11GeometryShader(id, shaderName, md3dDevice, md3dDeviceContext, md3dDriver);
+			shader = new CD3D11GeometryShader(id, shaderName, macros, md3dDevice, md3dDeviceContext, md3dDriver);
 			break;
 		case EST_HULL_SHADER:
-			shader = new CD3D11HullShader(id, shaderName, md3dDevice, md3dDeviceContext, md3dDriver);
+			shader = new CD3D11HullShader(id, shaderName, macros, md3dDevice, md3dDeviceContext, md3dDriver);
 			break;
 		case EST_DOMAIN_SHADER:
-			shader = new CD3D11DomainShader(id, shaderName, md3dDevice, md3dDeviceContext, md3dDriver);
+			shader = new CD3D11DomainShader(id, shaderName, macros, md3dDevice, md3dDeviceContext, md3dDriver);
 			break;
 		}
 
@@ -266,4 +349,6 @@ namespace gf
 
 		return buffer;
 	}
+
+
 }

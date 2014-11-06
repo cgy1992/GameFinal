@@ -22,6 +22,14 @@ namespace gf
 			f32 uTiles,
 			f32 vTiles,
 			SGeometryData& geoData);
+
+		virtual void createSphereData(
+			f32 radius,
+			u32 sliceCount,
+			u32 stackCount,
+			SGeometryData& geoData);
+
+		virtual void createQuadData(XMFLOAT3 vertices[], math::SAxisAlignedBox& aabb);
 	};
 
 }

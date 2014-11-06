@@ -8,27 +8,21 @@
 namespace gf
 {
 
-	void CMeshNode::render()
+	void CMeshNode::render(E_PIPELINE_USAGE usage)
 	{
 		if (!mMaterial)
 			return;
 
 		mMesh->bind();
 
-		u32 pipelineCount = mMaterial->getPipelineCount();
-		for (u32 i = 0; i < pipelineCount; i++)
-		{
-			if (mMaterial->isPipelineEnabled(i))
-			{
-				IPipeline* pipeline = mMaterial->getPipeline(i);
+		IPipeline* pipeline = mMaterial->getPipeline(usage);
 
-				CShaderVariableInjection::inject(this, pipeline, 0);
+		CShaderVariableInjection::inject(this, pipeline, 0);
 
-				pipeline->apply();
+		pipeline->apply(usage);
 
-				mMesh->draw();
-			}
-		}
+		mMesh->draw();
+		
 	}
 
 	void CMeshNode::OnRegisterSceneNode(bool bRecursion)
@@ -56,14 +50,15 @@ namespace gf
 
 	void CMeshNode::calcSortCode()
 	{
-		/* mesh - 8 bit
-		pipeline - 48 bit
-		material - 8 bit
-		*/
-		mSortCode = ((u64)mMesh->getSortCode() << 56) | (mMaterial->getPipeline(0)->getSortCode() << 8);
-		ITexture* pTexture = mMaterial->getTexture(0);
-		if (pTexture != nullptr)
-			mSortCode |= pTexture->getSortCode();
+		/* customed order - 8 bit, mesh - 8 bit, pipeline - 48 bit */
+
+		IVideoDriver* driver = mSceneManager->getVideoDriver();
+		E_PIPELINE_USAGE usage = driver->getPipelineUsage();
+
+		u32 meshCode = (mMesh) ? mMesh->getSortCode() : 0;
+		u64 pipeCode = (mMaterial && mMaterial->getPipeline(usage)) ? mMaterial->getPipeline(usage)->getSortCode() : 0;
+
+		mSortCode = ((u64)mRenderOrder << 56) | ((u64)meshCode << 48) | pipeCode;
 	}
 }
 

@@ -15,7 +15,9 @@
 #include "IAnimatedMeshBuffer.h"
 #include "ITerrainMesh.h"
 #include "IRenderTarget.h"
+#include "ITextureCube.h"
 #include "IDepthStencilSurface.h"
+#include "ITexture3D.h"
 
 namespace gf
 {
@@ -25,37 +27,53 @@ namespace gf
 
 		virtual ~IResourceFactory(){}
 
-		void setResourceGroupManager(IResourceGroupManager* resourceGroupManager) 
-		{ 
-			mResourceGroupManager = resourceGroupManager;
-		}
-
 		virtual ITexture* loadTextureFromFile(
 			const std::string& name,
 			const std::string& filepath,
 			u32 sortcode) = 0;
 
-		virtual ITexture* createTexture(
+		virtual ITextureCube* loadCubeTextureFromFile(
+			const std::string& name,
+			const std::string& filepath,
+			u32 sortcode) = 0;
+
+		virtual ITexture* createTexture2D(
 			const std::string& name,
 			u32 sortcode,
 			u32 width,
 			u32 height,
+			u32 bindFlags,
 			void* data,
 			u32 mipLevel,
 			E_GI_FORMAT format,
 			u32 pitch = 0) = 0;
 
+		virtual ITexture3D* createTexture3D(
+			const std::string& name,
+			u32 sortcode,
+			u32 width,
+			u32 height,
+			u32 depth,
+			void* data,
+			u32 mipLevel,
+			E_GI_FORMAT format,
+			u32 pitch = 0,
+			u32 slicePitch = 0) = 0;
+
+		/*
 		virtual IRenderTarget* createRenderTarget(
 			const std::string& name,
 			u32 sortcode,
+			bool temporay,
 			u32 width,
 			u32 height,
 			E_GI_FORMAT format,
 			bool multiSampling,
 			u32 multiSamplingCount, 
 			u32 multiSamplingQuality) = 0;
+			*/
 
-		virtual IDepthStencilSurface* createDepthStencilSurface(
+		virtual ITexture* createDepthStencilTexture(
 			const std::string& name,
 			u32 sortcode,
 			u32 width, 
@@ -86,7 +104,8 @@ namespace gf
 			const char* szFilename,
 			const char* szFunctionName,
 			u32 sortCode,
-			const std::string& shaderName) = 0;
+			const std::string& shaderName,
+			const SShaderMacroSet& macros) = 0;
 
 		virtual IInputLayout* createInputLayout(
 			u32 sortCode,
@@ -171,9 +190,11 @@ namespace gf
 			u32 vertexStride,
 			bool bit32Index) = 0;
 
+		
+
 
 	protected:
-		IResourceGroupManager*		mResourceGroupManager;
+		_DECLARE_SINGLETON_INSTANCE(IResourceFactory);
 	};
 }
 

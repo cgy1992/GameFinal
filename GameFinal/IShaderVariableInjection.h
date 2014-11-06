@@ -10,6 +10,8 @@ namespace gf
 	{
 	public:
 		virtual void inject(IMeshNode* mesh, IPipeline* pipeline, u32 subset = 0) const = 0;
+
+		//_DECLARE_SINGLETON_INSTANCE(IShaderVariableInjection);
 	};
 }
 #endif

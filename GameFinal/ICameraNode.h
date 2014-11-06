@@ -15,16 +15,21 @@ namespace gf
 			f32 aspectRatio,
 			f32 fov,
 			f32 nearZ,
-			f32 farZ)
-			:ISceneNode(parent, smgr, position)
+			f32 farZ, 
+			bool bPerspectiveProj)
+			:ISceneNode(parent, smgr, false, position)
 			, mFovAngleY(fov)
 			, mNearZ(nearZ)
 			, mFarZ(farZ)
 			, mAspectRatio(aspectRatio)
+			, mPerspectiveProj(bPerspectiveProj)
 		{
-
+			mViewWidth = 300.0f;
+			mViewHeight = 200.0f;
 		}
 
+		virtual void lookAt(const XMFLOAT3& lookat) = 0;
+		virtual void look(const XMFLOAT3& dir) = 0;
 		virtual void walk(f32 unit) = 0;
 		virtual void fly(f32 unit) = 0;
 		virtual void strafe(f32 unit) = 0;
@@ -84,9 +89,34 @@ namespace gf
 			return mAspectRatio;
 		}
 
+		void setViewWidth(f32 viewWidth)
+		{
+			mViewWidth = viewWidth;
+		}
+
+		void setViewHeight(f32 viewHeight)
+		{
+			mViewHeight = viewHeight;
+		}
+
+		f32 getViewWidth() const
+		{
+			return mViewWidth;
+		}
+
+		f32 getViewHeight() const
+		{
+			return mViewHeight;
+		}
+
 		XMMATRIX calcProjMatrix() const
 		{
-			XMMATRIX proj = XMMatrixPerspectiveFovLH(mFovAngleY, mAspectRatio, mNearZ, mFarZ);
+			XMMATRIX proj;
+			if (mPerspectiveProj)
+				proj = XMMatrixPerspectiveFovLH(mFovAngleY, mAspectRatio, mNearZ, mFarZ);
+			else
+				proj = XMMatrixOrthographicLH(mViewWidth, mViewHeight, mNearZ, mFarZ);
+
 			return proj;
 		}
 
@@ -106,12 +136,16 @@ namespace gf
 		XMFLOAT4X4		mViewMatrix;
 		XMFLOAT4X4		mProjMatrix;
 		XMFLOAT4X4		mViewProjMatrix;
-		math::SFrustum		mFrustum;
+		math::SFrustum	mFrustum;
 
 		f32				mFovAngleY;
 		f32				mAspectRatio;
 		f32				mNearZ;
 		f32				mFarZ;
+		f32				mViewWidth;
+		f32				mViewHeight;
+
+		bool			mPerspectiveProj;
 	};
 
 }

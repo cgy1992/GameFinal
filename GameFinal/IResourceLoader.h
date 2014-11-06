@@ -21,6 +21,12 @@ namespace gf
 		virtual bool loadMaterialsFromFile(const std::string& name) = 0;
 
 		virtual bool loadMeshFromFile(const std::string& name) = 0;
+
+		virtual IPipeline* loadPipeline(const std::string& pipelineName, const std::string& filepath) = 0;
+
+		virtual IMaterial* loadMaterial(const std::string& materialName, const std::string& filepath) = 0;
+
+		_DECLARE_SINGLETON_INSTANCE(IResourceLoader);
 	};
 
 }

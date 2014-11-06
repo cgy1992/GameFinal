@@ -1,0 +1,26 @@
+<materials>
+    <material name="falali/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="falali/pipeline_01"/>
+        </pipelines>
+        <textures/>
+    </material>
+    <material name="falali/material_01">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="specular" value="0.350000, 0.350000, 0.350000, 1.000000"/>
+            <attribute name="emissive" value="0.350000, 0.350000, 0.350000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="falali/pipeline_01"/>
+        </pipelines>
+        <textures/>
+    </material>
+</materials>

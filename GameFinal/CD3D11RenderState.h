@@ -70,21 +70,7 @@ namespace gf
 			return D3D11_BLEND_OP_ADD;
 		}
 
-		D3D11_COMPARISON_FUNC convertComparisonFunc(E_COMPARISON_FUNC func)
-		{
-			switch (func)
-			{
-			case ECF_NEVER: return D3D11_COMPARISON_NEVER;
-			case ECF_LESS: return D3D11_COMPARISON_LESS;
-			case ECF_EQUAL: return D3D11_COMPARISON_EQUAL;
-			case ECF_LESS_EQUAL: return D3D11_COMPARISON_LESS_EQUAL;
-			case ECF_GREATER: return D3D11_COMPARISON_GREATER;
-			case ECF_NOT_EQUAL: return D3D11_COMPARISON_NOT_EQUAL;
-			case ECF_GREATER_EQUAL: return D3D11_COMPARISON_GREATER_EQUAL;
-			case ECF_ALWAYS: return D3D11_COMPARISON_ALWAYS;
-			}
-			return D3D11_COMPARISON_ALWAYS;
-		}
+
 
 		D3D11_STENCIL_OP convertStencilOp(E_STENCIL_OP op)
 		{

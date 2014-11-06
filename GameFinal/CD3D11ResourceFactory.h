@@ -4,6 +4,8 @@
 #include "CResourceFactory.h"
 #include "CD3D11RenderState.h"
 #include "CD3D11Sampler.h"
+#include "CD3D11Texture3D.h"
+
 namespace gf
 {
 	class CD3D11Driver;
@@ -21,19 +23,52 @@ namespace gf
 			const std::string& filename,
 			u32 sortcode);
 
-		virtual ITexture* createTexture(
+		virtual ITextureCube* loadCubeTextureFromFile(
+			const std::string& name,
+			const std::string& filepath,
+			u32 sortcode);
+
+		virtual ITexture* createTexture2D(
 			const std::string& name,
 			u32 sortcode,
 			u32 width,
 			u32 height,
+			u32 bindFlags,
 			void* data,
 			u32 mipLevel,
 			E_GI_FORMAT format,
 			u32 pitch = 0);
 
+		virtual ITexture3D* createTexture3D(
+			const std::string& name,
+			u32 sortcode,
+			u32 width,
+			u32 height,
+			u32 depth,
+			void* data,
+			u32 mipLevel,
+			E_GI_FORMAT format,
+			u32 pitch = 0,
+			u32 slicePitch = 0);
+
+		virtual ITexture* createDepthStencilTexture(
+			const std::string& name,
+			u32 sortcode,
+			u32 width,
+			u32 height,
+			u32 depthBitNum,
+			u32 stencilBitNum,
+			bool multiSampling, 
+			u32 multiSamplingCount,
+			u32 multiSamplingQuality,
+			bool bShaderBound,
+			bool bindDepthToShader);
+
+		/*
 		virtual IRenderTarget* createRenderTarget(
 			const std::string& name,
 			u32 sortcode,
+			bool temporay,
 			u32 width,
 			u32 height,
 			E_GI_FORMAT format,
@@ -53,6 +88,7 @@ namespace gf
 			u32 multiSamplingQuality,
 			bool bShaderBound,
 			bool bindDepthToShader);
+			*/
 
 		virtual IRenderState* createRenderState(const std::string& name);
 
@@ -72,7 +108,8 @@ namespace gf
 			const char* szFilename,
 			const char* szFunctionName,
 			u32 id,
-			const std::string& shaderName);
+			const std::string& shaderName,
+			const SShaderMacroSet& macros);
 
 		virtual IInputLayout* createInputLayout(
 			u32 sortCode,

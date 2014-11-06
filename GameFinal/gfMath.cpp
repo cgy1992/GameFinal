@@ -29,6 +29,16 @@ namespace gf
 			return true;
 		}
 
+		static inline BOOL XMVector3AnyTrue(FXMVECTOR V)
+		{
+			XMVECTOR C;
+
+			// Duplicate the fourth element from the first element.
+			C = XMVectorSwizzle(V, 0, 1, 2, 0);
+
+			return XMComparisonAnyTrue(XMVector4EqualIntR(C, XMVectorTrueInt()));
+		}
+
 
 		E_INTERSECT_STATE IntersectAabbPlane(const SAxisAlignedBox& aabb, const XMFLOAT4& plane)
 		{
@@ -224,7 +234,61 @@ namespace gf
 				(maxPoint.y - minPoint.y) * 0.5f,
 				(maxPoint.z - minPoint.z) * 0.5f);
 		}
-	}	
+
+		E_INTERSECT_STATE IntersectSphereFrustum(const SSphere& sphere, const SFrustum& frustum)
+		{
+			XMFLOAT4 c(sphere.Center.x, sphere.Center.y, sphere.Center.z, 1.0f);
+			XMVECTOR center = XMLoadFloat4(&c);
+
+			bool bIntersect = false;
+			for (u32 i = 0; i < 6; i++)
+			{
+				XMVECTOR plane = XMLoadFloat4(&frustum.Planes[i]);
+				XMVECTOR dist = XMVector4Dot(center, plane);
+				f32 r = XMVectorGetX(dist);
+				
+				if (r < -sphere.Radius)
+					return EIS_OUTSIDE;
+
+				if (r < sphere.Radius)
+					bIntersect = true;
+			}
+
+			return bIntersect ? EIS_INTERSECTING : EIS_INSIDE;
+		}
+
+		bool IntersectTwoAabbs(const SAxisAlignedBox& aabb1, const SAxisAlignedBox& aabb2)
+		{
+			XMVECTOR CenterA = XMLoadFloat3(&aabb1.Center);
+			XMVECTOR ExtentsA = XMLoadFloat3(&aabb1.Extents);
+
+			XMVECTOR CenterB = XMLoadFloat3(&aabb2.Center);
+			XMVECTOR ExtentsB = XMLoadFloat3(&aabb2.Extents);
+
+			XMVECTOR MinA = CenterA - ExtentsA;
+			XMVECTOR MaxA = CenterA + ExtentsA;
+
+			XMVECTOR MinB = CenterB - ExtentsB;
+			XMVECTOR MaxB = CenterB + ExtentsB;
+
+			// for each i in (x, y, z) if a_min(i) > b_max(i) or b_min(i) > a_max(i) then return FALSE
+			XMVECTOR Disjoint = XMVectorOrInt(XMVectorGreater(MinA, MaxB), XMVectorGreater(MinB, MaxA));
+
+			return !XMVector3AnyTrue(Disjoint);
+		}
+
+		void intersectOrientedBoxOrientedBox(const SOrientedBox& obb1, const SOrientedBox& obb2)
+		{
+			
+		}
+
+		f32 RandomFloat(f32 a, f32 b)
+		{
+			// get a float from 0 to 1
+			f32 i = rand() % 10000 / 10000.0f;
+			return i * (b - a) + a;
+		}
+	}
 }
 
 

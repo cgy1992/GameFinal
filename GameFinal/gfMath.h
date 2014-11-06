@@ -1,10 +1,10 @@
 #ifndef __GF_MATH_H__
 #define __GF_MATH_H__
 
+#include "xnacollision/xnacollision.h"
+
 namespace gf
 {
-	
-
 	/*
 	class Math
 	{
@@ -30,6 +30,14 @@ namespace gf
 		{
 			XMFLOAT3				Center;            // Center of the box.
 			XMFLOAT3				Extents;           // Distance from the center to each side.
+
+			XNA::AxisAlignedBox getXnaAxisAlignedBox() const
+			{
+				XNA::AxisAlignedBox aabb;
+				aabb.Center = Center;
+				aabb.Extents = Extents;
+				return aabb;
+			}
 		};
 
 		struct SOrientedBox
@@ -37,6 +45,35 @@ namespace gf
 			XMFLOAT3				Center;
 			XMFLOAT3				Extents;
 			XMFLOAT3				Axis[3];
+
+			XNA::OrientedBox getXnaOrientedBox() const
+			{
+				XNA::OrientedBox obb;
+				obb.Center = Center;
+				obb.Extents = Extents;
+
+				XMMATRIX rot = XMLoadFloat3x3(reinterpret_cast<const XMFLOAT3X3*>(&Axis[0]));
+				XMFLOAT4X4 M;
+				XMStoreFloat4x4(&M, rot);
+
+				XMVECTOR quaternion = XMQuaternionRotationMatrix(rot);
+				XMStoreFloat4(&obb.Orientation, quaternion);
+				return obb;
+			}
+		};
+
+		struct SSphere
+		{
+			XMFLOAT3				Center;
+			f32						Radius;
+
+			XNA::Sphere getXnaSphere() const
+			{
+				XNA::Sphere sphere;
+				sphere.Center = Center;
+				sphere.Radius = Radius;
+				return sphere;
+			}
 		};
 
 		struct SFrustum
@@ -65,6 +102,8 @@ namespace gf
 
 		bool FloatArrayEqual(const f32 color1[], const f32 color2[], u32 elementCount = 4, f32 e = 0.00001f);
 
+		f32 RandomFloat(f32 a, f32 b);
+
 		E_INTERSECT_STATE IntersectAabbPlane(const SAxisAlignedBox& aabb, const XMFLOAT4& plane);
 
 		E_INTERSECT_STATE IntersectOrientedBoxPlane(const SOrientedBox& obb, const XMFLOAT4& plane);
@@ -75,9 +114,17 @@ namespace gf
 
 		E_INTERSECT_STATE IntersectAabbFrustum(const SAxisAlignedBox& aabb, const SFrustum& frustum);
 
+		E_INTERSECT_STATE IntersectSphereFrustum(const SSphere& sphere, const SFrustum& frustum);
+
+		bool IntersectTwoAabbs(const SAxisAlignedBox& aabb1, const SAxisAlignedBox& aabb2);
+
+		bool IntersectAabbAndOBB();
+
 		void ComputeAabbFromPoints(SAxisAlignedBox* aabb, u32 count, const XMFLOAT3 points[]);
 
 		void ComputeAabbFromOrientedBox(SAxisAlignedBox* aabb, const SOrientedBox& obb);
+
+		void intersectOrientedBoxOrientedBox(const SOrientedBox& obb1, const SOrientedBox& obb2);
 	}
 }
 

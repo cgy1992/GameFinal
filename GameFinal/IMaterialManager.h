@@ -11,17 +11,20 @@ namespace gf
 	{
 	public:
 		virtual IMaterial* create(const std::string& name,
-			const IMaterial::Material& colors,
-			IPipeline* pipelines[],
-			u32 pipelineCount) = 0;
+			IPipeline* pipelines[]) = 0;
+
+		virtual IMaterial* create(const std::string& name,
+			IPipeline* pipeline) = 0;
 
 		virtual bool add(IMaterial& material) = 0;
 		//virtual IMaterial* load() = 0;
-		virtual IMaterial* get(const std::string& name) = 0;
+		virtual IMaterial* get(const std::string& name, bool bLoadIfNotExist = true) = 0;
 
 		virtual bool destroy(const std::string& name) = 0;
 
 		virtual bool destroy(IMaterial* material) = 0;
+
+		_DECLARE_SINGLETON_INSTANCE(IMaterialManager);
 	};
 
 }

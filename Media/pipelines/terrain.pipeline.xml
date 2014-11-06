@@ -14,7 +14,7 @@
       <pixel-shader file="terrain.hlsl" main="ps_main">
         <variable name="gTexture" value="texture" index="0"/>
         <variable name="gLight" value="light" index="1"/>
-        <variable name="gMaterial" value="material"/>
+        <variable name="gMaterial" value="material_color"/>
         <variable name="gEyePos" value="camera_position"/>
         <variable name="gFrustumPlanes" value="frustum"/>
       </pixel-shader>
@@ -62,14 +62,16 @@
       <pixel-shader file="terrain2.hlsl" main="ps_main">
         <variable name="gGrassTexture" value="texture" index="0"/>
         <variable name="gLight" value="light" index="1"/>
-        <variable name="gMaterial" value="material"/>
+        <variable name="gMaterial" value="material_color"/>
         <variable name="gEyePos" value="camera_position"/>
-        
+        <variable name="gPower" value="m_power"/>
+        <variable name="gDirLights" value="dir_lights"/>
+        <variable name="gDirLightsNum" value="dir_lights_num"/>
       </pixel-shader>
     </shaders>
     <render-states>
       <render-state name="stencil_read_mask" value="0x0000ffff"/>
-      <render-state name="fill_mode" value="wireframe"/>
+     
       <!--<render-state name="fill_mode" value="wireframe"/>-->
     </render-states>
     <samplers>

@@ -1,3 +1,4 @@
+/* Assimp : http://sourceforge.net/projects/assimp/files/assimp-3.0/assimp-sdk-3.0-setup.exe/download */
 #include <iostream>
 #include <Windows.h>
 #include <GameFinal.h>

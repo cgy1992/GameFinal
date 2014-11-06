@@ -10,13 +10,23 @@
 #include "COctreeManager.h"
 #include "CTerrainNode.h"
 #include "CEmptyNode.h"
+#include "CMeshManager.h"
+#include "CCompositor.h"
+#include "CDirectionalLightNode.h"
+#include "CPointLightNode.h"
 
 namespace gf
 {
-	CSceneManager::CSceneManager(IDevice* device)
-		:ISceneManager(device)
+	CSceneManager::CSceneManager(IDevice* device, const math::SAxisAlignedBox& aabb)
+		:ISceneManager(device, aabb)
 		, mMillisecondsDelta(0)
 		, mSecondsDelta(0)
+		, mSkyDomeNode(nullptr)
+		, mQuadMeshNode(nullptr)
+		, mDefaultOctree(nullptr)
+		, mShadowMapCamera(nullptr)
+		, mAmbient(0.5f, 0.5f, 0.5f, 1.0f)
+		, mCurrentShadowLightID(0)
 	{
 		//get Video Driver object
 		mVideoDriver = device->getVideoDriver();
@@ -24,26 +34,44 @@ namespace gf
 		//get Resource Factory
 		IResourceFactory* pResourceFactory = mVideoDriver->getResourceFactory();
 
-		mLightNodes.fill(nullptr);
 		mCameraNodes.fill(nullptr);
+		
+
+		// create shadow map camera
+		mShadowMapCamera = this->addCameraNode(SHADOW_CAMERA_ID, nullptr, XMFLOAT3(0, 0, 0),
+			XMFLOAT3(0, 0, 0.5), XMFLOAT3(0, 1.0f, 0), false, XM_PIDIV4, 0, 1000.0f);
+		
 		mActiveCameraId = EMPTY_CAMERA_ID;
+		
+		// create default octree.
+		mDefaultOctree = this->addOctreeManagerNode(nullptr, aabb.Extents.x * 2.0f, aabb.Extents.y * 2.0f,
+			aabb.Extents.z * 2.0f, aabb.Center, 8);
+		mDefaultOctree->remove();
+	}
+	
+	void CSceneManager::init()
+	{
+		
 	}
 
 	CSceneManager::~CSceneManager()
 	{
 		//ReleaseReferenceCounted(mGeometryCreator);
+		//ReleaseReferenceCounted(mSkyDomeNode);
+		ReleaseReferenceCounted(mQuadMeshNode);
 	}
 
 	ISceneNode* CSceneManager::addEmptyNode(
 		ISceneNode* parent,
+		bool bStatic,
 		const XMFLOAT3& position,
 		const XMFLOAT3& rotation,
 		const XMFLOAT3& scale)
 	{
-		if (!parent)
-			parent = this;
+		parent = getParentNode(parent, bStatic);
 
-		ISceneNode* node = new CEmptyNode(parent, this, position, rotation, scale);
+		ISceneNode* node = new CEmptyNode(nullptr, this, position, rotation, scale);
+		parent->addChild(node);
 
 		return node;
 	}
@@ -53,6 +81,7 @@ namespace gf
 		ISimpleMesh* mesh,
 		IMaterial* material,
 		ISceneNode* parent,
+		bool bStatic,
 		const XMFLOAT3& position,
 		const XMFLOAT3& rotation,
 		const XMFLOAT3& scale)
@@ -60,10 +89,9 @@ namespace gf
 		if (!mesh)
 			return nullptr;
 
-		if (!parent)
-			parent = this;
+		parent = getParentNode(parent, bStatic);
 
-		IMeshNode* node = new CMeshNode(nullptr, this, mesh, material, position, rotation, scale);
+		IMeshNode* node = new CMeshNode(nullptr, this, bStatic, mesh, material, position, rotation, scale);
 		parent->addChild(node);
 
 		return node;
@@ -72,6 +100,7 @@ namespace gf
 	IMeshNode* CSceneManager::addModelMeshNode(
 		IModelMesh* mesh,
 		ISceneNode* parent,
+		bool bStatic,
 		const XMFLOAT3& position,
 		const XMFLOAT3& rotation,
 		const XMFLOAT3& scale)
@@ -79,10 +108,10 @@ namespace gf
 		if (!mesh)
 			return nullptr;
 
-		if (!parent)
-			parent = this;
+		parent = getParentNode(parent, bStatic);
 
-		IMeshNode* node = new CModelMeshNode(parent, this, mesh, position, rotation, scale);
+		IMeshNode* node = new CModelMeshNode(nullptr, this, bStatic, mesh, position, rotation, scale);
+		parent->addChild(node);
 
 		return node;
 	}
@@ -90,6 +119,7 @@ namespace gf
 	IAnimatedMeshNode* CSceneManager::addAnimatedMeshNode(
 		IAnimatedMesh* mesh,
 		ISceneNode* parent,
+		bool bStatic,
 		const XMFLOAT3& position,
 		const XMFLOAT3& rotation,
 		const XMFLOAT3& scale)
@@ -97,11 +127,11 @@ namespace gf
 		if (!mesh)
 			return nullptr;
 
-		if (!parent)
-			parent = this;
+		parent = getParentNode(parent, bStatic);
 
-		IAnimatedMeshNode* node = new CAnimatedMeshNode(parent, this, mesh, position, rotation, scale);
-
+		IAnimatedMeshNode* node = new CAnimatedMeshNode(nullptr, this, bStatic, mesh, position, rotation, scale);
+		parent->addChild(node);
+		
 		return node;
 	}
 
@@ -125,23 +155,22 @@ namespace gf
 	void CSceneManager::collectMeshNodeShaders(IMeshNode* node)
 	{
 		// collect all the shaders ( for per-frame variables optimization)
+		E_PIPELINE_USAGE usage = mVideoDriver->getPipelineUsage();
+
 		u32 subsetCount = node->getSubsetCount();
 		for (u32 i = 0; i < subsetCount; i++)
 		{
 			IMaterial* material = node->getMaterial(i);
 			if (material)
 			{
-				for (u32 j = 0; j < material->getPipelineCount(); j++)
+				IPipeline* pipeline = material->getPipeline(usage);
+				if (pipeline)
 				{
-					IPipeline* pipeline = material->getPipeline(j);
-					if (pipeline)
+					for (u32 k = 0; k < EST_SHADER_COUNT; k++)
 					{
-						for (u32 k = 0; k < EST_SHADER_COUNT; k++)
-						{
-							IShader* shader = pipeline->getShader((E_SHADER_TYPE)k);
-							if (shader != nullptr)
-								mActiveShaders.insert(shader);
-						}
+						IShader* shader = pipeline->getShader((E_SHADER_TYPE)k);
+						if (shader != nullptr)
+							mActiveShaders.insert(shader);
 					}
 				}
 			}
@@ -151,12 +180,35 @@ namespace gf
 
 	void CSceneManager::registerNodeForRendering(IMeshNode* node, E_NODE_TYPE nodeType)
 	{
-		if (ENT_SOLID_NODE)
+		if (nodeType == ENT_SOLID_NODE)
 		{
 			if (!node->needCulling() || !isCulled(node))
 			{
-				collectMeshNodeShaders(node);
-				mSolidNodes.push_back(node);
+				if (!mVideoDriver->isRenderingShadowMap() ||
+					node->isProjectingShadow(mCurrentShadowLightID))
+				{
+					collectMeshNodeShaders(node);
+					mSolidNodes.push_back(node);
+				}
+			}
+		}
+	}
+
+	void CSceneManager::registerNodeForRendering(ILightNode* node)
+	{
+		// if not visible, it means that the light has been turned off.
+		if (!node->isVisible())
+			return;
+
+		ICameraNode* camera = getActiveCameraNode();
+		if (camera)
+		{
+			const math::SFrustum& frustum = camera->getFrustum();
+			if (!node->needCulling() || !node->isCulled(frustum))
+			{
+				// if the light is in 
+
+
 			}
 		}
 	}
@@ -181,10 +233,30 @@ namespace gf
 		mMillisecondsDelta = delta;
 		mSecondsDelta = static_cast<f32>(delta)* 0.001f;
 
+		ITextureManager::getInstance()->updateTemporaryTextures(delta);
+
+		// update skydome position
+		if (mSkyDomeNode)
+		{
+			ICameraNode* camera = getActiveCameraNode();
+			if (camera)
+			{
+				XMFLOAT3 pos = camera->getPosition();
+				mSkyDomeNode->setPosition(pos.x, pos.y, pos.z);
+			}
+		}
+
+		// remove all dynamic nodes from octree.
+		mDefaultOctree->update(delta);
+
+		// update all nodes.
 		ISceneNode::update(delta);
+
+		// add dynamic nodes to octree.
+		mDefaultOctree->addSceneNodeToOctree(this);
 	}
 
-	void CSceneManager::render()
+	void CSceneManager::render(E_PIPELINE_USAGE)
 	{
 
 	}
@@ -211,50 +283,137 @@ namespace gf
 
 		/* render all the solid nodes */
 		auto it = mSolidNodes.begin();
+		E_PIPELINE_USAGE usage = mVideoDriver->getPipelineUsage();
 		for (; it != mSolidNodes.end(); it++)
 		{
-			(*it)->render();
+			(*it)->render(usage);
 		}
+	}
+
+	void CSceneManager::drawShadowMaps()
+	{
+		ICameraNode* activeCamera = getActiveCameraNode();
+		const math::SFrustum& frustum = activeCamera->getFrustum();
+		setActiveCamera(mShadowMapCamera);
+		SViewport preViewport = mVideoDriver->getViewport();
+
+		//IRenderTarget* preRenderTarget = mVideoDriver->getRenderTarget();
+		//IDepthStencilSurface* preDepthStencilSurface = mVideoDriver->getDepthStencilSurface();
+		
+		mVideoDriver->clearShader(EST_PIXEL_SHADER);
+		mVideoDriver->setRenderTargetAndDepthStencil(nullptr, nullptr);
+
+		// generate all shadow maps.
+		for (auto it = mLightNodes.begin(); it != mLightNodes.end(); it++)
+		{
+			ILightNode* light = it->second;
+			if (light->castShadow() && !light->isCulled(frustum))
+			{
+				light->generateShadowMap();
+			}
+		}
+		
+		mVideoDriver->setPipelineUsage(EPU_FORWARD);
+		mVideoDriver->setViewport(preViewport);
+		mVideoDriver->setDefaultRenderTargetAndDepthStencil();
+		setActiveCamera(activeCamera);
+	}
+
+	/* called by light objects */
+	void CSceneManager::drawShadowMap(ILightNode* light)
+	{
+		mCurrentShadowLightID = light->getId();
+		draw(mDefaultOctree);
 	}
 
 	void CSceneManager::drawAll()
 	{
-		draw(this);
+		drawShadowMaps();
+
+		if (mCompositors.empty())
+		{
+			draw(mDefaultOctree);
+		}
+		else
+		{
+			// if multisampling, then create a new depth buffer
+			const SViewport& viewport = mVideoDriver->getViewport();
+
+			IRenderTarget* target = ITextureManager::getInstance()->getTempRenderTarget(0, 0, EGF_R8G8B8A8_UNORM);
+			target->clear();
+			mVideoDriver->setRenderTarget(target);
+			draw(mDefaultOctree);
+			
+			for (u32 i = 0; i < mCompositors.size(); i++)
+			{
+				bool lastCompositor = false;
+				if (i == mCompositors.size() - 1)
+					lastCompositor = true;
+
+				ICompositor* compositor = mCompositors[i];
+				compositor->render(this, lastCompositor);
+			}
+		}
 	}
 
-
-	ILightNode* CSceneManager::addLightNode(u32 id, ISceneNode* parent,
-		const XMFLOAT3& position)
+	ILightNode* CSceneManager::addDirectionalLight(u32 id, ISceneNode* parent, const XMFLOAT3& direction)
 	{
-		if (parent == nullptr)
-			parent = this;
-
-		if (id < 0 || id >= MAX_LIGHT_COUNT)
-		{
-			GF_PRINT_CONSOLE_INFO("The light id must between 0 and %d.\n", 0, MAX_LIGHT_COUNT - 1);
-			return nullptr;
-		}
-
-		if (mLightNodes[id] != nullptr)
+		ILightNode* light = getLightNode(id);
+		if (light)
 		{
 			GF_PRINT_CONSOLE_INFO("The light with id %d already existed!\n", id);
 			return nullptr;
 		}
 
-		ILightNode* pLight = new CLightNode(id, parent, this, position);
-		mLightNodes[id] = pLight;
-		return pLight;
+		if (!parent)
+			parent = this;
+
+		light = new CDirectionalLightNode(parent, this, id, direction);
+		mLightNodes.insert(std::make_pair(id, light));
+		mDirectionalLights.push_back(light);
+
+		return light;
+	}
+
+	ILightNode* CSceneManager::addPointLight(u32 id,
+		ISceneNode* parent,
+		bool bStatic,
+		const XMFLOAT3& position,
+		f32 range)
+	{
+		ILightNode* light = getLightNode(id);
+		if (light)
+		{
+			GF_PRINT_CONSOLE_INFO("The light with id %d already existed!\n", id);
+			return nullptr;
+		}
+
+		light = new CPointLightNode(nullptr, this, bStatic, id, position, range);
+		parent = getParentNode(parent, bStatic);
+		parent->addChild(light);
+		mLightNodes.insert(std::make_pair(id, light));
+		return light;
+	}
+
+	ILightNode* CSceneManager::addSpotLight(u32 id,
+		ISceneNode* parent,
+		bool bStatic,
+		const XMFLOAT3& position,
+		const XMFLOAT3& direction,
+		f32 range,
+		f32 innerCone,
+		f32 outerCone)
+	{
+		return nullptr;
 	}
 
 	ILightNode* CSceneManager::getLightNode(u32 id)
 	{
-		if (id < 0 || id >= MAX_LIGHT_COUNT)
-		{
-			GF_PRINT_CONSOLE_INFO("The light id must between 0 and %d.\n", 0, MAX_LIGHT_COUNT - 1);
+		auto it = mLightNodes.find(id);
+		if (it == mLightNodes.end())
 			return nullptr;
-		}
 
-		return mLightNodes[id];
+		return it->second;
 	}
 
 	ICameraNode* CSceneManager::addCameraNode(u32 id,
@@ -262,6 +421,7 @@ namespace gf
 		const XMFLOAT3& position,
 		const XMFLOAT3& lookat,
 		const XMFLOAT3& up,
+		bool bPersectiveProj,
 		f32 fov,
 		f32 nearZ,
 		f32 farZ,
@@ -291,7 +451,7 @@ namespace gf
 		}
 
 		ICameraNode* camera = new CCameraNode(parent, this, position,
-			lookat, up, aspectRatio, fov, nearZ, farZ);
+			lookat, up, aspectRatio, fov, nearZ, farZ, bPersectiveProj);
 		mCameraNodes[id] = camera;
 
 		if (mActiveCameraId == EMPTY_CAMERA_ID)
@@ -305,6 +465,7 @@ namespace gf
 		const XMFLOAT3& position,
 		const XMFLOAT3& lookat,
 		const XMFLOAT3& up,
+		bool bPersectiveProj,
 		f32 maxUpAngle,
 		f32 maxDownAngle,
 		f32 fov,
@@ -336,7 +497,7 @@ namespace gf
 		}
 
 		IFpsCameraNode* camera = new CFpsCameraNode(parent, this, position, lookat, up, aspectRatio,
-			fov, nearZ, farZ, maxUpAngle, maxDownAngle);
+			fov, nearZ, farZ, maxUpAngle, maxDownAngle, bPersectiveProj);
 
 		mCameraNodes[id] = camera;
 		if (mActiveCameraId == EMPTY_CAMERA_ID)
@@ -395,18 +556,127 @@ namespace gf
 		f32 width,
 		f32 height,
 		f32 depth,
-		bool staticOctree,
 		XMFLOAT3 center,
 		u32 maxTreeHeight)
 	{
 		if (!parent)
 			parent = this;
 
-		IOctreeManager* node = new COctreeManager(parent, this, width, height, depth, staticOctree, center, maxTreeHeight);
+		IOctreeManager* node = new COctreeManager(parent, this, width, height, depth, center, maxTreeHeight);
 
 		return node;
 	}
 
-	
+	void CSceneManager::setSkyDome(ITextureCube* cubeTexture)
+	{
+		std::string materialName = "gf/skydome_material";
+
+		if (cubeTexture)
+		{
+			if (mSkyDomeNode == nullptr)
+			{
+				IMaterialManager* materialManager = IMaterialManager::getInstance();
+				
+				IMaterial* material = materialManager->get(materialName, false);
+				if (!material)
+				{
+					IPipeline* pipeline = IPipelineManager::getInstance()->get("gf/skydome");
+					material = materialManager->create(materialName, pipeline);
+				}
+				material->setTexture(0, cubeTexture);
+
+				ISimpleMesh* mesh = IMeshManager::getInstance()->getSimpleMesh(IMeshManager::SKYDOME);
+				if (!mesh)
+				{
+					mesh = IMeshManager::getInstance()->createSphereMesh(IMeshManager::SKYDOME);
+				}
+
+				mSkyDomeNode = addMeshNode(mesh, material);
+				mSkyDomeNode->setRenderOrder(ERO_SKYDOME);
+				mSkyDomeNode->setNeedCulling(false);
+			}
+			else
+			{
+				IMaterial* material = mSkyDomeNode->getMaterial();
+				material->setTexture(0, cubeTexture);
+				this->addChild(mSkyDomeNode);
+			}
+		}
+		else
+		{
+			if (mSkyDomeNode)
+			{
+				mSkyDomeNode->remove();
+			}
+		}
+	}
+
+	IMeshNode* CSceneManager::getQuadNode()
+	{
+		if (!mQuadMeshNode)
+		{
+			IMeshManager* meshManager = IMeshManager::getInstance();
+			ISimpleMesh* mesh = meshManager->getSimpleMesh(IMeshManager::QUAD);
+			if (!mesh)
+			{
+				mesh = meshManager->createQuad(IMeshManager::QUAD);
+			}
+
+			mQuadMeshNode = addMeshNode(mesh, nullptr);
+			mQuadMeshNode->remove();
+			mQuadMeshNode->setNeedCulling(false);
+		}
+
+		return mQuadMeshNode;
+	}
+
+
+	ICompositor* CSceneManager::createCompositor(IPipeline* pipeline)
+	{
+		ICompositor* compositor = new CCompositor(pipeline);
+		return compositor;
+	}
+
+	ICompositor* CSceneManager::createCompositor(u32 type, const SCompositorCreateParam& param)
+	{
+		ICompositorFactory* factory = mVideoDriver->getCompositorFactory();
+		return factory->createCompositor(type, param);
+	}
+
+	void CSceneManager::addCompositor(ICompositor* compositor)
+	{
+		if (compositor)
+			mCompositors.push_back(compositor);
+	}
+
+	ISceneNode* CSceneManager::getParentNode(ISceneNode* parent, bool bStatic)
+	{
+		if (bStatic)
+		{
+			return mDefaultOctree;
+		}
+
+		if (!parent)
+		{
+			return this;
+		}
+
+		return parent;
+	}
+
+	void CSceneManager::registerToOctree(ISceneNode* scene)
+	{
+		if (scene->getNodeType() & ESNT_OCTREE_MANAGER)
+			return;
+	}
+
+	bool CSceneManager::getNearLights(IMeshNode* node, E_LIGHT_TYPE lightType, std::vector<ILightNode*>& lights)
+	{
+		return mDefaultOctree->getNearLights(node, lightType, lights);
+	}
+
+
+
 
 }
+

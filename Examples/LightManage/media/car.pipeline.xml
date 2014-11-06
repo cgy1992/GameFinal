@@ -1,0 +1,16 @@
+<pipelines>
+    <pipeline name="car/pipeline_01">
+        <input-layout>
+            <element semantic="POSITION" format="float3"/>
+            <element semantic="NORMAL" format="float3"/>
+        </input-layout>
+        <shaders>
+            <vertex-shader file="car.hlsl" main="vs_main">
+                <variable name="gWorld" value="world_matrix"/>
+                <variable name="gViewProj" value="viewproj_matrix"/>
+            </vertex-shader>
+            <pixel-shader file="car.hlsl" main="ps_main"/>
+        </shaders>
+        <!--You can put render-states here.-->
+    </pipeline>
+</pipelines>

@@ -1,0 +1,98 @@
+<materials>
+    <material name="mm/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm/pipeline_01"/>
+        </pipelines>
+        <textures/>
+    </material>
+    <material name="mm/material_01">
+        <attributes>
+            <attribute name="ambient" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="diffuse" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="12d945f0.dds"/>
+        </textures>
+    </material>
+    <material name="mm/material_02">
+        <attributes>
+            <attribute name="ambient" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="diffuse" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="12b3dc50.dds"/>
+        </textures>
+    </material>
+    <material name="mm/material_03">
+        <attributes>
+            <attribute name="ambient" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="diffuse" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="1711d670.dds"/>
+        </textures>
+    </material>
+    <material name="mm/material_04">
+        <attributes>
+            <attribute name="ambient" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="diffuse" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="12b3dd50.dds"/>
+        </textures>
+    </material>
+    <material name="mm/material_05">
+        <attributes>
+            <attribute name="ambient" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="diffuse" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="12c2a390.dds"/>
+        </textures>
+    </material>
+    <material name="mm/material_06">
+        <attributes>
+            <attribute name="ambient" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="diffuse" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="12c56a50.dds"/>
+        </textures>
+    </material>
+</materials>

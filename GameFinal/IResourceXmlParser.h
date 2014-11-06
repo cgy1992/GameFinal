@@ -17,6 +17,7 @@ namespace gf
 			E_SHADER_TYPE					Type;
 			std::string						FileName;
 			std::string						FunctionName;
+			SShaderMacroSet					Macros;
 		};
 
 		struct SRenderStateCreateParams
@@ -50,11 +51,18 @@ namespace gf
 			u32										Index;
 		};
 
+		struct SMaterialAttributeParam
+		{
+			std::string								Name;
+			XMFLOAT4								Value;
+		};
+
 		struct SMaterialCreateParams
 		{
 			std::string								Name;
-			SMaterial::Material						MaterialColors;
+			std::vector<SMaterialAttributeParam>	AttributeParams;
 			std::vector<std::string>				PipelineNames;
+			std::vector<E_PIPELINE_USAGE>			PipelineUsages;
 			std::vector<SMaterialTextureParam>		TextureParams;
 		};
 
@@ -99,6 +107,12 @@ namespace gf
 		};
 
 	public:
+		virtual bool extractSubNodeNames(const std::string& filepath, const char* rootNode,
+			const char* subNode, std::vector<std::string>& vec) const = 0;
+
+		virtual bool extractMaterialNames(const std::string& filepath, std::vector<std::string>& vec) const = 0;
+
+		virtual bool extractPipelineNames(const std::string& filepath, std::vector<std::string>& vec) const = 0;
 
 		virtual bool parsePipelineFile(const std::string& filepath, std::vector<SPipelineCreateParams>& createParamsArray) const = 0;
 
@@ -108,7 +122,17 @@ namespace gf
 			std::vector<SRenderTargetParams>& renderTargetParamsArray, 
 			std::vector<SDepthStencilSurfaceParams>& depthStencilParamsArray) const = 0;
 
+		virtual bool parseOnePipeline(const std::string& filepath,
+			const std::string& pipelineName,
+			SPipelineCreateParams& createParams) const = 0;
+
+		virtual bool parseOneMaterial(const std::string& filepath,
+			const std::string& materialName,
+			SMaterialCreateParams& createParams) const = 0;
+
+		_DECLARE_SINGLETON_INSTANCE(IResourceXmlParser);
 	};
+
 }
 
 #endif

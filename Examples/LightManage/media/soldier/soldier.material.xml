@@ -1,0 +1,70 @@
+<materials>
+    <material name="soldier/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.50000, 0.50000, 0.50000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="soldier/pipeline_01"/>
+        </pipelines>
+        <textures/>
+    </material>
+    <material name="soldier/material_01">
+        <attributes>
+            <attribute name="ambient" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="diffuse" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="specular" value="0.50000, 0.50000, 0.50000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="soldier/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="m45.bmp"/>
+        </textures>
+    </material>
+    <material name="soldier/material_02">
+        <attributes>
+            <attribute name="ambient" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="diffuse" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="specular" value="0.50000, 0.50000, 0.50000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="soldier/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="m46.bmp"/>
+        </textures>
+    </material>
+    <material name="soldier/material_03">
+        <attributes>
+            <attribute name="ambient" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="diffuse" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="specular" value="0.50000, 0.50000, 0.50000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="soldier/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="m49.bmp"/>
+        </textures>
+    </material>
+    <material name="soldier/material_04">
+        <attributes>
+            <attribute name="ambient" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="diffuse" value="0.588000, 0.588000, 0.588000, 1.000000"/>
+            <attribute name="specular" value="0.50000, 0.50000, 0.50000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="soldier/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="m51.bmp"/>
+        </textures>
+    </material>
+</materials>

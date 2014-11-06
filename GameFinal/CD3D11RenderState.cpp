@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CD3D11RenderState.h"
+#include "D3DUtil.h"
 
 namespace gf
 {
@@ -88,6 +89,16 @@ namespace gf
 										 mRasterizerDesc.DepthBiasClamp = depthBiasClamp;
 										 mRasterStateDirty = true;
 									 }
+		}
+			break;
+		case ERS_SLOPE_SCALED_DEPTH_BIAS:
+		{
+											f32 slopeScaledDepthBias = static_cast<f32>(value);
+											if (mRasterizerDesc.SlopeScaledDepthBias != slopeScaledDepthBias)
+											{
+												mRasterizerDesc.SlopeScaledDepthBias = slopeScaledDepthBias;
+												mRasterStateDirty = true;
+											}
 		}
 			break;
 		case ERS_SCISSOR_ENABLE:
@@ -225,7 +236,7 @@ namespace gf
 			break;
 		case ERS_DEPTH_FUNC:
 		{
-							   D3D11_COMPARISON_FUNC func = convertComparisonFunc((E_COMPARISON_FUNC)value);
+							   D3D11_COMPARISON_FUNC func = getD3d11ComparisonFunc((E_COMPARISON_FUNC)value);
 							   if (mDepthStencilDesc.DepthFunc != func)
 							   {
 								   mDepthStencilDesc.DepthFunc = func;
@@ -329,13 +340,18 @@ namespace gf
 		switch (state)
 		{
 		case ERS_DEPTH_BIAS_CLAMP:
-		{
-									 if (mRasterizerDesc.DepthBiasClamp != value)
-									 {
-										 mRasterizerDesc.DepthBiasClamp = value;
-										 mRasterStateDirty = true;
-									 }
-		}
+			if (mRasterizerDesc.DepthBiasClamp != value)
+			{
+				mRasterizerDesc.DepthBiasClamp = value;
+				mRasterStateDirty = true;
+			}
+			break;
+		case ERS_SLOPE_SCALED_DEPTH_BIAS:
+			if (mRasterizerDesc.SlopeScaledDepthBias != value)
+			{
+				mRasterizerDesc.SlopeScaledDepthBias = value;
+				mRasterStateDirty = true;
+			}
 			break;
 		}
 	}

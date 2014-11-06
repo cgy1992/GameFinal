@@ -118,6 +118,38 @@ namespace gf
 		return mShaders[shaderType] != nullptr && mShaders[shaderType]->setVector(varname, v, ignoreIfAlreadyUpdated);
 	}
 
+	u32 CPipeline::setVector(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated /*= false*/)
+	{
+		u32 result = 0;
+		for (u32 i = 0; i < 5; i++)
+		{
+			if (mShaders[i] != nullptr && mShaders[i]->setVector(varname, val, ignoreIfAlreadyUpdated))
+				result++;
+		}
+		return result;
+	}
+
+	bool CPipeline::setVector(E_SHADER_TYPE shaderType, const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated /*= false*/)
+	{
+		return mShaders[shaderType] != nullptr && mShaders[shaderType]->setVector(varname, val, ignoreIfAlreadyUpdated);
+	}
+
+	u32 CPipeline::setAttribute(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated)
+	{
+		u32 result = 0;
+		for (u32 i = 0; i < 5; i++)
+		{
+			if (mShaders[i] != nullptr && mShaders[i]->setAttribute(varname, val, ignoreIfAlreadyUpdated))
+				result++;
+		}
+		return result;
+	}
+
+	bool CPipeline::setAttribute(E_SHADER_TYPE shaderType, const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated)
+	{
+		return mShaders[shaderType] != nullptr && mShaders[shaderType]->setAttribute(varname, val, ignoreIfAlreadyUpdated);
+	}
+
 	u32 CPipeline::setFloat(const std::string& varname, f32 v, bool ignoreIfAlreadyUpdated)
 	{
 		u32 result = 0;
@@ -164,6 +196,26 @@ namespace gf
 	bool CPipeline::setRawValue(E_SHADER_TYPE shaderType, const std::string& varname, void* raw, u32 size, bool ignoreIfAlreadyUpdated)
 	{
 		return mShaders[shaderType] != nullptr && mShaders[shaderType]->setRawData(varname, raw, size, ignoreIfAlreadyUpdated);
+	}
+
+	u32 CPipeline::setArray(const std::string& varname, void* data, u32 arraySize, u32 elementSize, bool ignoreIfAlreadyUpdate)
+	{
+		u32 result = 0;
+		for (u32 i = 0; i < 5; i++)
+		{
+			if (mShaders[i] != nullptr && mShaders[i]->setArray(varname, data, arraySize, elementSize, ignoreIfAlreadyUpdate))
+				result++;
+		}
+		return result;
+	}
+
+	u32 CPipeline::setArray(E_SHADER_TYPE shaderType, const std::string& varname, void* data, u32 arraySize, u32 elementSize, bool ignoreIfAlreadyUpdate)
+	{
+		if (mShaders[shaderType])
+		{
+			return mShaders[shaderType]->setArray(varname, data, arraySize, elementSize, ignoreIfAlreadyUpdate);
+		}
+		return 0;
 	}
 
 	u32 CPipeline::setTexture(const std::string& varname, ITexture* texture)
@@ -244,4 +296,13 @@ namespace gf
 		}
 	}
 
+	void CPipeline::registerAutoSamplers(const std::map<std::string, ISampler*>& samplerMap)
+	{
+		for (auto it = samplerMap.begin(); it != samplerMap.end(); it++)
+		{
+			setSampler(it->first, it->second);
+		}
+	}
+
 }
+

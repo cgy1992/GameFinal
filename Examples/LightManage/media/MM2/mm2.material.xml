@@ -1,0 +1,436 @@
+<materials>
+    <material name="mm2/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_face_00_00_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_01">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.050000, 0.200000, 0.200000, 1.000000"/>
+            <attribute name="emissive" value="0.050000, 0.200000, 0.200000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_bura_00_d_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_02">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.200000, 0.250000, 0.250000, 1.000000"/>
+            <attribute name="emissive" value="0.200000, 0.250000, 0.250000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_syatu_00_d_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_03">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="specular" value="0.400000, 0.400000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.400000, 0.400000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_ribon_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_04">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.400000, 0.450000, 0.450000, 1.000000"/>
+            <attribute name="emissive" value="0.400000, 0.450000, 0.450000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_pskirt_00_d_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_05">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.550000, 0.550000, 0.550000, 1.000000"/>
+            <attribute name="emissive" value="0.550000, 0.550000, 0.550000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_highsox_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_06">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.400000, 0.400000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.400000, 0.400000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_kutu_lowfa_01.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_07">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.650000, 0.600000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.650000, 0.600000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_tume_00_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_08">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_tikubi_00_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_09">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_body_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_10">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_bodyude_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_11">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.400000, 0.400000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.400000, 0.400000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_kmnpb_00_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_12">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_eyekage_.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_13">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_eyehikari_.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_14">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+            <attribute name="emissive" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_eye_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_15">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_hairbase_00_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_16">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_ha_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_17">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_sita.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_18">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.300000, 0.300000, 0.300000, 1.000000"/>
+            <attribute name="emissive" value="0.300000, 0.300000, 0.300000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_mayuge_00_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_19">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.100000, 0.050000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.100000, 0.050000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_matuge_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_20">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+            <attribute name="emissive" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_hair_00_04_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_21">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+            <attribute name="emissive" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_hair_00_03_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_22">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+            <attribute name="emissive" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_hair_00_02_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_23">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+            <attribute name="emissive" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_hair_00_01_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_24">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+            <attribute name="emissive" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_hair_00_02_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_25">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+            <attribute name="emissive" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_hair_00_03_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_26">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+            <attribute name="emissive" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_hair_00_01_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_27">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+            <attribute name="emissive" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_hair_00_00_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_28">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.800000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+            <attribute name="emissive" value="1.500000, 1.500000, 1.500000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_hair_00_00_00.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_29">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_unc_pussy.bmp"/>
+        </textures>
+    </material>
+    <material name="mm2/material_30">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 0.800000, 0.800000, 1.000000"/>
+            <attribute name="specular" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+            <attribute name="emissive" value="0.500000, 0.450000, 0.400000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="mm2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cw_t_body_00.bmp"/>
+        </textures>
+    </material>
+</materials>

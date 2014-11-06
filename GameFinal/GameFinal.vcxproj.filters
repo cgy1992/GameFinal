@@ -90,6 +90,18 @@
     <Filter Include="src\SceneManager\Class">
       <UniqueIdentifier>{b6cfab44-b1b6-4d4a-9fcf-4cfd5dfd0b9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Util\Cpp">
+      <UniqueIdentifier>{b60e7d06-3ebe-4954-a8c6-6825f22aee6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\built-in-resources">
+      <UniqueIdentifier>{436cb695-33e1-4cb9-9dcd-840970fdbf0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\effect">
+      <UniqueIdentifier>{61cbd2b4-576e-4261-b10a-52c3e68a015c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\effect\compositor">
+      <UniqueIdentifier>{39470482-b0b0-46b6-9e9a-f52cf29e5e86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -123,9 +135,6 @@
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
     <ClInclude Include="CD3D11SimpleMesh.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11Texture.h">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
     <ClInclude Include="CD3D11VertexShader.h">
@@ -443,6 +452,51 @@
     <ClInclude Include="CD3D11DepthStencilSurface.h">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
+    <ClInclude Include="ICompositor.h">
+      <Filter>src\effect\compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="CCompositor.h">
+      <Filter>src\effect\compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="CBlurCompositor.h">
+      <Filter>src\effect\compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="ICompositorFactory.h">
+      <Filter>src\effect\compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="CCompositorFactory.h">
+      <Filter>src\effect\compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="CBloomCompositor.h">
+      <Filter>src\effect\compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="CMotionBlurCompositor.h">
+      <Filter>src\effect\compositor</Filter>
+    </ClInclude>
+    <ClInclude Include="CDirectionalLightNode.h">
+      <Filter>src\SceneNode\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="CPointLightNode.h">
+      <Filter>src\SceneNode\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="gfEnums.h">
+      <Filter>src\Util\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="ITexture3D.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Texture3D.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="ITextureCube.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11TextureCube.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Texture2D.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -488,9 +542,6 @@
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
     <ClCompile Include="CD3D11SimpleMesh.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11Texture.cpp">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
     <ClCompile Include="CD3D11VertexShader.cpp">
@@ -631,5 +682,54 @@
     <ClCompile Include="CD3D11DepthStencilSurface.cpp">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
+    <ClCompile Include="gfSingletons.cpp">
+      <Filter>src\Util\Cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="CCompositor.cpp">
+      <Filter>src\effect\compositor</Filter>
+    </ClCompile>
+    <ClCompile Include="CBlurCompositor.cpp">
+      <Filter>src\effect\compositor</Filter>
+    </ClCompile>
+    <ClCompile Include="CCompositorFactory.cpp">
+      <Filter>src\effect\compositor</Filter>
+    </ClCompile>
+    <ClCompile Include="CBloomCompositor.cpp">
+      <Filter>src\effect\compositor</Filter>
+    </ClCompile>
+    <ClCompile Include="CMotionBlurCompositor.cpp">
+      <Filter>src\effect\compositor</Filter>
+    </ClCompile>
+    <ClCompile Include="CDirectionalLightNode.cpp">
+      <Filter>src\SceneNode\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CPointLightNode.cpp">
+      <Filter>src\SceneNode\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Texture3D.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11TextureCube.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Texture2D.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Media\built-in-resources\skydome.hlsl">
+      <Filter>src\built-in-resources</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Media\built-in-resources\post_process.hlsl">
+      <Filter>src\built-in-resources</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="..\Media\built-in-resources\skydome.pipeline.xml">
+      <Filter>src\built-in-resources</Filter>
+    </Xml>
+    <Xml Include="..\Media\built-in-resources\post_process.pipeline.xml">
+      <Filter>src\built-in-resources</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

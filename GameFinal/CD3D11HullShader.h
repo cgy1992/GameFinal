@@ -8,11 +8,12 @@ namespace gf
 	{
 	public:
 		CD3D11HullShader(u32 id,
-			std::string name,
+			const std::string& name,
+			const SShaderMacroSet& macros,
 			ID3D11Device* pd3dDevice,
 			ID3D11DeviceContext* pd3dDeviceContext,
 			CD3D11Driver* pd3dDriver)
-			:CD3D11Shader(id, name, pd3dDevice, pd3dDeviceContext, pd3dDriver)
+			:CD3D11Shader(id, name, macros, pd3dDevice, pd3dDeviceContext, pd3dDriver)
 			, md3dHullShader(nullptr)
 		{
 

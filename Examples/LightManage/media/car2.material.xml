@@ -1,0 +1,142 @@
+<materials>
+    <material name="car2/material_00">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="car2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="wj-car-12.bmp"/>
+        </textures>
+    </material>
+    <material name="car2/material_01">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="car2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="wj-car-01.bmp"/>
+        </textures>
+    </material>
+    <material name="car2/material_02">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="car2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="wj-car-11.bmp"/>
+        </textures>
+    </material>
+    <material name="car2/material_03">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="car2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="wj-car-17.bmp"/>
+        </textures>
+    </material>
+    <material name="car2/material_04">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="car2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="wj-car-16.bmp"/>
+        </textures>
+    </material>
+    <material name="car2/material_05">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="car2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="veh_0016_001.bmp"/>
+        </textures>
+    </material>
+    <material name="car2/material_06">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="car2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="wj-car-03.bmp"/>
+        </textures>
+    </material>
+    <material name="car2/material_07">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="car2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="wj-car-19.bmp"/>
+        </textures>
+    </material>
+    <material name="car2/material_08">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="car2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="veh_10001.bmp"/>
+        </textures>
+    </material>
+    <material name="car2/material_09">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+            <attribute name="emissive" value="0.700000, 0.700000, 0.700000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="car2/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="wj-car-14.bmp"/>
+        </textures>
+    </material>
+</materials>

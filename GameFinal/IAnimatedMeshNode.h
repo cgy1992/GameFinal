@@ -12,10 +12,11 @@ namespace gf
 	public:
 		IAnimatedMeshNode(ISceneNode* parent,
 			ISceneManager* smgr,
+			bool bStatic,
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
-			:IMeshNode(parent, smgr, position, rotation, scale)
+			:IMeshNode(parent, smgr, bStatic, position, rotation, scale)
 		{
 
 		}

@@ -4,6 +4,8 @@
 #include "gfUtil.h"
 namespace gf
 {
+	
+
 	CResourceGroupManager::CResourceGroupManager(ITextureManager* TextureManager,
 		IShaderManager* ShaderManager,
 		IInputLayoutManager* InputlayoutManager,
@@ -27,6 +29,7 @@ namespace gf
 		mResourceFileExtensions[ERFT_TEXTURE].push_back("jpeg");
 		mResourceFileExtensions[ERFT_TEXTURE].push_back("png");
 		mResourceFileExtensions[ERFT_TEXTURE].push_back("bmp");
+		mResourceFileExtensions[ERFT_TEXTURE].push_back("dds");
 
 		// init texture xml exts.
 		mResourceFileExtensions[ERFT_TEXTURE_XML].push_back("texture");
@@ -35,16 +38,16 @@ namespace gf
 		mResourceFileExtensions[ERFT_TEXTURE_XML].push_back("tex.xml");
 
 		// init pipeline file exts
-		mResourceFileExtensions[ERFT_PIPELINE].push_back("pipeline");
-		mResourceFileExtensions[ERFT_PIPELINE].push_back("pipe");
-		mResourceFileExtensions[ERFT_PIPELINE].push_back("pipeline.xml");
-		mResourceFileExtensions[ERFT_PIPELINE].push_back("pipe.xml");
+		mResourceFileExtensions[ERFT_PIPELINE_XML].push_back("pipeline");
+		mResourceFileExtensions[ERFT_PIPELINE_XML].push_back("pipe");
+		mResourceFileExtensions[ERFT_PIPELINE_XML].push_back("pipeline.xml");
+		mResourceFileExtensions[ERFT_PIPELINE_XML].push_back("pipe.xml");
 
 		// init material file exts
-		mResourceFileExtensions[ERFT_MATERIAL].push_back("material");
-		mResourceFileExtensions[ERFT_MATERIAL].push_back("mtrl");
-		mResourceFileExtensions[ERFT_MATERIAL].push_back("material.xml");
-		mResourceFileExtensions[ERFT_MATERIAL].push_back("mtrl.xml");
+		mResourceFileExtensions[ERFT_MATERIAL_XML].push_back("material");
+		mResourceFileExtensions[ERFT_MATERIAL_XML].push_back("mtrl");
+		mResourceFileExtensions[ERFT_MATERIAL_XML].push_back("material.xml");
+		mResourceFileExtensions[ERFT_MATERIAL_XML].push_back("mtrl.xml");
 
 		// init mesh file exts.
 		mResourceFileExtensions[ERFT_MESH].push_back("mesh");
@@ -299,26 +302,42 @@ namespace gf
 		switch (type)
 		{
 		case ERFT_TEXTURE:
-		case ERFT_PIPELINE:
-		case ERFT_MATERIAL:
+		case ERFT_PIPELINE_XML:
+		case ERFT_MATERIAL_XML:
 		case ERFT_MESH:
 		case ERFT_RAW:
 		case ERFT_TEXTURE_XML:
 		{
-						  SResourceFile file;
-						  file.Name = filename;
-						  file.DirectoryIndex = dirIndex;
-						  file.Type = type;
-						  mResourceGroups[groupIndex].Files.push_back(file);
+								 SResourceFile file;
+								 file.Name = filename;
+								 file.DirectoryIndex = dirIndex;
+								 file.Type = type;
+								 mResourceGroups[groupIndex].Files.push_back(file);
 		}
 			break;
 		}
 
-		u32 locationIndex = (groupIndex << 16) | (dirIndex);
-		mResourceFilesLocationInfos.insert(std::make_pair(filename, locationIndex));
+		SResourceLocationInfo locationInfo;
+		locationInfo.GroupId = groupIndex;
+		locationInfo.DirectoryId = dirIndex;
+		locationInfo.Type = type;
+		locationInfo.FileName = filename;
 
+		mResourceFilesLocationInfos.insert(std::make_pair(filename, locationInfo));
+		if (type == ERFT_MATERIAL_XML)
+		{
+			registerMaterialInXml(filename, locationInfo);
+		}
+		else if (type == ERFT_PIPELINE_XML)
+		{
+			registerPipelineInXml(filename, locationInfo);
+		}
+
+		
 		return true;
 	}
+
+
 
 	/* 从完整路径中剥离出目录路径和文件名，调用函数必须保证fullpath参数是一个'文件'的完整路径*/
 	void CResourceGroupManager::seperateDirAndName(const std::string& fullpath, std::string& dirpath, std::string& filename)
@@ -357,10 +376,10 @@ namespace gf
 			case ERFT_TEXTURE_XML:
 				mResourceLoader->loadTexturesFromXml(file.Name);
 				break;
-			case ERFT_PIPELINE:
+			case ERFT_PIPELINE_XML:
 				mResourceLoader->loadPipelinesFromFile(file.Name);
 				break;
-			case ERFT_MATERIAL:
+			case ERFT_MATERIAL_XML:
 				mResourceLoader->loadMaterialsFromFile(file.Name);
 				break;
 			case ERFT_MESH:
@@ -384,15 +403,20 @@ namespace gf
 		return false;
 	}
 
-	bool CResourceGroupManager::getFullPath(const std::string& resourceFileName, std::string& fullpath) const
+	bool CResourceGroupManager::getFullPath(const std::string& resourceFileName, 
+		std::string& fullpath,
+		E_RESOURCE_FILE_TYPE filetype) const
 	{
 		auto it = mResourceFilesLocationInfos.find(resourceFileName);
 		if (it == mResourceFilesLocationInfos.end())
 			return false;
 
-		u32 locationIndex = it->second;
-		u32 groupId = (locationIndex >> 16) & 0x0000FFFF;
-		u32 directoryId = locationIndex & 0x0000FFFF;
+		const SResourceLocationInfo& locationInfo = it->second;
+		if (filetype != ERFT_UNKNOWN && locationInfo.Type != filetype)
+			return false;
+
+		u32 groupId = locationInfo.GroupId;
+		u32 directoryId = locationInfo.DirectoryId;
 
 		const std::string& dirpath = mResourceGroups[groupId].Directories[directoryId].Path;
 
@@ -400,4 +424,85 @@ namespace gf
 
 		return true;
 	}
+
+	void CResourceGroupManager::registerMaterialInXml(const std::string& filename, const SResourceLocationInfo& locationInfo)
+	{
+		const std::string& dirpath = mResourceGroups[locationInfo.GroupId].Directories[locationInfo.DirectoryId].Path;
+		std::string fullpath = dirpath + filename;
+
+		IResourceXmlParser* parser = IResourceXmlParser::getInstance();
+
+		mMaterialFileNames.push_back(filename);
+		u32 index = mMaterialFileNames.size() - 1;
+
+		std::vector<std::string> materialNames;
+		parser->extractMaterialNames(fullpath, materialNames);
+
+		u32 count = materialNames.size();
+		for (u32 i = 0; i < count; i++)
+		{
+			mMaterialNameAndFileNameIndexMapping.insert(std::make_pair(materialNames[i], index));
+		}
+	}
+
+	void CResourceGroupManager::registerPipelineInXml(const std::string& filename, const SResourceLocationInfo& locationInfo)
+	{
+		const std::string& dirpath = mResourceGroups[locationInfo.GroupId].Directories[locationInfo.DirectoryId].Path;
+		std::string fullpath = dirpath + filename;
+
+		IResourceXmlParser* parser = IResourceXmlParser::getInstance();
+
+		mPipelineFileNames.push_back(filename);
+		u32 index = mPipelineFileNames.size() - 1;
+
+		std::vector<std::string> pipelineNames;
+		parser->extractPipelineNames(fullpath, pipelineNames);
+
+		for (u32 i = 0; i < pipelineNames.size(); i++)
+		{
+			mPipelineNameAndFileNameIndexMapping.insert(std::make_pair(pipelineNames[i], index));
+		}
+
+	}
+
+	IPipeline* CResourceGroupManager::loadPipeline(const std::string& pipelineName)
+	{
+		auto it = mPipelineNameAndFileNameIndexMapping.find(pipelineName);
+		if (it != mPipelineNameAndFileNameIndexMapping.end())
+		{
+			u32 index = it->second;
+			const std::string& filename = mPipelineFileNames[index];
+			std::string filepath;
+			if (getFullPath(filename, filepath, ERFT_PIPELINE_XML))
+			{
+				return mResourceLoader->loadPipeline(pipelineName, filepath);
+			}
+		}
+		return nullptr;
+	}
+
+	IMaterial* CResourceGroupManager::loadMaterial(const std::string& materialName)
+	{
+		auto it = mMaterialNameAndFileNameIndexMapping.find(materialName);
+		if (it != mMaterialNameAndFileNameIndexMapping.end())
+		{
+			u32 index = it->second;
+			const std::string& filename = mMaterialFileNames[index];
+			std::string filepath;
+			if (getFullPath(filename, filepath, ERFT_MATERIAL_XML))
+			{
+				return mResourceLoader->loadMaterial(materialName, filepath);
+			}
+		}
+		return nullptr;
+	}
+
+	IMesh* CResourceGroupManager::loadMesh(const std::string& name)
+	{
+		mResourceLoader->loadMeshFromFile(name);
+		IMeshManager* meshManager = IMeshManager::getInstance();
+		return meshManager->getMesh(name, false);
+	}
+
 }
+

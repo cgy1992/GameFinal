@@ -55,7 +55,7 @@ namespace gf
 			const std::vector<SBoneAnimationClip>& animateClips);
 
 
-		virtual IMesh* getMesh(const std::string& name);
+		virtual IMesh* getMesh(const std::string& name, bool bLoadIfNotExist = true);
 
 		virtual ISimpleMesh* createCubeMesh(
 			const std::string& name,
@@ -74,6 +74,13 @@ namespace gf
 			f32 vTiles = 1.0f,
 			E_MEMORY_USAGE usage = EMU_STATIC);
 
+		virtual ISimpleMesh* createSphereMesh(
+			const std::string& name,
+			f32 radius = 1.0f,
+			u32 sliceCount = 20,
+			u32 stackCount = 20,
+			E_MEMORY_USAGE usage = EMU_STATIC);
+
 		virtual ITerrainMesh* createTerrainMesh(
 			const std::string& name,
 			const std::string& szRawFileName,
@@ -87,11 +94,13 @@ namespace gf
 
 		virtual ISimpleMesh* getSimpleMesh(const std::string& name);
 
-		virtual IModelMesh* getModelMesh(const std::string& name);
+		virtual IModelMesh* getModelMesh(const std::string& name, bool bLoadIfNotExist = true);
 
-		virtual IAnimatedMesh* getAnimatedMesh(const std::string& name);
+		virtual IAnimatedMesh* getAnimatedMesh(const std::string& name, bool bLoadIfNotExist = true);
 
 		virtual ITerrainMesh* getTerrainMesh(const std::string& name);
+
+		virtual ISimpleMesh* createQuad(const std::string& name, E_MEMORY_USAGE usage = EMU_STATIC);
 
 		_DEFINE_RESOURCE_DESTROY_METHODS(CMeshManager, mMeshMap, IMesh);
 

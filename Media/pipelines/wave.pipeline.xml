@@ -22,7 +22,7 @@
       <pixel-shader file="wave.hlsl" main="PS">
         <variable name="gPointLight" value="light" index="1"/>
         <variable name="gEyePos" value="camera_position"/>
-        <variable name="gMaterial" value="material"/>
+        <variable name="gMaterial" value="material_color"/>
         <variable name="gNormalTexture1" value="texture" index="1"/>
         <variable name="gNormalTexture2" value="texture" index="4"/>
         <variable name="gWaterTexture1" value="texture" index="0"/>

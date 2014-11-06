@@ -34,6 +34,8 @@ namespace gf
 
 		f32 getHeightByRowAndCol(u32 row, u32 col) const;
 
+		virtual f32 getHeight(f32 x, f32 z) const;
+
 		XMFLOAT2 getPatchHeightBounds(u32 patchRow, u32 patchCol) const;
 
 		virtual E_MESH_TYPE getType() const

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CMaterialManager.h"
+#include "IResourceGroupManager.h"
 
 namespace gf
 {
@@ -27,19 +28,22 @@ namespace gf
 		return true;
 	}
 
-	IMaterial* CMaterialManager::get(const std::string& name)
+	IMaterial* CMaterialManager::get(const std::string& name, bool bLoadIfNotExist)
 	{
 		auto it = mMaterialsMap.find(name);
-		if (it == mMaterialsMap.end())
-			return nullptr;
+		if (it != mMaterialsMap.end())
+			return &(it->second);
 
-		return &(it->second);
+		if (bLoadIfNotExist)
+		{
+			return IResourceGroupManager::getInstance()->loadMaterial(name);
+		}
+
+		return nullptr;
 	}
 
 	IMaterial* CMaterialManager::create(const std::string& name,
-		const IMaterial::Material& colors,
-		IPipeline* pipelines[],
-		u32 pipelineCount)
+		IPipeline* pipelines[])
 	{
 		auto it = mMaterialsMap.find(name);
 		if (it != mMaterialsMap.end())
@@ -51,12 +55,20 @@ namespace gf
 		}
 
 		u32 sortcode = mCodeAllocator.allocate();
-		SMaterial material(name, sortcode, colors, pipelines, pipelineCount);
+		SMaterial material(name, sortcode, pipelines);
 
 		mMaterialsMap.insert(std::make_pair(name, material));
 		it = mMaterialsMap.find(name);
 		return &it->second;
 	}
+
+	IMaterial* CMaterialManager::create(const std::string& name, IPipeline* pipeline)
+	{
+		IPipeline* pipelines[EPU_COUNT] = { 0 };
+		pipelines[EPU_FORWARD] = pipeline;
+		return create(name, pipelines);
+	}
+
 
 	bool CMaterialManager::destroy(const std::string& name)
 	{

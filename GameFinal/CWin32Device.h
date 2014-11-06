@@ -21,6 +21,10 @@ namespace gf
 
 		virtual void setWindowCaption(const char* caption);
 
+		virtual ISceneManager* createSceneManager(const math::SAxisAlignedBox& aabb);
+
+		virtual ISceneManager* createSceneManager();
+
 		virtual ~CWin32Device();
 	private:
 		HWND			mHwnd;

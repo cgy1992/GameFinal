@@ -1,13 +1,15 @@
 <materials>
   <material name="test/material01">
-    <ambient  color="0.5f, 0.5f, 0.5f"/>
-    <diffuse  color="0.5f, 0.5f, 0.5f, 1.0f"/>
-    <specular color="1.0f, 1.0f, 1.0f, 1.0f"/>
-    <emissive color="0.5f, 0.5f, 0.5f, 1.0f"/>
-
+    <attributes>
+      <attribute name="ambient" value="0.5f, 0.5f, 0.5f"/>
+      <attribute name="diffuse" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="specular" value="1.0f, 1.0f, 1.0f, 1.0f"/>
+      <attribute name="emissive" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+    </attributes>
+    
     <pipelines>
+      
       <pipeline name="test/pipeline01"/>
-      <pipeline name="test/pipeline02"/>
       
     </pipelines>
 
@@ -18,10 +20,12 @@
   </material>
 
   <material name="test/material02">
-    <ambient  color="0.8f, 0.5f, 0.5f"/>
-    <diffuse  color="0.8f, 0.5f, 0.5f, 1.0f"/>
-    <specular color="0.8f, 0.5f, 0.5f, 1.0f"/>
-    <emissive color="0.8f, 0.5f, 0.5f, 1.0f"/>
+    <attributes>
+      <attribute name="ambient" value="0.5f, 0.5f, 0.5f"/>
+      <attribute name="diffuse" value="0.8f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="specular" value="0.8f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="emissive" value="0.8f, 0.5f, 0.5f, 1.0f"/>
+    </attributes>
     <pipelines>
       <pipeline name="test/pipeline01"/>
     </pipelines>
@@ -32,10 +36,12 @@
 
 
   <material name="test/ground_material">
-    <ambient  color="0.5f, 0.5f, 0.5f, 1.0f"/>
-    <diffuse  color="0.5f, 0.5f, 0.5f, 1.0f"/>
-    <specular color="0.5f, 0.5f, 0.5f, 1.0f"/>
-    <emissive color="0.5f, 0.5f, 0.5f, 1.0f"/>
+    <attributes>
+      <attribute name="ambient" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="diffuse" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="specular" value="0.5f, 0.5f, 0.5f, 32.0f"/>
+      <attribute name="emissive" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+    </attributes>
     <pipelines>
       <pipeline name="test/pipeline01"/>
     </pipelines>
@@ -58,10 +64,12 @@
   </material>
 
   <material name="test/wave_material">
-    <ambient  color="0.3f, 0.6f, 0.8f, 1.0f"/>
-    <diffuse  color="0.8f, 0.8f, 0.8f, 1.0f"/>
-    <specular color="0.3f, 0.3f, 0.3f, 32.0f"/>
-    <emissive color="0.3f, 0.3f, 0.3f, 1.0f"/>
+    <attributes>
+      <attribute name="ambient" value="0.3f, 0.6f, 0.8f, 1.0f"/>
+      <attribute name="diffuse" value="0.8f, 0.8f, 0.8f, 1.0f"/>
+      <attribute name="specular" value="0.3f, 0.3f, 0.3f, 32.0f"/>
+      <attribute name="emissive" value="0.3f, 0.3f, 0.3f, 1.0f"/>
+    </attributes>
     <pipelines>
       <pipeline name="test/wave_pipeline"/>
     </pipelines>
@@ -76,21 +84,9 @@
   </material>
 
   <material name="test/posteffect_material">
-    <textures>
-      <texture name="target1"/>
-    </textures>
     <pipelines>
       <pipeline name="test/posteffect_pipeline"/>
     </pipelines>
   </material>
-
-  <material name="test/posteffect_material2">
-    <textures>
-      <texture name="target2"/>
-    </textures>
-    <pipelines>
-      <pipeline name="test/posteffect_pipeline2"/>
-    </pipelines>
-  </material>
-
+  
 </materials>

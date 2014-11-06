@@ -3,6 +3,7 @@
 
 #include "IMaterialManager.h"
 #include "CSortCodeAllocator.h"
+
 namespace gf
 {
 	class CMaterialManager : public IMaterialManager
@@ -13,12 +14,13 @@ namespace gf
 
 		virtual bool add(IMaterial& material);
 
-		virtual IMaterial* get(const std::string& name);
+		virtual IMaterial* get(const std::string& name, bool bLoadIfNotExist = true);
 
 		virtual IMaterial* create(const std::string& name,
-			const IMaterial::Material& colors,
-			IPipeline* pipelines[],
-			u32 pipelineCount);
+			IPipeline* pipelines[]);
+
+		virtual IMaterial* create(const std::string& name,
+			IPipeline* pipeline);
 
 		virtual bool destroy(const std::string& name);
 

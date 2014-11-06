@@ -16,14 +16,14 @@ namespace gf
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
-			:IMeshNode(parent, smgr, position, rotation, scale)
+			:IMeshNode(parent, smgr, false, position, rotation, scale)
 		{
 
 		}
 
-
 		virtual ITerrainMesh* getTerrainMesh() = 0;
 
+		virtual f32 getHeight(f32 x, f32 z, bool localPivot = false) const = 0;
 	};
 }
 

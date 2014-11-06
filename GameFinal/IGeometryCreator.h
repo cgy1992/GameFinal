@@ -32,6 +32,7 @@ namespace gf
 	{
 		std::vector<SGeometryVertex>	Vertices;
 		std::vector<u16>				Indices;
+		math::SAxisAlignedBox			Aabb;
 	};
 
 	class IGeometryCreator : public IReferenceCounted
@@ -58,8 +59,15 @@ namespace gf
 			f32 vTiles,
 			SGeometryData& geoData) = 0;
 
-	private:
+		virtual void createSphereData(
+			f32 radius,
+			u32 sliceCount, 
+			u32 stackCount,
+			SGeometryData& geoData) = 0;
 
+		virtual void createQuadData(XMFLOAT3 vertices[], math::SAxisAlignedBox& aabb) = 0;
+
+		_DECLARE_SINGLETON_INSTANCE(IGeometryCreator);
 	};
 }
 

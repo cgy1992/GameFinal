@@ -1,0 +1,16 @@
+<materials>
+    <material name="wangyuanji/material_00">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="wangyuanji/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="5579_2.bmp"/>
+        </textures>
+    </material>
+</materials>

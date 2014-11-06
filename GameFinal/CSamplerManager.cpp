@@ -2,10 +2,12 @@
 #include "CSamplerManager.h"
 namespace gf
 {
+	
+
 	CSamplerManager::CSamplerManager(IResourceFactory* pResourceFactory)
 		:mResourceFactory(pResourceFactory)
 	{
-
+		createStockSamplers();
 	}
 
 	ISampler* CSamplerManager::create(const std::string& name, const SSamplerDesc& desc)
@@ -33,4 +35,25 @@ namespace gf
 
 		return it->second;
 	}
+
+	void CSamplerManager::createStockSamplers()
+	{
+		// create shadow map sampler
+		SSamplerDesc desc;
+		desc.AddressU = EAM_BORDER;
+		desc.AddressV = EAM_BORDER;
+		desc.AddressW = EAM_BORDER;
+		desc.BorderColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		desc.Filter = ESF_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+		desc.ComparsionFunc = ECF_LESS;
+		ISampler* shadowMapSampler = create(ISamplerManager::SHADOW_MAP_SAMPLER, desc);
+
+		desc.AddressU = EAM_WRAP;
+		desc.AddressV = EAM_WRAP;
+		desc.AddressW = EAM_WRAP;
+		desc.Filter = ESF_FILTER_MIN_MAG_MIP_POINT;
+		desc.ComparsionFunc = ECF_NEVER;
+		ISampler* wrapPointSampler = create(ISamplerManager::WRAP_POINT_SAMPLER, desc);
+	}
+
 }

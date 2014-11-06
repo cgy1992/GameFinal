@@ -70,6 +70,13 @@ namespace gf
 			f32 vTiles = 1.0f,
 			E_MEMORY_USAGE usage = EMU_STATIC) = 0;
 
+		virtual ISimpleMesh* createSphereMesh(
+			const std::string& name,
+			f32 radius = 1.0f,
+			u32 sliceCount = 20,
+			u32 stackCount = 20,
+			E_MEMORY_USAGE usage = EMU_STATIC) = 0;
+
 		virtual ITerrainMesh* createTerrainMesh(
 			const std::string& name,
 			const std::string& szRawFileName,
@@ -81,19 +88,25 @@ namespace gf
 			u32 cellsPerPatch = 64,
 			E_MEMORY_USAGE usage = EMU_STATIC) = 0;
 
-		virtual IMesh* getMesh(const std::string& name) = 0;
+		virtual ISimpleMesh* createQuad(const std::string& name, E_MEMORY_USAGE usage = EMU_STATIC) = 0;
+
+		virtual IMesh* getMesh(const std::string& name, bool bLoadIfNotExist = true) = 0;
 
 		virtual ISimpleMesh* getSimpleMesh(const std::string& name) = 0;
 
-		virtual IModelMesh* getModelMesh(const std::string& name) = 0;
+		virtual IModelMesh* getModelMesh(const std::string& name, bool bLoadIfNotExist = true) = 0;
 
-		virtual IAnimatedMesh* getAnimatedMesh(const std::string& name) = 0;
+		virtual IAnimatedMesh* getAnimatedMesh(const std::string& name, bool bLoadIfNotExist = true) = 0;
 
 		virtual ITerrainMesh* getTerrainMesh(const std::string& name) = 0;
 
-
 		_DECLARE_RESOURCE_DESTROY_METHODS(IMesh);
 
+		_DECLARE_SINGLETON_INSTANCE(IMeshManager);
+
+	public:
+		static SINGLETON_API std::string SKYDOME;
+		static SINGLETON_API std::string QUAD;
 	};
 }
 

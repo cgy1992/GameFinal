@@ -1,0 +1,30 @@
+<pipelines>
+  <pipeline name="ground_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="ground.hlsl" main="vs_main">
+        <macro name="SHADOW_ON"/>
+      </vertex-shader>
+      <pixel-shader file="ground.hlsl" main="ps_main">
+        <macro name="SHADOW_ON" value="1"/>
+        <variable name="gLight" value="light" index="1"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+      <render-state name="cull_mode" value="CW"/>
+    </render-states>
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    </samplers>
+  </pipeline>
+</pipelines>

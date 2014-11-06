@@ -16,6 +16,8 @@ namespace gf
 			IShader* shader) = 0;
 
 		virtual IInputLayout* get(const std::vector<SInputLayoutElement>& elements) = 0;
+
+		_DECLARE_SINGLETON_INSTANCE(IInputLayoutManager);
 	};
 }
 

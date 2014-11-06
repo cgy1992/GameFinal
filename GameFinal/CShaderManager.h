@@ -18,19 +18,34 @@ namespace gf
 		virtual IShader* load(E_SHADER_TYPE shaderType,
 			const std::string& filename,
 			const std::string& functionName,
-			const std::string& shaderName);
+			const SShaderMacroSet& macros);
 
+		virtual IShader* get(const std::string& name,
+			bool bLoadIfNotExist = true,
+			E_SHADER_TYPE shaderType = EST_UNDEFINED_SHADER);
 
-		virtual IShader* get(const std::string& name);
+		virtual IShader* get(const std::string& name,
+			const SShaderMacroSet& macros,
+			bool bLoadIfNotExist = true,
+			E_SHADER_TYPE shaderType = EST_UNDEFINED_SHADER);
 
-		_DEFINE_RESOURCE_DESTROY_METHODS(CShaderManager, mShadersMap, IShader);
+		virtual std::string makeUpShaderName(const std::string& filename,
+			const std::string& functionName) const;
+
+		virtual bool splitShaderName(const std::string& shaderName,
+			std::string& filename,
+			std::string& functionName) const;
+
+		//_DEFINE_RESOURCE_DESTROY_METHODS(CShaderManager, mShadersMap, IShader);
+
 
 	private:
-		IResourceFactory*								mResourceFactory;
+		IResourceFactory*									mResourceFactory;
 
-		std::map<std::string, IShader*>					mShadersMap;
+		//std::map<std::string, IShader*>					mShadersMap;
+		std::map<std::string, std::list<IShader*>>			mShadersMap;
 
-		CSortCodeAllocator<MAX_SHADER_SORT_CODE>		mCodeAllocator[5];
+		CSortCodeAllocator<MAX_SHADER_SORT_CODE>			mCodeAllocator[5];
 
 	};
 }

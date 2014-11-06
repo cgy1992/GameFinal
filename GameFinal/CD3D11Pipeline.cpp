@@ -25,11 +25,18 @@ namespace gf
 		ReleaseReferenceCounted(mRenderState);
 	}
 
-
-	void CD3D11Pipeline::apply()
+	void CD3D11Pipeline::apply(E_PIPELINE_USAGE usage)
 	{
+		// if it is just rendering shadow map now, don't need to set shader variables.
+		// so the total number of shaders is 4.
+
+
+		//u32 shaderCount = md3d11Driver->isRenderingShadowMap() ? EST_PIXEL_SHADER : EST_SHADER_COUNT;
+		u32 shaderCount = EST_SHADER_COUNT;
+
 		//update the content of constant buffer
-		for (u32 i = 0; i < EST_SHADER_COUNT; i++)
+
+		for (u32 i = 0; i < shaderCount; i++)
 		{
 			IShader* shader = mShaders[i];
 			if (shader != nullptr)
@@ -54,35 +61,52 @@ namespace gf
 			applySamplers();
 
 			// set shaders
-			for (u32 i = 0; i < 5; i++)
+			for (u32 i = 0; i < shaderCount; i++)
 			{
 				IShader* shader = mShaders[i];
-				if (shader != nullptr && currentState.Shaders[i] != shader)
+				if (shader != nullptr)
 				{
-					md3d11Driver->bindSampler(shader->getType(), shader->getSamplerCount());
-					shader->submit();
-					currentState.Shaders[i] = shader;
+					if (currentState.Shaders[i] != shader)
+					{
+						md3d11Driver->bindSampler(shader->getType(), shader->getSamplerCount());
+						shader->submit();
+						currentState.Shaders[i] = shader;
+					}
+				}
+				else
+				{
+					if (currentState.Shaders[i] != nullptr)
+					{
+						md3d11Driver->clearShader((E_SHADER_TYPE)i);
+						currentState.Shaders[i] = nullptr;
+					}
 				}
 			}
 
-
-
-			//set input layout (vertex format)
+			// set input layout (vertex format)
 			if (currentState.InputLayout != mInputLayout)
 			{
 				mInputLayout->apply();
 				currentState.InputLayout = mInputLayout;
 			}
 
-			//set primitive type
+			// set primitive type
 			if (currentState.PrimitiveType != mPrimitiveType)
 			{
 				md3d11Driver->bindPrimitiveType(mPrimitiveType);
 				currentState.PrimitiveType = mPrimitiveType;
 			}
 
-			//set rasterizer state
-			ID3D11RasterizerState* pd3dRasterizerState = mRenderState->getRasterizerState();
+			ID3D11RasterizerState* pd3dRasterizerState = NULL;
+			pd3dRasterizerState = mRenderState->getRasterizerState();
+			
+			
+			if (usage == EPU_DIR_SHADOW_MAP)
+				pd3dRasterizerState = currentState.ShadowMapRasterizerState;
+			else
+				pd3dRasterizerState = mRenderState->getRasterizerState();
+		
+			
 			if (currentState.RasterizerState != pd3dRasterizerState)
 			{
 				md3dDeviceContext->RSSetState(pd3dRasterizerState);

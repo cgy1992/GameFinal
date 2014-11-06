@@ -3,6 +3,8 @@
 #include <algorithm>
 namespace gf
 {
+	
+
 	CResourceXmlParser::CResourceXmlParser()
 	{
 		// init input-layout format mapping
@@ -72,19 +74,21 @@ namespace gf
 		mShaderVariableMapping["frustum"] = SShaderVariableAttribute(ESAVT_CAMERA_FRUSTUM, EUF_PER_FRAME);
 		mShaderVariableMapping["bone_transforms"] = SShaderVariableAttribute(ESAVT_BONE_TRANSFORMS, EUF_PER_OBJECT);
 		mShaderVariableMapping["worldviewproj_matrix"] = SShaderVariableAttribute(ESAVT_WORLD_VIEW_PROJ_MATRIX, EUF_PER_OBJECT);
+		mShaderVariableMapping["point_lights"] = SShaderVariableAttribute(ESAVT_NEAR_POINT_LIGHTS, EUF_PER_OBJECT);
+		mShaderVariableMapping["point_lights_num"] = SShaderVariableAttribute(ESAVT_NEAR_POINT_LIGHTS_NUM, EUF_PER_OBJECT);
+		mShaderVariableMapping["dir_lights"] = SShaderVariableAttribute(ESAVT_DIRECTIONAL_LIGHTS, EUF_PER_FRAME);
+		mShaderVariableMapping["dir_lights_num"] = SShaderVariableAttribute(ESAVT_DIRECTIONAL_LIGHTS_NUM, EUF_PER_FRAME);
+		mShaderVariableMapping["spot_lights"] = SShaderVariableAttribute(ESAVT_NEAR_SPOT_LIGHTS, EUF_PER_OBJECT);
+		mShaderVariableMapping["spot_lights_num"] = SShaderVariableAttribute(ESAVT_NEAR_SPOT_LIGHTS_NUM, EUF_PER_OBJECT);
 
 		mShaderVariableMapping["light"] = SShaderVariableAttribute(ESAVT_LIGHT, EUF_PER_FRAME);
-		mShaderVariableMapping["material"] = SShaderVariableAttribute(ESAVT_MATERIAL, EUF_PER_OBJECT);
-		mShaderVariableMapping["material_ambient"] = SShaderVariableAttribute(ESAVT_MATERIAL_AMBIENT, EUF_PER_OBJECT);
-		mShaderVariableMapping["material_diffuse"] = SShaderVariableAttribute(ESAVT_MATERIAL_DIFFUSE, EUF_PER_OBJECT);
-		mShaderVariableMapping["material_specular"] = SShaderVariableAttribute(ESAVT_MATERIAL_SPECULAR, EUF_PER_OBJECT);
-		mShaderVariableMapping["material_emissive"] = SShaderVariableAttribute(ESAVT_MATERIAL_EMISSIVE, EUF_PER_OBJECT);
+		mShaderVariableMapping["material_color"] = SShaderVariableAttribute(ESAVT_MATERIAL_COLOR, EUF_PER_OBJECT);
+		mShaderVariableMapping["ambient"] = SShaderVariableAttribute(ESAVT_AMBIENT, EUF_PER_FRAME);
 		mShaderVariableMapping["texture"] = SShaderVariableAttribute(ESAVT_TEXTURE);
 		mShaderVariableMapping["texture_width"] = SShaderVariableAttribute(ESAVT_TEXTURE_WIDTH);
 		mShaderVariableMapping["texture_height"] = SShaderVariableAttribute(ESAVT_TEXTURE_HEIGHT);
 		mShaderVariableMapping["inverse_texture_width"] = SShaderVariableAttribute(ESAVT_INVERSE_TEXTURE_WIDTH);
 		mShaderVariableMapping["inverse_texture_height"] = SShaderVariableAttribute(ESAVT_INVERSE_TEXTURE_HEIGHT);
-
 
 		/* terrain variables */
 		mShaderVariableMapping["terrain_row_cell"] = SShaderVariableAttribute(ESAVT_TERRAIN_ROW_CELL, EUF_PER_FRAME);
@@ -107,12 +111,14 @@ namespace gf
 		mShaderVariableMapping["window_height"] = SShaderVariableAttribute(ESAVT_WINDOW_HEIGHT, EUF_PER_FRAME);
 		mShaderVariableMapping["inverse_window_width"] = SShaderVariableAttribute(ESAVT_INVERSE_WINDOW_WIDTH, EUF_PER_FRAME);
 		mShaderVariableMapping["inverse_window_height"] = SShaderVariableAttribute(ESAVT_INVERSE_WINDOW_HEIGHT, EUF_PER_FRAME);
+		mShaderVariableMapping["screen_size"] = SShaderVariableAttribute(ESAVT_SCREEN_SIZE, EUF_PER_FRAME);
 
 		// init render state mapping.
 		mRenderStateMapping["FILL_MODE"] = ERS_FILL_MODE;
 		mRenderStateMapping["CULL_MODE"] = ERS_CULL_MODE;
 		mRenderStateMapping["DEPTH_BIAS"] = ERS_DEPTH_BIAS;
 		mRenderStateMapping["DEPTH_BIAS_CLAMP"] = ERS_DEPTH_BIAS_CLAMP;
+		mRenderStateMapping["SLOPE_SCALED_DEPTH_BIAS"] = ERS_SLOPE_SCALED_DEPTH_BIAS;
 		mRenderStateMapping["SCISSOR_ENABLE"] = ERS_SCISSOR_ENABLE;
 		mRenderStateMapping["MULTISAMPLE_ENABLE"] = ERS_MULTISAMPLE_ENABLE;
 		mRenderStateMapping["ANTI_LINE_ENABLE"] = ERS_ANTI_LINE_ENABLE;
@@ -214,6 +220,14 @@ namespace gf
 		mSamplerFilterMapping["COMPARISON_MIN_MAG_LINEAR_MIP_POINT"] = ESF_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
 		mSamplerFilterMapping["COMPARISON_MIN_MAG_MIP_LINEAR"] = ESF_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
 		mSamplerFilterMapping["COMPARISON_ANISOTROPIC"] = ESF_FILTER_COMPARISON_ANISOTROPIC;
+
+
+		mPipelineUsageMapping["FORWARD"] = EPU_FORWARD;
+		mPipelineUsageMapping["DIR_SHADOW_MAP"] = EPU_DIR_SHADOW_MAP;
+		mPipelineUsageMapping["SHADOW_MAP"] = EPU_DIR_SHADOW_MAP;
+		mPipelineUsageMapping["POINT_SHADOW_MAP"] = EPU_POINT_SHADOW_MAP;
+		mPipelineUsageMapping["DEBUG"] = EPU_DEBUG;
+
 	}
 
 	bool CResourceXmlParser::handlePipelineNode(const std::string& filepath, tinyxml2::XMLElement* pipeline_node, SPipelineCreateParams& createParams) const
@@ -281,14 +295,11 @@ namespace gf
 		}
 		handleShaderNode(filepath, EST_VERTEX_SHADER, vertex_shader_node, createParams);
 
-		// get the pixel shader, which is also necessary.
 		tinyxml2::XMLElement* pixel_shader_node = shaders_node->FirstChildElement("pixel-shader");
-		if (!pixel_shader_node)
+		if (pixel_shader_node)
 		{
-			GF_PRINT_CONSOLE_INFO("The <pipeline> doesn't have <pixel-shader> in pipeline file (%s).\n", filepath.c_str());
-			return false;
+			handleShaderNode(filepath, EST_PIXEL_SHADER, pixel_shader_node, createParams);
 		}
-		handleShaderNode(filepath, EST_PIXEL_SHADER, pixel_shader_node, createParams);
 
 		//get hull shader
 		tinyxml2::XMLElement* hull_shader_node = shaders_node->FirstChildElement("hull-shader");
@@ -366,6 +377,20 @@ namespace gf
 		return true;
 	}
 
+
+	E_PIPELINE_USAGE CResourceXmlParser::getPipelineUsage(const char* s) const
+	{
+		if (s == nullptr)
+			return EPU_FORWARD;
+
+		std::string usageString = s;
+		std::transform(usageString.begin(), usageString.end(), usageString.begin(), std::toupper);
+		auto it = mPipelineUsageMapping.find(usageString);
+		if (it != mPipelineUsageMapping.end())
+			return it->second;
+
+		return EPU_FORWARD;
+	}
 
 	E_PRIMITIVE_TYPE CResourceXmlParser::getPrimitiveType(std::string& s) const
 	{
@@ -468,6 +493,14 @@ namespace gf
 
 		shaderCreateParams.FunctionName = functionName;
 
+		// find macros of this shader.
+		tinyxml2::XMLElement* macro_node = node->FirstChildElement("macro");
+		while (macro_node)
+		{
+			handleShaderMacroNode(shaderType, macro_node, shaderCreateParams);
+			macro_node = macro_node->NextSiblingElement("macro");
+		}
+
 		// find the auto variables of this shader
 		tinyxml2::XMLElement* variable_node = node->FirstChildElement("variable");
 
@@ -504,33 +537,47 @@ namespace gf
 		}
 
 		u32 indexParam = node->UnsignedAttribute("index");
-		auto it = mShaderVariableMapping.find(variableValue);
-
-		// if the variable doesn't have effective meaning, just neglect it
-		if (it == mShaderVariableMapping.end())
-		{
-			GF_PRINT_CONSOLE_INFO("'%s' is not a valid value of shader variable in this %s.\n",
-				variableValue, filepath.c_str());
-			return false;
-		}
-
-		// get the update-frequency attribute
-		E_UPDATE_FREQUENCY freq = it->second.DefaultUpdateFrequency;
-		const char* freqText = node->Attribute("update-frequency");
-		if (freqText)
-		{
-			if (_stricmp(freqText, "frame") == 0)
-				freq = EUF_PER_FRAME;
-			else if (_stricmp(freqText, "object") == 0)
-				freq = EUF_PER_OBJECT;
-		}
 
 		SShaderAutoVariable var;
+
 		var.VariableName = variableName;
-		var.Type = it->second.Meaning;
 		var.ShaderType = shaderType;
 		var.IndexParam = indexParam;
-		var.UpdateFrequency = freq;
+
+		// check if variable value' string begins with "m_"
+		// this kind of variables are injected by the material attributes
+		if (variableValue[0] == 'm' && variableValue[1] == '_')
+		{
+			var.Type = ESAVT_MATERIAL_ATTRIBUTE;
+			var.UpdateFrequency = EUF_PER_OBJECT;
+			var.MaterialAttributeName = &variableValue[2];
+		}
+		else
+		{
+			auto it = mShaderVariableMapping.find(variableValue);
+
+			// if the variable doesn't have effective meaning, just neglect it
+			if (it == mShaderVariableMapping.end())
+			{
+				GF_PRINT_CONSOLE_INFO("'%s' is not a valid value of shader variable in this %s.\n",
+					variableValue, filepath.c_str());
+				return false;
+			}
+
+			// get the update-frequency attribute
+			E_UPDATE_FREQUENCY freq = it->second.DefaultUpdateFrequency;
+			const char* freqText = node->Attribute("update-frequency");
+			if (freqText)
+			{
+				if (_stricmp(freqText, "frame") == 0)
+					freq = EUF_PER_FRAME;
+				else if (_stricmp(freqText, "object") == 0)
+					freq = EUF_PER_OBJECT;
+			}
+
+			var.Type = it->second.Meaning;
+			var.UpdateFrequency = freq;
+		}
 
 		createParams.ShaderAutoVariables.push_back(var);
 
@@ -572,6 +619,7 @@ namespace gf
 		{
 			/* if the render state's value need a float. */
 		case ERS_DEPTH_BIAS_CLAMP:
+		case ERS_SLOPE_SCALED_DEPTH_BIAS:
 			if (node->QueryFloatAttribute("value", &rsCreateParams.FloatValue) == tinyxml2::XML_NO_ERROR)
 				bValidRenderState = true;
 			break;
@@ -715,10 +763,21 @@ namespace gf
 				desc.AddressW = it->second;
 		}
 
+		/* Comparision function. */
+		value_str = node->Attribute("comparison-func");
+		if (value_str)
+		{
+			std::string s = value_str;
+			std::transform(s.begin(), s.end(), s.begin(), std::toupper);
+			auto it = mComparisonFuncMapping.find(s);
+			if (it != mComparisonFuncMapping.end())
+				desc.ComparsionFunc = (E_COMPARISON_FUNC)it->second;
+		}
+
 		/* borderColor */
 		value_str = node->Attribute("border-color");
 		if (value_str)
-			desc.BorderColor = getColorFromString(value_str);
+			desc.BorderColor = getVectorFromString(value_str);
 
 		createParams.SamplerDescs.insert(std::make_pair(name, desc));
 		return true;
@@ -783,6 +842,41 @@ namespace gf
 		if (sscanf_s(s, "%d", &value) == 1)
 			return true;
 		return false;
+	}
+
+	bool CResourceXmlParser::extractSubNodeNames(const std::string& filepath, const char* rootNode,
+		const char* subNode, std::vector<std::string>& vec) const
+	{
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile(filepath.c_str()) != tinyxml2::XML_NO_ERROR)
+			return false;
+
+		tinyxml2::XMLElement* root_node = doc.FirstChildElement(rootNode);
+		if (!root_node)
+		{
+			GF_PRINT_CONSOLE_INFO("The %s is not the root element in the file: %s.\n", rootNode, filepath.c_str());
+			return false;
+		}
+
+		tinyxml2::XMLElement* sub_node = root_node->FirstChildElement(subNode);
+
+		while (sub_node)
+		{
+			std::string name = sub_node->Attribute("name");
+			vec.push_back(name);
+			sub_node = sub_node->NextSiblingElement(subNode);
+		}
+		return true;
+	}
+
+	bool CResourceXmlParser::extractMaterialNames(const std::string& filepath, std::vector<std::string>& vec) const
+	{
+		return extractSubNodeNames(filepath, "materials", "material", vec);
+	}
+
+	bool CResourceXmlParser::extractPipelineNames(const std::string& filepath, std::vector<std::string>& vec) const
+	{
+		return extractSubNodeNames(filepath, "pipelines", "pipeline", vec);
 	}
 
 	bool CResourceXmlParser::parseMaterialFile(const std::string& filepath, std::vector<SMaterialCreateParams>& createParamsArray) const
@@ -1014,22 +1108,17 @@ namespace gf
 
 		createParams.Name = name;
 
-		/* handle the ambient, diffuse, specular, emissive node, if it exists.*/
-		tinyxml2::XMLElement* ambient_node = node->FirstChildElement("ambient");
-		if (ambient_node)
-			handleMaterialColorNode(filepath, createParams.Name, ambient_node, createParams.MaterialColors.Ambient);
-
-		tinyxml2::XMLElement* diffuse_node = node->FirstChildElement("diffuse");
-		if (diffuse_node)
-			handleMaterialColorNode(filepath, createParams.Name, diffuse_node, createParams.MaterialColors.Diffuse);
-
-		tinyxml2::XMLElement* specular_node = node->FirstChildElement("specular");
-		if (specular_node)
-			handleMaterialColorNode(filepath, createParams.Name, specular_node, createParams.MaterialColors.Specular);
-
-		tinyxml2::XMLElement* emissive_node = node->FirstChildElement("emissive");
-		if (emissive_node)
-			handleMaterialColorNode(filepath, createParams.Name, emissive_node, createParams.MaterialColors.Emissive);
+		/* handle the attributes, such as ambient, diffuse color, etc. */
+		tinyxml2::XMLElement* attributes_node = node->FirstChildElement("attributes");
+		if (attributes_node)
+		{
+			tinyxml2::XMLElement* attr_node = attributes_node->FirstChildElement("attribute");
+			while (attr_node)
+			{
+				handleMaterialAttributeNode(filepath, attr_node, createParams);
+				attr_node = attr_node->NextSiblingElement("attribute");
+			}
+		}
 
 		/* handle the pipelines */
 		tinyxml2::XMLElement* pipelines_node = node->FirstChildElement("pipelines");
@@ -1047,7 +1136,9 @@ namespace gf
 			const char* pipelineName = pipeline_node->Attribute("name");
 			if (pipelineName)
 			{
+				E_PIPELINE_USAGE usage = getPipelineUsage(pipeline_node->Attribute("usage"));
 				createParams.PipelineNames.push_back(pipelineName);
+				createParams.PipelineUsages.push_back(usage);
 			}
 			pipeline_node = pipeline_node->NextSiblingElement("pipeline");
 		}
@@ -1113,16 +1204,15 @@ namespace gf
 		return true;
 	}
 
-	XMFLOAT4 CResourceXmlParser::getColorFromString(const char* color_str) const
+	XMFLOAT4 CResourceXmlParser::getVectorFromString(const char* color_str) const
 	{
 		XMFLOAT4 color;
 		/* set default color values. */
-		color.x = color.y = color.z = 0.0f;
-		color.w = 1.0f;
+		color.x = color.y = color.z = color.w = 0.0f;
 
 		/* parse the color string - like : "1.2f, 0.2, 0.5f, 1.0f" */
 		/* remove the 'f' charactor, which may be a user's habit. */
-		char s[64];
+		char s[128];
 		memset(s, 0, sizeof(s));
 		const char* p1 = color_str;
 		char* p2 = s;
@@ -1139,22 +1229,107 @@ namespace gf
 		return color;
 	}
 
-	bool CResourceXmlParser::handleMaterialColorNode(const std::string& filepath,
-		const std::string& materialName,
-		tinyxml2::XMLElement* node,
-		XMFLOAT4& color) const
+	bool CResourceXmlParser::parseOnePipeline(const std::string& filepath, 
+		const std::string& pipelineName, 
+		SPipelineCreateParams& createParams) const
 	{
-		const char* color_str = node->Attribute("color");
-		if (!color_str)
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile(filepath.c_str()) != tinyxml2::XML_NO_ERROR)
+			return false;
+
+		/* get the pipeline root node. */
+		tinyxml2::XMLElement* root_node = doc.FirstChildElement("pipelines");
+		if (!root_node)
 		{
-			GF_PRINT_CONSOLE_INFO("The <%s> element doesn't have a 'color' attribute, which is a must.\
-								  							  							  in the material(%s) and the file(%s)",
-																						  node->Name(), materialName.c_str(), filepath.c_str());
+			GF_PRINT_CONSOLE_INFO("The <pipelines> is not the root element in the pipeline file: %s.\n", filepath.c_str());
 			return false;
 		}
 
-		color = getColorFromString(color_str);
-		return true;
+		tinyxml2::XMLElement* sub_node = root_node->FirstChildElement("pipeline");
+
+		while (sub_node)
+		{
+			const char* name = sub_node->Attribute("name");
+			if (pipelineName == name)
+			{
+				if (handlePipelineNode(filepath, sub_node, createParams))
+					return true;
+				else
+					return false;
+			}
+
+			sub_node = sub_node->NextSiblingElement("pipeline");
+		}
+		return false;
+	}
+
+	bool CResourceXmlParser::parseOneMaterial(const std::string& filepath, 
+		const std::string& materialName, 
+		SMaterialCreateParams& createParams) const
+	{
+		tinyxml2::XMLDocument doc;
+		if (doc.LoadFile(filepath.c_str()) != tinyxml2::XML_NO_ERROR)
+			return false;
+
+		/* get the pipeline root node. */
+		tinyxml2::XMLElement* root_node = doc.FirstChildElement("materials");
+		if (!root_node)
+		{
+			GF_PRINT_CONSOLE_INFO("The <materials> is not the root element in the material file: %s.\n", filepath.c_str());
+			return false;
+		}
+
+		tinyxml2::XMLElement* sub_node = root_node->FirstChildElement("material");
+
+		while (sub_node)
+		{
+			const char* name = sub_node->Attribute("name");
+			if (materialName == name)
+			{
+				if (handleMaterialNode(filepath, sub_node, createParams))
+					return true;
+				else
+					return false;
+			}
+
+			sub_node = sub_node->NextSiblingElement("material");
+		}
+		return false;
+	}
+
+	bool CResourceXmlParser::handleMaterialAttributeNode(const std::string& filepath, 
+		tinyxml2::XMLElement* node, SMaterialCreateParams& createParams) const
+	{
+		const char* name = node->Attribute("name");
+		if (name)
+		{
+			const char* valstr = node->Attribute("value");
+			if (valstr)
+			{
+				XMFLOAT4 val = this->getVectorFromString(valstr);
+				SMaterialAttributeParam attrParam;
+				attrParam.Name = name;
+				attrParam.Value = val;
+				createParams.AttributeParams.push_back(attrParam);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool CResourceXmlParser::handleShaderMacroNode(E_SHADER_TYPE shaderType, 
+		tinyxml2::XMLElement* node, SShaderCreateParams& createParams) const
+	{
+		const char* name = node->Attribute("name");
+		if (name)
+		{
+			const char* value = node->Attribute("value");
+			if (!value) value = "";
+			createParams.Macros.set(name, value);
+			return true;
+		}
+		return false;
 	}
 
 

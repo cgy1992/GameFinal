@@ -17,6 +17,7 @@ namespace gf
 		EGF_R8G8_UINT,
 		EGF_R8G8B8_UINT,
 		EGF_R8G8B8A8_UINT,
+		EGF_R8G8B8A8_UNORM,
 		//EGF_D32_FLOAT,
 		//EGF_D24_UNORM_S8_UINT,
 		//EGF_D16_UNORM,
@@ -36,6 +37,7 @@ namespace gf
 		case EGF_R8G8B8_UINT:				return 3;
 		case EGF_R8G8B8A8_UINT:				return 4;
 		case EGF_R16_FLOAT:					return 2;
+		case EGF_R8G8B8A8_UNORM:			return 4;
 		}
 
 		return 0;

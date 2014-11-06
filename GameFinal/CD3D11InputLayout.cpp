@@ -37,8 +37,9 @@ namespace gf
 			}
 		}
 
+
 		hr = pd3dDevice->CreateInputLayout(&elementsDescs[0], elementCount, vertexShaderBuffer->GetBufferPointer(),
-			vertexShaderBuffer->GetBufferSize(), &m_pd3dInputLayout);
+				vertexShaderBuffer->GetBufferSize(), &m_pd3dInputLayout);
 
 		if (FAILED(hr))
 		{

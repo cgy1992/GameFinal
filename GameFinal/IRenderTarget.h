@@ -5,21 +5,59 @@
 
 namespace gf
 {
-	class IRenderTarget : public ITexture
+	class IRenderTarget : public IReferenceCounted
 	{
 	public:
-		IRenderTarget(const std::string& name, u32 sortcode)
-			:ITexture(name, sortcode)
+		IRenderTarget()
+			:mTexture(nullptr)
+			, mTemporary(false)
+			, mWidth(0)
+			, mHeight(0)
 		{
 
-		}
-
-		virtual E_TEXTURE_TYPE getType() const
-		{
-			return ETT_RENDER_TARGET;
 		}
 
 		virtual void clear(const f32 color[]) = 0;
+
+		virtual void clear() = 0;
+
+		virtual void apply(E_SHADER_TYPE shaderType, u32 slot) = 0;
+
+		u32 getWidth() const
+		{
+			return mWidth;
+		}
+
+		u32 getHeight() const
+		{
+			return mHeight;
+		}
+
+		bool isTemporary() const
+		{
+			return mTemporary;
+		}
+
+		void setTemporary(bool b)
+		{
+			mTemporary = b;
+		}
+
+		ITexture* getTexture()
+		{
+			return mTexture;
+		}
+
+		E_GI_FORMAT getFormat() const
+		{
+			return mTexture->getFormat();
+		}
+
+	protected:
+		ITexture*				mTexture;
+		u32						mWidth;
+		u32						mHeight;
+		bool					mTemporary;
 	};
 
 }

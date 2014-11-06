@@ -4,27 +4,20 @@
 
 namespace gf
 {
-	void CTerrainNode::render()
+	void CTerrainNode::render(E_PIPELINE_USAGE usage)
 	{
 		if (!mMaterial)
 			return;
 
 		mMesh->bind();
+		
+		IPipeline* pipeline = mMaterial->getPipeline(usage);
 
-		u32 pipelineCount = mMaterial->getPipelineCount();
-		for (u32 i = 0; i < pipelineCount; i++)
-		{
-			if (mMaterial->isPipelineEnabled(i))
-			{
-				IPipeline* pipeline = mMaterial->getPipeline(i);
+		CShaderVariableInjection::injectForTerrainNode(this, pipeline);
 
-				CShaderVariableInjection::injectForTerrainNode(this, pipeline);
+		pipeline->apply(usage);
 
-				pipeline->apply();
-
-				mMesh->draw();
-			}
-		}
+		mMesh->draw();
 	}
 
 	void CTerrainNode::OnRegisterSceneNode(bool bRecursion)
@@ -52,13 +45,32 @@ namespace gf
 
 	void CTerrainNode::calcSortCode()
 	{
-		/* mesh - 8 bit
-		pipeline - 48 bit
-		material - 8 bit
-		*/
-		mSortCode = ((u64)mMesh->getSortCode() << 56) | (mMaterial->getPipeline(0)->getSortCode() << 8);
-		ITexture* pTexture = mMaterial->getTexture(0);
-		if (pTexture != nullptr)
-			mSortCode |= pTexture->getSortCode();
+		/* customed order - 8 bit, mesh - 8 bit, pipeline - 48 bit */
+
+		IVideoDriver* driver = mSceneManager->getVideoDriver();
+		E_PIPELINE_USAGE usage = driver->getPipelineUsage();
+
+		u32 meshCode = (mMesh) ? mMesh->getSortCode() : 0;
+		u64 pipeCode = (mMaterial && mMaterial->getPipeline(usage)) ? mMaterial->getPipeline(usage)->getSortCode() : 0;
+
+		mSortCode = ((u64)mRenderOrder << 56) | ((u64)meshCode << 48) | pipeCode;
+	}
+
+	f32 CTerrainNode::getHeight(f32 x, f32 z, bool localPivot /*= false*/) const
+	{
+		f32 height;
+		if (!localPivot)
+		{
+			x -= mPosition.x;
+			z -= mPosition.z;
+			height = mMesh->getHeight(x, z);
+			height += mPosition.y;
+		}
+		else
+		{
+			height = mMesh->getHeight(x, z);
+		}
+
+		return height;
 	}
 }

@@ -19,7 +19,9 @@ namespace gf
 			E_PRIMITIVE_TYPE primitiveType,
 			IRenderState* renderState) = 0;
 
-		virtual IPipeline* get(const std::string& name) = 0;
+		virtual IPipeline* get(const std::string& name, bool bLoadIfNotExist = true) = 0;
+
+		_DECLARE_SINGLETON_INSTANCE(IPipelineManager);
 
 		_DECLARE_RESOURCE_DESTROY_METHODS(IPipeline);
 	};

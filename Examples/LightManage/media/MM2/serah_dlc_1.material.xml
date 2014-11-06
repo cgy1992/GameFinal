@@ -1,0 +1,72 @@
+<materials>
+    <material name="serah_dlc_1/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="serah_dlc_1/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="cloth_d.png"/>
+        </textures>
+    </material>
+    <material name="serah_dlc_1/material_01">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="serah_dlc_1/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="body_d.png"/>
+        </textures>
+    </material>
+    <material name="serah_dlc_1/material_02">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="serah_dlc_1/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="hair_d.png"/>
+        </textures>
+    </material>
+    <material name="serah_dlc_1/material_03">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="serah_dlc_1/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="eyes_d.png"/>
+        </textures>
+    </material>
+    <material name="serah_dlc_1/material_04">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="serah_dlc_1/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="necklace_d.png"/>
+        </textures>
+    </material>
+</materials>

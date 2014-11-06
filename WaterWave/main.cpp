@@ -6,8 +6,8 @@
 
 using namespace gf;
 
-const u32 SCREEN_WIDTH = 800;
-const u32 SCREEN_HEIGHT = 600;
+const u32 SCREEN_WIDTH = 1024;
+const u32 SCREEN_HEIGHT = 768;
 const f32 CAMERA_MOVE_UNIT = 50.0f;
 const f32 CAMERA_ROTATE_UNIT = 1.0f;
 
@@ -41,9 +41,9 @@ ISimpleMesh* createWaterMesh(IMeshManager* meshManager, const std::string& name,
 int main()
 {
 	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 4;
-	settings.MultiSamplingQuality = 32;
-	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
+	settings.MultiSamplingCount = 1;
+	settings.MultiSamplingQuality = 0;
+	IDevice* device = createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
 
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager* smgr = device->getSceneManager();
@@ -78,6 +78,7 @@ int main()
 	pipeline->setMatrix("gTangentWorldMatrix", TBN);
 
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 40.0f, -4.0f), XMFLOAT3(0, 40.0f, 0.0f));
+	camera->setFarZ(10000.0f);
 	char caption[200];
 
 	ITimer* timer = device->getTimer();
@@ -87,6 +88,16 @@ int main()
 	static float t2 = 0.0f;
 	
 	E_FILL_MODE fillMode = E_FILL_SOLID;
+
+	SCompositorCreateParam param;
+	param.Bloom.BlurPassCount = 3;
+	param.Bloom.BrightnessThreshold = 0.85f;
+	param.Bloom.BlurTexelDistance = 1.0f;
+	param.Bloom.BlurTextureWidth = 400;
+	param.Bloom.BlurTextureHeight = 300;
+	
+	ICompositor* bloom = smgr->createCompositor(ECT_BLOOM, param);
+	smgr->addCompositor(bloom);
 
 	while (device->run())
 	{

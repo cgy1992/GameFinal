@@ -2,7 +2,9 @@
 #define __D3D11SAMPLER_CLASS_H__
 
 #include "ISampler.h"
+#include "D3DUtil.h"
 #include "CD3D11SamplerStateCache.h"
+
 namespace gf
 {
 	class CD3D11Sampler : public ISampler
@@ -55,6 +57,14 @@ namespace gf
 			D3D11_SAMPLER_DESC desc;
 			md3dSamplerState->GetDesc(&desc);
 			memcpy(desc.BorderColor, rgba, sizeof(f32)* 4);
+			setSamplerState(desc);
+		}
+
+		virtual void setComparsionFunc(E_COMPARISON_FUNC func)
+		{
+			D3D11_SAMPLER_DESC desc;
+			md3dSamplerState->GetDesc(&desc);
+			desc.ComparisonFunc = getD3d11ComparisonFunc(func);
 			setSamplerState(desc);
 		}
 

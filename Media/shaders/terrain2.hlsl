@@ -1,28 +1,10 @@
-struct Material
-{
-	float4 Ambient;
-	float4 Diffuse;
-	float4 Specular;
-	float4 Emissive;
-};
-
-struct Light
-{
-	float4 Diffuse;
-	float4 Specular;
-	float4 Ambient;
-	float3 Position;
-	float  Range;
-	float3 Direction;
-	float  Falloff;
-	float3 Attenuations;
-	float  Theta;
-};
+#include "../built-in-resources/GameFinal.hlsl"
 
 cbuffer cbPerObject
 {
 	float4x4 gWorld;
-	Material gMaterial;
+	SMaterial gMaterial;
+	float gPower;
 };
 
 cbuffer cbPerFrame
@@ -30,7 +12,9 @@ cbuffer cbPerFrame
 	float4x4 gViewProj;
 	float3 gEyePos;
 	float4 gFrustumPlanes[6];
-	Light gLight;
+	SDirectionalLight gLight;
+	SDirectionalLight gDirLights[10];
+	uint	gDirLightsNum;
 };
 
 cbuffer cbFixed
@@ -225,10 +209,15 @@ DomainOut ds_main( PatchTess input,
 
 float4 ps_main(DomainOut pin) : SV_TARGET
 {
-	float4 Color = gLight.Ambient * gMaterial.Ambient;
+	float4 Color = GF_AMBIENT * gMaterial.Ambient;
 	float3 Normal = normalize(pin.Normal);
-	Color += gLight.Diffuse * gMaterial.Diffuse * saturate(dot(Normal, -gLight.Direction));
 
-	float4 texColor = gGrassTexture.Sample(gGrassTextureSampleState, pin.Tex * 30.0f);
+	for(uint i = 0; i < gDirLightsNum; i++)
+	{
+		SDirectionalLight light = gDirLights[i];
+		Color += light.Diffuse * gMaterial.Diffuse * saturate(dot(Normal, -light.Direction));
+	}
+
+	float4 texColor = GF_TEXTURE.Sample(gGrassTextureSampleState, pin.Tex * 30.0f);
 	return Color * texColor;
 }

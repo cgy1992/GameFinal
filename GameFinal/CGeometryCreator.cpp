@@ -80,6 +80,9 @@ namespace gf
 		// Fill in the right face index data
 		i[30] = 20; i[31] = 21; i[32] = 22;
 		i[33] = 20; i[34] = 22; i[35] = 23;
+
+		geoData.Aabb.Center = XMFLOAT3(0, 0, 0);
+		geoData.Aabb.Extents = XMFLOAT3(w2, h2, d2);
 	}
 
 	void CGeometryCreator::createPlaneData(
@@ -102,6 +105,9 @@ namespace gf
 
 		f32 du = uTiles / xsegments;
 		f32 dv = vTiles / ysegments;
+
+		geoData.Aabb.Center = XMFLOAT3(0, 0, 0);
+		geoData.Aabb.Extents = XMFLOAT3(halfWidth, min(0.1f, width * 0.01f), halfDepth);
 
 		geoData.Vertices.resize(vertexCount);
 		for (u32 i = 0; i <= ysegments; ++i)
@@ -138,6 +144,134 @@ namespace gf
 				k += 6; // next quad
 			}
 		}
+	}
+
+	void CGeometryCreator::createSphereData(f32 radius, u32 sliceCount,
+		u32 stackCount, SGeometryData& geoData)
+	{
+		geoData.Vertices.clear();
+		geoData.Indices.clear();
+
+		//
+		// Compute the vertices stating at the top pole and moving down the stacks.
+		//
+
+		// Poles: note that there will be texture coordinate distortion as there is
+		// not a unique point on the texture map to assign to the pole when mapping
+		// a rectangular texture onto a sphere.
+		SGeometryVertex topVertex(0.0f, +radius, 0.0f, 0.0f, +1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+		SGeometryVertex bottomVertex(0.0f, -radius, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+
+		geoData.Vertices.push_back(topVertex);
+
+		float phiStep = XM_PI / stackCount;
+		float thetaStep = 2.0f*XM_PI / sliceCount;
+
+		// Compute vertices for each stack ring (do not count the poles as rings).
+		for (UINT i = 1; i <= stackCount - 1; ++i)
+		{
+			float phi = i*phiStep;
+
+			// Vertices of ring.
+			for (UINT j = 0; j <= sliceCount; ++j)
+			{
+				float theta = j*thetaStep;
+
+				SGeometryVertex v;
+
+				// spherical to cartesian
+				v.Position.x = radius*sinf(phi)*cosf(theta);
+				v.Position.y = radius*cosf(phi);
+				v.Position.z = radius*sinf(phi)*sinf(theta);
+
+				// Partial derivative of P with respect to theta
+				v.TangentU.x = -radius*sinf(phi)*sinf(theta);
+				v.TangentU.y = 0.0f;
+				v.TangentU.z = +radius*sinf(phi)*cosf(theta);
+
+				XMVECTOR T = XMLoadFloat3(&v.TangentU);
+				XMStoreFloat3(&v.TangentU, XMVector3Normalize(T));
+
+				XMVECTOR p = XMLoadFloat3(&v.Position);
+				XMStoreFloat3(&v.Normal, XMVector3Normalize(p));
+
+				v.TexC.x = theta / XM_2PI;
+				v.TexC.y = phi / XM_PI;
+
+				geoData.Vertices.push_back(v);
+			}
+		}
+
+		geoData.Vertices.push_back(bottomVertex);
+
+		//
+		// Compute indices for top stack.  The top stack was written first to the vertex buffer
+		// and connects the top pole to the first ring.
+		//
+
+		for (UINT i = 1; i <= sliceCount; ++i)
+		{
+			geoData.Indices.push_back(0);
+			geoData.Indices.push_back(i + 1);
+			geoData.Indices.push_back(i);
+		}
+
+		//
+		// Compute indices for inner stacks (not connected to poles).
+		//
+
+		// Offset the indices to the index of the first vertex in the first ring.
+		// This is just skipping the top pole vertex.
+		UINT baseIndex = 1;
+		UINT ringVertexCount = sliceCount + 1;
+		for (UINT i = 0; i < stackCount - 2; ++i)
+		{
+			for (UINT j = 0; j < sliceCount; ++j)
+			{
+				geoData.Indices.push_back(baseIndex + i*ringVertexCount + j);
+				geoData.Indices.push_back(baseIndex + i*ringVertexCount + j + 1);
+				geoData.Indices.push_back(baseIndex + (i + 1)*ringVertexCount + j);
+
+				geoData.Indices.push_back(baseIndex + (i + 1)*ringVertexCount + j);
+				geoData.Indices.push_back(baseIndex + i*ringVertexCount + j + 1);
+				geoData.Indices.push_back(baseIndex + (i + 1)*ringVertexCount + j + 1);
+			}
+		}
+
+		//
+		// Compute indices for bottom stack.  The bottom stack was written last to the vertex buffer
+		// and connects the bottom pole to the bottom ring.
+		//
+
+		// South pole vertex was added last.
+		UINT southPoleIndex = (UINT)geoData.Vertices.size() - 1;
+
+		// Offset the indices to the index of the first vertex in the last ring.
+		baseIndex = southPoleIndex - ringVertexCount;
+
+		for (UINT i = 0; i < sliceCount; ++i)
+		{
+			geoData.Indices.push_back(southPoleIndex);
+			geoData.Indices.push_back(baseIndex + i);
+			geoData.Indices.push_back(baseIndex + i + 1);
+		}
+
+		geoData.Aabb.Center = XMFLOAT3(0, 0, 0);
+		geoData.Aabb.Extents = XMFLOAT3(radius, radius, radius);
+	}
+
+	void CGeometryCreator::createQuadData(XMFLOAT3 vertices[], math::SAxisAlignedBox& aabb)
+	{
+		vertices[0] = XMFLOAT3(-1.0f, 1.0f, 0.0f);
+		vertices[1] = XMFLOAT3(1.0f, 1.0f, 0.0f);
+		vertices[2] = XMFLOAT3(1.0f, -1.0f, 0.0f);
+
+		vertices[3] = XMFLOAT3(-1.0f, 1.0f, 0.0f);
+		vertices[4] = XMFLOAT3(1.0f, -1.0f, 0.0f);
+		vertices[5] = XMFLOAT3(-1.0f, -1.0f, 0.0f);
+
+		aabb.Center = XMFLOAT3(0, 0, 0);
+		aabb.Extents = XMFLOAT3(1.0f, 1.0f, 0.01f);
 	}
 
 }

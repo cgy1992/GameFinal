@@ -3,7 +3,7 @@
 
 namespace gf
 {
-
+	/*
 	bool CD3D11DepthStencilSurface::create(u32 width, u32 height,
 		u32 depthBitNum, u32 stencilBitNum,
 		bool multiSampling, u32 multiSamplingCount, u32 multiSamplingQuality,
@@ -143,6 +143,42 @@ namespace gf
 
 		return true;
 	}
+	*/
+
+	bool CD3D11DepthStencilSurface::create(ITexture* texture, 
+		ID3D11Texture2D* pTexture2D,
+		DXGI_FORMAT depthStencilFormat, 
+		ID3D11ShaderResourceView* d3dShaderResourceView, 
+		bool multiSampling)
+	{
+		HRESULT hr;
+		ID3D11DepthStencilView* pd3dDepthStencilView;
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+		dsvDesc.Flags = 0;
+		dsvDesc.Format = depthStencilFormat;
+		if (multiSampling)
+		{
+			dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+		}
+		else
+		{
+			dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+			dsvDesc.Texture2D.MipSlice = 0;
+		}
+
+		hr = md3dDevice->CreateDepthStencilView(pTexture2D, &dsvDesc, &pd3dDepthStencilView);
+		if (FAILED(hr))
+		{
+			return false;
+		}
+
+		ReleaseCOM(md3dDepthStencilView);
+		md3dDepthStencilView = pd3dDepthStencilView;
+		mTexture = texture;
+		md3dShaderResourceView = d3dShaderResourceView;
+		return true;
+	}
 
 	void CD3D11DepthStencilSurface::clear(f32 depth, u8 stencil)
 	{
@@ -160,6 +196,12 @@ namespace gf
 	{
 		if (md3dDepthStencilView)
 			md3dDeviceContext->ClearDepthStencilView(md3dDepthStencilView, D3D11_CLEAR_STENCIL, 1.0f, stencil);
+	}
+
+	void CD3D11DepthStencilSurface::apply(E_SHADER_TYPE shaderType, u32 slot)
+	{
+		if (mTexture)
+			mTexture->apply(shaderType, slot);
 	}
 }
 

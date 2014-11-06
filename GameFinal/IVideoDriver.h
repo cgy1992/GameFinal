@@ -17,6 +17,7 @@
 #include "IShaderVariableInjection.h"
 #include "ISamplerManager.h"
 #include "IDepthStencilSurface.h"
+#include "ICompositorFactory.h"
 
 namespace gf
 {
@@ -28,6 +29,25 @@ namespace gf
 		f32 Height;
 		f32 MinDepth;
 		f32 MaxDepth;
+
+		SViewport()
+			: TopLeftX(0), TopLeftY(0)
+			, Width(0), Height(0)
+			, MinDepth(0), MaxDepth(0)
+		{
+
+		}
+
+		bool operator==(const SViewport& v) const
+		{
+			if (TopLeftX == v.TopLeftX && TopLeftY == v.TopLeftY
+				&& Width == v.Width && Height == v.Height
+				&& MinDepth == v.MinDepth && MaxDepth == v.MaxDepth)
+			{
+				return true;
+			}
+			return false;
+		}
 	};
 
 	class IVideoDriver : public IReferenceCounted
@@ -67,6 +87,8 @@ namespace gf
 		}
 
 		virtual void bindPrimitiveType(E_PRIMITIVE_TYPE primitiveType) = 0;
+
+		virtual void clearShader(E_SHADER_TYPE shaderType) = 0;
 
 		virtual void clearDepthStencil(f32 depth, u8 stencil) = 0;
 
@@ -153,7 +175,20 @@ namespace gf
 			return mSamplerManager;
 		}
 
-		
+		virtual ICompositorFactory*		getCompositorFactory() = 0;
+
+		bool isRenderingShadowMap() const 
+		{ 
+			return mCurrentPipelineUsage == EPU_DIR_SHADOW_MAP || mCurrentPipelineUsage == EPU_POINT_SHADOW_MAP;
+		}
+
+		E_PIPELINE_USAGE getPipelineUsage() const { return mCurrentPipelineUsage; }
+
+		virtual void setPipelineUsage(E_PIPELINE_USAGE usage) = 0;
+
+
+
+		_DECLARE_SINGLETON_INSTANCE(IVideoDriver);
 
 	protected:
 		int								mVideoCardMemory;
@@ -170,8 +205,13 @@ namespace gf
 		IResourceGroupManager*			mResourceGroupManager;
 		ISamplerManager*				mSamplerManager;
 		SViewport						mViewport;
+
+		//bool							mRenderingShadowMap;
+		E_PIPELINE_USAGE				mCurrentPipelineUsage;
+
 		//	IShaderVariableInjection*		mShaderVariableInjector;
 	};
+
 }
 
 #endif

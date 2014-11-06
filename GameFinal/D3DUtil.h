@@ -41,12 +41,19 @@ if (FAILED(hr))                                         \
 
 #include "gfGIFormat.h"
 #include "EMemoryUsage.h"
+#include "gfEnums.h"
 
 namespace gf
 {
 	DXGI_FORMAT getDxgiFormat(E_GI_FORMAT format);
 
 	D3D11_USAGE getD3d11Usage(E_MEMORY_USAGE usage);
+
+	E_GI_FORMAT getFormatFromDxgi(DXGI_FORMAT format);
+
+	D3D11_COMPARISON_FUNC getD3d11ComparisonFunc(E_COMPARISON_FUNC func);
+
+	UINT getD3dx11BindFlags(u32 flags);
 }
 
 

@@ -146,9 +146,8 @@ namespace gf
 		// szRawFileName is just the file name without full path
 		// so here full path must be obtained through ResourceGroupManager's getFullPath method
 
-
 		std::string rawFilePath;
-		if (!mResourceGroupManager->getFullPath(szRawFileName, rawFilePath))
+		if (!IResourceGroupManager::getInstance()->getFullPath(szRawFileName, rawFilePath))
 		{
 			GF_PRINT_CONSOLE_INFO("The terrain mesh ('%s') create failed!  Since raw file named '%s' has not been found.\n", name.c_str(), szRawFileName.c_str());
 			return nullptr;

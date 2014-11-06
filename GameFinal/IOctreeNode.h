@@ -2,7 +2,8 @@
 #define __OCTREE_NODE_CLASS_H__
 
 #include "IReferenceCounted.h"
-#include "ISceneNode.h"
+#include "IMeshNode.h"
+#include "ILightNode.h"
 
 namespace gf
 {
@@ -34,7 +35,7 @@ namespace gf
 			mMaxCorner(maxCorner),
 			mTreeHeight(treeHeight)
 		{
-			memset(mChildrenNodes, 0, sizeof(mChildrenNodes));
+			
 		}
 
 		virtual void addSceneNode(ISceneNode* node) = 0;
@@ -52,16 +53,16 @@ namespace gf
 
 		virtual bool removeSceneNode(ISceneNode* node) = 0;
 
+		virtual void reset() = 0;
+
 	protected:
 		IOctreeManager*					mOctreeManager;
 
 		XMFLOAT3						mMinCorner;
 		XMFLOAT3						mMaxCorner;
+		math::SAxisAlignedBox			mAabb;
 
 		u32								mTreeHeight;
-
-		std::list<ISceneNode*>			mContainedNodes;
-		IOctreeNode*					mChildrenNodes[8];
 
 
 

@@ -24,9 +24,17 @@ namespace gf
 
 		virtual u32 setTransposedMatrixArray(E_SHADER_TYPE shaderType, const std::string& varname, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdated = false);
 
+		virtual u32 setAttribute(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated = false);
+
+		virtual bool setAttribute(E_SHADER_TYPE shaderType, const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated = false);
+
 		virtual u32 setVector(const std::string& varname, const f32* v, bool ignoreIfAlreadyUpdated = false);
 
 		virtual bool setVector(E_SHADER_TYPE shaderType, const std::string& varname, const f32* v, bool ignoreIfAlreadyUpdated = false);
+
+		virtual u32 setVector(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated = false);
+
+		virtual bool setVector(E_SHADER_TYPE shaderType, const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated = false);
 
 		virtual u32 setUint(const std::string& varname, u32 v, bool ignoreIfAlreadyUpdated = false);
 
@@ -39,6 +47,11 @@ namespace gf
 		virtual u32 setRawValue(const std::string& varname, void* raw, u32 size, bool ignoreIfAlreadyUpdated = false);
 
 		virtual bool setRawValue(E_SHADER_TYPE shaderType, const std::string& varname, void* raw, u32 size, bool ignoreIfAlreadyUpdated = false);
+
+		virtual u32 setArray(const std::string& varname, void* data, u32 arraySize, u32 elementSize, bool ignoreIfAlreadyUpdate = false);
+
+		// return the actual element count that has been set.
+		virtual u32 setArray(E_SHADER_TYPE shaderType, const std::string& varname, void* data, u32 arraySize, u32 elementSize, bool ignoreIfAlreadyUpdate = false);
 
 		virtual u32 setTexture(const std::string& varname, ITexture* texture);
 
@@ -64,6 +77,8 @@ namespace gf
 		}
 
 		virtual void addShaderAutoVariable(const SShaderAutoVariable& var);
+
+		virtual void registerAutoSamplers(const std::map<std::string, ISampler*>& samplerMap);
 
 		virtual bool setSampler(const std::string& varname, ISampler* sampler);
 
@@ -91,7 +106,6 @@ namespace gf
 		std::vector<SShaderSamplerVariable>		mSamplerVariables;
 
 		//std::vector<> mShader;
-
 
 	private:
 

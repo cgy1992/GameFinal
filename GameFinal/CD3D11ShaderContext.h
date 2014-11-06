@@ -5,7 +5,7 @@
 #include "IShaderContext.h"
 #include "IShader.h"
 #include "ITexture.h"
-#include "CD3D11Texture.h"
+#include "CD3D11Texture2D.h"
 #include "CD3D11Driver.h"
 
 

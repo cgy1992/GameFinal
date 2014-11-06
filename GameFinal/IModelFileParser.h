@@ -50,6 +50,7 @@ namespace gf
 		s32							BoneId;					/* 如果在骨骼动画模型中，该子集没有骨骼动画，则需要经过这个骨骼的变换 */
 		bool						Skinned;
 		char						MaterialName[128];
+		XMFLOAT4X4					OffsetMatrix;
 	};
 
 
@@ -85,7 +86,8 @@ namespace gf
 	public:
 
 		virtual bool parseModelFile(const std::string& filepath, SModelMeshCreateParams& createParams) = 0;
-
+		
+		_DECLARE_SINGLETON_INSTANCE(IModelFileParser);
 	};
 }
 

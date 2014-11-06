@@ -1,34 +1,7 @@
-//Texture2DMS<float4, 4> gTexture1;
+#include "../built-in-resources/GameFinal.hlsl"
+
 Texture2D gTexture1;
-
 SamplerState sampleType;
-
-struct Light
-{
-	float4 Diffuse;
-	float4 Specular;
-	float4 Ambient;
-	float3 Position;
-	float  Range;
-	float3 Direction;
-	float  Falloff;
-	float3 Attenuations;
-	float  Theta;
-};
-
-/*
-XMFLOAT4 Ambient;
-XMFLOAT4 Diffuse;
-XMFLOAT4 Specular;
-XMFLOAT4 Emissive;
-*/
-struct Material
-{
-	float4 Ambient;
-	float4 Diffuse;
-	float4 Specular;
-	float4 Emissive;
-};
 
 cbuffer cbPerObject
 {
@@ -37,15 +10,10 @@ cbuffer cbPerObject
 
 cbuffer cbPerFrame
 {
-	float4x4	gViewProj;
-	Light		gLight;
-	Material	gMaterial;
-	float3		gEyePos;
-};
-
-cbuffer cbNoting
-{
-	float4x4 gNoMatrix;
+	float4x4		gViewProj;
+	//SPointLight		gLight;
+	SMaterial		gMaterial;
+	float3			gEyePos;
 };
 
 struct VertexOut
@@ -60,28 +28,32 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 {
 	float3 PosW = pin.PosW;
 	float3 Normal = normalize(pin.Normal);
-
-	float4 Color = gLight.Ambient * gMaterial.Ambient + gMaterial.Emissive;
-	float3 lightDir = PosW - gLight.Position;
-	float dist = length(lightDir);
-	lightDir /= dist;
-
-	float diffAtten = dot(-lightDir, Normal);
+	float4 Color = GF_AMBIENT * gMaterial.Ambient + gMaterial.Emissive;
 	float4 Specular = 0;
 	float4 Diffuse = 0;
 
-	[flatten]
-	if (diffAtten > 0)
+	for(uint i = 0; i < GF_POINT_LIGHTS_NUM; i++)
 	{
-		float3 toEye = normalize(gEyePos - PosW);
-		float3 refLightDir = reflect(lightDir, Normal);
+		SPointLight light = GF_POINT_LIGHTS[i];
+		float3 lightDir = PosW - light.Position;
+		float dist = length(lightDir);
+		lightDir /= dist;
 
-		float specAtten = dot(refLightDir, toEye);
-		float distAtten = 1.0 / dot(gLight.Attenuations, float3(1, dist, dist * dist));
+		float diffAtten = dot(-lightDir, Normal);
+		
+		[flatten]
+		if (diffAtten > 0)
+		{
+			float3 toEye = normalize(gEyePos - PosW);
+			float3 refLightDir = reflect(lightDir, Normal);
 
-		Diffuse = gLight.Diffuse * diffAtten * distAtten * gMaterial.Diffuse;
-		Specular = gLight.Specular * pow(saturate(specAtten), 32) * distAtten * gMaterial.Specular;
-	}
+			float specAtten = dot(refLightDir, toEye);
+			float distAtten = 1.0 / dot(light.Attenuations, float3(1, dist, dist * dist));
+
+			Diffuse = light.Diffuse * diffAtten * distAtten * gMaterial.Diffuse;
+			Specular = light.Specular * pow(saturate(specAtten), 32) * distAtten * gMaterial.Specular;
+		}
+	}	
 
 	float4 texColor = gTexture1.Sample(sampleType, pin.Tex);
 	//float width, height, NumberOfSamples;

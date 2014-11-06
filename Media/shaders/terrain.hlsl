@@ -1,34 +1,15 @@
-struct Material
-{
-	float4 Ambient;
-	float4 Diffuse;
-	float4 Specular;
-	float4 Emissive;
-};
-
-struct Light
-{
-	float4 Diffuse;
-	float4 Specular;
-	float4 Ambient;
-	float3 Position;
-	float  Range;
-	float3 Direction;
-	float  Falloff;
-	float3 Attenuations;
-	float  Theta;
-};
+#include "../built-in-resources/GameFinal.hlsl"
 
 cbuffer cbPerObject
 {
 	float4x4 	gWorld;
-	Material	gMaterial;
+	SMaterial 	gMaterial;
 };
 
 cbuffer cbPerFrame
 {
 	float4x4	gViewProj;
-	Light		gLight;
+	SDirectionalLight gLight;
 	float3		gEyePos;
 	float4   	gFrustumPlanes[6];
 };
@@ -62,9 +43,9 @@ VertexOut vs_main(VertexIn vin)
 
 float4 ps_main(VertexOut pin) : SV_TARGET
 {
-	float4 texColor = gTexture.Sample(gSampleState, pin.Tex);
+	float4 texColor;
 
-	float4 AmbientColor = gLight.Ambient * gMaterial.Ambient;
+	float4 AmbientColor = GF_AMBIENT * gMaterial.Ambient * 3.0f;
 
 	float3 Normal = normalize(pin.Normal);
 
@@ -72,5 +53,15 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 
 	//texColor.r = abs(gFrustumPlanes[1].x);
 
+
+	//float4 texColor;
+	float4 ratio = GF_TEXTURE_3.Sample(gSampleState, pin.Tex);
+	float4 c1 = GF_TEXTURE_0.Sample(gSampleState, pin.Tex * 20.0f);
+	float4 c2 = GF_TEXTURE_1.Sample(gSampleState, pin.Tex * 10.0f);
+	float4 c3 = GF_TEXTURE_2.Sample(gSampleState, pin.Tex * 12.0f);
+
+	texColor = c1 * ratio.r + c2 * ratio.g + c3 * ratio.b;
+
 	return texColor * (AmbientColor + DiffuseColor);
 }
+

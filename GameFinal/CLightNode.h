@@ -3,6 +3,7 @@
 
 #include "ILightNode.h"
 
+/*
 namespace gf
 {
 
@@ -131,7 +132,7 @@ namespace gf
 			return m_lightData.Theta;
 		}
 
-		
+		virtual bool isCulled(const math::SFrustum& frustum) const;
 
 	protected:
 		u32					m_id;
@@ -139,16 +140,10 @@ namespace gf
 		SLightData			m_lightData;
 		XMFLOAT3			m_direction;
 
-		/*
-		XMFLOAT4			m_diffuse;
-		XMFLOAT4			m_specular;
-		XMFLOAT4			m_ambient;
-		XMFLOAT3			m_direction;
-		f32					m_range;
-		XMFLOAT3			m_attenuation;
-		*/
+
+		math::SAxisAlignedBox mAabb;
 	};
 
 }
-
+*/
 #endif

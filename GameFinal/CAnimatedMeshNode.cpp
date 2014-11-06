@@ -51,7 +51,7 @@ namespace gf
 		}
 	}
 
-	void CAnimatedMeshNode::render()
+	void CAnimatedMeshNode::render(E_PIPELINE_USAGE usage)
 	{
 		XMFLOAT4X4 preAbsoluteTransform;
 
@@ -90,48 +90,44 @@ namespace gf
 				}
 			}
 
-			for (u32 j = 0; j < material->getPipelineCount(); j++)
+			IPipeline* pipeline = material->getPipeline(usage);
+			if (!pipeline)
+				continue;
+
+			//	IPipeline* pipeline2 = subsets[0].Material->getPipeline(0);
+			//pipeline = subsets[subsets.size() - 1].Material->getPipeline(0);
+
+			// 如果该子集有动画，骨骼变换都是需要注入的
+			if (subsets[i].Skinned)
 			{
-				IPipeline* pipeline = material->getPipeline(j);
-				if (!pipeline)
-					continue;
-
-				//	IPipeline* pipeline2 = subsets[0].Material->getPipeline(0);
-				//pipeline = subsets[subsets.size() - 1].Material->getPipeline(0);
-
-				// 如果该子集有动画，骨骼变换都是需要注入的
-				if (subsets[i].Skinned)
-				{
-					CShaderVariableInjection::injectBoneTransforms(pipeline,
-						reinterpret_cast<f32*>(&mSubsetBoneTransforms[0]),
-						subsets[i].Bones.size());
-				}
-
-				CShaderVariableInjection::inject(this, pipeline, i);
-				pipeline->apply();
-				/*
-
-				//如果当前的流水线和上一条相同，则除了材质外的其他变量不用注入
-				if (pipeline == prePipeline)
-				{
-				//当且仅当材质也不同于上一个时才注入
-				if (preMaterial != material)
-				{
-				CShaderVariableInjection::injectMaterial(material, pipeline);
-				pipeline->apply();
-				}
-				}
-				else // 如果两条流水线不同，全部变量都需要更新
-				{
-				CShaderVariableInjection::inject(this, pipeline, i);
-				pipeline->apply();
-				prePipeline = pipeline;
-				}
-				*/
-
-				mMesh->drawSubset(i);
-
+				CShaderVariableInjection::injectBoneTransforms(pipeline,
+					reinterpret_cast<f32*>(&mSubsetBoneTransforms[0]),
+					subsets[i].Bones.size());
 			}
+
+			CShaderVariableInjection::inject(this, pipeline, i);
+			pipeline->apply(usage);
+			/*
+
+			//如果当前的流水线和上一条相同，则除了材质外的其他变量不用注入
+			if (pipeline == prePipeline)
+			{
+			//当且仅当材质也不同于上一个时才注入
+			if (preMaterial != material)
+			{
+			CShaderVariableInjection::injectMaterial(material, pipeline);
+			pipeline->apply();
+			}
+			}
+			else // 如果两条流水线不同，全部变量都需要更新
+			{
+			CShaderVariableInjection::inject(this, pipeline, i);
+			pipeline->apply();
+			prePipeline = pipeline;
+			}
+			*/
+
+			mMesh->drawSubset(i);
 
 			// 如果世界变换经过了改变，则需要回复 
 			if (!subsets[i].Skinned && subsets[i].BoneId >= 0)
@@ -158,23 +154,18 @@ namespace gf
 
 	void CAnimatedMeshNode::calcSortCode()
 	{
-		mSortCode = ((u64)mMesh->getSortCode() << 56);
+		/* customed order - 8 bit, mesh - 8 bit, pipeline - 48 bit */
+		IVideoDriver* driver = mSceneManager->getVideoDriver();
+		E_PIPELINE_USAGE usage = driver->getPipelineUsage();
 
-		IMaterial* material = mMaterials[0];
-		if (material)
+		u32 meshCode = (mMesh) ? mMesh->getSortCode() : 0;
+		u64 pipeCode = 0;
+		if (mMaterials[0])
 		{
-			IPipeline* pipeline = material->getPipeline(0);
-			if (pipeline)
-			{
-				mSortCode |= (pipeline->getSortCode() << 8);
-			}
-
-			ITexture* texture = material->getTexture(0);
-			if (texture)
-			{
-				mSortCode |= texture->getSortCode();
-			}
+			if (mMaterials[0]->getPipeline(usage))
+				pipeCode = mMaterials[0]->getPipeline(usage)->getSortCode();
 		}
+		mSortCode = ((u64)mRenderOrder << 56) | ((u64)meshCode << 48) | pipeCode;
 	}
 
 	bool CAnimatedMeshNode::setAnimation(u32 id)

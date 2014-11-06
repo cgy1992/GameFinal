@@ -3,6 +3,7 @@
 
 #include "gfTypes.h"
 #include "gfUtil.h"
+#include "gfEnums.h"
 #include "IShader.h"
 #include "IInputLayout.h"
 #include "IRenderState.h"
@@ -85,16 +86,17 @@ namespace gf
 		ESAVT_WORLD_VIEW_PROJ_MATRIX,
 		ESAVT_INVERSE_WORLD_VIEW_PROJ_MATRIX,
 		ESAVT_TRANSPOSE_WORLD_VIEW_PROJ_MATRIX,
-		ESAVT_INVERSE_TRANSPOSE_WORLD_VIEW_PROJ_MATRIX,	
+		ESAVT_INVERSE_TRANSPOSE_WORLD_VIEW_PROJ_MATRIX,
 		ESAVT_TRANSFORMS_END,							/* transform end */
 
 		/* materials */
 		ESAVT_MATERIAL_BEGIN,					/* material begin */
-		ESAVT_MATERIAL,
+		ESAVT_MATERIAL_COLOR,
 		ESAVT_MATERIAL_AMBIENT,
 		ESAVT_MATERIAL_DIFFUSE,
 		ESAVT_MATERIAL_SPECULAR,
 		ESAVT_MATERIAL_EMISSIVE,
+		ESAVT_MATERIAL_ATTRIBUTE,
 		ESAVT_TEXTURE,
 		ESAVT_TEXTURE_WIDTH,
 		ESAVT_TEXTURE_HEIGHT,
@@ -107,6 +109,17 @@ namespace gf
 		ESAVT_CAMERA_POSITION,
 		ESAVT_CAMERA_FRUSTUM,
 		ESAVT_LIGHT,
+		ESAVT_AMBIENT,
+		ESAVT_NEAR_POINT_LIGHTS,				
+		ESAVT_NEAR_POINT_LIGHTS_NUM,
+		ESAVT_NEAR_SPOT_LIGHTS,
+		ESAVT_NEAR_SPOT_LIGHTS_NUM,
+		ESAVT_DIRECTIONAL_LIGHTS,
+		ESAVT_DIRECTIONAL_LIGHTS_NUM,
+		ESAVT_SHADOW_MAP,
+		ESAVT_SHADOW_MAP_TRANSFORM,
+		ESAVT_SHADOW_MAP_SIZE,
+		ESAVT_SHADOW_MAP_JITTER_TEXTURE,
 		ESAVT_SCENE_END,						/* scene info end*/
 
 		/* bone transforms. */
@@ -137,10 +150,8 @@ namespace gf
 		ESAVT_WINDOW_HEIGHT,
 		ESAVT_INVERSE_WINDOW_WIDTH,
 		ESAVT_INVERSE_WINDOW_HEIGHT,
+		ESAVT_SCREEN_SIZE,
 		ESAVT_WINDOW_SYSTEM_END,				/* window and system end */
-		
-
-
 	};
 
 	enum E_UPDATE_FREQUENCY
@@ -149,9 +160,6 @@ namespace gf
 		EUF_PER_FRAME
 	};
 
-
-
-
 	struct SShaderAutoVariable
 	{
 		std::string						VariableName;
@@ -159,6 +167,7 @@ namespace gf
 		E_SHADER_TYPE					ShaderType;
 		E_UPDATE_FREQUENCY				UpdateFrequency;
 		u32								IndexParam;
+		std::string						MaterialAttributeName;
 	};
 
 	struct SShaderSamplerVariable
@@ -166,6 +175,23 @@ namespace gf
 		std::string						VariableName;
 		u32								ShaderTypes;
 		ISampler*						Sampler;
+	};
+
+	struct SShaderVariableAttribute
+	{
+		E_SHADER_AUTO_VARIABLE_TYPE		Meaning;
+		E_UPDATE_FREQUENCY				DefaultUpdateFrequency;
+		u32								IndexParam;
+
+		SShaderVariableAttribute(){}
+
+		SShaderVariableAttribute(E_SHADER_AUTO_VARIABLE_TYPE meaning,
+			E_UPDATE_FREQUENCY freq = EUF_PER_OBJECT,
+			u32 index = 0)
+			:Meaning(meaning), DefaultUpdateFrequency(freq), IndexParam(index)
+		{
+
+		}
 	};
 
 	class IPipeline : public IReferenceCounted
@@ -190,6 +216,14 @@ namespace gf
 
 		virtual bool setVector(E_SHADER_TYPE shaderType, const std::string& varname, const f32* v, bool ignoreIfAlreadyUpdated = false) = 0;
 
+		virtual u32 setVector(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated = false) = 0;
+
+		virtual bool setVector(E_SHADER_TYPE shaderType, const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated = false) = 0;
+
+		virtual u32 setAttribute(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated = false) = 0;
+
+		virtual bool setAttribute(E_SHADER_TYPE shaderType, const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated = false) = 0;
+
 		virtual u32 setFloat(const std::string& varname, f32 v, bool ignoreIfAlreadyUpdated = false) = 0;
 
 		virtual bool setFloat(E_SHADER_TYPE shaderType, const std::string& varname, f32 v, bool ignoreIfAlreadyUpdated = false) = 0;
@@ -202,6 +236,11 @@ namespace gf
 		virtual u32 setRawValue(const std::string& varname, void* raw, u32 size, bool ignoreIfAlreadyUpdated = false) = 0;
 
 		virtual bool setRawValue(E_SHADER_TYPE shaderType, const std::string& varname, void* raw, u32 size, bool ignoreIfAlreadyUpdated = false) = 0;
+
+		virtual u32 setArray(const std::string& varname, void* data, u32 arraySize, u32 elementSize, bool ignoreIfAlreadyUpdate = false) = 0;
+		
+		// return the actual element count that has been set.
+		virtual u32 setArray(E_SHADER_TYPE shaderType, const std::string& varname, void* data, u32 arraySize, u32 elementSize, bool ignoreIfAlreadyUpdate = false) = 0;
 
 		virtual u32 setTexture(const std::string& varname, ITexture* texture) = 0;
 
@@ -217,13 +256,15 @@ namespace gf
 
 		virtual void addShaderAutoVariable(const SShaderAutoVariable& var) = 0;
 
+		virtual void registerAutoSamplers(const std::map<std::string, ISampler*>& samplerMap) = 0;
+
 		virtual bool setSampler(const std::string& varname, ISampler* sampler) = 0;
 
 		virtual void applySamplers() const = 0;
 
 		virtual const std::vector<SShaderAutoVariable>& getShaderAutoVariables() const = 0;
 
-		virtual void apply() = 0;
+		virtual void apply(E_PIPELINE_USAGE) = 0;
 
 		virtual u64 getSortCode() const = 0;
 

@@ -13,6 +13,7 @@ namespace gf
 			u32					IndexCount;
 			u32					StartIndexLocation;
 			u32					BaseVertexLocation;
+			XMFLOAT4X4			OffsetMatrix;
 			IMaterial*			Material;
 		};
 
@@ -32,6 +33,8 @@ namespace gf
 		virtual bool getMaterialName(u32 index, std::string& name) const = 0;
 
 		virtual void drawSubset(u32 index) const = 0;
+
+		virtual XMFLOAT4X4 getSubsetTransform(u32 subset) const = 0;
 
 		virtual void bind() = 0;
 

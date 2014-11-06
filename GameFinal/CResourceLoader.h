@@ -38,11 +38,15 @@ namespace gf
 
 		virtual bool loadMaterial(const std::string& fullpath, const IResourceXmlParser::SMaterialCreateParams& createParams) const;
 
-		virtual bool createRenderTarget(const std::string& fullpath, const IResourceXmlParser::SRenderTargetParams& createParams) const;
+		//virtual bool createRenderTarget(const std::string& fullpath, const IResourceXmlParser::SRenderTargetParams& createParams) const;
 
-		virtual bool createDepthStencilSurface(const std::string& fullpath, const IResourceXmlParser::SDepthStencilSurfaceParams& createParams) const;
+		//virtual bool createDepthStencilSurface(const std::string& fullpath, const IResourceXmlParser::SDepthStencilSurfaceParams& createParams) const;
 
 		virtual bool loadMeshFromFile(const std::string& name);
+
+		virtual IPipeline* loadPipeline(const std::string& pipelineName, const std::string& filepath);
+		
+		virtual IMaterial* loadMaterial(const std::string& materialName, const std::string& filepath);
 
 	private:
 		IResourceGroupManager*				mResourceGroupManager;

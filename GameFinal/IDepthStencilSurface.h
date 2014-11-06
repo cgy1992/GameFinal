@@ -5,19 +5,13 @@
 
 namespace gf
 {
-	class IDepthStencilSurface : public ITexture
+	class IDepthStencilSurface : public IReferenceCounted
 	{
 	public:
-		
-		IDepthStencilSurface(const std::string& name, u32 sortcode)
-			:ITexture(name, sortcode)
+		IDepthStencilSurface()
+			:mTexture(nullptr)
 		{
 
-		}
-
-		virtual E_TEXTURE_TYPE getType() const
-		{
-			return ETT_DEPTH_STENCIL;
 		}
 
 		virtual void clear(f32 depth = 1.0f, u8 stencil = 0) = 0;
@@ -26,6 +20,15 @@ namespace gf
 
 		virtual void clearStencil(u8 stencil = 0) = 0;
 
+		virtual void apply(E_SHADER_TYPE shaderType, u32 slot) = 0;
+
+		ITexture* getTexture()
+		{
+			return mTexture;
+		}
+
+	protected:
+		ITexture*			mTexture;
 	};
 }
 

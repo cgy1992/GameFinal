@@ -11,7 +11,25 @@ namespace gf
 		const char* szProfile = getShaderProfile();
 		ID3D10Blob* errorMessage = NULL;
 
-		hr = D3DX11CompileFromFileA(szFileName, NULL, NULL, szFunctionName, szProfile, D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,
+		// collect all macros.
+		D3D10_SHADER_MACRO* pDefines = NULL;
+		if (mMacros.size() > 0)
+		{
+			pDefines = new D3D10_SHADER_MACRO[mMacros.size() + 1];
+			SShaderMacroSet::Iterator it = mMacros.getIterator();
+			u32 i = 0;
+			while (it.hasNext())
+			{
+				const SShaderMacro& macro = it.next();
+				pDefines[i].Name = macro.Name.c_str();
+				pDefines[i].Definition = macro.Definition.c_str();
+				i++;
+			}
+			pDefines[i].Name = NULL;
+			pDefines[i].Definition = NULL;
+		}
+
+		hr = D3DX11CompileFromFileA(szFileName, pDefines, NULL, szFunctionName, szProfile, D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,
 			&mShaderBuffer, &errorMessage, NULL);
 		if (FAILED(hr))
 		{
@@ -119,6 +137,7 @@ namespace gf
 				if (reflectionVariable)
 				{
 					SShaderConstantVariable scv;
+
 					reflectionVariable->GetDesc(&scv.Desc);
 
 					ID3D11ShaderReflectionType* reflectionType = reflectionVariable->GetType();
@@ -246,6 +265,78 @@ namespace gf
 		return setRawData(cv, (void*)val, sizeof(f32)* cv->TypeDesc.Columns);
 	}
 
+	bool CD3D11Shader::setVector(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdate /*= false*/)
+	{
+		SShaderConstantVariable* cv = getConstantVariable(varname);
+		if (cv == nullptr)
+			return false;
+
+		if (ignoreIfAlreadyUpdate && cv->AlreadyUpdated)
+			return false;
+
+		if (cv->TypeDesc.Class != D3D10_SVC_VECTOR ||
+			cv->TypeDesc.Type != D3D10_SVT_FLOAT)
+		{
+			return false;
+		}
+
+		return setRawData(cv, (void*)&val, sizeof(f32)* cv->TypeDesc.Columns);
+	}
+
+	bool CD3D11Shader::setAttribute(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdate)
+	{
+		SShaderConstantVariable* cv = getConstantVariable(varname);
+		if (cv == nullptr)
+			return false;
+
+		if (ignoreIfAlreadyUpdate && cv->AlreadyUpdated)
+			return false;
+
+		if (cv->TypeDesc.Class == D3D10_SVC_VECTOR)
+		{
+			s32 iVal[4];
+			u32 uiVal[4];
+
+			switch (cv->TypeDesc.Type)
+			{
+			case D3D10_SVT_FLOAT:
+				return setRawData(cv, (void*)&val, sizeof(f32)* cv->TypeDesc.Columns);
+			case D3D10_SVT_INT:
+				iVal[0] = static_cast<s32>(val.x);
+				iVal[1] = static_cast<s32>(val.y);
+				iVal[2] = static_cast<s32>(val.z);
+				iVal[3] = static_cast<s32>(val.w);
+				return setRawData(cv, (void*)iVal, sizeof(s32)* cv->TypeDesc.Columns);
+			case D3D10_SVT_UINT:
+				uiVal[0] = static_cast<u32>(val.x);
+				uiVal[1] = static_cast<u32>(val.y);
+				uiVal[2] = static_cast<u32>(val.z);
+				uiVal[3] = static_cast<u32>(val.w);
+				return setRawData(cv, (void*)uiVal, sizeof(u32)* cv->TypeDesc.Columns);
+			}
+		}
+		else if (cv->TypeDesc.Class == D3D10_SVC_SCALAR)
+		{
+			s32 sval;
+			u32 uval;
+			f32 fval;
+			switch (cv->TypeDesc.Type)
+			{
+			case D3D10_SVT_FLOAT:
+				fval = val.x;
+				return setRawData(cv, &fval, sizeof(f32));
+			case D3D10_SVT_INT:
+				sval = static_cast<s32>(val.x);
+				return setRawData(cv, &sval, sizeof(s32));
+			case D3D10_SVT_UINT:
+				uval = static_cast<u32>(val.x);
+				return setRawData(cv, &sval, sizeof(u32));
+			}
+		}
+
+		return false;
+	}
+
 	bool CD3D11Shader::setMatrix(const std::string& varname, const f32* matrix, bool ignoreIfAlreadyUpdate)
 	{
 		SShaderConstantVariable* cv = getConstantVariable(varname);
@@ -345,7 +436,8 @@ namespace gf
 			return false;
 
 		u32 bindPoint = desc.BindPoint;
-		md3dDriver->setTexture(getType(), bindPoint, texture);
+		//md3dDriver->setTexture(getType(), bindPoint, texture);
+		texture->apply(getType(), bindPoint);
 
 		return true;
 	}
@@ -374,6 +466,30 @@ namespace gf
 		mConstantBuffers[cv->ConstantBufferIndex]->Dirty = true;
 		cv->AlreadyUpdated = true;
 		return true;
+	}
+
+	// return the actual element count that has been set.
+	u32 CD3D11Shader::setArray(const std::string& varname, 
+		void* data, u32 arraySize, u32 elementSize, 
+		bool ignoreIfAlreadyUpdate /*= false*/)
+	{
+		SShaderConstantVariable* cv = getConstantVariable(varname);
+		if (cv == nullptr)
+			return 0;
+
+		if (cv->TypeDesc.Elements == 0)
+			return 0;
+
+		if (cv->TypeDesc.Elements < arraySize)
+			arraySize = cv->TypeDesc.Elements;
+
+		if (ignoreIfAlreadyUpdate && cv->AlreadyUpdated)
+			return arraySize;
+
+		if (setRawData(cv, data, arraySize * elementSize))
+			return arraySize;
+
+		return 0;
 	}
 
 	bool CD3D11Shader::applyConstantBuffer(ID3D11DeviceContext* pd3dDeviceContext, u32 index)
@@ -426,4 +542,55 @@ namespace gf
 
 		return it->second.AlreadyUpdated;
 	}
+
+	bool CD3D11Shader::isContantVariable(const std::string& varname) const
+	{
+		return mConstantVariables.find(varname) != mConstantVariables.end();
+	}
+
+	bool CD3D11Shader::isTextureVariable(const std::string& varname) const
+	{
+		return mShaderResourceDescs.find(varname) != mShaderResourceDescs.end();
+	}
+
+	void CD3D11Shader::registerAutoVariablesToPipeline(IPipeline* pipeline, const std::map<std::string, SShaderVariableAttribute>& varMap) const
+	{
+		for (auto i = mConstantVariables.begin(); i != mConstantVariables.end(); i++)
+		{
+			const std::string& varname = i->first;
+			auto j = varMap.find(varname);
+			if (j != varMap.end())
+			{
+				const SShaderVariableAttribute& attr = j->second;
+				SShaderAutoVariable var;
+				var.ShaderType = getType();
+				var.VariableName = varname;
+				var.Type = attr.Meaning;
+				var.UpdateFrequency = attr.DefaultUpdateFrequency;
+				var.IndexParam = attr.IndexParam;
+				pipeline->addShaderAutoVariable(var);
+			}
+		}
+
+		for (auto i = mShaderResourceDescs.begin(); i != mShaderResourceDescs.end(); i++)
+		{
+			const std::string& varname = i->first;
+			auto j = varMap.find(varname);
+			if (j != varMap.end())
+			{
+				const SShaderVariableAttribute& attr = j->second;
+				SShaderAutoVariable var;
+				var.ShaderType = getType();
+				var.VariableName = varname;
+				var.Type = attr.Meaning;
+				var.UpdateFrequency = attr.DefaultUpdateFrequency;
+				var.IndexParam = attr.IndexParam;
+				pipeline->addShaderAutoVariable(var);
+			}
+		}
+	}
+
+
+
+
 }

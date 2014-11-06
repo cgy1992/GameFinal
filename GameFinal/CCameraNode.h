@@ -16,8 +16,9 @@ namespace gf
 			f32 aspectRatio,
 			f32 fov,
 			f32 nearZ,
-			f32 farZ)
-			:ICameraNode(parent, smgr, position, aspectRatio, fov, nearZ, farZ)
+			f32 farZ,
+			bool bPerspectiveProj)
+			:ICameraNode(parent, smgr, position, aspectRatio, fov, nearZ, farZ, bPerspectiveProj)
 		{
 			XMVECTOR eye = XMLoadFloat3(&position);
 			XMVECTOR target = XMLoadFloat3(&lookat);
@@ -36,11 +37,46 @@ namespace gf
 			XMStoreFloat3(&mRight, right);
 		}
 
-		virtual void render()
+		virtual void render(E_PIPELINE_USAGE usage)
 		{
-
+			
 		}
 
+		virtual void lookAt(const XMFLOAT3& lookat)
+		{
+			XMVECTOR eye = XMLoadFloat3(&mPosition);
+			XMVECTOR target = XMLoadFloat3(&lookat);
+			XMVECTOR look = target - eye;
+			look = XMVector3Normalize(look);
+			XMVECTOR up = XMLoadFloat3(&mUp);
+
+			XMVECTOR right = XMVector3Cross(up, look);
+			right = XMVector3Normalize(right);
+
+			up = XMVector3Cross(look, right);
+			up = XMVector3Normalize(up);
+
+			XMStoreFloat3(&mLook, look);
+			XMStoreFloat3(&mUp, up);
+			XMStoreFloat3(&mRight, right);
+		}
+
+		virtual void look(const XMFLOAT3& dir)
+		{
+			XMVECTOR lookdir = XMLoadFloat3(&dir);
+			lookdir = XMVector3Normalize(lookdir);
+			XMVECTOR up = XMLoadFloat3(&mUp);
+
+			XMVECTOR right = XMVector3Cross(up, lookdir);
+			right = XMVector3Normalize(right);
+
+			up = XMVector3Cross(lookdir, right);
+			up = XMVector3Normalize(up);
+
+			XMStoreFloat3(&mLook, lookdir);
+			XMStoreFloat3(&mUp, up);
+			XMStoreFloat3(&mRight, right);
+		}
 
 		/* move along camera's look vector */
 		virtual void walk(f32 unit)

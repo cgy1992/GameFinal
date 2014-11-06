@@ -49,6 +49,8 @@ namespace gf
 			return mHeightMapTexture;
 		}
 
+		virtual f32 getHeight(f32 x, f32 z) const = 0;
+
 		f32 getVertexSpace() const
 		{
 			return mVertexSpace;

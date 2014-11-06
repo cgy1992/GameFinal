@@ -22,6 +22,7 @@
 #include <xnamath.h>
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
 #include <stdexcept>
@@ -34,6 +35,8 @@
 #include <list>
 #include <set>
 #include <regex>
+#include <functional>
 #include <mmsystem.h>
+#include "xnacollision/xnacollision.h"
 
 #include "gfTypes.h"

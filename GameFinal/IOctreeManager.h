@@ -15,16 +15,14 @@ namespace gf
 			f32 width,
 			f32 height,
 			f32 depth,
-			bool staticOctree,
 			XMFLOAT3 center,
 			u32 maxTreeHeight)
-			:ISceneNode(parent, smgr)
+			:ISceneNode(parent, smgr, true)
 			, mWidth(width)
 			, mHeight(height)
 			, mDepth(depth)
 			, mCenter(center)
 			, mMaxTreeHeight(maxTreeHeight)
-			, mStaticOctree(staticOctree)
 		{
 
 		}
@@ -39,12 +37,16 @@ namespace gf
 			return ESNT_OCTREE_MANAGER;
 		}
 
+		virtual void addSceneNodeToOctree(ISceneNode* node) = 0;
+
 		/*
 			remove 'node' and all its decendants from the octree manager
 			ALWAYS use method to remove scene node from octree manager
 			'remove' or 'removeChild' method should NEVER be called by the user
 		*/
 		virtual bool removeSceneNode(ISceneNode* node) = 0;
+
+		virtual bool getNearLights(IMeshNode* node, E_LIGHT_TYPE lightType, std::vector<ILightNode*>& lights) = 0;
 
 	protected:
 
@@ -56,7 +58,7 @@ namespace gf
 
 		// Is it a static octree or a dynamic octree?
 		// "static" means the nodes inside the octree won't change in different frames
-		bool			mStaticOctree;
+		// bool			mStaticOctree;
 	};
 
 }

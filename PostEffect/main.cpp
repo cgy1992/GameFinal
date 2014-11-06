@@ -6,8 +6,8 @@
 
 using namespace gf;
 
-const u32 SCREEN_WIDTH = 800;
-const u32 SCREEN_HEIGHT = 600;
+const u32 SCREEN_WIDTH = 1024;
+const u32 SCREEN_HEIGHT = 768;
 const f32 CAMERA_MOVE_UNIT = 5.0f;
 const f32 CAMERA_ROTATE_UNIT = 1.0f;
 
@@ -34,32 +34,38 @@ ISimpleMesh* createQuadMesh(IMeshManager* meshManager);
 int main()
 {
 	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 4;
-	settings.MultiSamplingQuality = 32;
+	settings.MultiSamplingCount = 1;
+	settings.MultiSamplingQuality = 0;
 
-	IDevice* device = gf::createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
+	IDevice* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
-	ISceneManager* smgr = device->getSceneManager();
+
+	math::SAxisAlignedBox smgr_size;
+	smgr_size.Center = XMFLOAT3(0, 0, 0);
+	smgr_size.Extents = XMFLOAT3(50.0f, 50.0f, 50.0f);
+
+	ISceneManager* smgr = device->createSceneManager(smgr_size);
 	IMeshManager* meshManager = driver->getMeshManager();
 	IMaterialManager* materialManager = driver->getMaterialManager();
 	ITextureManager* textureManager = driver->getTextureManager();
 
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
-	resourceGroupManager->loadResourceGroup("General");
+	//resourceGroupManager->loadResourceGroup("General");
+
+	ITextureCube* skyTexture = textureManager->loadCubeTexture("Snow.dds");
+	//smgr->setSkyDome(skyTexture);
 
 	ISceneNode* emptyNode = smgr->addEmptyNode();
 	emptyNode->translate(0, 3.0f, 0);
 	emptyNode->scale(2.0f, 2.0f, 2.0f);
 
 	ISimpleMesh* cubeMesh = meshManager->createCubeMesh("cube1");
-	IMeshNode* cubeMeshNode = smgr->addMeshNode(cubeMesh, nullptr, emptyNode, XMFLOAT3(0, 0.0f, 0));
-	//cubeMeshNode->scale(0.5f, 0.5f, 0.5f);
+	IMeshNode* cubeMeshNode = smgr->addMeshNode(cubeMesh, nullptr, emptyNode, false, XMFLOAT3(0, 0.0f, 0));
 	cubeMeshNode->setMaterialName("test/material01");
-	//cubeMeshNode->remove();
 
 	ISimpleMesh* planeMesh = meshManager->createPlaneMesh("plane1", 10.0, 10.0f, 50, 50, 10.0f, 10.0f);
-	IMeshNode* planeMeshNode = smgr->addMeshNode(planeMesh, nullptr);
+	IMeshNode* planeMeshNode = smgr->addMeshNode(planeMesh, nullptr, nullptr, true);
 	planeMeshNode->setMaterialName("test/ground_material");
 
 	IAnimatedMesh* animMesh = meshManager->getAnimatedMesh("lxq.mesh");
@@ -67,14 +73,11 @@ int main()
 	animNode->scale(0.02f, 0.02f, 0.02f);
 
 	IModelMesh* heroMesh = meshManager->getModelMesh("hero.mesh");
-	IMeshNode* heroNode = smgr->addModelMeshNode(heroMesh);
+	IMeshNode* heroNode = smgr->addModelMeshNode(heroMesh, nullptr, true, XMFLOAT3(20.0f, 5.0f, 5.0f), 
+		XMFLOAT3(0, 0, 0), XMFLOAT3(0.01f, 0.01f, 0.01f));
 
-	heroNode->scale(0.01f, 0.01f, 0.01f);
-	heroNode->translate(2.0f, 0.5f, 0);
-
-	ISceneNode* node1 = smgr->addEmptyNode();
-	node1->addChild(heroNode);
-	node1->addChild(animNode);
+//	heroNode->scale(0.01f, 0.01f, 0.01f);
+//	heroNode->translate(2.0f, 0.5f, 0);
 
 	// create sampler state
 	SSamplerDesc samplerDesc;
@@ -85,38 +88,39 @@ int main()
 	ISampler* sampler = driver->getSamplerManager()->create(std::string("sampler1"), samplerDesc);
 
 	IPipeline* pipeline = driver->getPipelineManager()->get("test/pipeline01");
-	//pipeline->setSampler(std::string("sampleType"), sampler);
 
-	ILightNode* light = smgr->addLightNode(1);
-	light->setType(ELT_POINT);
-	light->setAmbient(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
-	light->setPosition(2.0f, 5.0f, -3.0f);
+	ILightNode* light = smgr->addPointLight(1, nullptr, true, XMFLOAT3(2.0f, 5.0f, -3.0f), 100.0f);
 	light->setSpecular(XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f));
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 	light->setAttenuation(1.0f, 0.0f, 0.0f);
-	light->setRange(100.0f);
+	light->enableShadow(true);
 
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f));
+	camera->setNearZ(0.1f);
+	IPipeline* blurPipeline = IPipelineManager::getInstance()->get("test/posteffect_pipeline");
 
-	IMaterial* quadMaterial = materialManager->get("test/posteffect_material");
-	ISimpleMesh* quadMesh = createQuadMesh(meshManager);
-	IMeshNode* quadNode = smgr->addMeshNode(quadMesh, quadMaterial);
-	quadNode->setNeedCulling(false);
+	SCompositorCreateParam param;
 	
-	IRenderTarget* pRenderTarget = textureManager->getRenderTarget("target1");
-	//IDepthStencilSurface* pDepthSurface = textureManager->createDepthStencilSurface("depth_surface1", 800, 600,
-	//	16, 0, false, 1, 0, true);
+	/*
+	param.Blur.PassCount = 10;
+	param.Blur.TexelDistance = 3.0f;
+	param.Blur.Algorithm = SCompositorCreateParam::EBLUR_NEAR_POINTS_4;
+	*/
+	
+	param.Bloom.BlurPassCount = 2;
+	param.Bloom.BlurTexelDistance = 2.0f;
+	param.Bloom.BrightnessThreshold = 0.8f;
+	param.Bloom.BlurTextureWidth = 400;
+	param.Bloom.BlurTextureHeight = 300;
+	
 
-	IDepthStencilSurface* pDepthSurface = textureManager->getDepthStencilSurface("depth_stencil_01");
-
-	//IRenderTarget* pRenderTarget = textureManager->createRenderTarget("target1", true);
-	//quadMaterial->setTexture(0, pRenderTarget);
+	//param.MotionBlur.SampleNum = 4;
+	ICompositor* compositor = smgr->createCompositor(ECT_BLOOM, param);
+	smgr->addCompositor(compositor);
 
 	f32 rotx = 0;
 	f32 roty = 0;
 	f32 rotz = 0;
-
-	//driver->setViewport(0, 0, 400, 300);
 
 	char caption[200];
 	ITimer* timer = device->getTimer();
@@ -128,14 +132,9 @@ int main()
 	{
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
-		pRenderTarget->clear(clearColor);
-		pDepthSurface->clearDepth(1.0f);
 
-		//driver->setRenderTarget(pRenderTarget);
-		//driver->setDepthStencilSurface(nullptr);
-		driver->setRenderTargetAndDepthStencil(pRenderTarget, pDepthSurface);
-
-		float dt = timer->tick() * 0.001f;
+		u32 ms = timer->tick();
+		f32 dt = ms * 0.001f;
 
 		rotx += dt * 2.0f;
 		roty += dt * 1.0f;
@@ -154,17 +153,16 @@ int main()
 
 		updateCamera(camera, dt);
 
-		smgr->update(dt);
+		if (GetAsyncKeyState(0x31) & 0x8000)
+			compositor->setIntAttribute(ECA_ALGORITHM, SCompositorCreateParam::EBLUR_NEAR_POINTS_4);
+		if (GetAsyncKeyState(0x32) & 0x8000)
+			compositor->setIntAttribute(ECA_ALGORITHM, SCompositorCreateParam::EBLUR_NEAR_POINTS_8);
+		if (GetAsyncKeyState(0x33) & 0x8000)
+			compositor->setIntAttribute(ECA_ALGORITHM, SCompositorCreateParam::EBLUR_GAUSSIAN);
 
-		smgr->draw(node1);
-		smgr->draw(cubeMeshNode);
-		smgr->draw(planeMeshNode);
+		smgr->update(ms);
 
-		//driver->setDefaultRenderTarget();
-		driver->setDefaultRenderTargetAndDepthStencil();
-		driver->clearDepth(1.0f);
-
-		smgr->draw(quadNode);
+		smgr->drawAll();
 
 		driver->endScene();
 
@@ -172,8 +170,9 @@ int main()
 		device->setWindowCaption(caption);
 	}
 
+	smgr->destroy();
 	device->drop();
-
+	
 	return 0;
 }
 
@@ -238,19 +237,4 @@ void updateCamera(ICameraNode* camera, f32 delta)
 	{
 		camera->roll(-CAMERA_ROTATE_UNIT * delta);
 	}
-}
-
-ISimpleMesh* createQuadMesh(IMeshManager* meshManager)
-{
-	XMFLOAT3 vertices[6];
-	vertices[0] = XMFLOAT3(-1.0f, 1.0f, 0.0f);
-	vertices[1] = XMFLOAT3(1.0f, 1.0f, 0.0f);
-	vertices[2] = XMFLOAT3(1.0f, -1.0f, 0.0f);
-
-	vertices[3] = XMFLOAT3(-1.0f, 1.0f, 0.0f);
-	vertices[4] = XMFLOAT3(1.0f, -1.0f, 0.0f);
-	vertices[5] = XMFLOAT3(-1.0f, -1.0f, 0.0f);
-
-	ISimpleMesh* mesh = meshManager->createSimpleMesh("quad", (void*)&vertices[0], 0, 6, sizeof(XMFLOAT3), 0, math::SAxisAlignedBox(), false);
-	return mesh;
 }

@@ -12,11 +12,12 @@ namespace gf
 	public:
 		CAnimatedMeshNode(ISceneNode* parent,
 			ISceneManager* smgr,
+			bool bStatic,
 			IAnimatedMesh* mesh,
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
-			:IAnimatedMeshNode(parent, smgr, position, rotation, scale)
+			:IAnimatedMeshNode(parent, smgr, bStatic, position, rotation, scale)
 			, mMesh(mesh)
 			, mAbsoluteBoneTransforms(mesh->getBoneCount())
 			, mRelativeBoneTransforms(mesh->getBoneCount())
@@ -49,7 +50,7 @@ namespace gf
 
 		virtual bool setMaterialName(const std::string& name, u32 subset = 0);
 
-		virtual void render();
+		virtual void render(E_PIPELINE_USAGE usage);
 
 		virtual void OnRegisterSceneNode(bool bRecursion = true);
 
@@ -74,9 +75,7 @@ namespace gf
 			ISceneNode::updateAbsoluteTransformation();
 
 			const math::SAxisAlignedBox& aabb = mMesh->getAabb();
-			getLocalAxis(mOBB.Axis);
-			mOBB.Center = getAbsolutePosition();
-			mOBB.Extents = aabb.Extents;
+			mOBB = computeOrientedBox(aabb);
 		}
 
 	private:

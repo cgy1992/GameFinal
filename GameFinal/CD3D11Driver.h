@@ -2,6 +2,7 @@
 #define CD3D11Driver_H
 
 #include "GameFinal.h"
+#include "CCompositorFactory.h"
 
 #define _GF_SHADER_RESOURCE_VIEW_COUNT 32
 
@@ -32,19 +33,19 @@ namespace gf
 			ID3D11RenderTargetView*		RenderTargetView;
 			ID3D11DepthStencilView*		DepthStencilView;
 
+			ID3D11RasterizerState*		ShadowMapRasterizerState;
+
 			void Reset()
 			{
 				memset(VertexBuffers, 0, sizeof(VertexBuffers));
 				IndexBuffer = NULL;
 				Pipeline = NULL;
 				
-				/*
 				memset(Shaders, 0, sizeof(Shaders));
-				memset(ShaderResourceViews, 0, sizeof(ShaderResourceViews));
-				memset(ShaderResourceViewIsDirty, 0, sizeof(ShaderResourceViewIsDirty));
+				//memset(ShaderResourceViews, 0, sizeof(ShaderResourceViews));
+				//memset(ShaderResourceViewIsDirty, 0, sizeof(ShaderResourceViewIsDirty));
 				memset(SamplerStates, 0, sizeof(SamplerStates));
 				memset(SamplerStateIsDirty, 0, sizeof(SamplerStateIsDirty));
-				*/
 
 				InputLayout = NULL;
 				PrimitiveType = EPT_TRIANGLELIST;
@@ -55,6 +56,7 @@ namespace gf
 				DepthStencilSurface = NULL;
 				RenderTargetView = NULL;
 				DepthStencilView = NULL;
+				
 			}
 
 			SD3D11DriverState()
@@ -64,6 +66,7 @@ namespace gf
 				memset(ShaderResourceViewIsDirty, 0, sizeof(ShaderResourceViewIsDirty));
 				memset(SamplerStates, 0, sizeof(SamplerStates));
 				memset(SamplerStateIsDirty, 0, sizeof(SamplerStateIsDirty));
+				ShadowMapRasterizerState = NULL;
 			}
 		};
 
@@ -107,7 +110,9 @@ namespace gf
 
 		virtual void setDefaultRenderTargetAndDepthStencil();
 
-		void setTexture(E_SHADER_TYPE shadertype, u32 slot, ITexture* texture);
+		//void setTexture(E_SHADER_TYPE shadertype, u32 slot, ITexture* texture);
+
+		void setTexture(E_SHADER_TYPE shadertype, u32 slot, ID3D11ShaderResourceView* shaderResourceView);
 
 		void setSampler(E_SHADER_TYPE shadertype, u32 slot, ISampler* sampler);
 
@@ -115,9 +120,18 @@ namespace gf
 
 		void bindSampler(E_SHADER_TYPE shaderType, u32 samplerCount);
 
+		virtual void clearShader(E_SHADER_TYPE shaderType);
+
 		virtual void setViewport(f32 topLeftX, f32 topLeftY, f32 width, f32 height, f32 minDepth = 0.0f, f32 maxDepth = 1.0f);
 
 		virtual void setViewport(const SViewport& viewport);
+
+		virtual ICompositorFactory*		getCompositorFactory()
+		{
+			return &mCompositorFactory;
+		}
+
+		virtual void setPipelineUsage(E_PIPELINE_USAGE usage);
 
 		virtual ~CD3D11Driver();
 
@@ -132,10 +146,16 @@ namespace gf
 		ID3D11Device*				md3dDevice;
 		ID3D11DeviceContext*		md3dDeviceContext;
 		ID3D11RenderTargetView*		mDefaultRenderTargetView;
+		IRenderTarget*				mDefaultRenderTarget;
+		
 		ID3D11Texture2D*			mDepthStencilBuffer;
-		ID3D11DepthStencilState*	mDepthStencilState;
+		//ID3D11DepthStencilState*	mDepthStencilState;
 		ID3D11DepthStencilView*		mDefaultDepthStencilView;
 		IDepthStencilSurface*		mDepthStencilSurface;
+
+		ID3D11RasterizerState*		mShadowMapRasterizeState;
+
+		CCompositorFactory			mCompositorFactory;
 	public:
 		/* this member is to store the current state of d3d11 driver context. */
 		SD3D11DriverState			D3D11DriverState;

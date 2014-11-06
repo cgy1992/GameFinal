@@ -36,7 +36,7 @@ namespace gf
 		return true;
 	}
 
-	void CModelMeshNode::render()
+	void CModelMeshNode::render(E_PIPELINE_USAGE usage)
 	{
 		mMesh->bind();
 
@@ -50,32 +50,29 @@ namespace gf
 			IMaterial* material = mMaterials[i];
 			if (!material)
 				continue;
+			
+			IPipeline* pipeline = material->getPipeline(usage);
+			if (!pipeline)
+				continue;
 
-
-			for (u32 j = 0; j < material->getPipelineCount(); j++)
+			//如果当前的流水线和上一条相同，则除了材质外的其他变量不用注入
+			if (pipeline == prePipeline)
 			{
-				IPipeline* pipeline = material->getPipeline(j);
-				if (!pipeline)
-					continue;
-
-				//如果当前的流水线和上一条相同，则除了材质外的其他变量不用注入
-				if (pipeline == prePipeline)
+				//当且仅当材质也不同于上一个时才注入
+				if (preMaterial != material)
 				{
-					//当且仅当材质也不同于上一个时才注入
-					if (preMaterial != material)
-					{
-						CShaderVariableInjection::injectMaterial(material, pipeline);
-						pipeline->apply();
-					}
+					CShaderVariableInjection::injectMaterial(material, pipeline);
+					pipeline->apply(usage);
 				}
-				else // 如果两条流水线不同，全部变量都需要更新
-				{
-					CShaderVariableInjection::inject(this, pipeline, i);
-					pipeline->apply();
-					prePipeline = pipeline;
-				}
-				mMesh->drawSubset(i);
 			}
+			else // 如果两条流水线不同，全部变量都需要更新
+			{
+				CShaderVariableInjection::inject(this, pipeline, i);
+				pipeline->apply(usage);
+				prePipeline = pipeline;
+			}
+
+			mMesh->drawSubset(i);
 
 			preMaterial = material;
 		}
@@ -95,27 +92,19 @@ namespace gf
 
 	void CModelMeshNode::calcSortCode()
 	{
-		/* mesh - 8 bit
-		pipeline - 48 bit
-		material-texture - 8 bit
-		*/
-		mSortCode = ((u64)mMesh->getSortCode() << 56);
+		/* customed order - 8 bit, mesh - 8 bit, pipeline - 48 bit */
+		IVideoDriver* driver = mSceneManager->getVideoDriver();
+		E_PIPELINE_USAGE usage = driver->getPipelineUsage();
 
-		IMaterial* material = mMaterials[0];
-		if (material)
+
+		u32 meshCode = (mMesh) ? mMesh->getSortCode() : 0;
+		u64 pipeCode = 0;
+		if (mMaterials[0])
 		{
-			IPipeline* pipeline = material->getPipeline(0);
-			if (pipeline)
-			{
-				mSortCode |= (pipeline->getSortCode() << 8);
-			}
-
-			ITexture* texture = material->getTexture(0);
-			if (texture)
-			{
-				mSortCode |= texture->getSortCode();
-			}
+			if (mMaterials[0]->getPipeline(usage))
+				pipeCode = mMaterials[0]->getPipeline(usage)->getSortCode();
 		}
+		mSortCode = ((u64)mRenderOrder << 56) | ((u64)meshCode << 48) | pipeCode;
 	}
 
 }

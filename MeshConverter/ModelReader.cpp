@@ -106,6 +106,14 @@ void fillSubsets(const aiScene* scene,
 
 		subsets_wrappers[i].Subset.StartIndexLocation = start_index_location;
 		subsets_wrappers[i].Subset.IndexCount = mesh->mNumFaces * 3;
+
+		XMMATRIX I = XMMatrixIdentity();
+		XMStoreFloat4x4(&subsets_wrappers[i].Subset.OffsetMatrix, I);
+		if (mesh->mNumBones > 0)
+		{
+			subsets_wrappers[i].Subset.OffsetMatrix = convertFromAiMatrix(mesh->mBones[0]->mOffsetMatrix);
+		}
+
 		strcpy_s(subsets_wrappers[i].Subset.MaterialName, materials[mesh->mMaterialIndex].Name);
 		start_index_location += mesh->mNumFaces * 3;
 	}

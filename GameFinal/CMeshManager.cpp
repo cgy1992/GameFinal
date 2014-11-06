@@ -1,7 +1,12 @@
 #include "stdafx.h"
 #include "CMeshManager.h"
+#include "gfUtil.h"
+
 namespace gf
 {
+	std::string IMeshManager::SKYDOME = "_skydome_mesh";
+	std::string IMeshManager::QUAD = "_quad";
+
 	CMeshManager::CMeshManager(IResourceFactory* pResourceFactory, 
 		IGeometryCreator* pGeometryCreator,
 		ITextureManager* pTextureManager)
@@ -98,13 +103,18 @@ namespace gf
 	}
 
 
-	IMesh* CMeshManager::getMesh(const std::string& name)
+	IMesh* CMeshManager::getMesh(const std::string& name, bool bLoadIfNotExist)
 	{
 		auto it = mMeshMap.find(name);
-		if (it == mMeshMap.end())
-			return nullptr;
+		if (it != mMeshMap.end())
+			return it->second;
 
-		return it->second;
+		if (bLoadIfNotExist)
+		{
+			return IResourceGroupManager::getInstance()->loadMesh(name);			
+		}
+
+		return nullptr;
 	}
 
 	ISimpleMesh* CMeshManager::getSimpleMesh(const std::string& name)
@@ -119,29 +129,39 @@ namespace gf
 		return dynamic_cast<ISimpleMesh*>(it->second);
 	}
 
-	IModelMesh* CMeshManager::getModelMesh(const std::string& name)
+	IModelMesh* CMeshManager::getModelMesh(const std::string& name, bool bLoadIfNotExist)
 	{
 		auto it = mMeshMap.find(name);
-		if (it == mMeshMap.end())
-			return nullptr;
+		IMesh* mesh = nullptr;
+		if (it != mMeshMap.end())
+			mesh = it->second;
+		else if (bLoadIfNotExist)
+			mesh = IResourceGroupManager::getInstance()->loadMesh(name);
 
-		if (it->second->getType() != EMT_MODEL_MESH)
-			return nullptr;
+		if (mesh && mesh->getType() == EMT_MODEL_MESH)
+		{
+			return dynamic_cast<IModelMesh*>(mesh);
+		}
 
-		return dynamic_cast<IModelMesh*>(it->second);
+		return nullptr;
 	}
 
 
-	IAnimatedMesh* CMeshManager::getAnimatedMesh(const std::string& name)
+	IAnimatedMesh* CMeshManager::getAnimatedMesh(const std::string& name, bool bLoadIfNotExist)
 	{
 		auto it = mMeshMap.find(name);
-		if (it == mMeshMap.end())
-			return nullptr;
+		IMesh* mesh = nullptr;
+		if (it != mMeshMap.end())
+			mesh = it->second;
+		else if (bLoadIfNotExist)
+			mesh = IResourceGroupManager::getInstance()->loadMesh(name);
 
-		if (it->second->getType() != EMT_ANIMATE_MODEL_MESH)
-			return nullptr;
+		if (mesh && mesh->getType() == EMT_ANIMATE_MODEL_MESH)
+		{
+			return dynamic_cast<IAnimatedMesh*>(mesh);
+		}
 
-		return dynamic_cast<IAnimatedMesh*>(it->second);
+		return nullptr;
 	}
 
 	ITerrainMesh* CMeshManager::getTerrainMesh(const std::string& name)
@@ -166,13 +186,9 @@ namespace gf
 		SGeometryData geoData;
 		mGeometryCreator->createCubeData(width, height, depth, geoData);
 
-		math::SAxisAlignedBox aabb;
-		aabb.Center = XMFLOAT3(0, 0, 0);
-		aabb.Extents = XMFLOAT3(width * 0.5f, height * 0.5f, depth * 0.5f);
-
 		ISimpleMesh* mesh = createSimpleMesh(name, &geoData.Vertices[0], &geoData.Indices[0],
 			geoData.Vertices.size(), mGeometryCreator->getVertexStride(), geoData.Indices.size(),
-			aabb, false, usage);
+			geoData.Aabb, false, usage);
 		return mesh;
 	}
 
@@ -197,20 +213,53 @@ namespace gf
 		SGeometryData geoData;
 		mGeometryCreator->createPlaneData(width, depth, xsegments, ysegments, uTiles, vTiles, geoData);
 
-		bool bit32Index = false;
-		if (geoData.Indices.size() >= 0xffff)
-			bit32Index = true;
-
-		math::SAxisAlignedBox aabb;
-		aabb.Center = XMFLOAT3(0, 0, 0);
-		aabb.Extents = XMFLOAT3(width * 0.5f, min(0.1f, width * 0.01f), depth * 0.5f);
-
 		ISimpleMesh* mesh = createSimpleMesh(name, &geoData.Vertices[0], &geoData.Indices[0],
 			geoData.Vertices.size(), mGeometryCreator->getVertexStride(), geoData.Indices.size(),
-			aabb, bit32Index, usage);
+			geoData.Aabb, false, usage);
 
 		return mesh;
 	}
+
+
+	ISimpleMesh* CMeshManager::createSphereMesh(
+		const std::string& name,
+		f32 radius,
+		u32 sliceCount,
+		u32 stackCount,
+		E_MEMORY_USAGE usage)
+	{
+		if (sliceCount == 0)
+		{
+			GF_PRINT_CONSOLE_INFO("The sliceCount of a sphere mesh can't be 0.\n");
+			return nullptr;
+		}
+
+		if (stackCount == 0)
+		{
+			GF_PRINT_CONSOLE_INFO("The stackCount of a sphere mesh can't be 0.\n");
+			return nullptr;
+		}
+
+		SGeometryData geoData;
+		mGeometryCreator->createSphereData(radius, sliceCount, stackCount, geoData);
+
+		ISimpleMesh* mesh = createSimpleMesh(name, &geoData.Vertices[0], &geoData.Indices[0],
+			geoData.Vertices.size(), mGeometryCreator->getVertexStride(), geoData.Indices.size(),
+			geoData.Aabb, false, usage);
+
+		return mesh;
+	}
+
+	ISimpleMesh* CMeshManager::createQuad(const std::string& name, E_MEMORY_USAGE usage)
+	{
+		XMFLOAT3 vertices[6];
+		math::SAxisAlignedBox aabb;
+		mGeometryCreator->createQuadData(vertices, aabb);
+
+		ISimpleMesh* mesh = createSimpleMesh(name, vertices, nullptr, 6, sizeof(XMFLOAT3), 0, aabb, false, usage);
+		return mesh;
+	}
+
 
 	IAnimatedMesh* CMeshManager::createAnimatedModelMesh(
 		const std::string& name,
@@ -301,5 +350,7 @@ namespace gf
 
 		return mesh;
 	}
+
+
 
 }

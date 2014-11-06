@@ -5,11 +5,22 @@ namespace gf
 {
 	void CShaderVariableInjection::inject(IMeshNode* node, IPipeline* pipeline, u32 subset)
 	{
+		//IVideoDriver* driver = IVideoDriver::getInstance();
+		//bool isRenderingShadow = driver->isRenderingShadowMap();
+
 		const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
 		u32 shaderVariableCount = shaderVariables.size();
 
 		for (u32 i = 0; i < shaderVariableCount; i++)
 		{
+			//这里不允许PixelShader注入变量是有问题的，以后再改
+			/*
+			if (!(shaderVariables[i].ShaderType == EST_PIXEL_SHADER && isRenderingShadow))
+			{
+				injectVariable(shaderVariables[i], node, pipeline, subset);
+			}
+			*/
+
 			injectVariable(shaderVariables[i], node, pipeline, subset);
 		}
 	}
@@ -243,24 +254,55 @@ namespace gf
 		bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
 		ITexture* pTexture = nullptr;
 
-		
 		switch (var.Type)
 		{
-		case ESAVT_MATERIAL:
-			pipeline->setRawValue(shaderType, var.VariableName, &material->Colors, sizeof(material->Colors), ignoreIfAlreadyUpdate);
-			break;
+		case ESAVT_MATERIAL_COLOR:
+		{
+									 XMFLOAT4 materialColor[4];
+									 materialColor[0] = material->getAttribute("ambient");
+									 materialColor[1] = material->getAttribute("diffuse");
+									 materialColor[2] = material->getAttribute("specular");
+									 materialColor[3] = material->getAttribute("emissive");
+									 pipeline->setRawValue(shaderType, var.VariableName, &materialColor[0], sizeof(materialColor), ignoreIfAlreadyUpdate);
+		}
 		case ESAVT_MATERIAL_AMBIENT:
-			pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&material->Colors.Ambient), ignoreIfAlreadyUpdate);
+		{
+									   XMFLOAT4 ambient;
+									   ambient = material->getAttribute("ambient");
+									   pipeline->setAttribute(shaderType, var.VariableName, ambient, ignoreIfAlreadyUpdate);
+		}
 			break;
 		case ESAVT_MATERIAL_DIFFUSE:
-			pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&material->Colors.Diffuse), ignoreIfAlreadyUpdate);
+		{
+									   XMFLOAT4 diffuse;
+									   diffuse = material->getAttribute("diffuse");
+									   pipeline->setAttribute(shaderType, var.VariableName, diffuse, ignoreIfAlreadyUpdate);
+		}
 			break;
 		case ESAVT_MATERIAL_SPECULAR:
-			pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&material->Colors.Specular), ignoreIfAlreadyUpdate);
+		{
+									   XMFLOAT4 specular;
+									   specular = material->getAttribute("specular");
+									   pipeline->setAttribute(shaderType, var.VariableName, specular, ignoreIfAlreadyUpdate);
+		}
 			break;
 		case ESAVT_MATERIAL_EMISSIVE:
-			pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&material->Colors.Emissive), ignoreIfAlreadyUpdate);
+		{
+										XMFLOAT4 emissive;
+										emissive = material->getAttribute("emissive");
+										pipeline->setAttribute(shaderType, var.VariableName, emissive, ignoreIfAlreadyUpdate);
+		}
 			break;
+		case ESAVT_MATERIAL_ATTRIBUTE:
+		{
+										 XMFLOAT4 val;
+										 if (material->getAttribute(var.MaterialAttributeName, val))
+										 {
+											 pipeline->setAttribute(shaderType, var.VariableName, val, ignoreIfAlreadyUpdate);
+										 }
+		}
+			break;
+			
 		case ESAVT_TEXTURE:
 			pTexture = material->getTexture(var.IndexParam);
 			if (pTexture)
@@ -316,7 +358,8 @@ namespace gf
 			{
 				XMFLOAT3 pos = camera->getAbsolutePosition();
 				XMFLOAT4 p = XMFLOAT4(pos.x, pos.y, pos.z, 1.0f);
-				pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&p), ignoreIfAlreadyUpdate);
+				//pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&p), ignoreIfAlreadyUpdate);
+				pipeline->setAttribute(shaderType, var.VariableName, p, ignoreIfAlreadyUpdate);
 			}
 			return;
 		}
@@ -330,24 +373,149 @@ namespace gf
 			}
 			return;
 		}
-
-
-		/* 注入整个光照结构体 */
-		bool flag = false;
-		ILightNode* light = nullptr;
-		switch (var.Type)
+		else if (var.Type == ESAVT_AMBIENT)
 		{
-		case ESAVT_LIGHT:
-			light = sceneManager->getLightNode(var.IndexParam);
-			flag = true;
-			break;
+			XMFLOAT4 ambient = sceneManager->getAmbient();
+			pipeline->setVector(shaderType, var.VariableName, ambient, ignoreIfAlreadyUpdate);
+			return;
+		}
+		else if (var.Type == ESAVT_LIGHT)
+		{
+			ILightNode* light = sceneManager->getLightNode(var.IndexParam);
+			if (light)
+			{
+				E_LIGHT_TYPE lightType = light->getType();
+				if (lightType == ELT_DIRECTIONAL)
+				{
+					SDirectionalLight lightData;
+					light->getLightData(&lightData);
+					pipeline->setRawValue(shaderType, var.VariableName, (void*)&lightData, sizeof(lightData), ignoreIfAlreadyUpdate);
+				}
+				else if (lightType == ELT_POINT)
+				{
+					SPointLight lightData;
+					light->getLightData(&lightData);
+					pipeline->setRawValue(shaderType, var.VariableName, (void*)&lightData, sizeof(lightData), ignoreIfAlreadyUpdate);
+				}
+				else if (lightType == ELT_SPOT)
+				{
+					SSpotLight lightData;
+					light->getLightData(&lightData);
+					pipeline->setRawValue(shaderType, var.VariableName, (void*)&lightData, sizeof(lightData), ignoreIfAlreadyUpdate);
+				}
+			}
+			return;
+		}
+		else if (var.Type == ESAVT_NEAR_POINT_LIGHTS)
+		{
+			std::vector<ILightNode*> lights;
+			u32 lightCount = 0;
+			if (node->getNodeType() & ESNT_MESH)
+			{
+				IMeshNode* meshNode = (IMeshNode*)node;
+				sceneManager->getNearLights(meshNode, ELT_POINT, lights);
+				lightCount = lights.size();
+
+				if (lightCount > 0)
+				{
+					std::vector<SPointLight> lightDataArray;
+					lightDataArray.resize(lightCount);
+					for (u32 i = 0; i < lightCount; i++)
+						lights[i]->getLightData(&lightDataArray[i]);
+					
+					lightCount = pipeline->setArray(shaderType, var.VariableName, 
+						(void*)&lightDataArray[0], lightCount, sizeof(SPointLight), ignoreIfAlreadyUpdate);
+				}
+
+				// inject point lights number, if have.
+				const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
+				for (u32 i = 0; i < shaderVariables.size(); i++)
+				{
+					const SShaderAutoVariable& var = shaderVariables[i];
+					if (var.Type == ESAVT_NEAR_POINT_LIGHTS_NUM)
+					{
+						bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
+						pipeline->setUint(var.ShaderType, var.VariableName, lightCount, ignoreIfAlreadyUpdate);
+					}
+				}
+			}
+		}
+		else if (var.Type == ESAVT_DIRECTIONAL_LIGHTS)
+		{
+			const std::list<ILightNode*>& lights = sceneManager->getDirectionalLights();
+			u32 lightCount = lights.size();
+
+			if (lightCount > 0)
+			{
+				std::vector<SDirectionalLight> lightDataArray;
+				lightDataArray.resize(lightCount);
+				u32 i = 0;
+				for (auto it = lights.begin(); it != lights.end(); it++, i++)
+					(*it)->getLightData(&lightDataArray[i]);
+				
+				lightCount = pipeline->setArray(shaderType, var.VariableName,
+					(void*)&lightDataArray[0], lightCount, sizeof(SDirectionalLight), ignoreIfAlreadyUpdate);
+			}
+
+			// inject point lights number, if have.
+			const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
+			for (u32 i = 0; i < shaderVariables.size(); i++)
+			{
+				const SShaderAutoVariable& var = shaderVariables[i];
+				if (var.Type == ESAVT_DIRECTIONAL_LIGHTS_NUM)
+				{
+					bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
+					pipeline->setUint(var.ShaderType, var.VariableName, lightCount, ignoreIfAlreadyUpdate);
+				}
+			}
+		}
+		else if (var.Type == ESAVT_SHADOW_MAP)
+		{
+			u32 lightID = var.IndexParam;
+			ILightNode* light = sceneManager->getLightNode(lightID);
+			if (!light)
+				return;
+
+			ITexture* shadowMapTexture = light->getShadowMap();
+			if (shadowMapTexture)
+			{
+				pipeline->setTexture(var.ShaderType, var.VariableName, shadowMapTexture);
+			}
+		}
+		else if (var.Type == ESAVT_SHADOW_MAP_TRANSFORM)
+		{
+			u32 lightID = var.IndexParam;
+			ILightNode* light = sceneManager->getLightNode(lightID);
+			if (!light)
+				return;
+
+			XMFLOAT4X4 viewProjMatrix = light->getShadowMapTransform();
+			pipeline->setMatrix(var.ShaderType, var.VariableName, viewProjMatrix, ignoreIfAlreadyUpdate);
+		}
+		else if (var.Type == ESAVT_SHADOW_MAP_SIZE)
+		{
+			u32 lightID = var.IndexParam;
+			ILightNode* light = sceneManager->getLightNode(lightID);
+			if (!light)
+				return;
+
+			ITexture* shadowMapTexture = light->getShadowMap();
+			if (shadowMapTexture)
+			{
+				f32 w = static_cast<f32>(shadowMapTexture->getWidth());
+				f32 h = static_cast<f32>(shadowMapTexture->getHeight());
+				pipeline->setVector(var.ShaderType, var.VariableName, XMFLOAT4(w, h, 1.0f / w, 1.0f / h), ignoreIfAlreadyUpdate);
+			}
+		}
+		else if (var.Type == ESAVT_SHADOW_MAP_JITTER_TEXTURE)
+		{
+			ITexture* texture = ITextureManager::getInstance()->get(ITextureManager::SHADOW_MAP_JITTER_TEXTURE, false);
+			if (texture)
+			{
+				pipeline->setTexture(var.ShaderType, var.VariableName, texture);
+			}
 		}
 
-		if (flag && light)
-		{
-			const SLightData& lightData = light->getLightData();
-			pipeline->setRawValue(shaderType, var.VariableName, (void*)&lightData, sizeof(SLightData), ignoreIfAlreadyUpdate);
-		}
 	}
 
 	void CShaderVariableInjection::injectForTerrainNode(ITerrainNode* node, IPipeline* pipeline)
@@ -451,6 +619,25 @@ namespace gf
 			break;
 		case ESAVT_INVERSE_WINDOW_HEIGHT:
 			pipeline->setFloat(var.ShaderType, var.VariableName, 1.0f / device->getClientHeight(), ignoreIfAlreadyUpdate);
+			break;
+		case ESAVT_SCREEN_SIZE:
+		{
+								  f32 w, h;
+								  IRenderTarget* rt = driver->getRenderTarget();
+								  if (rt)
+								  {
+									  w = static_cast<f32>(rt->getWidth()); 
+									  h = static_cast<f32>(rt->getHeight());
+								  }
+								  else
+								  {
+									  const SViewport& viewport = driver->getViewport();
+									  w = viewport.Width;
+									  h = viewport.Height;
+								  }
+								  f32 screenSize[] = { w, h, 1.0f / w, 1.0f / h };
+								  pipeline->setVector(var.ShaderType, var.VariableName, screenSize, ignoreIfAlreadyUpdate);
+		}
 			break;
 		}
 	}

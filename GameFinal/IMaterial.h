@@ -10,69 +10,84 @@
 
 namespace gf
 {
-
-
 	struct SMaterial : public SReferenceCounted
 	{
 	public:
-		struct Material
-		{
-			XMFLOAT4 Ambient;
-			XMFLOAT4 Diffuse;
-			XMFLOAT4 Specular;
-			XMFLOAT4 Emissive;
-		};
 
-
-
-		SMaterial(const std::string& name, u32 sortcode, Material colors, IPipeline* pipelines[], u32 pipelineCount)
-			:mName(name), mSortCode(sortcode), Colors(colors), mPipelineCount(pipelineCount)
+		SMaterial(const std::string& name, u32 sortcode, IPipeline* pipelines[])
+			:mName(name), mSortCode(sortcode)
 		{
 			memset(mTextures, 0, sizeof(mTextures));
-			memset(mPipelinesEnabled, 0, sizeof(mPipelinesEnabled));
 			memset(mPipelines, 0, sizeof(mPipelines));
-
-			for (u32 i = 0; i < pipelineCount; i++)
+			for (u32 i = 0; i < EPU_COUNT; i++)
 			{
 				mPipelines[i] = pipelines[i];
-				if (pipelines[i])
-				{
-					pipelines[i]->grab();
-					mPipelinesEnabled[i] = true;
-				}
+				AddReferenceCounted(mPipelines[i]);
 			}
 		}
 
+		SMaterial(IPipeline* pipelines[])
+			:SMaterial("", 0, pipelines)
+		{
+
+		}
+
+		SMaterial(IPipeline* pipeline)
+			:mName(""), mSortCode(0)
+		{
+			memset(mTextures, 0, sizeof(mTextures));
+			memset(mPipelines, 0, sizeof(mPipelines));
+			mPipelines[EPU_FORWARD] = pipeline;
+			AddReferenceCounted(mPipelines[EPU_FORWARD]);
+		}
+
+		SMaterial()
+			:mName(""), mSortCode(0)
+		{
+			memset(mTextures, 0, sizeof(mTextures));
+			memset(mPipelines, 0, sizeof(mPipelines));
+		}
 
 		SMaterial(const SMaterial& material)
 		{
 			mName = material.mName;
 			mSortCode = material.mSortCode;
-			mPipelineCount = material.mPipelineCount;
-			memcpy(&Colors, &material.Colors, sizeof(Material));
-			for (u32 i = 0; i < mPipelineCount; i++)
+			mAttributes = material.mAttributes;
+
+			for (u32 i = 0; i < EPU_COUNT; i++)
 			{
 				mPipelines[i] = material.mPipelines[i];
-				mPipelinesEnabled[i] = material.mPipelinesEnabled[i];
-				if (mPipelines[i])
-					mPipelines[i]->grab();
+				AddReferenceCounted(mPipelines[i]);
 			}
 
 			for (u32 i = 0; i < MAX_TEXTURE_COUNT; i++)
 			{
 				mTextures[i] = material.mTextures[i];
-				if (mTextures[i])
-					mTextures[i]->grab();
+				AddReferenceCounted(mTextures[i]);
 			}
 		}
 
+		void setPipeline(IPipeline* pipeline)
+		{
+			setPipeline(EPU_FORWARD, pipeline);
+		}
+
+		void setPipeline(E_PIPELINE_USAGE usage, IPipeline* pipeline)
+		{
+			if (mPipelines[usage] != pipeline)
+			{
+				ReleaseReferenceCounted(mPipelines[usage]);
+				mPipelines[usage] = pipeline;
+				AddReferenceCounted(mPipelines[usage]);
+			}
+		}
 
 		~SMaterial()
 		{
 			for (u32 i = 0; i < MAX_TEXTURE_COUNT; i++)
 				ReleaseReferenceCounted(mTextures[i]);
 
-			for (u32 i = 0; i < mPipelineCount; i++)
+			for (u32 i = 0; i < EPU_COUNT; i++)
 				ReleaseReferenceCounted(mPipelines[i]);
 		}
 
@@ -82,33 +97,20 @@ namespace gf
 			return mName;
 		}
 
-		IPipeline* getPipeline(u32 index)
+		IPipeline* getPipeline(E_PIPELINE_USAGE usage, bool bReturnClosestPipeline = true)
 		{
-			if (index >= MAX_PIPELINE_COUNT)
-				return nullptr;
+			IPipeline* pipeline = mPipelines[usage];
+			if (bReturnClosestPipeline)
+			{
+				//如果没有指定负责绘制Directional Light Shadow Map的pipeline,
+				//则直接使用FORWORD的pipeline.
+				if (usage == EPU_DIR_SHADOW_MAP && pipeline == nullptr)
+				{
+					pipeline = mPipelines[EPU_FORWARD];
+				}
+			}
 
-			return mPipelines[index];
-		}
-
-		u32 getPipelineCount() const
-		{
-			return mPipelineCount;
-		}
-
-		bool isPipelineEnabled(u32 index) const
-		{
-			if (index >= MAX_PIPELINE_COUNT)
-				return false;
-
-			return mPipelinesEnabled[index];
-		}
-
-		void enablePipeline(u32 index, bool enabled = true)
-		{
-			if (index >= MAX_PIPELINE_COUNT)
-				return;
-
-			mPipelinesEnabled[index] = enabled;
+			return pipeline;
 		}
 
 		bool setTexture(u32 layer, ITexture* texture)
@@ -137,22 +139,56 @@ namespace gf
 			return mSortCode;
 		}
 
+		void setAttribute(const std::string& name, f32 value)
+		{
+			mAttributes[name] = XMFLOAT4(value, value, value, value);
+		}
+
+		void setAttribute(const std::string& name, XMFLOAT2 value)
+		{
+			mAttributes[name] = XMFLOAT4(value.x, value.y, 0, 0);
+		}
+
+		void setAttribute(const std::string& name, XMFLOAT3 value)
+		{
+			mAttributes[name] = XMFLOAT4(value.x, value.y, value.z, 0);
+		}
+
+		void setAttribute(const std::string& name, XMFLOAT4 value)
+		{
+			mAttributes[name] = value;
+		}
+
+		XMFLOAT4 getAttribute(const std::string& name) const
+		{
+			auto it = mAttributes.find(name);
+			if (it != mAttributes.end())
+				return it->second;
+
+			return XMFLOAT4(0, 0, 0, 0);
+		}
+
+		bool getAttribute(const std::string& name, XMFLOAT4& val) const
+		{
+			auto it = mAttributes.find(name);
+			if (it != mAttributes.end())
+			{
+				val = it->second;
+				return true;
+			}
+			return false;
+		}
+
 	//	const static u32 MAX_TEXTURE_COUNT;
 	//	const static u32 MAX_PIPELINE_COUNT;
-
-
-	public:
-
-		Material Colors;
-
 	private:
-		std::string			mName;
-		u32					mSortCode;
-		IPipeline*			mPipelines[8];
-		bool				mPipelinesEnabled[8];
-		u32					mPipelineCount;
-		ITexture*			mTextures[8];
+		std::string								mName;
+		u32										mSortCode;
+		IPipeline*								mPipelines[EPU_COUNT];
+		ITexture*								mTextures[8];
+		std::map<std::string, XMFLOAT4>			mAttributes;
 	};
+
 
 	typedef SMaterial IMaterial;
 

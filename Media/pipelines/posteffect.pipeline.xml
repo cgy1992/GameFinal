@@ -6,14 +6,8 @@
       <element semantic="POSITION" format="float3"></element>
     </input-layout>
     <shaders>
-      <vertex-shader file="posteffect.hlsl" main="vs_main">
-        
-      </vertex-shader>
-      <pixel-shader file="posteffect.hlsl" main="ps_main">
-        <variable name="gTexture" value="texture" index="0"/>
-        <variable name="gInverseWindowWidth" value="inverse_window_width"/>
-        <variable name="gInverseWindowHeight" value="inverse_window_height"/>
-      </pixel-shader>
+      <vertex-shader file="post_process.hlsl" main="vs_main"/>
+      <pixel-shader file="post_process.hlsl" main="ps_blur4"/>
     </shaders>
     <samplers>
       <sampler name="gSamplerState"
@@ -22,6 +16,11 @@
                  filter="MIN_MAG_MIP_LINEAR"
                  border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
     </samplers>
+
+    <render-states>
+      <render-state name="DEPTH_ENABLE" value="false"/>
+      
+    </render-states>
   </pipeline>
   
   <!-- This pipeline uses multisampling render target -->
@@ -47,6 +46,9 @@
         <variable name="gInverseWindowHeight" value="inverse_window_height"/>
       </pixel-shader>
     </shaders>
+    <render-states>
+      <render-state name="DEPTH_ENABLE" value="false"/>
+    </render-states>
     <samplers>
       <sampler name="gSamplerState"
                  addressU="wrap"

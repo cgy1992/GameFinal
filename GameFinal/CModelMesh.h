@@ -58,6 +58,11 @@ namespace gf
 			return EMT_MODEL_MESH;
 		}
 
+		virtual XMFLOAT4X4 getSubsetTransform(u32 subset) const
+		{
+			return mSubsets[subset].OffsetMatrix;
+		}
+
 		virtual ~CModelMesh()
 		{
 			ReleaseReferenceCounted(mMeshBuffer);

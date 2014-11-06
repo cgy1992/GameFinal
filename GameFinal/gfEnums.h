@@ -1,0 +1,37 @@
+#ifndef __GF_ENUMS_H__
+#define __GF_ENUMS_H__
+
+namespace gf
+{
+	enum E_COMPARISON_FUNC
+	{
+		ECF_NEVER,
+		ECF_LESS,
+		ECF_EQUAL,
+		ECF_LESS_EQUAL,
+		ECF_GREATER,
+		ECF_NOT_EQUAL,
+		ECF_GREATER_EQUAL,
+		ECF_ALWAYS
+	};
+
+	enum E_PIPELINE_USAGE
+	{
+		EPU_FORWARD = 0,
+		EPU_DIR_SHADOW_MAP = 1,
+		EPU_POINT_SHADOW_MAP = 2,
+		EPU_DEBUG = 3,
+		EPU_COUNT
+	};
+
+	enum E_TEXTURE_BIND_TYPE
+	{
+		ETBT_SHADER = (1),
+		ETBT_RENDER_TARGET = (1 << 2),
+		ETBT_DEPTH_STENCIL = (1 << 3),
+	};
+
+}
+
+
+#endif

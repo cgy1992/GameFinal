@@ -31,7 +31,7 @@ namespace gf
 			ReleaseReferenceCounted(mMaterial);
 		}
 
-		virtual void render();
+		virtual void render(E_PIPELINE_USAGE usage);
 
 		virtual void OnRegisterSceneNode(bool bRecursion = true);
 
@@ -81,6 +81,8 @@ namespace gf
 		{
 			return mMesh;
 		}
+
+		virtual f32 getHeight(f32 x, f32 z, bool localPivot = false) const;
 
 	private:
 		ITerrainMesh*			mMesh;

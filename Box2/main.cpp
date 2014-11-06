@@ -5,9 +5,11 @@
 #pragma comment(lib, "winmm.lib")
 
 using namespace gf;
+//_DEFINE_SINGLETON_INSTANCE(IMaterialManager);
+//_DEFINE_SINGLETON_INSTANCE(IPipelineManager);
 
-const u32 SCREEN_WIDTH = 800;
-const u32 SCREEN_HEIGHT = 600;
+const u32 SCREEN_WIDTH = 1024;
+const u32 SCREEN_HEIGHT = 768;
 const f32 CAMERA_MOVE_UNIT = 5.0f;
 const f32 CAMERA_ROTATE_UNIT = 1.0f;
 
@@ -35,25 +37,36 @@ int main()
 	settings.MultiSamplingCount = 4;
 	settings.MultiSamplingQuality = 32;
 
-	IDevice* device = gf::createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
+	IDevice* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
-	ISceneManager* smgr = device->getSceneManager();
+	ISceneManager* smgr = device->createSceneManager();
 	IMeshManager* meshManager = driver->getMeshManager();
 	IMaterialManager* materialManager = driver->getMaterialManager();
 	ITextureManager* textureManager = driver->getTextureManager();
+	IPipelineManager* pipelineManager = driver->getPipelineManager();
 
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
-	resourceGroupManager->loadResourceGroup("General");
+	//resourceGroupManager->loadResourceGroup("General");
 
 	ISceneNode* emptyNode = smgr->addEmptyNode();
 	emptyNode->translate(0, 3.0f, 0);
 	emptyNode->scale(2.0f, 2.0f, 2.0f);
 
 	ISimpleMesh* cubeMesh = meshManager->createCubeMesh("cube1");
-	IMeshNode* cubeMeshNode = smgr->addMeshNode(cubeMesh, nullptr, emptyNode, XMFLOAT3(0, 0.0f, 0));
-	//cubeMeshNode->scale(0.5f, 0.5f, 0.5f);
+	IMeshNode* cubeMeshNode = smgr->addMeshNode(cubeMesh, nullptr, emptyNode, false, XMFLOAT3(0, 0.0f, 0));
 	cubeMeshNode->setMaterialName("test/material01");
+
+	ICubeTexture* cubeMap = textureManager->loadCubeTexture("Snow.dds");
+	smgr->setSkyDome(cubeMap);
+
+	//sphereMaterial.setTexture(0, cubeMap);
+
+	//IMeshNode* cubeMeshNode = smgr->addMeshNode(sphereMesh, &sphereMaterial, nullptr, XMFLOAT3(0, 0.0f, 0));
+	//cubeMeshNode->scale(0.5f, 0.5f, 0.5f);
+	
+
+	//cubeMeshNode->setMaterialName("test/material01");
 	//cubeMeshNode->remove();
 
 	ISimpleMesh* planeMesh = meshManager->createPlaneMesh("plane1", 10.0, 10.0f, 50, 50, 10.0f, 10.0f);
@@ -61,18 +74,14 @@ int main()
 	planeMeshNode->setMaterialName("test/ground_material");
 
 	IAnimatedMesh* animMesh = meshManager->getAnimatedMesh("lxq.mesh");
-	IAnimatedMeshNode* animNode = smgr->addAnimatedMeshNode(animMesh);
-	animNode->scale(0.02f, 0.02f, 0.02f);
+	IAnimatedMeshNode* animNode = smgr->addAnimatedMeshNode(animMesh, nullptr, true, XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(0.02f, 0.02f, 0.02f));
+	//animNode->scale(0.02f, 0.02f, 0.02f);
 
 	IModelMesh* heroMesh = meshManager->getModelMesh("hero.mesh");
 	IMeshNode* heroNode = smgr->addModelMeshNode(heroMesh);	
 	
 	heroNode->scale(0.01f, 0.01f, 0.01f);
 	heroNode->translate(2.0f, 0.5f, 0);
-
-	ISceneNode* node1 = smgr->addEmptyNode();
-	node1->addChild(heroNode);
-	node1->addChild(animNode);
 
 	// create sampler state
 	SSamplerDesc samplerDesc;
@@ -83,20 +92,17 @@ int main()
 	ISampler* sampler = driver->getSamplerManager()->create(std::string("sampler1"), samplerDesc);
 
 	IPipeline* pipeline = driver->getPipelineManager()->get("test/pipeline01");
-	//pipeline->setSampler(std::string("sampleType"), sampler);
 
-	ILightNode* light = smgr->addLightNode(1);
-	light->setType(ELT_POINT);
-	light->setAmbient(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
-	light->setPosition(2.0f, 5.0f, -3.0f);
+	ILightNode* light = smgr->addPointLight(1, nullptr, true, XMFLOAT3(2.0f, 5.0f, -3.0f), 100.0f);
 	light->setSpecular(XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f));
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	light->setAttenuation(1.0f, 0.0f, 0.0f);
-	light->setRange(100.0f);
+
+	ILightNode* light2 = smgr->addPointLight(2, nullptr, true, XMFLOAT3(100.0f, 100.0f, 100.0f), 10.0f);
+	light2->setSpecular(XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f));
+	light2->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 
 	//ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f));
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f));
-
 
 	f32 rotx = 0;
 	f32 roty = 0;
@@ -131,11 +137,15 @@ int main()
 		XMMATRIX rotM = Mx * My * Mz;
 
 		cubeMeshNode->setOrientation(rotM);
+		
 		animNode->addTime(dt * 3000.0f);
 
 		updateCamera(camera, dt);
 
 		smgr->update(dt);
+
+		math::SOrientedBox& obb = cubeMeshNode->getOrientedBox();
+		XNA::OrientedBox xna_obb = obb.getXnaOrientedBox();
 
 		smgr->drawAll();
 
@@ -145,6 +155,8 @@ int main()
 		device->setWindowCaption(caption);
 	}
 
+	//sphereMaterial.drop();
+	smgr->destroy();
 	device->drop();
 
 	return 0;

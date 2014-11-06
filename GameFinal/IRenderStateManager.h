@@ -10,6 +10,10 @@ namespace gf
 		virtual IRenderState* create(const std::string& name) = 0;
 		virtual IRenderState* get(const std::string& name, bool addIfNotFound = true) = 0;
 
+		
+
+		_DECLARE_SINGLETON_INSTANCE(IRenderStateManager);
+
 		_DECLARE_RESOURCE_DESTROY_METHODS(IRenderState);
 	};
 }

@@ -16,8 +16,9 @@ namespace gf
 			f32 nearZ,
 			f32 farZ,
 			f32 maxUpAngle,
-			f32 maxDownAngle)
-			:ICameraNode(parent, smgr, position, aspectRatio, fov, nearZ, farZ)
+			f32 maxDownAngle,
+			bool bPerspectiveProj)
+			:ICameraNode(parent, smgr, position, aspectRatio, fov, nearZ, farZ, bPerspectiveProj)
 			, mMaxUpAngle(maxUpAngle)
 			, mMaxDownAngle(maxDownAngle)
 		{

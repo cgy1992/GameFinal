@@ -20,10 +20,10 @@ namespace gf
 
 	void CD3D11PixelShader::submit()
 	{
-		u32 bufferCount = mConstantBuffers.size();
+			u32 bufferCount = mConstantBuffers.size();
 
-		md3dDeviceContext->PSSetConstantBuffers(0, bufferCount, md3dConstantBuffers);
+			md3dDeviceContext->PSSetConstantBuffers(0, bufferCount, md3dConstantBuffers);
 
-		md3dDeviceContext->PSSetShader(m_pd3dShader, 0, 0);
+			md3dDeviceContext->PSSetShader(m_pd3dShader, 0, 0);
 	}
 }

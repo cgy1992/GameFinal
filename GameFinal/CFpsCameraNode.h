@@ -18,16 +18,25 @@ namespace gf
 			f32 nearZ,
 			f32 farZ,
 			f32 maxUpAngle,
-			f32 maxDownAngle)
-			:IFpsCameraNode(parent, smgr, position, aspectRatio, fov, nearZ, farZ, maxUpAngle, maxDownAngle)
+			f32 maxDownAngle,
+			bool bPerspectiveProj)
+			:IFpsCameraNode(parent, smgr, position, aspectRatio, fov, nearZ, farZ, maxUpAngle, maxDownAngle, bPerspectiveProj)
 		{
 			XMVECTOR worldup = XMLoadFloat3(&up);
 			worldup = XMVector3Normalize(worldup);
+			XMStoreFloat3(&mWorldUp, worldup);
 
-			XMVECTOR eye = XMLoadFloat3(&position);
+			lookAt(lookat);
+		}
+
+		virtual void lookAt(const XMFLOAT3& lookat)
+		{
+			
+			XMVECTOR eye = XMLoadFloat3(&mPosition);
 			XMVECTOR target = XMLoadFloat3(&lookat);
 			XMVECTOR look = XMVector3Normalize(target - eye);
 
+			XMVECTOR worldup = XMLoadFloat3(&mWorldUp);
 			XMVECTOR right = XMVector3Cross(worldup, look);
 			right = XMVector3Normalize(right);
 
@@ -37,20 +46,43 @@ namespace gf
 			XMVECTOR angle = XMVector3AngleBetweenNormals(dir, look);
 
 			/* 判断当前是抬头还是低头，如果是抬头，则angle角为负，否则为正
-			   这里根据look向量与worldup向量的点积判断，如果点积为正，则为抬头，
-			   如果点积为负，则为低头 */
+			这里根据look向量与worldup向量的点积判断，如果点积为正，则为抬头，
+			如果点积为负，则为低头 */
 
 			mPitchAngle = XMVectorGetX(angle);
 			if (XMVectorGetX(XMVector3Dot(look, worldup)) > 0)
 				mPitchAngle = -mPitchAngle;
 
 			adjustPitchAngle();
-
-			XMStoreFloat3(&mWorldUp, worldup);
 			XMStoreFloat3(&mWalkDir, dir);
 		}
 
-		virtual void render()
+		virtual void look(const XMFLOAT3& d)
+		{
+			XMVECTOR lookdir = XMLoadFloat3(&d);
+			lookdir = XMVector3Normalize(lookdir);
+			XMVECTOR worldup = XMLoadFloat3(&mWorldUp);
+			XMVECTOR right = XMVector3Cross(worldup, lookdir);
+			right = XMVector3Normalize(right);
+
+			XMVECTOR dir = XMVector3Cross(right, worldup);
+			dir = XMVector3Normalize(dir);
+
+			XMVECTOR angle = XMVector3AngleBetweenNormals(dir, lookdir);
+
+			/* 判断当前是抬头还是低头，如果是抬头，则angle角为负，否则为正
+			这里根据look向量与worldup向量的点积判断，如果点积为正，则为抬头，
+			如果点积为负，则为低头 */
+
+			mPitchAngle = XMVectorGetX(angle);
+			if (XMVectorGetX(XMVector3Dot(lookdir, worldup)) > 0)
+				mPitchAngle = -mPitchAngle;
+
+			adjustPitchAngle();
+			XMStoreFloat3(&mWalkDir, dir);
+		}
+
+		virtual void render(E_PIPELINE_USAGE usage)
 		{
 
 		}

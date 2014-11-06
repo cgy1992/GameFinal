@@ -41,11 +41,12 @@ namespace gf
 	{
 	public:
 		CD3D11Shader(u32 id,
-			std::string name,
+			const std::string& name,
+			const SShaderMacroSet& macros,
 			ID3D11Device* pd3dDevice,
 			ID3D11DeviceContext* pd3dDeviceContext,
 			CD3D11Driver* pd3dDriver)
-			:IShader(id, name),
+			:IShader(id, name, macros),
 			md3dDevice(pd3dDevice),
 			md3dDeviceContext(pd3dDeviceContext),
 			md3dDriver(pd3dDriver)
@@ -76,11 +77,17 @@ namespace gf
 
 		virtual bool setRawData(const std::string& varname, void* data, u32 size, bool ignoreIfAlreadyUpdate = false);
 
+		virtual u32 setArray(const std::string& varname, void* data, u32 arraySize, u32 elementSize, bool ignoreIfAlreadyUpdate = false);
+
 		virtual bool setUint(const std::string& varname, u32 val, bool ignoreIfAlreadyUpdate = false);
 
 		virtual bool setFloat(const std::string& varname, f32 val, bool ignoreIfAlreadyUpdate = false);
 
+		virtual bool setVector(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdate = false);
+
 		virtual bool setVector(const std::string& varname, const f32* val, bool ignoreIfAlreadyUpdate = false);
+
+		virtual bool setAttribute(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdate = false);
 
 		//virtual bool setVector3(const std::string& varname, const f32* val, bool ignoreIfAlreadyUpdate = false) = 0;
 
@@ -118,6 +125,13 @@ namespace gf
 
 		virtual bool isAlreadyUpdated(const std::string& varname);
 
+		virtual bool isContantVariable(const std::string& varname) const;
+
+		virtual bool isTextureVariable(const std::string& varname) const;
+
+		virtual void registerAutoVariablesToPipeline(IPipeline* pipeline,
+			const std::map<std::string, SShaderVariableAttribute>& varMap) const;
+
 	protected:
 		bool setRawData(SShaderConstantVariable* cv, void* data, u32 size);
 
@@ -137,7 +151,6 @@ namespace gf
 
 		std::map<std::string, D3D11_SHADER_INPUT_BIND_DESC>		mShaderResourceDescs;
 		std::map<std::string, D3D11_SHADER_INPUT_BIND_DESC>		mShaderSamplerDescs;
-
 	};
 }
 #endif

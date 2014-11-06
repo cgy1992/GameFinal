@@ -2,7 +2,7 @@
 #include "CD3D11Driver.h"
 #include "CD3D11SimpleMesh.h"
 #include "CD3D11ResourceFactory.h"
-#include "CD3D11Texture.h"
+#include "CD3D11Texture2D.h"
 #include "CMaterialManager.h"
 #include "CTextureManager.h"
 #include "CMaterialManager.h"
@@ -24,8 +24,6 @@ namespace gf
 	{
 
 	}
-
-
 
 	bool CD3D11Driver::init(SCreationParameters& createParam)
 	{
@@ -259,67 +257,11 @@ namespace gf
 		md3dDevice->CreateRenderTargetView(backBuffer, 0, &mDefaultRenderTargetView);
 		ReleaseCOM(backBuffer);
 
+		mDefaultRenderTarget = new CD3D11RenderTarget(md3dDevice, md3dDeviceContext, mDefaultRenderTargetView,
+			createParam.ClientWidth, createParam.ClientHeight);
 
 		// Initialize the description of the depth buffer.
 		ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
-
-		// Set up the description of the depth buffer.
-		/*
-		depthBufferDesc.Width = createParam.ClientWidth;
-		depthBufferDesc.Height = createParam.ClientHeight;
-		depthBufferDesc.MipLevels = 1;
-		depthBufferDesc.ArraySize = 1;
-		depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthBufferDesc.SampleDesc.Count = swapChainDesc.SampleDesc.Count;
-		depthBufferDesc.SampleDesc.Quality = swapChainDesc.SampleDesc.Quality;
-		depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		depthBufferDesc.CPUAccessFlags = 0;
-		depthBufferDesc.MiscFlags = 0;
-
-		// Create the texture for the depth buffer using the filled out description.
-		result = md3dDevice->CreateTexture2D(&depthBufferDesc, NULL, &mDepthStencilBuffer);
-		md3dDevice->CreateDepthStencilView(mDepthStencilBuffer, 0, &mDepthStencilView);
-
-		// Initialize the description of the stencil state.
-		ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
-
-		// Set up the description of the stencil state.
-		depthStencilDesc.DepthEnable = true;
-		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-
-		depthStencilDesc.StencilEnable = true;
-		depthStencilDesc.StencilReadMask = 0xFF;
-		depthStencilDesc.StencilWriteMask = 0xFF;
-
-		// Stencil operations if pixel is front-facing.
-		depthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-		depthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		// Stencil operations if pixel is back-facing.
-		depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-		depthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
-
-		// Create the depth stencil state.
-		result = md3dDevice->CreateDepthStencilState(&depthStencilDesc, &mDepthStencilState);
-		if (FAILED(result))
-		{
-			return false;
-		}
-
-		// Set the depth stencil state.
-		md3dDeviceContext->OMSetDepthStencilState(mDepthStencilState, 1);
-
-//		md3dDeviceContext->OMSetRenderTargets(1, &mDefaultRenderTargetView, mDepthStencilView);
-
-
-		md3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		*/
 
 		// Setup the viewport for rendering.
 		setViewport(0, 0, static_cast<f32>(mDevice->getClientWidth()), static_cast<f32>(mDevice->getClientHeight()));
@@ -327,45 +269,56 @@ namespace gf
 		//create resource factory
 		mResourceFactory = new CD3D11ResourceFactory(
 			md3dDevice, md3dDeviceContext, this);
+		IResourceFactory::_setInstance(mResourceFactory);
 
 		//create geometry creator
 		mGeometryCreator = new CGeometryCreator;
+		IGeometryCreator::_setInstance(mGeometryCreator);
 
 		//create material manager
 		mMaterialManager = new CMaterialManager;
+		IMaterialManager::_setInstance(mMaterialManager);
 
 		// create shadermanager
 		mShaderManager = new CShaderManager(mResourceFactory);
+		IShaderManager::_setInstance(mShaderManager);
 
 		// create inputlayout manager
 		mInputLayoutManager = new CInputLayoutManager(mResourceFactory);
-
-		//create pipeline manager
-		mPipeManager = new CPipelineManager(mResourceFactory);
+		IInputLayoutManager::_setInstance(mInputLayoutManager);
 
 		//create texture manager
 		mTextureManager = new CTextureManager(mDevice, mResourceFactory);
+		ITextureManager::_setInstance(mTextureManager);
 
 		//create render state manager
 		mRenderStateManager = new CRenderStateManager(mResourceFactory);
+		IRenderStateManager::_setInstance(mRenderStateManager);
 
 		//create mesh manager
 		mMeshManager = new CMeshManager(mResourceFactory, mGeometryCreator, mTextureManager);
+		IMeshManager::_setInstance(mMeshManager);
 
 		//create sampler manager
 		mSamplerManager = new CSamplerManager(mResourceFactory);
+		ISamplerManager::_setInstance(mSamplerManager);
+
+		//create pipeline manager
+		mPipeManager = new CPipelineManager(mResourceFactory);
+		IPipelineManager::_setInstance(mPipeManager);
 
 		//create resource group manager
 		mResourceGroupManager = new CResourceGroupManager(mTextureManager, mShaderManager,
 			mInputLayoutManager, mRenderStateManager, mPipeManager, mMaterialManager, mMeshManager, mSamplerManager);
+		IResourceGroupManager::_setInstance(mResourceGroupManager);
 
-		mResourceFactory->setResourceGroupManager(mResourceGroupManager);
+		//mResourceFactory->setResourceGroupManager(mResourceGroupManager);
 
 		// create default depth-stencil-buffer
 		bool multiSampling = (createParam.MultiSamplingCount > 1);
 
 		mDepthStencilSurface = mTextureManager->createDepthStencilSurface("_default_depth_stencil_surface", 0, 0, createParam.DepthBits, createParam.StencilBits,
-			multiSampling, createParam.MultiSamplingCount, createParam.MultiSamplingQuality, false);
+			multiSampling, createParam.MultiSamplingCount, createParam.MultiSamplingQuality, true);
 
 		if (!mDepthStencilSurface)
 		{
@@ -377,6 +330,26 @@ namespace gf
 		CD3D11DepthStencilSurface* d3dDepthStencilSurface = dynamic_cast<CD3D11DepthStencilSurface*>(mDepthStencilSurface);
 		mDefaultDepthStencilView = d3dDepthStencilSurface->getDepthStencilView();
 		D3D11DriverState.DepthStencilView = mDefaultDepthStencilView;
+
+
+		// create mShadowMapRasterizeState. This state is only for rendering shadow maps.
+		D3D11_RASTERIZER_DESC shadowRasterizeState;
+		shadowRasterizeState.FillMode = D3D11_FILL_SOLID;
+		shadowRasterizeState.CullMode = D3D11_CULL_BACK; // RENDER BACK FACE
+		shadowRasterizeState.FrontCounterClockwise = FALSE; 
+		shadowRasterizeState.DepthBias = 100000;
+		shadowRasterizeState.DepthBiasClamp = 0.0f;
+		shadowRasterizeState.SlopeScaledDepthBias = 1.0f;
+		shadowRasterizeState.DepthClipEnable = TRUE;
+		shadowRasterizeState.ScissorEnable = FALSE;
+		shadowRasterizeState.MultisampleEnable = FALSE;
+		shadowRasterizeState.AntialiasedLineEnable = FALSE;
+
+		hr = md3dDevice->CreateRasterizerState(&shadowRasterizeState, &mShadowMapRasterizeState);
+		if (FAILED(hr))
+			return false;
+
+		D3D11DriverState.ShadowMapRasterizerState = mShadowMapRasterizeState;
 
 		return true;
 	}
@@ -393,6 +366,8 @@ namespace gf
 		  6, inputlayout
 		  7, render-state
 		  */
+
+		mDefaultRenderTarget->drop();
 
 		ReleaseReferenceCounted(mMeshManager);
 		ReleaseReferenceCounted(mMaterialManager);
@@ -422,6 +397,8 @@ namespace gf
 		//md3dDeviceContext->ClearDepthStencilView(mDepthStencilView, clearFlag, depthValue, stencilValue);
 
 		D3D11DriverState.Reset();
+
+		mCurrentPipelineUsage = EPU_FORWARD;
 
 		setDefaultRenderTargetAndDepthStencil();
 
@@ -503,6 +480,12 @@ namespace gf
 
 			if (d3dShaderResourceView)
 				unbindTextureFromShaders(d3dShaderResourceView);
+
+			// change viewport to adapt new size
+			SViewport viewport = mViewport;
+			viewport.Width = (f32)pRenderTarget->getWidth();
+			viewport.Height = (f32)pRenderTarget->getHeight();
+			setViewport(viewport);
 		}
 		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetView, D3D11DriverState.DepthStencilView);
 	}
@@ -533,9 +516,16 @@ namespace gf
 	{
 		if (D3D11DriverState.RenderTargetView != mDefaultRenderTargetView)
 		{
-			D3D11DriverState.RenderTarget = nullptr;
+			D3D11DriverState.RenderTarget = mDefaultRenderTarget;
 			D3D11DriverState.RenderTargetView = mDefaultRenderTargetView;
+
 			md3dDeviceContext->OMSetRenderTargets(1, &mDefaultRenderTargetView, D3D11DriverState.DepthStencilView);
+
+			// set default viewport size
+			SViewport viewport = mViewport;
+			viewport.Width = (f32)IDevice::getInstance()->getClientWidth();
+			viewport.Height = (f32)IDevice::getInstance()->getClientHeight();
+			setViewport(viewport);
 		}
 	}
 
@@ -585,6 +575,13 @@ namespace gf
 
 				if (d3dShaderResourceView)
 					unbindTextureFromShaders(d3dShaderResourceView);
+
+				// set new viewport size
+				// change viewport to adapt new size
+				SViewport viewport = mViewport;
+				viewport.Width = (f32)pRenderTarget->getWidth();
+				viewport.Height = (f32)pRenderTarget->getHeight();
+				setViewport(viewport);
 			}
 		}
 		
@@ -620,47 +617,46 @@ namespace gf
 		D3D11DriverState.DepthStencilSurface = mDepthStencilSurface;
 		D3D11DriverState.DepthStencilView = mDefaultDepthStencilView;
 
+		CD3D11DepthStencilSurface* d3dDepthStencilSurface = dynamic_cast<CD3D11DepthStencilSurface*>(mDepthStencilSurface);
+		D3D11DriverState.DepthStencilView = d3dDepthStencilSurface->getDepthStencilView();
+		ID3D11ShaderResourceView* d3dShaderResourceView = d3dDepthStencilSurface->getShaderResourceView();
+		if (d3dShaderResourceView)
+			unbindTextureFromShaders(d3dShaderResourceView);
+
 		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetView, D3D11DriverState.DepthStencilView);
 	}
 
 	void CD3D11Driver::setDefaultRenderTargetAndDepthStencil()
 	{
 		// set default render target
-		D3D11DriverState.RenderTarget = nullptr;
+		D3D11DriverState.RenderTarget = mDefaultRenderTarget;
 		D3D11DriverState.RenderTargetView = mDefaultRenderTargetView;
 
 		// set default depth stencil surface
+		CD3D11DepthStencilSurface* d3dDepthStencilSurface = dynamic_cast<CD3D11DepthStencilSurface*>(mDepthStencilSurface);
+		D3D11DriverState.DepthStencilView = d3dDepthStencilSurface->getDepthStencilView();
+		ID3D11ShaderResourceView* d3dShaderResourceView = d3dDepthStencilSurface->getShaderResourceView();
+		if (d3dShaderResourceView)
+			unbindTextureFromShaders(d3dShaderResourceView);
+
 		D3D11DriverState.DepthStencilSurface = mDepthStencilSurface;
 		D3D11DriverState.DepthStencilView = mDefaultDepthStencilView;
 
 		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetView, D3D11DriverState.DepthStencilView);
+
+		// set default viewport size
+		SViewport viewport = mViewport;
+		viewport.Width = (f32)(IDevice::getInstance()->getClientWidth());
+		viewport.Height = (f32)(IDevice::getInstance()->getClientHeight());
+		setViewport(viewport);
 	}
 
-
-	void CD3D11Driver::setTexture(E_SHADER_TYPE shadertype, u32 slot, ITexture* texture)
+	void CD3D11Driver::setTexture(E_SHADER_TYPE shadertype, u32 slot, ID3D11ShaderResourceView* shaderResourceView)
 	{
-		switch (texture->getType())
+		if (shaderResourceView != D3D11DriverState.ShaderResourceViews[shadertype][slot])
 		{
-		case ETT_TEXTURE_2D:
-			{
-				CD3D11Texture*	d3d11Texture = dynamic_cast<CD3D11Texture*>(texture);
-				if (d3d11Texture->getShaderResourceView() != D3D11DriverState.ShaderResourceViews[shadertype][slot])
-				{
-					D3D11DriverState.ShaderResourceViews[shadertype][slot] = d3d11Texture->getShaderResourceView();
-					D3D11DriverState.ShaderResourceViewIsDirty[shadertype] = true;
-				}
-			}
-			break;
-		case ETT_RENDER_TARGET:
-			{
-				CD3D11RenderTarget* d3d11RenderTarget = dynamic_cast<CD3D11RenderTarget*>(texture);
-				if (d3d11RenderTarget->getShaderResourceView() != D3D11DriverState.ShaderResourceViews[shadertype][slot])
-				{
-					D3D11DriverState.ShaderResourceViews[shadertype][slot] = d3d11RenderTarget->getShaderResourceView();
-					D3D11DriverState.ShaderResourceViewIsDirty[shadertype] = true;
-				}
-			}
-			break;
+			D3D11DriverState.ShaderResourceViews[shadertype][slot] = shaderResourceView;
+			D3D11DriverState.ShaderResourceViewIsDirty[shadertype] = true;
 		}
 	}
 
@@ -758,8 +754,24 @@ namespace gf
 		}
 	}
 
+	void CD3D11Driver::clearShader(E_SHADER_TYPE shaderType)
+	{
+		switch (shaderType)
+		{
+		case EST_VERTEX_SHADER:   md3dDeviceContext->VSSetShader(NULL, 0, 0); break;
+		case EST_PIXEL_SHADER:    md3dDeviceContext->PSSetShader(NULL, 0, 0); break;
+		case EST_GEOMETRY_SHADER: md3dDeviceContext->GSSetShader(NULL, 0, 0); break;
+		case EST_HULL_SHADER:	  md3dDeviceContext->HSSetShader(NULL, 0, 0); break;
+		case EST_DOMAIN_SHADER:   md3dDeviceContext->DSSetShader(NULL, 0, 0); break;
+		}
+	}
+
 	void CD3D11Driver::setViewport(const SViewport& viewport)
 	{
+		// if equals with the old.
+		if (mViewport == viewport)
+			return;
+
 		mViewport = viewport;
 		D3D11_VIEWPORT d3d11Viewport;
 		d3d11Viewport.Width = viewport.Width;
@@ -784,4 +796,24 @@ namespace gf
 
 		setViewport(viewport);
 	}
+
+	/*
+	void CD3D11Driver::setRenderingShadowMap(bool b)
+	{
+		mRenderingShadowMap = b;
+		if (mRenderingShadowMap)
+		{
+			md3dDeviceContext->RSSetState(mShadowMapRasterizeState);
+			D3D11DriverState.RasterizerState = mShadowMapRasterizeState;
+		}
+		D3D11DriverState.Pipeline = nullptr;
+	}
+	*/
+
+	void CD3D11Driver::setPipelineUsage(E_PIPELINE_USAGE usage)
+	{
+		mCurrentPipelineUsage = usage;
+		D3D11DriverState.Pipeline = nullptr;
+	}
+
 }

@@ -4,6 +4,8 @@
 #include "IReferenceCounted.h"
 #include "gfTypes.h"
 #include "gfUtil.h"
+#include "gfEnums.h"
+#include "IRenderState.h"
 
 namespace gf
 {
@@ -45,6 +47,18 @@ namespace gf
 		E_ADDRESS_MODE		AddressV;
 		E_ADDRESS_MODE		AddressW;
 		XMFLOAT4			BorderColor;
+		E_COMPARISON_FUNC	ComparsionFunc;
+
+		SSamplerDesc()
+		: Filter(ESF_FILTER_MIN_MAG_MIP_POINT)
+		, AddressU(EAM_WRAP)
+		, AddressV(EAM_WRAP)
+		, AddressW(EAM_WRAP)
+		, BorderColor(0, 0, 0, 0)
+		, ComparsionFunc(ECF_NEVER)
+		{
+
+		}
 	};
 
 	class ISampler : public IReferenceCounted
@@ -53,15 +67,15 @@ namespace gf
 		ISampler(const std::string& name)
 			:mName(name)
 		{
+
 		}
 
 		virtual void setAddressV(E_ADDRESS_MODE) = 0;
 		virtual void setAddressU(E_ADDRESS_MODE) = 0;
 		virtual void setAddressW(E_ADDRESS_MODE) = 0;
-
 		virtual void setFilter(E_SAMPLER_FILTER) = 0;
 		virtual void setBorderColor(const f32 rgba[]) = 0;
-
+		virtual void setComparsionFunc(E_COMPARISON_FUNC func) = 0;
 		virtual u32	 getSortCode() const = 0;
 
 		const std::string& getName()

@@ -1,10 +1,13 @@
 #include "stdafx.h"
+#include "ISceneNode.h"
 #include "CResourceLoader.h"
 #include "CResourceXmlParser.h"
 #include "CModelFileParser.h"
 #include "gfTypes.h"
 namespace gf
 {
+	
+
 	CResourceLoader::CResourceLoader(IResourceGroupManager* ResourceGroupManager,
 		ITextureManager* TextureManager,
 		IShaderManager* ShaderManager,
@@ -25,23 +28,32 @@ namespace gf
 		, mSamplerManager(SamplerManager)
 	{
 		mResourceXmlParser = new CResourceXmlParser;
+		IResourceXmlParser::_setInstance(mResourceXmlParser);
+
 		mModelFileParser = new CModelFileParser;
 	}
 
 	bool CResourceLoader::loadTexture(const std::string& name)
 	{
-		std::string fullpath;
-		if (!mResourceGroupManager->getFullPath(name, fullpath))
-		{
-			GF_PRINT_CONSOLE_INFO("The texture named %s doesn't exist.\n", name);
-			return false;
-		}
-
-		ITexture* texture = mTextureManager->load(name, fullpath);
+		ITexture* texture = mTextureManager->load(name);
 		if (texture == nullptr)
 			return false;
 
 		return true;
+	}
+
+	IPipeline* CResourceLoader::loadPipeline(const std::string& pipelineName, const std::string& filepath)
+	{
+		IResourceXmlParser::SPipelineCreateParams createParams;
+		if (mResourceXmlParser->parseOnePipeline(filepath, pipelineName, createParams))
+		{
+			if (loadPipeline(filepath, createParams))
+			{
+				IPipeline* pipeline = mPipelineManager->get(pipelineName, false);
+				return pipeline;
+			}
+		}
+		return nullptr;
 	}
 
 	bool CResourceLoader::loadPipeline(const std::string& fullpath, const IResourceXmlParser::SPipelineCreateParams& createParams) const
@@ -49,7 +61,7 @@ namespace gf
 		/* if the pipeline with the same name has already been loaded,
 		maybe some mistake has occurred. such as two pipeline file with the same
 		pipeline name. */
-		IPipeline* pipeline = mPipelineManager->get(createParams.Name);
+		IPipeline* pipeline = mPipelineManager->get(createParams.Name, false);
 		if (pipeline)
 		{
 			GF_PRINT_CONSOLE_INFO("Pipeline '%s' (in the file '%s') has already been loaded. It can't been loaded again. \
@@ -65,10 +77,10 @@ namespace gf
 		for (u32 i = 0; i < shaderCount; i++)
 		{
 			const IResourceXmlParser::SShaderCreateParams shaderCreateParams = createParams.Shaders[i];
-			std::string shaderName = shaderCreateParams.FileName + std::string("-") + shaderCreateParams.FunctionName;
-			IShader* shader = mShaderManager->get(shaderName);
+			std::string shaderName = mShaderManager->makeUpShaderName(shaderCreateParams.FileName, shaderCreateParams.FunctionName);
+			IShader* shader = mShaderManager->get(shaderName, shaderCreateParams.Macros, true, shaderCreateParams.Type);
 
-			/* if the shader has not been loaded. Load it first. */
+			/*
 			if (!shader)
 			{
 				std::string shaderFullPath;
@@ -79,7 +91,7 @@ namespace gf
 					return false;
 				}
 
-				shader = mShaderManager->load(shaderCreateParams.Type, shaderFullPath, shaderCreateParams.FunctionName, shaderName);
+				shader = mShaderManager->load(shaderCreateParams.Type, shaderCreateParams.FileName, shaderCreateParams.FunctionName);
 				if (shader == nullptr)
 				{
 					GF_PRINT_CONSOLE_INFO("Pipeline '%s' creation failed. Due to the '%s' function in '%s' shader file.\n",
@@ -87,9 +99,9 @@ namespace gf
 					return false;
 				}
 			}
+			*/
 
 			shaders[i] = shader;
-
 			/* find the vertex shader, which will be used to create input-layout soon.*/
 			if (shader->getType() == EST_VERTEX_SHADER)
 			{
@@ -135,6 +147,7 @@ namespace gf
 			{
 				/* if the render-state need a float value */
 			case ERS_DEPTH_BIAS_CLAMP:
+			case ERS_SLOPE_SCALED_DEPTH_BIAS:
 				pRenderState->setFloat(rsCreateParam.StateType, rsCreateParam.FloatValue);
 				break;
 				/* others are unsigned int. */
@@ -236,6 +249,7 @@ namespace gf
 		if (!mResourceXmlParser->parseTextureXmlFile(fullpath, renderTargetParamsArray, depthStencilParamsArray))
 			return false;
 
+		/*
 		for (u32 i = 0; i < renderTargetParamsArray.size(); i++)
 		{
 			createRenderTarget(fullpath, renderTargetParamsArray[i]);
@@ -245,6 +259,7 @@ namespace gf
 		{
 			createDepthStencilSurface(fullpath, depthStencilParamsArray[i]);
 		}
+		*/
 
 		return true;
 	}
@@ -252,7 +267,7 @@ namespace gf
 	bool CResourceLoader::loadMaterial(const std::string& fullpath,
 		const IResourceXmlParser::SMaterialCreateParams& createParams) const
 	{
-		IMaterial* material = mMaterialManager->get(createParams.Name);
+		IMaterial* material = mMaterialManager->get(createParams.Name, false);
 		if (material)
 		{
 			GF_PRINT_CONSOLE_INFO("Material '%s' (in the file '%s') has already been loaded. It can't been loaded again. \
@@ -261,11 +276,13 @@ namespace gf
 			return false;
 		}
 
-		IPipeline* pipelines[8];
+		IPipeline* pipelines[EPU_COUNT] = { 0 };
 
 		for (u32 i = 0; i < createParams.PipelineNames.size(); i++)
 		{
 			const std::string& pipelineName = createParams.PipelineNames[i];
+			E_PIPELINE_USAGE usage = createParams.PipelineUsages[i];
+
 			IPipeline* pipeline = mPipelineManager->get(pipelineName);
 			if (!pipeline)
 			{
@@ -274,11 +291,10 @@ namespace gf
 				return false;
 			}
 
-			pipelines[i] = pipeline;
+			pipelines[usage] = pipeline;
 		}
 
-		material = mMaterialManager->create(createParams.Name, createParams.MaterialColors,
-			pipelines, createParams.PipelineNames.size());
+		material = mMaterialManager->create(createParams.Name, pipelines);
 
 		if (!material)
 		{
@@ -287,6 +303,15 @@ namespace gf
 			return false;
 		}
 
+		// set all attributes
+		for (u32 i = 0; i < createParams.AttributeParams.size(); i++)
+		{
+			material->setAttribute(createParams.AttributeParams[i].Name,
+				createParams.AttributeParams[i].Value);
+		}
+
+
+		// set all textures
 		for (u32 i = 0; i < createParams.TextureParams.size(); i++)
 		{
 			ITexture* texture = mTextureManager->get(createParams.TextureParams[i].Name);
@@ -303,10 +328,24 @@ namespace gf
 		return true;
 	}
 
+	IMaterial* CResourceLoader::loadMaterial(const std::string& materialName, const std::string& filepath)
+	{
+		IResourceXmlParser::SMaterialCreateParams createParams;
+		if (mResourceXmlParser->parseOneMaterial(filepath, materialName, createParams))
+		{
+			if (loadMaterial(filepath, createParams))
+			{
+				return mMaterialManager->get(materialName, false);
+			}
+		}
+
+		return nullptr;
+	}
+
 	bool CResourceLoader::loadMeshFromFile(const std::string& name)
 	{
 		std::string fullpath;
-		if (!mResourceGroupManager->getFullPath(name, fullpath))
+		if (!mResourceGroupManager->getFullPath(name, fullpath, ERFT_MESH))
 		{
 			GF_PRINT_CONSOLE_INFO("The mesh named %s doesn't exist.\n", name.c_str());
 			return false;
@@ -316,7 +355,7 @@ namespace gf
 		if (!mModelFileParser->parseModelFile(fullpath, createParams))
 			return false;
 
-		if (mMeshManager->getMesh(name))
+		if (mMeshManager->getMesh(name, false))
 		{
 			GF_PRINT_CONSOLE_INFO("The mesh named '%s' has already existed. \
 								  							  Do you have two different mesh files named '%s' ?\n",
@@ -332,6 +371,7 @@ namespace gf
 				subsets[i].StartIndexLocation = createParams.Subsets[i].StartIndexLocation;
 				subsets[i].IndexCount = createParams.Subsets[i].IndexCount;
 				subsets[i].BaseVertexLocation = createParams.Subsets[i].BaseVertexLocation;
+				subsets[i].OffsetMatrix = createParams.Subsets[i].OffsetMatrix;
 
 				std::string materialName = createParams.Subsets[i].MaterialName;
 				IMaterial* material = mMaterialManager->get(materialName);
@@ -340,7 +380,6 @@ namespace gf
 					GF_PRINT_CONSOLE_INFO("FAIL:The material (%s) of model mesh (%s) can't be found.\n",
 						materialName.c_str(), name.c_str());
 
-					return false;
 				}
 
 				subsets[i].Material = material;
@@ -372,7 +411,6 @@ namespace gf
 					GF_PRINT_CONSOLE_INFO("FAIL:The material (%s) of model mesh (%s) can't be found.\n",
 						materialName.c_str(), name.c_str());
 
-					return false;
 				}
 
 				subsets[i].Material = material;
@@ -407,6 +445,7 @@ namespace gf
 		return true;
 	}
 
+	/*
 	bool CResourceLoader::createRenderTarget(const std::string& fullpath, const IResourceXmlParser::SRenderTargetParams& createParams) const
 	{
 		IRenderTarget* renderTarget = mTextureManager->createRenderTarget(createParams.Name,
@@ -439,4 +478,5 @@ namespace gf
 
 		return true;
 	}
+	*/
 }

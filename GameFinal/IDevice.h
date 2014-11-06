@@ -4,6 +4,7 @@
 #include "gfTypes.h"
 #include "gfUtil.h"
 #include "ITimer.h"
+#include "gfMath.h"
 
 namespace gf
 {
@@ -83,7 +84,6 @@ namespace gf
 		IDevice(SCreationParameters& params) 
 			:m_CreationParams(params)
 			, mVideoDriver(nullptr)
-			, mSceneManager(nullptr)
 			, mTimer(nullptr)
 		{
 
@@ -101,10 +101,9 @@ namespace gf
 			return mVideoDriver;
 		}
 
-		ISceneManager*	getSceneManager()
-		{
-			return mSceneManager;
-		}
+		virtual ISceneManager* createSceneManager() = 0;
+
+		virtual ISceneManager* createSceneManager(const math::SAxisAlignedBox& aabb) = 0;
 
 		u32 getClientWidth() const
 		{
@@ -138,11 +137,12 @@ namespace gf
 
 		}
 
+		_DECLARE_SINGLETON_INSTANCE(IDevice);
 
 	protected:
 		SCreationParameters		m_CreationParams;
 		IVideoDriver*			mVideoDriver;
-		ISceneManager*			mSceneManager;
+		//ISceneManager*			mSceneManager;
 		ITimer*					mTimer;
 	};
 

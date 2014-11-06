@@ -22,7 +22,7 @@ namespace gf
 			return mRenderState;
 		}
 
-		virtual void apply();
+		virtual void apply(E_PIPELINE_USAGE);
 
 
 		virtual u64 getSortCode() const
@@ -33,8 +33,10 @@ namespace gf
 			renderstate  24bit
 			*/
 
+			u32 ps_code = mShaders[EST_PIXEL_SHADER] ? mShaders[EST_PIXEL_SHADER]->getSortCode() : 0;
+
 			return ((u64)mShaders[EST_VERTEX_SHADER]->getSortCode() << 40)
-				| ((u64)mShaders[EST_PIXEL_SHADER]->getSortCode() << 32)
+				| ((u64)ps_code << 32)
 				| (mInputLayout->getSortCode() << 24)
 				| (mRenderState->getSortCode());
 		}

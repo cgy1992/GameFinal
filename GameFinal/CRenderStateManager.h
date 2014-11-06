@@ -15,6 +15,9 @@ namespace gf
 		_DEFINE_RESOURCE_DESTROY_METHODS(CRenderStateManager, mRenderStatesMap, IRenderState);
 
 	private:
+
+		void createStockRenderStates();
+
 		IResourceFactory*						mResourceFactory;
 		std::map<std::string, IRenderState*>	mRenderStatesMap;
 	};

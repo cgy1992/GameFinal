@@ -67,6 +67,12 @@ namespace gf
 			return mSubsets;
 		}
 
+		virtual XMFLOAT4X4 getSubsetTransform(u32 subset) const
+		{
+			XMFLOAT4X4 M;
+			return M;
+		}
+
 		virtual u32 getBoneCount() const
 		{
 			return mBonesTree.size();

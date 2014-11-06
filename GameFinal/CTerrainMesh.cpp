@@ -262,10 +262,11 @@ namespace gf
 		std::vector<HALF> textureData(mRowVertexNum * mRowVertexNum);
 		std::transform(mHeightValues.begin(), mHeightValues.end(), textureData.begin(), XMConvertFloatToHalf);
 
-		mHeightMapTexture = textureManager->get(heightmapFileName);
+		mHeightMapTexture = textureManager->get(heightmapFileName, false);
 		if (!mHeightMapTexture)
 		{
-			mHeightMapTexture = textureManager->create(heightmapFileName, mRowVertexNum, mRowVertexNum, (void*)&textureData[0],
+			mHeightMapTexture = textureManager->createTexture2D(heightmapFileName, mRowVertexNum, mRowVertexNum,
+				ETBT_SHADER, (void*)&textureData[0],
 				1, EGF_R16_FLOAT, 0);
 		}
 
@@ -367,4 +368,48 @@ namespace gf
 	{
 		mMeshBuffer->draw();
 	}
+
+	f32 CTerrainMesh::getHeight(f32 x, f32 z) const
+	{
+		x = mTotalWidth * 0.5f + x;
+		z = mTotalWidth * 0.5f - z;
+
+		if (x < 0 || x > mTotalWidth || z < 0 || z > mTotalWidth)
+			return 0.0f;
+
+		x /= mVertexSpace;
+		z /= mVertexSpace;
+
+		int i = (int)z;
+		int j = (int)x;
+
+		/*
+		A - B
+		| / |
+		C - D		
+		*/
+
+		//计算出A,B,C,D四个点的高度
+		float A = mHeightValues[i * mRowVertexNum + j];
+		float B = mHeightValues[i * mRowVertexNum + j + 1];
+		float C = mHeightValues[(i + 1) * mRowVertexNum + j];
+		float D = mHeightValues[(i + 1) * mRowVertexNum + j + 1];
+
+		float dx = x - j;
+		float dz = z - i;
+		float height;
+
+		if (dx + dz < 1.0f) // 如果落在三角形ABC中
+		{
+			height = A + (B - A) * dx + (C - A) * dz;
+		}
+		else //如果落在三角形BCD中
+		{
+			height = D + (B - D) * (1.0f - dz) + (C - D) * (1.0f - dx);
+		}
+		return height;
+
+
+	}
+
 }

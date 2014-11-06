@@ -8,20 +8,6 @@ namespace gf
 {
 	class CResourceXmlParser : public IResourceXmlParser
 	{
-	public:
-		struct SShaderVariableAttribute
-		{
-			E_SHADER_AUTO_VARIABLE_TYPE		Meaning;
-			E_UPDATE_FREQUENCY				DefaultUpdateFrequency;
-
-			SShaderVariableAttribute(){}
-
-			SShaderVariableAttribute(E_SHADER_AUTO_VARIABLE_TYPE meaning, E_UPDATE_FREQUENCY freq = EUF_PER_OBJECT)
-				:Meaning(meaning), DefaultUpdateFrequency(freq)
-			{
-
-			}
-		};
 
 	public:
 		CResourceXmlParser();
@@ -30,13 +16,30 @@ namespace gf
 
 		virtual bool parseMaterialFile(const std::string& filepath, std::vector<SMaterialCreateParams>& createParamsArray) const;
 
+		virtual bool parseOnePipeline(const std::string& filepath,
+			const std::string& pipelineName, 
+			SPipelineCreateParams& createParams) const;
+
+		virtual bool parseOneMaterial(const std::string& filepath,
+			const std::string& materialName,
+			SMaterialCreateParams& createParams) const;
+
 		virtual bool parseTextureXmlFile(const std::string& filepath, 
 			std::vector<SRenderTargetParams>& renderTargetParamsArray,
 			std::vector<SDepthStencilSurfaceParams>& depthStencilParamsArray) const;
 
+		virtual bool extractSubNodeNames(const std::string& filepath, const char* rootNode, 
+			const char* subNode, std::vector<std::string>& vec) const;
+
+		virtual bool extractMaterialNames(const std::string& filepath, std::vector<std::string>& vec) const;
+
+		virtual bool extractPipelineNames(const std::string& filepath, std::vector<std::string>& vec) const;
+
 	private:
 
 		virtual bool handlePipelineNode(const std::string& filepath, tinyxml2::XMLElement* node, SPipelineCreateParams& createParams) const;
+
+		E_PIPELINE_USAGE getPipelineUsage(const char* s) const;
 
 		E_PRIMITIVE_TYPE getPrimitiveType(std::string& s) const;
 
@@ -53,6 +56,9 @@ namespace gf
 		/* this function just tell the char is a valid charactor to form a float. */
 		bool			isFloatCharactor(char c) const { return (c >= '0' && c <= '9') || c == '.'; }
 
+		
+
+
 		bool handleInputLayoutElementNode(const std::string& filepath,
 			tinyxml2::XMLElement* node,
 			SInputLayoutElement& element) const;
@@ -66,6 +72,10 @@ namespace gf
 			E_SHADER_TYPE shaderType,
 			tinyxml2::XMLElement* node,
 			SPipelineCreateParams& createParams) const;
+
+		bool handleShaderMacroNode(E_SHADER_TYPE shaderType,
+			tinyxml2::XMLElement* node, 
+			SShaderCreateParams& createParams) const;
 
 		bool handleRenderStateNode(const std::string& filepath,
 			tinyxml2::XMLElement* node,
@@ -88,19 +98,16 @@ namespace gf
 			SDepthStencilSurfaceParams& createParams) const;
 
 
-		XMFLOAT4 getColorFromString(const char* s) const;
+		XMFLOAT4 getVectorFromString(const char* s) const;
 
-		/* handle <ambient> <diffuse> <specular> <emissive> element in material file */
-		bool handleMaterialColorNode(const std::string& filepath,
-			const std::string& materialName,
-			tinyxml2::XMLElement* node, XMFLOAT4& color) const;
+		bool handleMaterialAttributeNode(const std::string& filepath,
+			tinyxml2::XMLElement* node,
+			SMaterialCreateParams& createParams) const;
 
 		/* handle <texture> element in material file. */
 		bool handleMaterialTextureNode(const std::string& filepath,
 			const std::string& materialName,
 			tinyxml2::XMLElement* node, SMaterialTextureParam& param) const;
-
-
 
 
 		/* 顶点格式的文本形式与枚举类型的映射 */
@@ -138,6 +145,9 @@ namespace gf
 
 		/* E_SAMPLER_FILTER 类型的文本形式与枚举类型的映射 */
 		std::map<std::string, E_SAMPLER_FILTER>			mSamplerFilterMapping;
+
+		/* E_PIPELINE_USAGE 类型的文本形式与枚举类型的映射 */
+		std::map<std::string, E_PIPELINE_USAGE>			mPipelineUsageMapping;
 	};
 }
 

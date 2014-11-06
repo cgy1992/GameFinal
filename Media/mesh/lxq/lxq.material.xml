@@ -1,9 +1,11 @@
 <materials>
     <material name="lxq/material_00">
-        <ambient color="1.000000, 1.000000, 1.000000, 1.000000"/>
-        <diffuse color="1.000000, 1.000000, 1.000000, 1.000000"/>
-        <specular color="0.000000, 0.000000, 0.000000, 1.000000"/>
-        <emissive color="0.000000, 0.000000, 0.000000, 1.000000"/>
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
         <pipelines>
             <pipeline name="lxq/skeleton_pipeline_01"/>
         </pipelines>
@@ -12,10 +14,12 @@
         </textures>
     </material>
     <material name="lxq/material_01">
-        <ambient color="1.000000, 1.000000, 1.000000, 1.000000"/>
-        <diffuse color="1.000000, 1.000000, 1.000000, 1.000000"/>
-        <specular color="0.000000, 0.000000, 0.000000, 1.000000"/>
-        <emissive color="0.000000, 0.000000, 0.000000, 1.000000"/>
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
         <pipelines>
             <pipeline name="lxq/skeleton_pipeline_01"/>
         </pipelines>
@@ -24,10 +28,12 @@
         </textures>
     </material>
     <material name="lxq/material_02">
-        <ambient color="1.000000, 1.000000, 1.000000, 1.000000"/>
-        <diffuse color="1.000000, 1.000000, 1.000000, 1.000000"/>
-        <specular color="0.000000, 0.000000, 0.000000, 1.000000"/>
-        <emissive color="0.000000, 0.000000, 0.000000, 1.000000"/>
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
         <pipelines>
             <pipeline name="lxq/skeleton_pipeline_01"/>
         </pipelines>
@@ -36,10 +42,12 @@
         </textures>
     </material>
     <material name="lxq/material_03">
-        <ambient color="1.000000, 1.000000, 1.000000, 1.000000"/>
-        <diffuse color="1.000000, 1.000000, 1.000000, 1.000000"/>
-        <specular color="0.000000, 0.000000, 0.000000, 1.000000"/>
-        <emissive color="0.000000, 0.000000, 0.000000, 1.000000"/>
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
         <pipelines>
             <pipeline name="lxq/skeleton_pipeline_01"/>
         </pipelines>

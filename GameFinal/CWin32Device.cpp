@@ -18,9 +18,6 @@ namespace gf
 
 	CWin32Device::~CWin32Device()
 	{
-		mSceneManager->destroy();
-		mSceneManager = nullptr;
-
 		//ReleaseReferenceCounted(mSceneManager);
 		ReleaseReferenceCounted(mVideoDriver);
 	}
@@ -110,6 +107,7 @@ namespace gf
 		if (m_CreationParams.DriverType == EDT_DIRECT3D11)
 		{
 			mVideoDriver = new CD3D11Driver(this);
+			IVideoDriver::_setInstance(mVideoDriver);
 			if (!mVideoDriver->init(m_CreationParams))
 			{
 				throw std::runtime_error("Video Driver init failed!");
@@ -124,9 +122,21 @@ namespace gf
 		mTimer = new CWin32Timer;
 		mTimer->reset();
 
-		mSceneManager = new CSceneManager(this);
-
 		return S_OK;
+	}
+
+	ISceneManager* CWin32Device::createSceneManager(const math::SAxisAlignedBox& aabb)
+	{
+		ISceneManager* sceneManager = new CSceneManager(this, aabb);
+		return sceneManager;
+	}
+
+	ISceneManager* CWin32Device::createSceneManager()
+	{
+		math::SAxisAlignedBox aabb;
+		aabb.Center = XMFLOAT3(0, 0, 0);
+		aabb.Extents = XMFLOAT3(1000.0f, 1000.0f, 1000.0f);
+		return createSceneManager(aabb);
 	}
 
 	LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
