@@ -17,9 +17,9 @@ If you have any question, please contact me.
 
 <img src="http://ww2.sinaimg.cn/mw690/7d29c2abgw1ef8nnbrdqzj20mo0hqn04.jpg"/><br/>
 
-<p>Tessellation:</p>
+<p>LOD Terrain:</p>
 
-<img src="http://ww1.sinaimg.cn/mw690/7d29c2abgw1ef8nndym56j20mo0hqqaj.jpg"/><br/>
+<img src="http://ww3.sinaimg.cn/mw690/7d29c2abgw1em1kj3ybm5j20sw0medj1.jpg"/><br/>
 
 <p>Water Surface:</p>
 
