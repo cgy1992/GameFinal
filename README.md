@@ -11,7 +11,7 @@ If you have any question, please contact me.
 
 <p>Lighting and Shading:</p>
 
-<img src="http://ww4.sinaimg.cn/mw690/7d29c2abgw1ef8nnd6dxjj20mo0hq762.jpg"/><br/>
+<img src="http://ww1.sinaimg.cn/mw690/7d29c2abgw1em1kb4413qj20sw0me402.jpg"/><br/>
 
 <p>Skeleton Animation:</p>
 
