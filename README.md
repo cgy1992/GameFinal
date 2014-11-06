@@ -1,7 +1,8 @@
 GameFinal
 =========
 
-<p style="font-size:50px;">Hello</p>
+Develope Effective and Open-Source Game Engine.
+-----
 
 GameFinal is a next-generation 3D game engine. It is being developed and not finished.
 
