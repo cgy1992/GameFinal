@@ -3,6 +3,7 @@
 
 #include "ITextureCube.h"
 #include "CD3D11Driver.h"
+#include "CD3D11RenderTarget.h"
 
 namespace gf
 {
@@ -19,10 +20,13 @@ namespace gf
 			, mTextureWidth(0)
 			, md3d11Driver(d3d11Driver)
 		{
-
+			memset(mRenderTargets, 0, sizeof(mRenderTargets));
 		}
 
 		bool loadFromFile(const std::string& filename);
+
+		bool create(u32 size, u32 bindFlags,
+			void* rawData, u32 miplevel, E_GI_FORMAT format, u32 pitch = 0);
 		
 		virtual u32 getWidth() const
 		{
@@ -36,6 +40,9 @@ namespace gf
 
 		virtual IRenderTarget* getRenderTarget(u32 index = 0)
 		{
+			if (index < 6)
+				return mRenderTargets[index];
+
 			return nullptr;
 		}
 
@@ -48,12 +55,16 @@ namespace gf
 
 	private:
 
+		void clearRenderTargets(CD3D11RenderTarget* pRenderTargets[]);
+
 		ID3D11Device*					md3dDevice;
 		ID3D11DeviceContext*			md3dDeviceContext;
 		CD3D11Driver*					md3d11Driver;
 		ID3D11Texture2D*				md3dTexture;
 		ID3D11ShaderResourceView*		md3dShaderResourceView;
 		u32								mTextureWidth;
+		CD3D11RenderTarget*				mRenderTargets[6];
+
 	};
 
 }

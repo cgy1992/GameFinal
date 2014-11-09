@@ -25,7 +25,8 @@ namespace gf
 		bool create(ITexture* texture, ID3D11Texture2D* pTexture2D,
 			DXGI_FORMAT depthStencilFormat, 
 			ID3D11ShaderResourceView* d3dShaderResourceView,
-			bool multiSampling);
+			bool multiSampling, u32 width, u32 height,
+			u32 depthBits, u32 stencilBits);
 
 		ID3D11DepthStencilView* getDepthStencilView()
 		{

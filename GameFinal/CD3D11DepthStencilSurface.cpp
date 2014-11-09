@@ -149,7 +149,8 @@ namespace gf
 		ID3D11Texture2D* pTexture2D,
 		DXGI_FORMAT depthStencilFormat, 
 		ID3D11ShaderResourceView* d3dShaderResourceView, 
-		bool multiSampling)
+		bool multiSampling, u32 width, u32 height, 
+		u32 depthBits, u32 stencilBits)
 	{
 		HRESULT hr;
 		ID3D11DepthStencilView* pd3dDepthStencilView;
@@ -177,6 +178,11 @@ namespace gf
 		md3dDepthStencilView = pd3dDepthStencilView;
 		mTexture = texture;
 		md3dShaderResourceView = d3dShaderResourceView;
+		mWidth = width;
+		mHeight = height;
+		mDepthBits = depthBits;
+		mStencilBits = stencilBits;
+
 		return true;
 	}
 

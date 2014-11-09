@@ -120,6 +120,7 @@ namespace gf
 		ESAVT_SHADOW_MAP_TRANSFORM,
 		ESAVT_SHADOW_MAP_SIZE,
 		ESAVT_SHADOW_MAP_JITTER_TEXTURE,
+		ESAVT_PL_SHADOW_MAP_JITTER_TEXTURE,
 		ESAVT_SCENE_END,						/* scene info end*/
 
 		/* bone transforms. */

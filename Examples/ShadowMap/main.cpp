@@ -78,6 +78,10 @@ int main()
 	boxNode->addShadow(1);
 	teapot->addShadow(1);
 	
+	sphereNode1->addShadow(2);
+	boxNode->addShadow(2);
+	teapot->addShadow(2);
+	
 
 	// add directional light
 	XMFLOAT3 light_dir(5.0f, -5.0f, -2.0f);
@@ -92,6 +96,14 @@ int main()
 	light->setShadowMapSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	light->setShadowCameraOrthographicSize(10.0f, 7.0f);
 	light->enableShadow(true);
+
+	// add point light
+	ILightNode* light2 = smgr->addPointLight(2, nullptr, false, XMFLOAT3(0, 3.0f, 0), 100);
+	light2->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
+	light2->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+	light2->setAttenuation(1.0f, 0.1f, 0);
+	light2->enableShadow(true);
+	light2->setShadowMapSize(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
 	camera->setFarZ(3000.0f);

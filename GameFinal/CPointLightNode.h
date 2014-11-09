@@ -2,6 +2,7 @@
 #define __POINT_LIGHT_NODE_CLASS_H__
 
 #include "ILightNode.h"
+#include "ITextureCube.h"
 
 namespace gf
 {
@@ -12,6 +13,7 @@ namespace gf
 			bool bStatic, u32 id,
 			const XMFLOAT3& position, f32 range)
 			:ILightNode(parent, smgr, bStatic, id, position)
+			, mShadowMapTexture(nullptr)
 		{
 			ZeroMemory(&mLightData, sizeof(mLightData));
 			mLightData.Position = getAbsolutePosition();
@@ -96,6 +98,8 @@ namespace gf
 
 		virtual ITexture* getShadowMap();
 
+		virtual void generateShadowMap();
+
 	private:
 
 		void computeBoundingVolumn();
@@ -104,7 +108,7 @@ namespace gf
 		math::SSphere			mSphere;
 		math::SAxisAlignedBox	mAabb;
 
-		
+		ITextureCube*			mShadowMapTexture;
 
 	};
 }

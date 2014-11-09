@@ -60,6 +60,40 @@ namespace gf
 		}
 	}
 
+	bool CD3D11RenderTarget::createOneInArray(ITexture* texture, 
+		ID3D11Texture2D* pTextureArray, 
+		ID3D11ShaderResourceView* d3dShaderResourceView, 
+		u32 index, u32 size)
+	{
+		HRESULT hr;
+		ID3D11RenderTargetView*	pd3dRenderTargetView;
+		D3D11_TEXTURE2D_DESC texDesc;
+
+		pTextureArray->GetDesc(&texDesc);
+
+		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+		rtvDesc.Format = texDesc.Format;
+		rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+		rtvDesc.Texture2DArray.MipSlice = 0;
+		rtvDesc.Texture2DArray.ArraySize = 1;
+		rtvDesc.Texture2DArray.FirstArraySlice = index;
+
+		// Create the render target view.
+		hr = md3dDevice->CreateRenderTargetView(pTextureArray, 
+			&rtvDesc, &pd3dRenderTargetView);
+		if (FAILED(hr))
+			return false;
+
+		ReleaseCOM(md3dRenderTargetView);
+		md3dRenderTargetView = pd3dRenderTargetView;
+		mTexture = texture;
+		md3dShaderResourceView = d3dShaderResourceView;
+		mWidth = size;
+		mHeight = size;
+
+		return true;
+	}
+
 }
 
 

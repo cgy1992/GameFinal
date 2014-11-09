@@ -36,10 +36,11 @@ namespace gf
 
 		mCameraNodes.fill(nullptr);
 		
+		mShadowMapCamera = this->addCameraNode(SHADOW_CAMERA_ID);
 
 		// create shadow map camera
-		mShadowMapCamera = this->addCameraNode(SHADOW_CAMERA_ID, nullptr, XMFLOAT3(0, 0, 0),
-			XMFLOAT3(0, 0, 0.5), XMFLOAT3(0, 1.0f, 0), false, XM_PIDIV4, 0, 1000.0f);
+		//mShadowMapCamera = this->addCameraNode(SHADOW_CAMERA_ID, nullptr, XMFLOAT3(0, 0, 0),
+		//	XMFLOAT3(0, 0, 0.5), XMFLOAT3(0, 1.0f, 0), false, XM_PIDIV4, 0, 1000.0f);
 		
 		mActiveCameraId = EMPTY_CAMERA_ID;
 		

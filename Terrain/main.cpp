@@ -6,8 +6,8 @@
 
 using namespace gf;
 
-const u32 SCREEN_WIDTH = 1280;
-const u32 SCREEN_HEIGHT = 960;
+const u32 SCREEN_WIDTH = 1024;
+const u32 SCREEN_HEIGHT = 768;
 const f32 CAMERA_MOVE_UNIT = 30.0f;
 const f32 CAMERA_ROTATE_UNIT = 1.0f;
 const f32 OBJECT_NUM_PER_ROW = 10;

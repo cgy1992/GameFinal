@@ -43,11 +43,21 @@ namespace gf
 			u32 width,
 			u32 height,
 			u32 depth,
+			u32 bindFlags,
 			void* data,
 			u32 mipLevel,
 			E_GI_FORMAT format,
 			u32 pitch = 0,
 			u32 slicePitch = 0);
+
+		virtual ITextureCube* createTextureCube(
+			const std::string& name,
+			u32 size,
+			u32 bindFlags,
+			void* data,
+			u32 miplevel,
+			E_GI_FORMAT format,
+			u32 pitch = 0);
 
 		virtual IRenderTarget* createRenderTarget(
 			const std::string& name,
@@ -74,6 +84,14 @@ namespace gf
 
 		virtual bool releaseTempRenderTarget(IRenderTarget* pRenderTarget);
 
+		virtual IDepthStencilSurface* getTempDepthStencilSurface(
+			u32 width = 0,
+			u32 height = 0,
+			u32 depthBits = 32,
+			u32 stencilBits = 0);
+
+		virtual bool releaseTempDepthStencilSurface(IDepthStencilSurface* pDepthStencilSurface);
+
 		virtual void updateTemporaryTextures(u32 delta);
 
 		_DEFINE_RESOURCE_DESTROY_METHODS(CTextureManager, mTextureMap, ITexture);
@@ -83,22 +101,23 @@ namespace gf
 
 		void createStockTextures();
 
-		ITexture3D* createShadowMapJitterTexture();
-		
+		void createShadowMapJitterTexture();
+		void createPointLightShadowMapJitterTexture();
+
 
 		IDevice*								mDevice;
 		IResourceFactory*						mResourceFactory;
 		std::map<std::string, ITexture*>		mTextureMap;
 		CSortCodeAllocator<255>					mCodeAllocator;
 
-		struct SRenderTargetInfo
+		struct STemporaryTextureInfo
 		{
 			u32				IdledTime;
 			ITexture*		Texture;
 		};
 
-		std::list<SRenderTargetInfo>				mIdledRenderTargets;
-		//std::list<IRenderTarget*>				mUsedRenderTargets;
+		std::list<STemporaryTextureInfo>				mIdledRenderTargets;
+		std::list<STemporaryTextureInfo>				mIdledDepthStencilTextures;
 
 	};
 }

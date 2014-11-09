@@ -147,8 +147,27 @@ Texture2D GF_SHADOW_MAP_5;
 Texture2D GF_SHADOW_MAP_6;
 Texture2D GF_SHADOW_MAP_7;
 
+// point light shadow map
+TextureCube GF_PL_SHADOW_MAP_0;
+TextureCube GF_PL_SHADOW_MAP_1;
+TextureCube GF_PL_SHADOW_MAP_2;
+TextureCube GF_PL_SHADOW_MAP_3;
+TextureCube GF_PL_SHADOW_MAP_4;
+TextureCube GF_PL_SHADOW_MAP_5;
+TextureCube GF_PL_SHADOW_MAP_6;
+TextureCube GF_PL_SHADOW_MAP_7;
+TextureCube GF_PL_SHADOW_MAP_8;
+TextureCube GF_PL_SHADOW_MAP_9;
+TextureCube GF_PL_SHADOW_MAP_10;
+TextureCube GF_PL_SHADOW_MAP_11;
+TextureCube GF_PL_SHADOW_MAP_12;
+TextureCube GF_PL_SHADOW_MAP_13;
+TextureCube GF_PL_SHADOW_MAP_14;
+TextureCube GF_PL_SHADOW_MAP_15;
+
 // shadow jitter, for blurring shadow
 Texture3D GF_SHADOW_MAP_JITTER_TEXTURE;
+Texture3D GF_PL_SHADOW_MAP_JITTER_TEXTURE;
 
 cbuffer gf_cb_shadow_map_0
 {
@@ -314,10 +333,10 @@ float CalcShadowFactor_3x3(Texture2D shadowMap, float4 shadowMapSize, float4 sha
 float CalcShadowFactor_Jitter(Texture2D shadowMap, float4 shadowMapSize,
 	float2 screenPos, float4 shadowPosH, float blurRadius)
 {
-#define SAMPLES_COUNT 64
-#define SAMPLES_COUNT_DIV_2 32
-#define INV_SAMPLES_COUNT (1.0f / SAMPLES_COUNT)
-#define INV_SAMPLES_COUNT_DIV_2 (1.0f / SAMPLES_COUNT_DIV_2)
+#define JITTER_SAMPLES_COUNT 64
+#define JITTER_SAMPLES_COUNT_DIV_2 32
+#define INV_JITTER_SAMPLES_COUNT (1.0f / JITTER_SAMPLES_COUNT)
+#define INV_JITTER_SAMPLES_COUNT_DIV_2 (1.0f / JITTER_SAMPLES_COUNT_DIV_2)
 
 	// Complete projection by doing division by w.
 	shadowPosH.xyz /= shadowPosH.w;
@@ -328,7 +347,7 @@ float CalcShadowFactor_Jitter(Texture2D shadowMap, float4 shadowMapSize,
 	// Texel size.
 	float2 fsize = float2(shadowMapSize.z, shadowMapSize.w) * blurRadius;
 
-		float percentLit = 0.0f;
+	float percentLit = 0.0f;
 	float3 jcoord = float3(screenPos, 0);
 
 		[unroll]
@@ -342,7 +361,7 @@ float CalcShadowFactor_Jitter(Texture2D shadowMap, float4 shadowMapSize,
 		smcoord = fsize * offset.zw + shadowPosH.xy;
 		percentLit += shadowMap.SampleCmpLevelZero(GF_SHADOW_MAP_SAMPLER, smcoord, depth).r;
 
-		jcoord.z += INV_SAMPLES_COUNT_DIV_2;
+		jcoord.z += INV_JITTER_SAMPLES_COUNT_DIV_2;
 	}
 
 
@@ -352,7 +371,7 @@ float CalcShadowFactor_Jitter(Texture2D shadowMap, float4 shadowMapSize,
 	}
 
 	[unroll]
-	for (int i = 4; i < SAMPLES_COUNT_DIV_2; i++)
+	for (int i = 4; i < JITTER_SAMPLES_COUNT_DIV_2; i++)
 	{
 		float4 offset = GF_SHADOW_MAP_JITTER_TEXTURE.Sample(GF_WRAP_POINT_SAMPLER, jcoord);
 
@@ -362,10 +381,10 @@ float CalcShadowFactor_Jitter(Texture2D shadowMap, float4 shadowMapSize,
 		smcoord = fsize * offset.zw + shadowPosH.xy;
 		percentLit += shadowMap.SampleCmpLevelZero(GF_SHADOW_MAP_SAMPLER, smcoord, depth).r;
 
-		jcoord.z += INV_SAMPLES_COUNT_DIV_2;
+		jcoord.z += INV_JITTER_SAMPLES_COUNT_DIV_2;
 	}
 
-	return percentLit * INV_SAMPLES_COUNT;
+	return percentLit * INV_JITTER_SAMPLES_COUNT;
 }
 
 
@@ -383,3 +402,76 @@ float CalcShadowFactor_Jitter(Texture2D shadowMap, float4 shadowMapSize,
 
 #endif
 
+float CalcPointLightShadowFactor_3x3x3(TextureCube shadowMap, float3 PosW, float3 LightPos,
+		float4 shadowMapSize, float blurDistance)
+{
+	float3 vLight = PosW - LightPos;
+	float distSqrt = dot(vLight, vLight);
+	
+	vLight = normalize(vLight);
+
+	float dx = shadowMapSize.z;
+	float offsets[3] = {-dx, 0, dx};
+	float percentLit = 0.0f;
+
+	[unroll]
+	for (int i = 0; i < 3; i++)
+	{
+		[unroll]
+		for(int j = 0; j < 3; j++)
+		{
+			[unroll]
+			for(int k = 0; k < 3; k++)
+			{
+				percentLit += shadowMap.SampleCmpLevelZero(GF_SHADOW_MAP_SAMPLER,
+					vLight + float3(offsets[i], offsets[j], offsets[k])*blurDistance, distSqrt).r;
+			}
+		}
+	}
+	return percentLit / 27;
+}
+
+float CalcPointLightShadowFactor_Jitter(TextureCube shadowMap, float3 PosW, float3 LightPos, 
+	float2 screenPos, float4 shadowMapSize, float blurDistance)
+{
+#define PL_JITTER_SAMPLES_COUNT 16
+#define INV_PL_JITTER_SAMPLES_COUNT (1.0f / PL_JITTER_SAMPLES_COUNT)
+
+	float3 vLight = PosW - LightPos;
+	float distSqrt = dot(vLight, vLight);
+	vLight = normalize(vLight);
+
+	float fsize = shadowMapSize.z * blurDistance;
+	float3 jcoord = float3(screenPos, 0);
+	float percentLit = 0.0f;
+
+	[unroll]
+	for(int i = 0; i < 4; i++)
+	{
+		float3 offset = GF_SHADOW_MAP_JITTER_TEXTURE.Sample(GF_WRAP_POINT_SAMPLER, jcoord).xyz;
+		percentLit += shadowMap.SampleCmpLevelZero(GF_SHADOW_MAP_SAMPLER, vLight + offset * fsize, distSqrt).r;
+		jcoord.z += INV_PL_JITTER_SAMPLES_COUNT;
+	}
+
+	
+	if(percentLit * (percentLit - 4.0f) == 0)
+	{
+		return percentLit * 0.25f;
+	}
+
+	[unroll]
+	for(int i = 4; i < PL_JITTER_SAMPLES_COUNT; i++)
+	{
+		float3 offset = GF_SHADOW_MAP_JITTER_TEXTURE.Sample(GF_WRAP_POINT_SAMPLER, jcoord).xyz;
+		percentLit += shadowMap.SampleCmpLevelZero(GF_SHADOW_MAP_SAMPLER, vLight + offset * fsize, distSqrt).r;
+		jcoord.z += INV_PL_JITTER_SAMPLES_COUNT;
+	}
+
+	return percentLit * INV_PL_JITTER_SAMPLES_COUNT;
+}
+
+#ifndef CalcPointLightShadowFactor
+#define CalcPointLightShadowFactor(ShadowLightID, LightPos, BlurRadius) \
+	CalcPointLightShadowFactor_Jitter(GF_PL_SHADOW_MAP_##ShadowLightID, pin.PosW, LightPos, \
+		pin.PosH.xy/pin.PosH.w, GF_SHADOW_MAP_SIZE_##ShadowLightID, BlurRadius)
+#endif

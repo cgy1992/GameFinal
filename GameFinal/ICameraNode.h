@@ -30,6 +30,8 @@ namespace gf
 
 		virtual void lookAt(const XMFLOAT3& lookat) = 0;
 		virtual void look(const XMFLOAT3& dir) = 0;
+		virtual void lookAt(const XMFLOAT3& lookat, const XMFLOAT3& up) = 0;
+		virtual void look(const XMFLOAT3& dir, const XMFLOAT3& up) = 0;
 		virtual void walk(f32 unit) = 0;
 		virtual void fly(f32 unit) = 0;
 		virtual void strafe(f32 unit) = 0;
@@ -118,6 +120,16 @@ namespace gf
 				proj = XMMatrixOrthographicLH(mViewWidth, mViewHeight, mNearZ, mFarZ);
 
 			return proj;
+		}
+
+		void setPerspectiveProjection(bool perspectiveProj)
+		{
+			mPerspectiveProj = perspectiveProj;
+		}
+
+		bool isPerspectiveProjection() const
+		{
+			return mPerspectiveProj;
 		}
 
 		const math::SFrustum& getFrustum() const

@@ -4,6 +4,7 @@
 #include "CResourceXmlParser.h"
 #include "CModelFileParser.h"
 #include "gfTypes.h"
+
 namespace gf
 {
 	

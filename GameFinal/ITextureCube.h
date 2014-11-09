@@ -16,7 +16,7 @@ namespace gf
 
 		virtual E_TEXTURE_TYPE getType() const
 		{
-			return ETT_CUBE_TEXTURE;
+			return ETT_TEXTURE_CUBE;
 		}
 
 		virtual ~ITextureCube() {}

@@ -131,6 +131,7 @@ namespace gf
 			hr = md3dDevice->CreateShaderResourceView(pd3dTexture, &srvDesc, &pd3dSRV);
 			if (FAILED(hr))
 			{
+				ReleaseCOM(pd3dTexture);
 				return false;
 			}
 		}
@@ -141,6 +142,8 @@ namespace gf
 			if (!pRenderTarget->create(this, pd3dTexture, pd3dSRV, width, height))
 			{
 				ReleaseReferenceCounted(pRenderTarget);
+				ReleaseCOM(pd3dSRV);
+				ReleaseCOM(pd3dTexture);
 				return false;
 			}
 		}
@@ -198,6 +201,7 @@ namespace gf
 			d3dTexFormat = DXGI_FORMAT_R32_TYPELESS;
 			d3dDepthStencilFormat = DXGI_FORMAT_D32_FLOAT;
 			d3dShaderViewFormat = DXGI_FORMAT_R32_FLOAT;
+			mFormat = EGF_D32_UNORM;
 		}
 		else if (depthBitNum == 24 && stencilBitNum == 8)
 		{
@@ -207,12 +211,15 @@ namespace gf
 				d3dShaderViewFormat = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 			else
 				d3dShaderViewFormat = DXGI_FORMAT_X24_TYPELESS_G8_UINT;
+
+			mFormat = EGF_D24_UNORM_S8_UINT;
 		}
 		else if (depthBitNum == 16 && stencilBitNum == 0)
 		{
 			d3dTexFormat = DXGI_FORMAT_R16_TYPELESS;
 			d3dDepthStencilFormat = DXGI_FORMAT_D16_UNORM;
 			d3dShaderViewFormat = DXGI_FORMAT_R16_FLOAT;
+			mFormat = EGF_D16_UNORM;
 		}
 		else {
 			GF_PRINT_CONSOLE_INFO("The format of depth-stencil-surface ('%s') is invalid.\n", mName.c_str());
@@ -276,7 +283,8 @@ namespace gf
 
 		// create depth-stencil
 		pd3dDepthStencilSurface = new CD3D11DepthStencilSurface(md3dDevice, md3dDeviceContext);
-		if (!pd3dDepthStencilSurface->create(this, pd3dTexture, d3dDepthStencilFormat, pd3dSRV, multiSampling))
+		if (!pd3dDepthStencilSurface->create(this, pd3dTexture, d3dDepthStencilFormat, pd3dSRV, multiSampling, 
+			width, height, depthBitNum, stencilBitNum))
 		{
 			ReleaseReferenceCounted(pd3dDepthStencilSurface);
 			ReleaseCOM(pd3dTexture);

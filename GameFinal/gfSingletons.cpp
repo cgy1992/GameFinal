@@ -36,5 +36,6 @@ namespace gf
 	const std::string ISamplerManager::SHADOW_MAP_SAMPLER = std::string("gf_shadow_map_sampler");
 
 	const std::string ITextureManager::SHADOW_MAP_JITTER_TEXTURE = std::string("gf_shadow_map_jitter_texture");
+	const std::string ITextureManager::PL_SHADOW_MAP_JITTER_TEXTURE = std::string("gf_pl_shadow_map_jitter_texture");
 }
 

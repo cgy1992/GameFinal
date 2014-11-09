@@ -37,6 +37,9 @@ namespace gf
 		bool create(ITexture* texture, ID3D11Texture2D* pTexture2D, 
 			ID3D11ShaderResourceView* d3dShaderResourceView, u32 width, u32 height);
 
+		bool createOneInArray(ITexture* texture, ID3D11Texture2D* pTextureArray,
+			ID3D11ShaderResourceView* d3dShaderResourceView, u32 index, u32 size);
+
 		virtual void clear(const f32 color[]);
 
 		virtual void clear();

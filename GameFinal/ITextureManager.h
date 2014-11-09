@@ -29,11 +29,21 @@ namespace gf
 			u32 width,
 			u32 height,
 			u32 depth,
+			u32 bindFlags,
 			void* data,
 			u32 mipLevel,
 			E_GI_FORMAT format,
 			u32 pitch = 0,
 			u32 slicePitch = 0) = 0;
+
+		virtual ITextureCube* createTextureCube(
+			const std::string& name,
+			u32 size,
+			u32 bindFlags,
+			void* data,
+			u32 miplevel,
+			E_GI_FORMAT format,
+			u32 pitch = 0) = 0;
 
 		virtual IRenderTarget* createRenderTarget(
 			const std::string& name,
@@ -68,11 +78,21 @@ namespace gf
 		virtual bool releaseTempRenderTarget(IRenderTarget* pRenderTarget) = 0;
 
 
+		virtual IDepthStencilSurface* getTempDepthStencilSurface(
+			u32 width = 0,
+			u32 height = 0,
+			u32 depthBits = 32,
+			u32 stencilBits = 0) = 0;
+
+		virtual bool releaseTempDepthStencilSurface(IDepthStencilSurface* pDepthStencilSurface) = 0;
+
+
 		_DECLARE_SINGLETON_INSTANCE(ITextureManager);
 
 		_DECLARE_RESOURCE_DESTROY_METHODS(ITexture);
 
 		const static std::string SHADOW_MAP_JITTER_TEXTURE;
+		const static std::string PL_SHADOW_MAP_JITTER_TEXTURE;
 	};
 }
 

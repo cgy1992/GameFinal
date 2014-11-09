@@ -78,6 +78,42 @@ namespace gf
 			XMStoreFloat3(&mRight, right);
 		}
 
+		virtual void look(const XMFLOAT3& dir, const XMFLOAT3& up)
+		{
+			XMVECTOR lookdir = XMLoadFloat3(&dir);
+			lookdir = XMVector3Normalize(lookdir);
+			XMVECTOR updir = XMLoadFloat3(&up);
+
+			XMVECTOR right = XMVector3Cross(updir, lookdir);
+			right = XMVector3Normalize(right);
+
+			updir = XMVector3Cross(lookdir, right);
+			updir = XMVector3Normalize(updir);
+
+			XMStoreFloat3(&mLook, lookdir);
+			XMStoreFloat3(&mUp, updir);
+			XMStoreFloat3(&mRight, right);
+		}
+
+		virtual void lookAt(const XMFLOAT3& lookat, const XMFLOAT3& up)
+		{
+			XMVECTOR eye = XMLoadFloat3(&mPosition);
+			XMVECTOR target = XMLoadFloat3(&lookat);
+			XMVECTOR look = target - eye;
+			look = XMVector3Normalize(look);
+			XMVECTOR updir = XMLoadFloat3(&up);
+
+			XMVECTOR right = XMVector3Cross(updir, look);
+			right = XMVector3Normalize(right);
+
+			updir = XMVector3Cross(look, right);
+			updir = XMVector3Normalize(updir);
+
+			XMStoreFloat3(&mLook, look);
+			XMStoreFloat3(&mUp, updir);
+			XMStoreFloat3(&mRight, right);
+		}
+
 		/* move along camera's look vector */
 		virtual void walk(f32 unit)
 		{

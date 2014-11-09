@@ -70,6 +70,23 @@ namespace gf
 		mBuiltInVariables["GF_SHADOW_MAP_6"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 6);
 		mBuiltInVariables["GF_SHADOW_MAP_7"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 7);
 		
+		mBuiltInVariables["GF_PL_SHADOW_MAP_0"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 0);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_1"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 1);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_2"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 2);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_3"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 3);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_4"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 4);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_5"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 5);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_6"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 6);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_7"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 7);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_8"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 8);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_9"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 9);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_10"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 10);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_11"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 11);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_12"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 12);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_13"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 13);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_14"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 14);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_15"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 15);
+
 		mBuiltInVariables["GF_SHADOW_MAP_TRANSFORM_0"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP_TRANSFORM, EUF_PER_FRAME, 0);
 		mBuiltInVariables["GF_SHADOW_MAP_TRANSFORM_1"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP_TRANSFORM, EUF_PER_FRAME, 1);
 		mBuiltInVariables["GF_SHADOW_MAP_TRANSFORM_2"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP_TRANSFORM, EUF_PER_FRAME, 2);
@@ -89,6 +106,7 @@ namespace gf
 		mBuiltInVariables["GF_SHADOW_MAP_SIZE_7"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP_SIZE, EUF_PER_FRAME, 7);
 
 		mBuiltInVariables["GF_SHADOW_MAP_JITTER_TEXTURE"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP_JITTER_TEXTURE, EUF_PER_FRAME, 0);
+		mBuiltInVariables["GF_PL_SHADOW_MAP_JITTER_TEXTURE"] = SShaderVariableAttribute(ESAVT_PL_SHADOW_MAP_JITTER_TEXTURE, EUF_PER_FRAME, 0);
 
 		// create built-in samplers
 		ISamplerManager* samplerMgr = ISamplerManager::getInstance();

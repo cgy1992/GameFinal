@@ -10,6 +10,7 @@
     <pipelines>
       <pipeline name="sphere_pipeline"/>
       <pipeline name="shadow_map_pipeline" usage="shadow_map"/>
+      <pipeline name="point_shadow_map_pipeline" usage="point_shadow_map"/>
     </pipelines>
     
   </material>
@@ -23,8 +24,9 @@
     </attributes>
 
     <pipelines>
-      <pipeline name="box_pipeline"/>
+      <pipeline name="sphere_pipeline"/>
       <pipeline name="shadow_map_pipeline" usage="shadow_map"/>
+      <pipeline name="point_shadow_map_pipeline" usage="point_shadow_map"/>
     </pipelines>
     
   </material>
@@ -40,6 +42,7 @@
     <pipelines>
       <pipeline name="sphere_pipeline"/>
       <pipeline name="shadow_map_pipeline" usage="shadow_map"/>
+      <pipeline name="point_shadow_map_pipeline" usage="point_shadow_map"/>
     </pipelines>
 
   </material>

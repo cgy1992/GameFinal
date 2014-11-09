@@ -23,6 +23,7 @@ namespace gf
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
 			:ISceneNode(parent, smgr, bStatic, position, rotation, scale)
 			, mOctreeNode(nullptr)
+			, mShadowFlag(0)
 		{
 			setRenderOrder(ERO_MESH);
 		}

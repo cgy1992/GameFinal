@@ -10,6 +10,11 @@ namespace gf
 
 	void CMeshNode::render(E_PIPELINE_USAGE usage)
 	{
+		if (usage == EPU_POINT_SHADOW_MAP)
+		{
+			int a = 1;
+		}
+
 		if (!mMaterial)
 			return;
 

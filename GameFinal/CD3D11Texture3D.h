@@ -25,8 +25,8 @@ namespace gf
 
 		virtual ~CD3D11Texture3D();
 
-		bool create(u32 width, u32 height,
-			u32 depth, void* rawData,
+		bool create(u32 width, u32 height, u32 depth, 
+			void* rawData,
 			u32 miplevel, E_GI_FORMAT format, u32 pitch = 0,
 			u32 slicePitch = 0);
 

@@ -31,7 +31,6 @@ namespace gf
 
 		virtual void lookAt(const XMFLOAT3& lookat)
 		{
-			
 			XMVECTOR eye = XMLoadFloat3(&mPosition);
 			XMVECTOR target = XMLoadFloat3(&lookat);
 			XMVECTOR look = XMVector3Normalize(target - eye);
@@ -55,6 +54,16 @@ namespace gf
 
 			adjustPitchAngle();
 			XMStoreFloat3(&mWalkDir, dir);
+		}
+
+		virtual void lookAt(const XMFLOAT3& lookat, const XMFLOAT3& up)
+		{
+			lookAt(lookat, mUp);
+		}
+
+		virtual void look(const XMFLOAT3& dir, const XMFLOAT3& up)
+		{
+			look(dir, mUp);
 		}
 
 		virtual void look(const XMFLOAT3& d)

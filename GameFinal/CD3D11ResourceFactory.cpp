@@ -91,6 +91,26 @@ namespace gf
 		return pTexture;
 	}
 
+	ITextureCube* CD3D11ResourceFactory::createTextureCube(
+		const std::string& name,
+		u32 sortcode,
+		u32 size,
+		u32 bindFlags,
+		void* rawData,
+		u32 miplevel,
+		E_GI_FORMAT format,
+		u32 pitch)
+	{
+		CD3D11TextureCube* pTexture = new CD3D11TextureCube(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
+		if (!pTexture->create(size, bindFlags, rawData, miplevel, format, pitch))
+		{
+			pTexture->drop();
+			pTexture = nullptr;
+		}
+		return pTexture;
+	}
+
+
 	ITexture* CD3D11ResourceFactory::createDepthStencilTexture(
 		const std::string& name,
 		u32 sortcode,
@@ -118,7 +138,7 @@ namespace gf
 	}
 
 	ITexture3D* CD3D11ResourceFactory::createTexture3D(const std::string& name,
-		u32 sortcode, u32 width, u32 height, u32 depth,
+		u32 sortcode, u32 width, u32 height, u32 depth, u32	bindFlags,
 		void* data, u32 mipLevel, E_GI_FORMAT format,
 		u32 pitch /*= 0*/, u32 slicePitch /*= 0*/)
 	{

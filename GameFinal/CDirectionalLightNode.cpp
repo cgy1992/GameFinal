@@ -53,6 +53,8 @@ namespace gf
 			}
 
 			ICameraNode* camera = mSceneManager->getActiveCameraNode();
+			
+			camera->setPerspectiveProjection(false);
 			camera->setPosition(mPosition);
 			camera->setViewWidth(mShadowCameraViewWidth);
 			camera->setViewHeight(mShadowCameraViewHeight);

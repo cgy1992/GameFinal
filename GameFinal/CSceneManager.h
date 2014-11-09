@@ -153,7 +153,8 @@ namespace gf
 
 		virtual XMFLOAT4 getAmbient() { return mAmbient; }
 
-		virtual bool getNearLights(IMeshNode* node, E_LIGHT_TYPE lightType, std::vector<ILightNode*>& lights);
+		virtual bool getNearLights(IMeshNode* node, 
+			E_LIGHT_TYPE lightType, std::vector<ILightNode*>& lights);
 
 		virtual const std::list<ILightNode*>& getDirectionalLights() const { return mDirectionalLights; }
 

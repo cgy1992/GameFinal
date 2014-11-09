@@ -45,11 +45,22 @@ namespace gf
 			u32 width,
 			u32 height,
 			u32 depth,
+			u32	bindFlags,
 			void* data,
 			u32 mipLevel,
 			E_GI_FORMAT format,
 			u32 pitch = 0,
 			u32 slicePitch = 0);
+
+		virtual ITextureCube* createTextureCube(
+			const std::string& name,
+			u32 sortcode,
+			u32 size,
+			u32 bindFlags,
+			void* rawData,
+			u32 miplevel,
+			E_GI_FORMAT format,
+			u32 pitch = 0);
 
 		virtual ITexture* createDepthStencilTexture(
 			const std::string& name,

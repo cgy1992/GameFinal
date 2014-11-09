@@ -10,9 +10,10 @@
       <vertex-shader file="ground.hlsl" main="vs_main">
         <macro name="SHADOW_ON"/>
       </vertex-shader>
-      <pixel-shader file="ground.hlsl" main="ps_main">
+      <pixel-shader file="ground.hlsl" main="point_light_ps_main">
         <macro name="SHADOW_ON" value="1"/>
         <variable name="gLight" value="light" index="1"/>
+        <variable name="gPointLight" value="light" index="2"/>
       </pixel-shader>
     </shaders>
     <render-states>

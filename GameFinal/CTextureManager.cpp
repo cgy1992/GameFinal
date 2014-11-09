@@ -46,7 +46,7 @@ namespace gf
 		if (it != mTextureMap.end())
 		{
 			ITexture* pTexture = it->second;
-			if (pTexture->getType() == ETT_CUBE_TEXTURE)
+			if (pTexture->getType() == ETT_TEXTURE_CUBE)
 			{
 				GF_PRINT_CONSOLE_INFO("CubeTexture file named '%s' has already been loaded.\n", name.c_str());
 				return dynamic_cast<ITextureCube*>(pTexture);
@@ -111,6 +111,7 @@ namespace gf
 		u32 width,
 		u32 height,
 		u32 depth,
+		u32 bindFlags,
 		void* data,
 		u32 mipLevel,
 		E_GI_FORMAT format,
@@ -133,7 +134,46 @@ namespace gf
 		}
 
 		u32 sortcode = mCodeAllocator.allocate();
-		ITexture3D* pTexture = mResourceFactory->createTexture3D(name, sortcode, width, height, depth, data, mipLevel, format, pitch, slicePitch);
+		ITexture3D* pTexture = mResourceFactory->createTexture3D(name, sortcode, width, height, depth, bindFlags, 
+			data, mipLevel, format, pitch, slicePitch);
+		
+		if (pTexture == nullptr)
+		{
+			mCodeAllocator.release(sortcode);
+			return nullptr;
+		}
+
+		mTextureMap.insert(std::make_pair(name, pTexture));
+		return pTexture;
+	}
+
+	
+	ITextureCube* CTextureManager::createTextureCube(
+		const std::string& name,
+		u32 size,
+		u32 bindFlags,
+		void* data,
+		u32 miplevel,
+		E_GI_FORMAT format,
+		u32 pitch)
+	{
+		auto it = mTextureMap.find(name);
+		if (it != mTextureMap.end())
+		{
+			if (it->second->getType() == ETT_TEXTURE_CUBE)
+			{
+				GF_PRINT_CONSOLE_INFO("CreateCube named '%s' has already existed.\n", name.c_str());
+				return dynamic_cast<ITextureCube*>(it->second);
+			}
+			else
+			{
+				GF_PRINT_CONSOLE_INFO("CreateCube named '%s' has already existed and it is not a kind of CreateCube.\n", name.c_str());
+				return nullptr;
+			}
+		}
+
+		u32 sortcode = mCodeAllocator.allocate();
+		ITextureCube* pTexture = mResourceFactory->createTextureCube(name, sortcode, size, bindFlags, data, miplevel, format, pitch);
 		if (pTexture == nullptr)
 		{
 			mCodeAllocator.release(sortcode);
@@ -298,11 +338,67 @@ namespace gf
 	{
 		if (pRenderTarget && pRenderTarget->isTemporary())
 		{
-			SRenderTargetInfo info = { 0, pRenderTarget->getTexture() };
+			STemporaryTextureInfo info = { 0, pRenderTarget->getTexture() };
 			mIdledRenderTargets.push_back(info);
 			return true;
 		}
 
+		return false;
+	}
+
+	IDepthStencilSurface* CTextureManager::getTempDepthStencilSurface(u32 width /* = 0 */, u32 height /* = 0 */,
+		u32 depthBits /* = 32 */, u32 stencilBits /* = 0 */)
+	{
+		if (width == 0)
+			width = (u32)IDevice::getInstance()->getClientWidth();
+		if (height == 0)
+			height = (u32)IDevice::getInstance()->getClientHeight();
+
+		// find the longest idled time, the header of this list.
+		if (!mIdledDepthStencilTextures.empty())
+		{
+			for (auto it = mIdledDepthStencilTextures.begin(); it != mIdledDepthStencilTextures.end(); it++)
+			{
+				ITexture* p = it->Texture;
+				IDepthStencilSurface* pDepthStencilSurface = p->getDepthStencilSurface();
+				if (pDepthStencilSurface->getWidth() == width
+					&& pDepthStencilSurface->getHeight() == height
+					&& pDepthStencilSurface->getDepthBits() == depthBits
+					&& pDepthStencilSurface->getStencilBits() == stencilBits)
+				{
+					mIdledDepthStencilTextures.erase(it);
+					return pDepthStencilSurface;
+				}
+			}
+		}
+
+		// if no idled render target, then create one.
+		u32 sortcode = mCodeAllocator.allocate();
+		ITexture* pDepthStencilTexture = mResourceFactory->createDepthStencilTexture("temp-depth-stencil-surface",
+			sortcode, width, height, depthBits, stencilBits, false, 1, 0, true, true);
+
+		GF_PRINT_CONSOLE_INFO("[[[create DS]]]\n");
+
+		if (!pDepthStencilTexture)
+		{
+			GF_PRINT_CONSOLE_INFO("Temporary DepthStencilSurface has failed to be created.\n");
+			mCodeAllocator.release(sortcode);
+			return nullptr;
+		}
+
+		IDepthStencilSurface* pDepthStencilSurface = pDepthStencilTexture->getDepthStencilSurface();
+		pDepthStencilSurface->setTemporary(true);
+		return pDepthStencilSurface;
+	}
+
+	bool CTextureManager::releaseTempDepthStencilSurface(IDepthStencilSurface* pDepthStencilSurface)
+	{
+		if (pDepthStencilSurface && pDepthStencilSurface->isTemporary())
+		{
+			STemporaryTextureInfo info = { 0, pDepthStencilSurface->getTexture() };
+			mIdledDepthStencilTextures.push_back(info);
+			return true;
+		}
 		return false;
 	}
 
@@ -322,14 +418,31 @@ namespace gf
 				it++;
 			}
 		}
+
+		for (auto it = mIdledDepthStencilTextures.begin(); it != mIdledDepthStencilTextures.end();)
+		{
+			if (it->IdledTime > _RENDER_STATE_IDLE_TIME_)
+			{
+				mCodeAllocator.release(it->Texture->getSortCode());
+				it->Texture->drop();
+				it = mIdledDepthStencilTextures.erase(it);
+			}
+			else
+			{
+				it->IdledTime += delta;
+				it++;
+			}
+		}
+
 	}
 
 	void CTextureManager::createStockTextures()
 	{
 		createShadowMapJitterTexture();
+		createPointLightShadowMapJitterTexture();
 	}
 
-	ITexture3D* CTextureManager::createShadowMapJitterTexture()
+	void CTextureManager::createShadowMapJitterTexture()
 	{
 		const u32 depth = 32;
 		const u32 width = 32;
@@ -376,10 +489,72 @@ namespace gf
 			}
 		}
 		
-		ITexture3D* pTexture = createTexture3D(ITextureManager::SHADOW_MAP_JITTER_TEXTURE,
-			width, height, depth, data, 1, EGF_R8G8B8A8_UNORM);
+		createTexture3D(ITextureManager::SHADOW_MAP_JITTER_TEXTURE,
+			width, height, depth, ETBT_SHADER, data, 1, EGF_R8G8B8A8_UNORM);
+		
+		free(data);
+	}
 
-		return pTexture;
+	void CTextureManager::createPointLightShadowMapJitterTexture()
+	{
+		const u32 SAMPLE_GRID_R = 4;
+		const u32 SAMPLE_GRID_U = 2;
+		const u32 SAMPLE_GRID_V = 2;
+		const f32 INV_SAMPLE_GRID_R = 1.0f / SAMPLE_GRID_R;
+		const f32 INV_SAMPLE_GRID_U = 1.0f / SAMPLE_GRID_U;
+		const f32 INV_SAMPLE_GRID_V = 1.0f / SAMPLE_GRID_V;
+		const u32 depth = SAMPLE_GRID_R * SAMPLE_GRID_U * SAMPLE_GRID_V;
+		const u32 width = 32;
+		const u32 height = 32;
+
+		u32 dataSize = width * height * depth * sizeof(u8)* 4;
+		u8* data = (u8*)malloc(dataSize);
+		u32 index = 0;
+
+		XMFLOAT3 offsets[depth];
+		for (u32 r = 0; r < SAMPLE_GRID_R; r++)
+		for (u32 u = 0; u < SAMPLE_GRID_U; u++)
+		for (u32 v = 0; v < SAMPLE_GRID_V; v++)
+			offsets[index++] = XMFLOAT3(r * INV_SAMPLE_GRID_R, u * INV_SAMPLE_GRID_U, v * INV_SAMPLE_GRID_V);
+
+		index = 0;
+		for (u32 i = 0; i < depth; i++)
+		{
+			// calculate r, u, v
+			f32 x = offsets[i].x;
+			f32 y = offsets[i].y;
+			f32 z = offsets[i].z;
+
+			// write one slice.
+			for (u32 j = 0; j < width; j++)
+			{
+				for (u32 k = 0; k < height; k++)
+				{
+					f32 r = math::RandomFloat(x, x + INV_SAMPLE_GRID_R);
+					f32 u = math::RandomFloat(y, y + INV_SAMPLE_GRID_U);
+					f32 v = math::RandomFloat(z, z + INV_SAMPLE_GRID_V);
+
+					// Çò×ø±êÏµ
+					r = sqrtf(r);
+					f32 phi = XM_2PI * u; // (0, 2PI)
+					f32 theta = XM_PI * v; // (0, PI)
+
+					f32 dx = r * sinf(theta) * cosf(phi);
+					f32 dy = r * sinf(theta) * sinf(phi);
+					f32 dz = r * cosf(theta);
+
+					data[index++] = static_cast<u8>(dx * 255);
+					data[index++] = static_cast<u8>(dy * 255);
+					data[index++] = static_cast<u8>(dz * 255);
+					data[index++] = static_cast<u8>(0 * 255);
+				}
+			}
+		}
+		
+		createTexture3D(ITextureManager::PL_SHADOW_MAP_JITTER_TEXTURE,
+			width, height, depth, ETBT_SHADER, data, 1, EGF_R8G8B8A8_UNORM);
+
+		free(data);
 	}
 
 
