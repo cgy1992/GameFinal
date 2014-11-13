@@ -497,6 +497,15 @@
     <ClInclude Include="CD3D11Texture2D.h">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
+    <ClInclude Include="ITexture2DArray.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Texture2DArray.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="gfStructs.h">
+      <Filter>src\Util\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -713,6 +722,9 @@
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
     <ClCompile Include="CD3D11Texture2D.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Texture2DArray.cpp">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
   </ItemGroup>

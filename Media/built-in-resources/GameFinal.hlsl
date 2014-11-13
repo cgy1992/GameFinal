@@ -343,6 +343,9 @@ float CalcShadowFactor_Jitter(Texture2D shadowMap, float4 shadowMapSize,
 
 	// Depth in NDC space.
 	float depth = shadowPosH.z;
+	if(depth > 1.0f)
+	return 1.0f;
+
 
 	// Texel size.
 	float2 fsize = float2(shadowMapSize.z, shadowMapSize.w) * blurRadius;
@@ -400,7 +403,7 @@ float CalcShadowFactor_Jitter(Texture2D shadowMap, float4 shadowMapSize,
 	mul(float4(pin.PosW.xyz, 1.0f), GF_SHADOW_MAP_TRANSFORM_##ShadowLightID)
 #endif
 
-#endif
+
 
 float CalcPointLightShadowFactor_3x3x3(TextureCube shadowMap, float3 PosW, float3 LightPos,
 		float4 shadowMapSize, float blurDistance)
@@ -474,4 +477,7 @@ float CalcPointLightShadowFactor_Jitter(TextureCube shadowMap, float3 PosW, floa
 #define CalcPointLightShadowFactor(ShadowLightID, LightPos, BlurRadius) \
 	CalcPointLightShadowFactor_Jitter(GF_PL_SHADOW_MAP_##ShadowLightID, pin.PosW, LightPos, \
 		pin.PosH.xy/pin.PosH.w, GF_SHADOW_MAP_SIZE_##ShadowLightID, BlurRadius)
+#endif
+
+
 #endif

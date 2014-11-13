@@ -310,7 +310,7 @@ namespace gf
 			ILightNode* light = it->second;
 			if (light->castShadow() && !light->isCulled(frustum))
 			{
-				light->generateShadowMap();
+				light->generateShadowMap(activeCamera);
 			}
 		}
 		
@@ -333,7 +333,10 @@ namespace gf
 
 		if (mCompositors.empty())
 		{
+			//ICameraNode* activeCamera = getActiveCameraNode();
+			//setActiveCamera(mShadowMapCamera);
 			draw(mDefaultOctree);
+			//setActiveCamera(activeCamera);
 		}
 		else
 		{

@@ -60,7 +60,7 @@ namespace gf
 		return mShadowMapTexture;
 	}
 
-	void CPointLightNode::generateShadowMap()
+	void CPointLightNode::generateShadowMap(ICameraNode* viewCamera)
 	{
 		ITextureManager* tmgr = ITextureManager::getInstance();
 		if (mCastShadow)

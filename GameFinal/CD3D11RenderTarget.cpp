@@ -22,18 +22,15 @@ namespace gf
 
 	bool CD3D11RenderTarget::create(ITexture* texture, ID3D11Texture2D* pTexture2D, 
 		ID3D11ShaderResourceView* d3dShaderResourceView,
-		u32 width, u32 height)
+		u32 width, u32 height, E_GI_FORMAT format)
 	{
 		HRESULT hr;
-		ID3D11RenderTargetView*	pd3dRenderTargetView;
+		ID3D11RenderTargetView*	pd3dRenderTargetView = nullptr;
 
 		D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 		// Setup the description of the render target view.
 
-		D3D11_TEXTURE2D_DESC textureDesc;
-		pTexture2D->GetDesc(&textureDesc);
-
-		renderTargetViewDesc.Format = textureDesc.Format;
+		renderTargetViewDesc.Format = getDxgiSRVFormat(format);
 		renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		renderTargetViewDesc.Texture2D.MipSlice = 0;
 
@@ -63,16 +60,13 @@ namespace gf
 	bool CD3D11RenderTarget::createOneInArray(ITexture* texture, 
 		ID3D11Texture2D* pTextureArray, 
 		ID3D11ShaderResourceView* d3dShaderResourceView, 
-		u32 index, u32 size)
+		u32 index, u32 width, u32 height, E_GI_FORMAT format)
 	{
 		HRESULT hr;
 		ID3D11RenderTargetView*	pd3dRenderTargetView;
-		D3D11_TEXTURE2D_DESC texDesc;
-
-		pTextureArray->GetDesc(&texDesc);
 
 		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
-		rtvDesc.Format = texDesc.Format;
+		rtvDesc.Format = getDxgiSRVFormat(format);
 		rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
 		rtvDesc.Texture2DArray.MipSlice = 0;
 		rtvDesc.Texture2DArray.ArraySize = 1;
@@ -88,8 +82,8 @@ namespace gf
 		md3dRenderTargetView = pd3dRenderTargetView;
 		mTexture = texture;
 		md3dShaderResourceView = d3dShaderResourceView;
-		mWidth = size;
-		mHeight = size;
+		mWidth = width;
+		mHeight = height;
 
 		return true;
 	}

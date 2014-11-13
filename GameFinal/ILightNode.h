@@ -4,6 +4,7 @@
 #include "ISceneNode.h"
 #include "IOctreeNode.h"
 #include "ITexture.h"
+#include "ICameraNode.h"
 
 namespace gf
 {
@@ -154,7 +155,7 @@ namespace gf
 
 		virtual void setShadowCameraOrthographicSize(f32 viewWidth, f32 viewHeight) {}
 
-		virtual void generateShadowMap() {}
+		virtual void generateShadowMap(ICameraNode* viewCamera) {}
 
 		XMFLOAT4X4 getShadowMapTransform()
 		{
@@ -187,6 +188,8 @@ namespace gf
 		{
 			return mInsideFrustum;
 		}
+
+		
 
 	protected:
 		u32				mId;

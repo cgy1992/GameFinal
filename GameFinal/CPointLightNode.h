@@ -3,13 +3,14 @@
 
 #include "ILightNode.h"
 #include "ITextureCube.h"
+#include "IDevice.h"
 
 namespace gf
 {
 	class CPointLightNode : public ILightNode
 	{
 	public:
-		CPointLightNode(ISceneNode* parent, ISceneManager* smgr, 
+		CPointLightNode(ISceneNode* parent, ISceneManager* smgr,
 			bool bStatic, u32 id,
 			const XMFLOAT3& position, f32 range)
 			:ILightNode(parent, smgr, bStatic, id, position)
@@ -19,6 +20,9 @@ namespace gf
 			mLightData.Position = getAbsolutePosition();
 			mLightData.Range = range;
 			mLightData.Attenuations = XMFLOAT3(1.0f, 0, 0);
+
+			mShadowMapWidth = IDevice::getInstance()->getClientWidth();
+			mShadowMapHeight = mShadowMapWidth;
 		}
 
 		void render(E_PIPELINE_USAGE usage){}
@@ -98,7 +102,7 @@ namespace gf
 
 		virtual ITexture* getShadowMap();
 
-		virtual void generateShadowMap();
+		virtual void generateShadowMap(ICameraNode* viewCamera);
 
 	private:
 

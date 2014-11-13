@@ -113,7 +113,7 @@ namespace gf
 			for (u32 i = 0; i < 6; i++)
 			{
 				pRenderTargets[i] = new CD3D11RenderTarget(md3dDevice, md3dDeviceContext);
-				if (!pRenderTargets[i]->createOneInArray(this, pd3dTexture, pd3dSRV, i, size))
+				if (!pRenderTargets[i]->createOneInArray(this, pd3dTexture, pd3dSRV, i, size, size, format))
 				{
 					clearRenderTargets(pRenderTargets);
 					ReleaseCOM(pd3dSRV);

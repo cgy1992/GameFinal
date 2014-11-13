@@ -17,6 +17,7 @@
 #include "CD3D11DepthStencilSurface.h"
 #include "CD3D11TextureCube.h"
 #include "CD3D11Texture3D.h"
+#include "CD3D11Texture2DArray.h"
 #include "gfUtil.h"
 
 namespace gf
@@ -88,6 +89,27 @@ namespace gf
 			pTexture = nullptr;
 		}
 
+		return pTexture;
+	}
+
+	ITexture2DArray* CD3D11ResourceFactory::createTexture2DArray(
+		const std::string& name,
+		u32 sortcode,
+		u32 width,
+		u32 height,
+		u32 arraySize,
+		u32 bindFlags,
+		void* data,
+		u32 mipLevel,
+		E_GI_FORMAT format,
+		u32 pitch)
+	{
+		CD3D11Texture2DArray* pTexture = new CD3D11Texture2DArray(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
+		if (!pTexture->create(width, height, arraySize, bindFlags, data, mipLevel, format, pitch))
+		{
+			pTexture->drop();
+			pTexture = nullptr;
+		}
 		return pTexture;
 	}
 

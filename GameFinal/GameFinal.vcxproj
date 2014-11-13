@@ -92,6 +92,7 @@
     <ClInclude Include="CCompositor.h" />
     <ClInclude Include="CCameraNode.h" />
     <ClInclude Include="CCompositorFactory.h" />
+    <ClInclude Include="CD3D11Texture2DArray.h" />
     <ClInclude Include="CD3D11TextureCube.h" />
     <ClInclude Include="CD3D11DepthStencilSurface.h" />
     <ClInclude Include="CD3D11DomainShader.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="gfGIFormat.h" />
     <ClInclude Include="GameFinal.h" />
     <ClInclude Include="gfCompileConfig.h" />
+    <ClInclude Include="gfStructs.h" />
     <ClInclude Include="gfTypes.h" />
     <ClInclude Include="gfUtil.h" />
     <ClInclude Include="IAnimatedMeshNode.h" />
@@ -162,6 +164,7 @@
     <ClInclude Include="ICameraNode.h" />
     <ClInclude Include="ICompositor.h" />
     <ClInclude Include="ICompositorFactory.h" />
+    <ClInclude Include="ITexture2DArray.h" />
     <ClInclude Include="ITextureCube.h" />
     <ClInclude Include="IDepthStencilSurface.h" />
     <ClInclude Include="IDevice.h" />
@@ -224,6 +227,7 @@
     <ClCompile Include="CCompositor.cpp" />
     <ClCompile Include="CCameraNode.cpp" />
     <ClCompile Include="CCompositorFactory.cpp" />
+    <ClCompile Include="CD3D11Texture2DArray.cpp" />
     <ClCompile Include="CD3D11TextureCube.cpp" />
     <ClCompile Include="CD3D11DepthStencilSurface.cpp" />
     <ClCompile Include="CD3D11DomainShader.cpp" />

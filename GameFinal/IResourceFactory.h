@@ -18,6 +18,7 @@
 #include "ITextureCube.h"
 #include "IDepthStencilSurface.h"
 #include "ITexture3D.h"
+#include "ITexture2DArray.h"
 
 namespace gf
 {
@@ -42,6 +43,18 @@ namespace gf
 			u32 sortcode,
 			u32 width,
 			u32 height,
+			u32 bindFlags,
+			void* data,
+			u32 mipLevel,
+			E_GI_FORMAT format,
+			u32 pitch = 0) = 0;
+
+		virtual ITexture2DArray* createTexture2DArray(
+			const std::string& name,
+			u32 sortcode,
+			u32 width,
+			u32 height,
+			u32 arraySize,
 			u32 bindFlags,
 			void* data,
 			u32 mipLevel,

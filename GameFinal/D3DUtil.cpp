@@ -3,6 +3,31 @@
 
 namespace gf
 {
+
+	/*
+			if (depthBitNum == 32 && stencilBitNum == 0)
+			{
+			d3dTexFormat = DXGI_FORMAT_R32_TYPELESS;
+			d3dDepthStencilFormat = DXGI_FORMAT_D32_FLOAT;
+			d3dShaderViewFormat = DXGI_FORMAT_R32_FLOAT;
+			}
+			else if (depthBitNum == 24 && stencilBitNum == 8)
+			{
+			d3dTexFormat = DXGI_FORMAT_R24G8_TYPELESS;
+			d3dDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+			if (bindDepthToShader)
+			d3dShaderViewFormat = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+			else
+			d3dShaderViewFormat = DXGI_FORMAT_X24_TYPELESS_G8_UINT;
+			}
+			else if (depthBitNum == 16 && stencilBitNum == 0)
+			{
+			d3dTexFormat = DXGI_FORMAT_R16_TYPELESS;
+			d3dDepthStencilFormat = DXGI_FORMAT_D16_UNORM;
+			d3dShaderViewFormat = DXGI_FORMAT_R16_FLOAT;
+			}
+	*/
+
 	DXGI_FORMAT getDxgiFormat(E_GI_FORMAT format)
 	{
 		switch (format)
@@ -13,10 +38,12 @@ namespace gf
 		case EGF_R32_FLOAT:				return DXGI_FORMAT_R32_FLOAT;
 		case EGF_R8_UINT:				return DXGI_FORMAT_R8_UINT;
 		case EGF_R8G8_UINT:				return DXGI_FORMAT_R8G8_UINT;
-			//	case EGF_R8G8B8_UINT:			return DXGI_FORMAT_R8G8B8_UINT;
 		case EGF_R8G8B8A8_UINT:			return DXGI_FORMAT_R8G8B8A8_UINT;
 		case EGF_R16_FLOAT:				return DXGI_FORMAT_R16_FLOAT;
 		case EGF_R8G8B8A8_UNORM:		return DXGI_FORMAT_R8G8B8A8_UNORM;
+		case EGF_D16:					return DXGI_FORMAT_R16_TYPELESS;
+		case EGF_D24S8:					return DXGI_FORMAT_R24G8_TYPELESS;
+		case EGF_D32:					return DXGI_FORMAT_R32_TYPELESS;
 		}
 		return DXGI_FORMAT_UNKNOWN;
 	}
@@ -80,5 +107,29 @@ namespace gf
 		return d3dFlags;
 	}
 
+
+	DXGI_FORMAT getDxgiSRVFormat(E_GI_FORMAT format)
+	{
+		if (format == EGF_D16)
+			return DXGI_FORMAT_R16_FLOAT;
+		if (format == EGF_D24S8)
+			return DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		if (format == EGF_D32)
+			return DXGI_FORMAT_R32_FLOAT;
+
+		return getDxgiFormat(format);
+	}
+
+	DXGI_FORMAT getDxgiDSVFormat(E_GI_FORMAT format)
+	{
+		if (format == EGF_D16)
+			return DXGI_FORMAT_D16_UNORM;
+		if (format == EGF_D24S8)
+			return DXGI_FORMAT_D24_UNORM_S8_UINT;
+		if (format == EGF_D32)
+			return DXGI_FORMAT_D32_FLOAT;
+
+		return getDxgiFormat(format);
+	}
 }
 

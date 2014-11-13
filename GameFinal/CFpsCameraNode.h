@@ -302,9 +302,6 @@ namespace gf
 		XMFLOAT3					mWalkDir;				/* 人物的行走方向 */
 		f32							mPitchAngle;			/* 俯仰角度，即视线偏离行走方向的角度 */
 
-		XMFLOAT3					mRight;
-		XMFLOAT3					mUp;
-		XMFLOAT3					mLook;
 		XMFLOAT4X4					mRelativeTransform;		/* 摄像机相对的变换，用于 getRelativeTransformation 函数的返回值. */
 	};
 

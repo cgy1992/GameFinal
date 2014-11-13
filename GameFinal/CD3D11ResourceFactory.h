@@ -39,6 +39,18 @@ namespace gf
 			E_GI_FORMAT format,
 			u32 pitch = 0);
 
+		virtual ITexture2DArray* createTexture2DArray(
+			const std::string& name,
+			u32 sortcode,
+			u32 width,
+			u32 height,
+			u32 arraySize,
+			u32 bindFlags,
+			void* data,
+			u32 mipLevel,
+			E_GI_FORMAT format,
+			u32 pitch = 0);
+
 		virtual ITexture3D* createTexture3D(
 			const std::string& name,
 			u32 sortcode,

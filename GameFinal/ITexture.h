@@ -14,7 +14,8 @@ namespace gf
 		ETT_TEXTURE_CUBE,
 		ETT_RENDER_TARGET,
 		ETT_DEPTH_STENCIL,
-		ETT_TEXTURE_3D
+		ETT_TEXTURE_3D,
+		ETT_TEXTURE_2D_ARRAY,
 	};
 
 	class IRenderTarget;

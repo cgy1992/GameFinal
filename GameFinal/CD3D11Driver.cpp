@@ -336,10 +336,12 @@ namespace gf
 		D3D11_RASTERIZER_DESC shadowRasterizeState;
 		shadowRasterizeState.FillMode = D3D11_FILL_SOLID;
 		shadowRasterizeState.CullMode = D3D11_CULL_BACK; // RENDER BACK FACE
-		shadowRasterizeState.FrontCounterClockwise = FALSE; 
-		shadowRasterizeState.DepthBias = 100000;
+		shadowRasterizeState.FrontCounterClockwise = TRUE; 
 		shadowRasterizeState.DepthBiasClamp = 0.0f;
-		shadowRasterizeState.SlopeScaledDepthBias = 1.0f;
+		//shadowRasterizeState.DepthBias = 100000;
+		//shadowRasterizeState.SlopeScaledDepthBias = 1.0f;
+		shadowRasterizeState.DepthBias = 0;
+		shadowRasterizeState.SlopeScaledDepthBias = 0;
 		shadowRasterizeState.DepthClipEnable = TRUE;
 		shadowRasterizeState.ScissorEnable = FALSE;
 		shadowRasterizeState.MultisampleEnable = FALSE;
@@ -452,8 +454,8 @@ namespace gf
 
 	void CD3D11Driver::clearRenderTarget(const f32 color[])
 	{
-		if (D3D11DriverState.RenderTargetView)
-			md3dDeviceContext->ClearRenderTargetView(D3D11DriverState.RenderTargetView, color);
+		if (D3D11DriverState.RenderTargetViews[0])
+			md3dDeviceContext->ClearRenderTargetView(D3D11DriverState.RenderTargetViews[0], color);
 	}
 
 	void CD3D11Driver::setRenderTarget(IRenderTarget* pRenderTarget)
@@ -461,19 +463,19 @@ namespace gf
 		// if param is null, set the default render target
 		if (!pRenderTarget)
 		{
-			D3D11DriverState.RenderTarget = nullptr;
-			D3D11DriverState.RenderTargetView = nullptr;
+			D3D11DriverState.RenderTargets[0] = nullptr;
+			D3D11DriverState.RenderTargetViews[0] = nullptr;
 			//md3dDeviceContext->OMSetRenderTargets(0, nullptr, D3D11DriverState.DepthStencilView);
 		}
 		else
 		{
 			// there is no need to change
-			if (pRenderTarget == D3D11DriverState.RenderTarget)
+			if (pRenderTarget == D3D11DriverState.RenderTargets[0])
 				return;
 
-			D3D11DriverState.RenderTarget = pRenderTarget;
+			D3D11DriverState.RenderTargets[0] = pRenderTarget;
 			CD3D11RenderTarget* d3d11RenderTarget = dynamic_cast<CD3D11RenderTarget*>(pRenderTarget);
-			D3D11DriverState.RenderTargetView = d3d11RenderTarget->getRenderTargetView();
+			D3D11DriverState.RenderTargetViews[0] = d3d11RenderTarget->getRenderTargetView();
 		
 			// check if the texture has already been bound to a shader.
 			ID3D11ShaderResourceView* d3dShaderResourceView = d3d11RenderTarget->getShaderResourceView();
@@ -487,7 +489,7 @@ namespace gf
 			viewport.Height = (f32)pRenderTarget->getHeight();
 			setViewport(viewport);
 		}
-		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetView, D3D11DriverState.DepthStencilView);
+		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetViews[0], D3D11DriverState.DepthStencilView);
 	}
 
 	void CD3D11Driver::unbindTextureFromShaders(ID3D11ShaderResourceView* d3dShaderResourceView)
@@ -514,10 +516,10 @@ namespace gf
 
 	void CD3D11Driver::setDefaultRenderTarget()
 	{
-		if (D3D11DriverState.RenderTargetView != mDefaultRenderTargetView)
+		if (D3D11DriverState.RenderTargetViews[0] != mDefaultRenderTargetView)
 		{
-			D3D11DriverState.RenderTarget = mDefaultRenderTarget;
-			D3D11DriverState.RenderTargetView = mDefaultRenderTargetView;
+			D3D11DriverState.RenderTargets[0] = mDefaultRenderTarget;
+			D3D11DriverState.RenderTargetViews[0] = mDefaultRenderTargetView;
 
 			md3dDeviceContext->OMSetRenderTargets(1, &mDefaultRenderTargetView, D3D11DriverState.DepthStencilView);
 
@@ -529,9 +531,9 @@ namespace gf
 		}
 	}
 
-	IRenderTarget* CD3D11Driver::getRenderTarget()
+	IRenderTarget* CD3D11Driver::getRenderTarget(u32 index)
 	{
-		return D3D11DriverState.RenderTarget;
+		return D3D11DriverState.RenderTargets[index];
 	}
 
 	void CD3D11Driver::setDepthStencilSurface(IDepthStencilSurface* depthStencilSurface)
@@ -553,24 +555,25 @@ namespace gf
 					unbindTextureFromShaders(d3dShaderResourceView);
 			}
 
-			md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetView, D3D11DriverState.DepthStencilView);
+			md3dDeviceContext->OMSetRenderTargets(D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT, 
+				&D3D11DriverState.RenderTargetViews[0], D3D11DriverState.DepthStencilView);
 		}
 	}
 
 	void CD3D11Driver::setRenderTargetAndDepthStencil(IRenderTarget* pRenderTarget, IDepthStencilSurface* pDepthStencilSurface)
 	{
-		if (pRenderTarget != D3D11DriverState.RenderTarget)
+		if (pRenderTarget != D3D11DriverState.RenderTargets[0])
 		{
 			if (!pRenderTarget)
 			{
-				D3D11DriverState.RenderTarget = nullptr;
-				D3D11DriverState.RenderTargetView = nullptr;
+				D3D11DriverState.RenderTargets[0] = nullptr;
+				D3D11DriverState.RenderTargetViews[0] = nullptr;
 			}
 			else
 			{
-				D3D11DriverState.RenderTarget = pRenderTarget;
+				D3D11DriverState.RenderTargets[0] = pRenderTarget;
 				CD3D11RenderTarget* d3d11RenderTarget = dynamic_cast<CD3D11RenderTarget*>(pRenderTarget);
-				D3D11DriverState.RenderTargetView = d3d11RenderTarget->getRenderTargetView();
+				D3D11DriverState.RenderTargetViews[0] = d3d11RenderTarget->getRenderTargetView();
 				ID3D11ShaderResourceView* d3dShaderResourceView = d3d11RenderTarget->getShaderResourceView();
 
 				if (d3dShaderResourceView)
@@ -603,7 +606,7 @@ namespace gf
 			}
 		}
 
-		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetView, D3D11DriverState.DepthStencilView);
+		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetViews[0], D3D11DriverState.DepthStencilView);
 	}
 
 
@@ -623,14 +626,17 @@ namespace gf
 		if (d3dShaderResourceView)
 			unbindTextureFromShaders(d3dShaderResourceView);
 
-		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetView, D3D11DriverState.DepthStencilView);
+		md3dDeviceContext->OMSetRenderTargets(D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT, 
+			&D3D11DriverState.RenderTargetViews[0], D3D11DriverState.DepthStencilView);
 	}
 
 	void CD3D11Driver::setDefaultRenderTargetAndDepthStencil()
 	{
 		// set default render target
-		D3D11DriverState.RenderTarget = mDefaultRenderTarget;
-		D3D11DriverState.RenderTargetView = mDefaultRenderTargetView;
+		//memset(D3D11DriverState.RenderTargets, 0, sizeof(D3D11DriverState.RenderTargets));
+		//memset(D3D11DriverState.RenderTargetViews, 0, sizeof(D3D11DriverState.RenderTargetViews));
+		D3D11DriverState.RenderTargets[0] = mDefaultRenderTarget;
+		D3D11DriverState.RenderTargetViews[0] = mDefaultRenderTargetView;
 
 		// set default depth stencil surface
 		CD3D11DepthStencilSurface* d3dDepthStencilSurface = dynamic_cast<CD3D11DepthStencilSurface*>(mDepthStencilSurface);
@@ -642,13 +648,70 @@ namespace gf
 		D3D11DriverState.DepthStencilSurface = mDepthStencilSurface;
 		D3D11DriverState.DepthStencilView = mDefaultDepthStencilView;
 
-		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetView, D3D11DriverState.DepthStencilView);
+		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetViews[0], D3D11DriverState.DepthStencilView);
 
 		// set default viewport size
 		SViewport viewport = mViewport;
 		viewport.Width = (f32)(IDevice::getInstance()->getClientWidth());
 		viewport.Height = (f32)(IDevice::getInstance()->getClientHeight());
 		setViewport(viewport);
+	}
+
+	void CD3D11Driver::setMultipleRenderTargets(IRenderTarget* renderTargets[], u32 count)
+	{
+		if (count > D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT)
+			count = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
+		// check if they are equal to current RTs,
+		memset(D3D11DriverState.RenderTargets, 0, sizeof(D3D11DriverState.RenderTargets));
+		memset(D3D11DriverState.RenderTargetViews, 0, sizeof(D3D11DriverState.RenderTargetViews));
+
+		std::vector<SViewport> viewports;
+		viewports.resize(count);
+
+		for (u32 i = 0; i < count; i++)
+		{
+			IRenderTarget* pRenderTarget = renderTargets[i];
+			D3D11DriverState.RenderTargets[i] = pRenderTarget;
+			if (pRenderTarget)
+			{
+				CD3D11RenderTarget* d3d11RenderTarget = dynamic_cast<CD3D11RenderTarget*>(pRenderTarget);
+				D3D11DriverState.RenderTargetViews[i] = d3d11RenderTarget->getRenderTargetView();
+				ID3D11ShaderResourceView* d3dShaderResourceView = d3d11RenderTarget->getShaderResourceView();
+				if (d3dShaderResourceView)
+					unbindTextureFromShaders(d3dShaderResourceView);
+
+				SViewport viewport = mViewport;
+				viewport.Width = (f32)pRenderTarget->getWidth();
+				viewport.Height = (f32)pRenderTarget->getHeight();
+				viewports.push_back(viewport);
+			}
+		}
+
+		md3dDeviceContext->OMSetRenderTargets(count, D3D11DriverState.RenderTargetViews, D3D11DriverState.DepthStencilView);
+		setViewports(viewports);
+	}
+
+	void  CD3D11Driver::setMultipleRenderTargets(IRenderTarget* renderTargets[], u32 count, IDepthStencilSurface* pDepthStencilSurface)
+	{
+		if (pDepthStencilSurface != D3D11DriverState.DepthStencilSurface)
+		{
+			if (!pDepthStencilSurface)
+			{
+				D3D11DriverState.DepthStencilSurface = nullptr;
+				D3D11DriverState.DepthStencilView = nullptr;
+			}
+			else
+			{
+				D3D11DriverState.DepthStencilSurface = pDepthStencilSurface;
+				CD3D11DepthStencilSurface* d3dDepthStencilSurface = dynamic_cast<CD3D11DepthStencilSurface*>(pDepthStencilSurface);
+				D3D11DriverState.DepthStencilView = d3dDepthStencilSurface->getDepthStencilView();
+				ID3D11ShaderResourceView* d3dShaderResourceView = d3dDepthStencilSurface->getShaderResourceView();
+				if (d3dShaderResourceView)
+					unbindTextureFromShaders(d3dShaderResourceView);
+			}
+		}
+
+		setMultipleRenderTargets(renderTargets, count);
 	}
 
 	void CD3D11Driver::setTexture(E_SHADER_TYPE shadertype, u32 slot, ID3D11ShaderResourceView* shaderResourceView)
@@ -795,6 +858,27 @@ namespace gf
 		viewport.MaxDepth = maxDepth;
 
 		setViewport(viewport);
+	}
+
+	void CD3D11Driver::setViewports(const std::vector<SViewport>& viewports)
+	{
+		u32 count = viewports.size();
+		if (count > D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT)
+			count = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
+
+		mViewport = viewports[0];
+		D3D11_VIEWPORT d3d11Viewports[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+		for (u32 i = 0; i < count; i++)
+		{
+			d3d11Viewports[i].Width = viewports[i].Width;
+			d3d11Viewports[i].Height = viewports[i].Height;
+			d3d11Viewports[i].TopLeftX = viewports[i].TopLeftX;
+			d3d11Viewports[i].TopLeftY = viewports[i].TopLeftY;
+			d3d11Viewports[i].MinDepth = viewports[i].MinDepth;
+			d3d11Viewports[i].MaxDepth = viewports[i].MaxDepth;
+		}
+
+		md3dDeviceContext->RSSetViewports(count, d3d11Viewports);
 	}
 
 	/*

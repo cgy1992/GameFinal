@@ -96,7 +96,9 @@ namespace gf
 			mShadowCameraViewHeight = viewHeight;
 		}
 
-		virtual void generateShadowMap();
+		virtual void generateShadowMap(ICameraNode* viewCamera);
+
+		void setCameraAttributes(ICameraNode* shadowCamera, ICameraNode* viewCamera);
 
 		virtual ITexture* getShadowMap()
 		{

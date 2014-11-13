@@ -106,6 +106,47 @@ namespace gf
 		return pTexture;
 	}
 
+	ITexture2DArray* CTextureManager::createTexture2DArray(
+		const std::string& name,
+		u32 width,
+		u32 height,
+		u32 arraySize,
+		u32 bindFlags,
+		void* data,
+		u32 mipLevel,
+		E_GI_FORMAT format,
+		u32 pitch)
+	{
+		auto it = mTextureMap.find(name);
+		if (it != mTextureMap.end())
+		{
+			ITexture* pTexture = it->second;
+			if (pTexture->getType() == ETT_TEXTURE_2D_ARRAY)
+			{
+				GF_PRINT_CONSOLE_INFO("Texture named '%s' has already existed.\n", name.c_str());
+				return dynamic_cast<ITexture2DArray*>(pTexture);
+			}
+			else
+			{
+				GF_PRINT_CONSOLE_INFO("Texture file named '%s' has already been loaded. But it is not a texture2D array texture.\n", name.c_str());
+				return nullptr;
+			}
+		}
+
+
+		u32 sortcode = mCodeAllocator.allocate();
+		ITexture2DArray* pTexture = mResourceFactory->createTexture2DArray(name, sortcode, width, height, 
+			arraySize, bindFlags, data, mipLevel, format, pitch);
+		if (pTexture == nullptr)
+		{
+			mCodeAllocator.release(sortcode);
+			return nullptr;
+		}
+
+		mTextureMap.insert(std::make_pair(name, pTexture));
+		return pTexture;
+	}
+
 	ITexture3D* CTextureManager::createTexture3D(
 		const std::string& name,
 		u32 width,

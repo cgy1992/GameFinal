@@ -102,7 +102,12 @@ namespace gf
 
 		bool FloatArrayEqual(const f32 color1[], const f32 color2[], u32 elementCount = 4, f32 e = 0.00001f);
 
-		f32 RandomFloat(f32 a, f32 b);
+		inline f32 RandomFloat(f32 a, f32 b)
+		{
+			// get a float from 0 to 1
+			f32 i = rand() % 10000 / 10000.0f;
+			return i * (b - a) + a;
+		}
 
 		E_INTERSECT_STATE IntersectAabbPlane(const SAxisAlignedBox& aabb, const XMFLOAT4& plane);
 

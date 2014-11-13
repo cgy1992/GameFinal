@@ -145,6 +145,8 @@ namespace gf
 	}
 	*/
 
+		
+
 	bool CD3D11DepthStencilSurface::create(ITexture* texture, 
 		ID3D11Texture2D* pTexture2D,
 		DXGI_FORMAT depthStencilFormat, 
@@ -208,6 +210,52 @@ namespace gf
 	{
 		if (mTexture)
 			mTexture->apply(shaderType, slot);
+	}
+
+
+	bool CD3D11DepthStencilSurface::createOneInArray(ITexture* texture,
+		ID3D11Texture2D* pTextureArray,
+		ID3D11ShaderResourceView* d3dShaderResourceView,
+		u32 index, u32 width, u32 height, E_GI_FORMAT format)
+	{
+		HRESULT hr;
+		ID3D11DepthStencilView* pd3dDepthStencilView = nullptr;
+
+		
+		D3D11_DEPTH_STENCIL_VIEW_DESC desc;
+		desc.Flags = 0;
+		desc.Format = getDxgiDSVFormat(format);
+		desc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+		desc.Texture2DArray.MipSlice = 0;
+		desc.Texture2DArray.ArraySize = 1;
+		desc.Texture2DArray.FirstArraySlice = index;
+
+		hr = md3dDevice->CreateDepthStencilView(pTextureArray, &desc, &pd3dDepthStencilView);
+		if (FAILED(hr))
+			return false;
+
+		ReleaseCOM(md3dDepthStencilView);
+		md3dDepthStencilView = pd3dDepthStencilView;
+		mTexture = texture;
+		md3dShaderResourceView = d3dShaderResourceView;
+		mWidth = width;
+		mHeight = height;
+
+		switch (format)
+		{
+		case EGF_D16:
+			mDepthBits = 16;
+			mStencilBits = 0;
+			break;
+		case EGF_D24S8:
+			mDepthBits = 24;
+			mStencilBits = 8;
+			break;
+		case EGF_D32:
+			mDepthBits = 32;
+			mStencilBits = 0;
+		}
+		return true;
 	}
 }
 

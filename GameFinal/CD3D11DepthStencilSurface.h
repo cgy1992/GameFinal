@@ -28,6 +28,11 @@ namespace gf
 			bool multiSampling, u32 width, u32 height,
 			u32 depthBits, u32 stencilBits);
 
+		bool createOneInArray(ITexture* texture,
+			ID3D11Texture2D* pTextureArray,
+			ID3D11ShaderResourceView* d3dShaderResourceView,
+			u32 index, u32 width, u32 height, E_GI_FORMAT format);
+
 		ID3D11DepthStencilView* getDepthStencilView()
 		{
 			return md3dDepthStencilView;

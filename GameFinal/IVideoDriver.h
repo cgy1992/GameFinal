@@ -100,7 +100,7 @@ namespace gf
 
 		virtual void setRenderTarget(IRenderTarget* pRenderTarget) = 0;
 
-		virtual IRenderTarget* getRenderTarget() = 0;
+		virtual IRenderTarget* getRenderTarget(u32 index = 0) = 0;
 
 		virtual void setDefaultRenderTarget() = 0;
 		
@@ -117,6 +117,8 @@ namespace gf
 		virtual void setViewport(f32 topLeftX, f32 topLeftY, f32 width, f32 height, f32 minDepth = 0.0f, f32 maxDepth = 1.0f) = 0;
 
 		virtual void setViewport(const SViewport& viewport) = 0;
+
+		virtual void setViewports(const std::vector<SViewport>& viewports) = 0;
 
 		const SViewport& getViewport() const { return mViewport; }
 

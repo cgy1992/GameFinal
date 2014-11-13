@@ -54,6 +54,10 @@ namespace gf
 	D3D11_COMPARISON_FUNC getD3d11ComparisonFunc(E_COMPARISON_FUNC func);
 
 	UINT getD3dx11BindFlags(u32 flags);
+
+	DXGI_FORMAT getDxgiSRVFormat(E_GI_FORMAT format);
+
+	DXGI_FORMAT getDxgiDSVFormat(E_GI_FORMAT format);
 }
 
 

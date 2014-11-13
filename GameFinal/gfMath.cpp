@@ -282,12 +282,7 @@ namespace gf
 			
 		}
 
-		f32 RandomFloat(f32 a, f32 b)
-		{
-			// get a float from 0 to 1
-			f32 i = rand() % 10000 / 10000.0f;
-			return i * (b - a) + a;
-		}
+
 	}
 }
 

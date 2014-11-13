@@ -93,7 +93,7 @@ int main()
 	light->setSpecular(XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f));
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 	light->setAttenuation(1.0f, 0.0f, 0.0f);
-	light->enableShadow(true);
+	light->enableShadow(false);
 
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f));
 	camera->setNearZ(0.1f);

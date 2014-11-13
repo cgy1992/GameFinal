@@ -35,10 +35,12 @@ namespace gf
 		}
 
 		bool create(ITexture* texture, ID3D11Texture2D* pTexture2D, 
-			ID3D11ShaderResourceView* d3dShaderResourceView, u32 width, u32 height);
+			ID3D11ShaderResourceView* d3dShaderResourceView, 
+			u32 width, u32 height, E_GI_FORMAT format);
 
 		bool createOneInArray(ITexture* texture, ID3D11Texture2D* pTextureArray,
-			ID3D11ShaderResourceView* d3dShaderResourceView, u32 index, u32 size);
+			ID3D11ShaderResourceView* d3dShaderResourceView, 
+			u32 index, u32 width, u32 height, E_GI_FORMAT format);
 
 		virtual void clear(const f32 color[]);
 
@@ -56,7 +58,14 @@ namespace gf
 			return md3dShaderResourceView;
 		}
 
+		virtual ~CD3D11RenderTarget()
+		{
+			ReleaseCOM(md3dRenderTargetView);
+		}
+
 	private:
+
+	//	DXGI_FORMAT getRenderTargetViewFormat(E_GI_FORMAT format);
 
 		ID3D11RenderTargetView*			md3dRenderTargetView;
 		ID3D11Device*					md3dDevice;

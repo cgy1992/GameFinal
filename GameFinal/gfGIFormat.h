@@ -20,9 +20,9 @@ namespace gf
 		EGF_R8G8B8A8_UINT,
 		EGF_R8G8B8A8_UNORM,
 		//EGF_D32_FLOAT,
-		EGF_D24_UNORM_S8_UINT,
-		EGF_D16_UNORM,
-		EGF_D32_UNORM
+		EGF_D24S8,
+		EGF_D16,
+		EGF_D32
 	};
 
 	inline u32 getFormatOffset(E_GI_FORMAT format)

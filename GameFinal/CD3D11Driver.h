@@ -28,9 +28,12 @@ namespace gf
 			ID3D11RasterizerState*		RasterizerState;
 			ID3D11BlendState*			BlendState;
 
-			IRenderTarget*				RenderTarget;
+			//IRenderTarget*				RenderTarget;
+			//ID3D11RenderTargetView*		RenderTargetView;
+			IRenderTarget*				RenderTargets[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+			ID3D11RenderTargetView*		RenderTargetViews[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+
 			IDepthStencilSurface*		DepthStencilSurface;
-			ID3D11RenderTargetView*		RenderTargetView;
 			ID3D11DepthStencilView*		DepthStencilView;
 
 			ID3D11RasterizerState*		ShadowMapRasterizerState;
@@ -52,10 +55,15 @@ namespace gf
 				DepthStencilState = NULL;
 				RasterizerState = NULL;
 				BlendState = NULL;
-				RenderTarget = NULL;
+				
 				DepthStencilSurface = NULL;
-				RenderTargetView = NULL;
 				DepthStencilView = NULL;
+
+				//RenderTarget = NULL;
+				//RenderTargetView = NULL;
+
+				memset(RenderTargets, 0, sizeof(RenderTargets));
+				memset(RenderTargetViews, 0, sizeof(RenderTargetViews));
 				
 			}
 
@@ -98,7 +106,7 @@ namespace gf
 
 		virtual void setRenderTarget(IRenderTarget* pRenderTarget);
 
-		virtual IRenderTarget* getRenderTarget();
+		virtual IRenderTarget* getRenderTarget(u32 index = 0);
 
 		virtual void setDepthStencilSurface(IDepthStencilSurface* depthStencilSurface);
 
@@ -109,6 +117,10 @@ namespace gf
 		virtual void setRenderTargetAndDepthStencil(IRenderTarget* pRenderTarget, IDepthStencilSurface* pDepthStencilSurface);
 
 		virtual void setDefaultRenderTargetAndDepthStencil();
+
+		virtual void setMultipleRenderTargets(IRenderTarget* renderTargets[], u32 count);
+
+		virtual void setMultipleRenderTargets(IRenderTarget* renderTargets[], u32 count, IDepthStencilSurface* pDepthStencilSurface);
 
 		//void setTexture(E_SHADER_TYPE shadertype, u32 slot, ITexture* texture);
 
@@ -125,6 +137,8 @@ namespace gf
 		virtual void setViewport(f32 topLeftX, f32 topLeftY, f32 width, f32 height, f32 minDepth = 0.0f, f32 maxDepth = 1.0f);
 
 		virtual void setViewport(const SViewport& viewport);
+
+		virtual void setViewports(const std::vector<SViewport>& viewports);
 
 		virtual ICompositorFactory*		getCompositorFactory()
 		{

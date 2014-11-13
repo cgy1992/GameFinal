@@ -322,9 +322,7 @@ namespace gf
 
 	protected:
 
-		XMFLOAT3		mRight;		/* 摄像机的右向量 */
-		XMFLOAT3		mUp;		/* 摄像机的上向量 */
-		XMFLOAT3		mLook;		/* 摄像机的前向量 */
+
 
 	};
 

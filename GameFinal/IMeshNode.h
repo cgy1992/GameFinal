@@ -44,6 +44,7 @@ namespace gf
 			getLocalAxis(obb.Axis);
 			obb.Center = getAbsolutePosition();
 
+
 			XMVECTOR axis, recipLength;
 
 			axis = XMLoadFloat3(&obb.Axis[0]);
@@ -67,6 +68,10 @@ namespace gf
 			XMStoreFloat3(&obb.Axis[2], axis);
 			f32 scaleZ = 1.0f / XMVectorGetX(recipLength);
 			obb.Extents.z = aabb.Extents.z * scaleZ;
+
+			obb.Center.x += aabb.Center.x * scaleX;
+			obb.Center.y += aabb.Center.y * scaleY;
+			obb.Center.z += aabb.Center.z * scaleZ;
 
 			return obb;
 		}
