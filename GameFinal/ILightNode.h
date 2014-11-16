@@ -157,10 +157,9 @@ namespace gf
 
 		virtual void generateShadowMap(ICameraNode* viewCamera) {}
 
-		XMFLOAT4X4 getShadowMapTransform()
-		{
-			return mShadowMapTransform;
-		}
+		virtual XMFLOAT4X4 getShadowMapTransform(u32 index = 0) = 0;
+
+		virtual void getShadowMapTransforms(XMFLOAT4X4 transforms[]) {}
 
 		virtual ITexture* getShadowMap() = 0;
 
@@ -198,7 +197,6 @@ namespace gf
 		IOctreeNode*	mOctreeNode;
 		u32				mShadowMapWidth;
 		u32				mShadowMapHeight;
-		XMFLOAT4X4		mShadowMapTransform;
 
 	};
 

@@ -97,9 +97,14 @@ namespace gf
 		return mShaders[shaderType] != nullptr && mShaders[shaderType]->setMatrix(varname, matrix, ignoreIfAlreadyUpdated);
 	}
 
-	u32 CPipeline::setTransposedMatrixArray(E_SHADER_TYPE shaderType, const std::string& varname, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdated)
+	bool CPipeline::setTransposedMatrixArray(E_SHADER_TYPE shaderType, const std::string& varname, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdated)
 	{
 		return mShaders[shaderType] && mShaders[shaderType]->setTransposedMatrixArray(varname, matrixs, count, ignoreIfAlreadyUpdated);
+	}
+
+	bool CPipeline::setMatrixArray(E_SHADER_TYPE shaderType, const std::string& varname, XMFLOAT4X4 matrixs[], u32 count, bool ignoreIfAlreadyUpdate)
+	{
+		return mShaders[shaderType] && mShaders[shaderType]->setMatrixArray(varname, matrixs, count, ignoreIfAlreadyUpdate);
 	}
 
 	u32 CPipeline::setVector(const std::string& varname, const f32* v, bool ignoreIfAlreadyUpdated)

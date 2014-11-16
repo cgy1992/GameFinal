@@ -102,7 +102,17 @@ namespace gf
 
 		virtual ITexture* getShadowMap()
 		{
-			return mShadowMap->getTexture();
+			return mShadowMap;
+		}
+
+		virtual XMFLOAT4X4 getShadowMapTransform(u32 index = 0)
+		{
+			return mShadowTransforms[index];
+		}
+
+		virtual void getShadowMapTransforms(XMFLOAT4X4 transforms[])
+		{
+			memcpy(transforms, mShadowTransforms, sizeof(mShadowTransforms));
 		}
 
 	protected:
@@ -110,7 +120,10 @@ namespace gf
 		SDirectionalLight		mLightData;
 		f32						mShadowCameraViewWidth;
 		f32						mShadowCameraViewHeight;
-		IDepthStencilSurface*	mShadowMap;
+		ITexture2DArray*		mShadowMap;
+		
+		XMFLOAT4X4				mShadowTransforms[ICameraNode::CASCADE_SHADOW_LEVEL];
+		XMFLOAT4X4				mShadowCropTransforms[ICameraNode::CASCADE_SHADOW_LEVEL];
 		
 	};
 

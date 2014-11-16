@@ -220,6 +220,8 @@ namespace gf
 
 		virtual bool setTransposedMatrixArray(const std::string& var, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdate = false) = 0;
 
+		virtual bool setMatrixArray(const std::string& var, XMFLOAT4X4 matrixs[], u32 count, bool ignoreIfAlreadyUpdate = false) = 0;
+
 		virtual bool setSampler(const std::string& varname, ISampler* sampler) = 0;
 
 		virtual bool existSampler(const std::string& varname) const = 0;

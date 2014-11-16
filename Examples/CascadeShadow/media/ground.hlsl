@@ -1,4 +1,4 @@
-#include "../../../Media/built-in-resources/GameFinal.hlsl"
+//#include "../../../Media/built-in-resources/GameFinal.hlsl"
 
 SamplerState gSampleState;
 
@@ -24,9 +24,6 @@ struct VertexOut
 	float3 Normal	: NORMAL; 
 	float3 Tangent  : TANGENT;
 	float3 Tex		: TEXCOORD;
-#ifdef SHADOW_ON
-	float4 ShadowPosH : TEXCOORD1;
-#endif
 };
 
 VertexOut vs_main(VertexIn vin)
@@ -38,10 +35,6 @@ VertexOut vs_main(VertexIn vin)
 	vout.Normal = mul(vin.Normal, (float3x3)GF_WORLD);
 	vout.Tangent = mul(vin.Tangent, (float3x3)GF_WORLD);
 	vout.Tex = vin.PosL;
-
-#ifdef SHADOW_ON
-	vout.ShadowPosH = CalcShadowPosH(vout.PosW, GF_SHADOW_MAP_TRANSFORM_1);
-#endif
 	return vout;
 }
 
@@ -64,8 +57,9 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 		diffuse, specular, gLight.Specular.w);
 
 #ifdef SHADOW_ON
-	float shadowFactor = CalcShadowFactor(1, pin.ShadowPosH, 2.0f);
+	//float shadowFactor = CalcShadowFactor(1, pin.ShadowPosH, 2.0f);
 	//float shadowFactor = CalcPointLightShadowFactor(GF_PL_SHADOW_MAP_2, pin.PosW, gPointLight.Position);
+	float shadowFactor = CalcShadowFactor(1, 2.0f);
 
 	return GF_AMBIENT * GF_MTRL_AMBIENT 
 		+ GF_MTRL_EMISSIVE + diffuse * GF_MTRL_DIFFUSE * shadowFactor

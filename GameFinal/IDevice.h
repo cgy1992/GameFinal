@@ -137,6 +137,11 @@ namespace gf
 
 		}
 
+		const char* getProcessPath() const
+		{
+			return mProcessPath;
+		}
+
 		_DECLARE_SINGLETON_INSTANCE(IDevice);
 
 	protected:
@@ -144,6 +149,8 @@ namespace gf
 		IVideoDriver*			mVideoDriver;
 		//ISceneManager*			mSceneManager;
 		ITimer*					mTimer;
+		char					mProcessPath[MAX_PATH + 1];
+
 	};
 
 }

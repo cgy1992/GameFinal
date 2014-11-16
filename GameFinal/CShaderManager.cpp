@@ -43,14 +43,7 @@ namespace gf
 		u32 sortCode = mCodeAllocator[shaderType].allocate();
 
 		// get shader file's full path
-		std::string filepath;
-		if (!IResourceGroupManager::getInstance()->getFullPath(filename, filepath, ERFT_SHADER))
-		{
-			GF_PRINT_CONSOLE_INFO("The shader file named '%s' has not been found.\n", filename.c_str());
-			return false;
-		}
-
-		IShader* shader = mResourceFactory->createShaderFromFile(shaderType, filepath.c_str(), functionName.c_str(), sortCode, shaderName, macros);
+		IShader* shader = mResourceFactory->createShaderFromFile(shaderType, filename.c_str(), functionName.c_str(), sortCode, shaderName, macros);
 		if (!shader)
 		{
 			mCodeAllocator[shaderType].release(sortCode);

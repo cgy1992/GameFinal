@@ -127,9 +127,10 @@ int main()
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
 	camera->setNearZ(1.0f);
 	camera->setFarZ(1000.0f);
-	camera->setShadowRange(20.0f);
+	camera->setShadowRange(100.0f);
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 
+	updateLightDirection(10.0f, light);
 
 	char caption[200];
 
@@ -147,7 +148,7 @@ int main()
 		float dt = ms * 0.001f;
 
 		updateCamera(camera, dt);
-		updateLightDirection(dt, light);
+		//updateLightDirection(dt, light);
 		//updateCarPosition(dt, carNode, camera);
 
 		smgr->update(ms);

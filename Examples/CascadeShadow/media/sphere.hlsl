@@ -20,9 +20,6 @@ struct VertexOut
 	float3 PosW		: POSITION;
 	float3 Normal	: NORMAL;
 
-#ifdef SHADOW_ON
-	float4 ShadowPosH : TEXCOORD1;
-#endif
 };
 
 VertexOut vs_main(VertexIn vin)
@@ -33,9 +30,6 @@ VertexOut vs_main(VertexIn vin)
 	vout.PosW = PosW.xyz;
 	vout.Normal = mul(vin.Normal, (float3x3)GF_WORLD);
 
-#ifdef SHADOW_ON
-	vout.ShadowPosH = CalcShadowPosH(vout.PosW, GF_SHADOW_MAP_TRANSFORM_1);
-#endif
 	return vout;
 }
 
@@ -57,7 +51,7 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 		diffuse, specular, gLight.Specular.w);
 
 #ifdef SHADOW_ON
-	float shadowFactor = CalcShadowFactor(1,pin.ShadowPosH,2.0f);
+	float shadowFactor = CalcShadowFactor(1, 2.0f);
 	
 	//float shadowFactor = CalcPointLightShadowFactor(GF_PL_SHADOW_MAP_2, pin.PosW, gPointLight.Position);
 	return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE + 

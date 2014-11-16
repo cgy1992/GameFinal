@@ -7,9 +7,10 @@ namespace gf
 	bool CD3D11Shader::compile(const char* szFileName, const char* szFunctionName, E_SHADER_TYPE type)
 	{
 		HRESULT hr;
-
+		IResourceGroupManager* rmgr = IResourceGroupManager::getInstance();
 		const char* szProfile = getShaderProfile();
 		ID3D10Blob* errorMessage = NULL;
+		std::string filename = szFileName;
 
 		// collect all macros.
 		D3D10_SHADER_MACRO* pDefines = NULL;
@@ -28,9 +29,33 @@ namespace gf
 			pDefines[i].Name = NULL;
 			pDefines[i].Definition = NULL;
 		}
+		
 
-		hr = D3DX11CompileFromFileA(szFileName, pDefines, NULL, szFunctionName, szProfile, D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,
-			&mShaderBuffer, &errorMessage, NULL);
+		std::string filepath;
+		if (!rmgr->getFullPath(filename, filepath, ERFT_SHADER))
+		{
+			GF_PRINT_CONSOLE_INFO("The shader file named '%s' has not been found.\n", szFileName);
+			return false;
+		}
+
+		const u32 MAX_CHAR_NUM = 3000 * 80;
+		char pSrcData[MAX_CHAR_NUM];
+		memset(pSrcData, 0, sizeof(pSrcData));
+		if (!getShaderFileContent(filepath.c_str(), pSrcData))
+		{
+			GF_PRINT_CONSOLE_INFO("The shader file named '%s' cannot be opened.\n", szFileName);
+			return false;
+		}
+		
+		hr = D3DX11CompileFromMemory(pSrcData, strlen(pSrcData), filepath.c_str(), 
+			pDefines, NULL, szFunctionName, szProfile, D3D10_SHADER_ENABLE_STRICTNESS, 0,
+			NULL, &mShaderBuffer, &errorMessage, NULL);
+
+		//hr = D3DX11CompileFromFileA(szFileName, pDefines, NULL, szFunctionName, szProfile, D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL,
+		//	&mShaderBuffer, &errorMessage, NULL);
+
+		delete[] pDefines;
+		
 		if (FAILED(hr))
 		{
 			// If the shader failed to compile it should have writen something to the error message.
@@ -48,6 +73,57 @@ namespace gf
 
 		initContext();
 
+		return true;
+	}
+
+
+	bool CD3D11Shader::getShaderFileContent(const char* szFullPath, char content[])
+	{
+		const static char* szBuiltInShaderNames[] = {
+			"GameFinal.hlsl",
+			"gfShadow.hlsl",
+			NULL
+		};
+
+		const u32 MAX_CHAR_NUM = 3000 * 80;
+		IResourceGroupManager* rgmr = IResourceGroupManager::getInstance();
+		const char* szProcessPath = IDevice::getInstance()->getProcessPath();
+
+		char pOriginData[MAX_CHAR_NUM] = { 0 };
+		memset(content, 0, sizeof(content));
+
+		FILE* fp = fopen(szFullPath, "r");
+		if (!fp)
+			return false;
+
+		fseek(fp, 0, SEEK_END);
+		u32 fileSize = ftell(fp);
+		fseek(fp, 0, SEEK_SET);
+		fread(pOriginData, fileSize, 1, fp);
+
+		//printf("%s", pSrcData);
+		fclose(fp);
+
+		u32 i = 0;
+		
+		while (szBuiltInShaderNames[i])
+		{
+			const char* shaderName = szBuiltInShaderNames[i];
+			std::string fullPath;
+			char szIncludeCode[256] = { 0 };
+
+			if (rgmr->getFullPath(shaderName, fullPath, ERFT_SHADER))
+			{
+				strcpy(szIncludeCode, "#include\"");
+				strcat(szIncludeCode, szProcessPath);
+				strcat(szIncludeCode, fullPath.c_str());
+				strcat(szIncludeCode, "\"\n");
+				strcat(content, szIncludeCode);
+			}
+			i++;
+		}
+
+		strcat(content, pOriginData);
 		return true;
 	}
 
@@ -423,6 +499,35 @@ namespace gf
 		}
 
 		return setRawData(cv, (void*)matrixs, sizeof(XMFLOAT4X4)* count);
+	}
+
+	bool CD3D11Shader::setMatrixArray(const std::string& varname, XMFLOAT4X4 matrixs[], u32 count, bool ignoreIfAlreadyUpdate)
+	{
+		SShaderConstantVariable* cv = getConstantVariable(varname);
+		if (cv == nullptr)
+			return false;
+
+		if (ignoreIfAlreadyUpdate && cv->AlreadyUpdated)
+			return false;
+
+		if (cv->TypeDesc.Class != D3D10_SVC_MATRIX_COLUMNS ||
+			cv->TypeDesc.Type != D3D10_SVT_FLOAT ||
+			cv->TypeDesc.Columns != 4 ||
+			cv->TypeDesc.Rows != 4 ||
+			cv->TypeDesc.Elements == 0)
+		{
+			return false;
+		}
+
+		std::vector<XMFLOAT4X4> transposedMatrixs(count);
+		for (u32 i = 0; i < count; i++)
+		{
+			XMMATRIX M = XMLoadFloat4x4(&matrixs[i]);
+			M = XMMatrixTranspose(M);
+			XMStoreFloat4x4(&transposedMatrixs[i], M);
+		}
+
+		return setRawData(cv, (void*)&transposedMatrixs[0], sizeof(XMFLOAT4X4)* count);
 	}
 
 	bool CD3D11Shader::setTexture(const std::string& varname, ITexture* texture)

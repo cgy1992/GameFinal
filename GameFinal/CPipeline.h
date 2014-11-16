@@ -22,7 +22,9 @@ namespace gf
 
 		virtual u32 setMatrix(E_SHADER_TYPE shaderType, const std::string& varname, const XMFLOAT4X4& matrix, bool ignoreIfAlreadyUpdated = false);
 
-		virtual u32 setTransposedMatrixArray(E_SHADER_TYPE shaderType, const std::string& varname, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdated = false);
+		virtual bool setTransposedMatrixArray(E_SHADER_TYPE shaderType, const std::string& varname, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdated = false);
+
+		virtual bool setMatrixArray(E_SHADER_TYPE shaderType, const std::string& varname, XMFLOAT4X4 matrixs[], u32 count, bool ignoreIfAlreadyUpdate = false);
 
 		virtual u32 setAttribute(const std::string& varname, const XMFLOAT4& val, bool ignoreIfAlreadyUpdated = false);
 

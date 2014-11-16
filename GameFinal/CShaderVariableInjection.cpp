@@ -373,6 +373,16 @@ namespace gf
 			}
 			return;
 		}
+		else if (var.Type == ESAVT_CAMERA_SEGMENTS)
+		{
+			ICameraNode* camera = sceneManager->getCameraNode(var.IndexParam);
+			if (camera)
+			{
+				const f32* segments = camera->getShadowSegments();
+				pipeline->setVector(shaderType, var.VariableName, &segments[1], ignoreIfAlreadyUpdate);
+			}
+			return;
+		}
 		else if (var.Type == ESAVT_AMBIENT)
 		{
 			XMFLOAT4 ambient = sceneManager->getAmbient();
@@ -491,6 +501,20 @@ namespace gf
 
 			XMFLOAT4X4 viewProjMatrix = light->getShadowMapTransform();
 			pipeline->setMatrix(var.ShaderType, var.VariableName, viewProjMatrix, ignoreIfAlreadyUpdate);
+		}
+		else if (var.Type == ESAVT_SHADOW_MAP_TRANSFORMS)
+		{
+			u32 lightID = var.IndexParam;
+			ILightNode* light = sceneManager->getLightNode(lightID);
+			if (!light)
+				return;
+			E_LIGHT_TYPE lightType = light->getType();
+			if (lightType == ELT_DIRECTIONAL)
+			{
+				XMFLOAT4X4 shadowMapTransforms[ICameraNode::CASCADE_SHADOW_LEVEL];
+				light->getShadowMapTransforms(shadowMapTransforms);
+				pipeline->setMatrixArray(var.ShaderType, var.VariableName, shadowMapTransforms, ICameraNode::CASCADE_SHADOW_LEVEL, ignoreIfAlreadyUpdate);
+			}
 		}
 		else if (var.Type == ESAVT_SHADOW_MAP_SIZE)
 		{

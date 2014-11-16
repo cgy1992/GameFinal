@@ -104,6 +104,12 @@ namespace gf
 
 		virtual void generateShadowMap(ICameraNode* viewCamera);
 
+		virtual XMFLOAT4X4 getShadowMapTransform(u32 index = 0)
+		{
+			XMFLOAT4X4 m;
+			return m;
+		}
+
 	private:
 
 		void computeBoundingVolumn();

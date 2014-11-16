@@ -231,8 +231,10 @@ namespace gf
 			}
 		}
 
-
-
+		const f32* getShadowSegments()
+		{
+			return mShadowSegments;
+		}
 
 		const static u32 ACTIVE_CAMERA_ID = 128;
 		const static u32 CASCADE_SHADOW_LEVEL = 4; 

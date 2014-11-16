@@ -69,6 +69,10 @@ namespace gf
 			std::string& fullpath,
 			E_RESOURCE_FILE_TYPE filetype = ERFT_UNKNOWN) const;
 
+		virtual bool getDirectoryPath(const std::string& resourceFileName,
+			std::string& dirPath,
+			E_RESOURCE_FILE_TYPE filetype = ERFT_UNKNOWN) const;
+
 		virtual IPipeline* loadPipeline(const std::string& pipelineName);
 
 		virtual IMaterial* loadMaterial(const std::string& materialName);

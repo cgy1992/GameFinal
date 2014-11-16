@@ -108,6 +108,7 @@ namespace gf
 		ESAVT_SCENE_BEGIN,						/* scene info begin */
 		ESAVT_CAMERA_POSITION,
 		ESAVT_CAMERA_FRUSTUM,
+		ESAVT_CAMERA_SEGMENTS,
 		ESAVT_LIGHT,
 		ESAVT_AMBIENT,
 		ESAVT_NEAR_POINT_LIGHTS,				
@@ -118,6 +119,7 @@ namespace gf
 		ESAVT_DIRECTIONAL_LIGHTS_NUM,
 		ESAVT_SHADOW_MAP,
 		ESAVT_SHADOW_MAP_TRANSFORM,
+		ESAVT_SHADOW_MAP_TRANSFORMS,
 		ESAVT_SHADOW_MAP_SIZE,
 		ESAVT_SHADOW_MAP_JITTER_TEXTURE,
 		ESAVT_PL_SHADOW_MAP_JITTER_TEXTURE,
@@ -211,7 +213,9 @@ namespace gf
 
 		virtual u32 setMatrix(E_SHADER_TYPE shaderType, const std::string& varname, const XMFLOAT4X4& matrix, bool ignoreIfAlreadyUpdated = false) = 0;
 
-		virtual u32 setTransposedMatrixArray(E_SHADER_TYPE shaderType, const std::string& varname, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdated = false) = 0;
+		virtual bool setTransposedMatrixArray(E_SHADER_TYPE shaderType, const std::string& varname, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdated = false) = 0;
+
+		virtual bool setMatrixArray(E_SHADER_TYPE shaderType, const std::string& varname, XMFLOAT4X4 matrixs[], u32 count, bool ignoreIfAlreadyUpdate = false) = 0;
 
 		virtual u32 setVector(const std::string& varname, const f32* v, bool ignoreIfAlreadyUpdated = false) = 0;
 

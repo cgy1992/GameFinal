@@ -58,6 +58,8 @@ namespace gf
 
 		virtual bool loadFromFile(const char* szFileName, const char* szFunctionName) = 0;
 
+		bool getShaderFileContent(const char* szFullPath, char content[]);
+
 		ID3D10Blob* getShaderBuffer()
 		{
 			return mShaderBuffer;
@@ -100,6 +102,8 @@ namespace gf
 		virtual bool setTexture(const std::string& varname, ITexture* texture);
 
 		virtual bool setTransposedMatrixArray(const std::string& var, const f32* matrixs, u32 count, bool ignoreIfAlreadyUpdate = false);
+
+		virtual bool setMatrixArray(const std::string& var, XMFLOAT4X4 matrixs[], u32 count, bool ignoreIfAlreadyUpdate = false);
 
 		virtual bool setSampler(const std::string& varname, ISampler* sampler);
 

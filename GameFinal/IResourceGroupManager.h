@@ -59,11 +59,16 @@ namespace gf
 			std::string& fullpath, 
 			E_RESOURCE_FILE_TYPE filetype = ERFT_UNKNOWN) const = 0;
 
+		virtual bool getDirectoryPath(const std::string& resourceFileName,
+			std::string& dirPath,
+			E_RESOURCE_FILE_TYPE filetype = ERFT_UNKNOWN) const = 0;
+
 	protected:
 
 		IResourceLoader*				mResourceLoader;
 
 		_DECLARE_SINGLETON_INSTANCE(IResourceGroupManager);
+
 	};
 }
 

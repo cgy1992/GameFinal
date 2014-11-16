@@ -407,6 +407,18 @@ namespace gf
 		std::string& fullpath,
 		E_RESOURCE_FILE_TYPE filetype) const
 	{
+		std::string dirPath;
+		if (!getDirectoryPath(resourceFileName, dirPath, filetype))
+			return false;
+		
+		fullpath = dirPath + resourceFileName;
+		return true;
+	}
+
+	bool CResourceGroupManager::getDirectoryPath(const std::string& resourceFileName,
+		std::string& dirPath,
+		E_RESOURCE_FILE_TYPE filetype) const
+	{
 		auto it = mResourceFilesLocationInfos.find(resourceFileName);
 		if (it == mResourceFilesLocationInfos.end())
 			return false;
@@ -418,10 +430,7 @@ namespace gf
 		u32 groupId = locationInfo.GroupId;
 		u32 directoryId = locationInfo.DirectoryId;
 
-		const std::string& dirpath = mResourceGroups[groupId].Directories[directoryId].Path;
-
-		fullpath = dirpath + resourceFileName;
-
+		dirPath = mResourceGroups[groupId].Directories[directoryId].Path;
 		return true;
 	}
 

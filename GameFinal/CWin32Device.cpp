@@ -13,7 +13,10 @@ namespace gf
 	CWin32Device::CWin32Device(SCreationParameters& params)
 		:IDevice(params)
 	{
-
+		DWORD dwRet;
+		dwRet = GetCurrentDirectoryA(MAX_PATH, mProcessPath);
+		//printf("Current Directory: %s\n", Buffer);
+		strcat(mProcessPath, "/");
 	}
 
 	CWin32Device::~CWin32Device()
