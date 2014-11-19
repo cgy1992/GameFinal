@@ -13,7 +13,7 @@ namespace gf
 	public:
 		CShaderManager(IResourceFactory* pResourceFactory);
 
-	protected:
+		virtual ~CShaderManager();
 
 		virtual IShader* load(E_SHADER_TYPE shaderType,
 			const std::string& filename,

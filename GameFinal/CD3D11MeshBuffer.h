@@ -28,6 +28,8 @@ namespace gf
 
 		}
 
+		virtual ~CD3D11MeshBuffer();
+
 		virtual bool init(void* vertices,
 			void* indices,
 			u32 vertexCount,
@@ -35,7 +37,11 @@ namespace gf
 			u32 vertexStride,
 			bool bit32Index);
 
+		virtual bool setVertexData(void* data, u32 size);
+
 		virtual void bind();
+
+		virtual void bind(IMeshBuffer* pInstanceBuffer);
 
 		virtual void draw() const;
 
@@ -43,11 +49,12 @@ namespace gf
 
 		virtual void draw(u32 start, u32 count) const;
 
-		virtual ~CD3D11MeshBuffer()
-		{
-			ReleaseCOM(md3dVertexBuffer);
-			ReleaseCOM(md3dIndexBuffer);
-		}
+		virtual void drawInstanced(u32 instanceCount) const;
+
+		virtual void drawIndexedInstanced(u32 start, u32 indiceCountPerInstance, u32 baseVertex, u32 instanceCount) const;
+
+		virtual void drawInstanced(u32 start, u32 vertexCountPerInstance, u32 instanceCount) const;
+
 
 	private:
 		ID3D11Device*			md3dDevice;

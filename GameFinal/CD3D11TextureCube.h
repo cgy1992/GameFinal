@@ -23,6 +23,8 @@ namespace gf
 			memset(mRenderTargets, 0, sizeof(mRenderTargets));
 		}
 
+		virtual ~CD3D11TextureCube();
+
 		bool loadFromFile(const std::string& filename);
 
 		bool create(u32 size, u32 bindFlags,

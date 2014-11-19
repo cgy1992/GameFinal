@@ -506,6 +506,27 @@
     <ClInclude Include="gfStructs.h">
       <Filter>src\Util\Headers</Filter>
     </ClInclude>
+    <ClInclude Include="IRenderableBuffer.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="IInstanceMeshBuffer.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11InstanceMeshBuffer.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="IInstanceCollectionNode.h">
+      <Filter>src\SceneNode\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="IInstanceNode.h">
+      <Filter>src\SceneNode\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CInstanceCollectionNode.h">
+      <Filter>src\SceneNode\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="CInstanceNode.h">
+      <Filter>src\SceneNode\Class</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -726,6 +747,12 @@
     </ClCompile>
     <ClCompile Include="CD3D11Texture2DArray.cpp">
       <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="CInstanceCollectionNode.cpp">
+      <Filter>src\SceneNode\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CInstanceNode.cpp">
+      <Filter>src\SceneNode\Class</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

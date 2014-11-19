@@ -31,16 +31,22 @@ namespace gf
 		}
 	}
 
-	bool CTerrainNode::setMaterialName(const std::string& name, u32 subset)
+	bool CTerrainNode::setMaterialName(const std::string& name)
 	{
 		IMaterial* material = mSceneManager->getVideoDriver()->getMaterialManager()->get(name);
 		if (material == nullptr)
 			return false;
 
-		ReleaseReferenceCounted(mMaterial);
-		mMaterial = material;
-		AddReferenceCounted(mMaterial);
-		return true;
+		return setMaterial(material);
+	}
+
+	bool CTerrainNode::setMaterialName(u32 subset, const std::string& name)
+	{
+		IMaterial* material = mSceneManager->getVideoDriver()->getMaterialManager()->get(name);
+		if (material == nullptr)
+			return false;
+
+		return setMaterial(subset, material);
 	}
 
 	void CTerrainNode::calcSortCode()

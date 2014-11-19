@@ -250,9 +250,9 @@ namespace gf
 
 		virtual bool getMaterialName(u32 index, std::string& name) const = 0;
 
-		virtual void drawSubset(u32 index) const = 0;
+		//virtual void drawSubset(u32 index) const = 0;
 
-		virtual void bind() = 0;
+		//virtual void bind() = 0;
 	};
 
 }

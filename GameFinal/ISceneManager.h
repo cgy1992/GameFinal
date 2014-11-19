@@ -16,6 +16,8 @@
 #include "ITerrainNode.h"
 #include "ICompositor.h"
 #include "ILightNode.h"
+#include "IInstanceNode.h"
+#include "IInstanceCollectionNode.h"
 
 namespace gf
 {
@@ -87,12 +89,23 @@ namespace gf
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f)) = 0;
 
+		virtual IInstanceCollectionNode* addInstanceCollectionNode(
+			IMesh* mesh,
+			ISceneNode* parent,
+			u32 maxInstanceNum,
+			u32 eachInstanceDataSize,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f)) = 0;
+
+
 		virtual ITerrainNode* addTerrainNode(
 			ITerrainMesh* mesh,
 			IMaterial* material = nullptr,
 			ISceneNode* parent = nullptr,
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0)) = 0;
 
+		
 		virtual ILightNode* addDirectionalLight(u32 id,
 			ISceneNode* parent,
 			const XMFLOAT3& direction) = 0;
@@ -144,6 +157,8 @@ namespace gf
 		{
 			return mVideoDriver;
 		}
+
+		virtual IOctreeManager*	getDefaultOctreeManager() = 0;
 
 		virtual ICameraNode* getActiveCameraNode() = 0;
 

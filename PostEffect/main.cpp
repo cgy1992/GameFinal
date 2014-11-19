@@ -117,7 +117,7 @@ int main()
 	//param.MotionBlur.SampleNum = 4;
 	ICompositor* compositor = smgr->createCompositor(ECT_BLOOM, param);
 	smgr->addCompositor(compositor);
-
+	
 	f32 rotx = 0;
 	f32 roty = 0;
 	f32 rotz = 0;

@@ -5,13 +5,26 @@
 
 namespace gf
 {
-
-	bool CModelMeshNode::setMaterial(IMaterial* material, u32 subset)
+	bool CModelMeshNode::setMaterial(u32 subset, IMaterial* material)
 	{
 		if (subset >= mMesh->getSubsetCount())
 			return false;
 
-		mMaterials[subset] = material;
+		if (material != mMaterials[subset])
+		{
+			ReleaseReferenceCounted(mMaterials[subset]);
+			mMaterials[subset] = material;
+			AddReferenceCounted(material);
+		}
+		return true;
+	}
+
+	bool CModelMeshNode::setMaterial(IMaterial* material)
+	{
+		for (u32 i = 0; i < mMesh->getSubsetCount(); i++)
+		{
+			setMaterial(i, material);
+		}
 		return true;
 	}
 
@@ -23,22 +36,31 @@ namespace gf
 		return mMaterials[subset];
 	}
 
-	bool CModelMeshNode::setMaterialName(const std::string& name, u32 subset)
+	bool CModelMeshNode::setMaterialName(const std::string& name)
 	{
-		if (subset >= mMesh->getSubsetCount())
-			return false;
-
 		IMaterial* material = mSceneManager->getVideoDriver()->getMaterialManager()->get(name);
 		if (material == nullptr)
 			return false;
 
-		mMaterials[subset] = material;
-		return true;
+		return setMaterial(material);
 	}
 
-	void CModelMeshNode::render(E_PIPELINE_USAGE usage)
+	bool CModelMeshNode::setMaterialName(u32 subset, const std::string& name)
 	{
-		mMesh->bind();
+		IMaterial* material = mSceneManager->getVideoDriver()->getMaterialManager()->get(name);
+		if (material == nullptr)
+			return false;
+
+		return setMaterial(subset, material);
+	}
+
+
+	void CModelMeshNode::renderInstanced(E_PIPELINE_USAGE usage, u32 instanceCount, IMeshBuffer* instanceBuffer)
+	{
+		if (instanceCount == 0)
+			mMesh->bind();
+		else
+			mMesh->bind(instanceBuffer);
 
 		IPipeline* prePipeline = nullptr; /* 记录前一个流水线 */
 		IMaterial* preMaterial = nullptr; /* 记录前一个子集的材质 */
@@ -50,7 +72,7 @@ namespace gf
 			IMaterial* material = mMaterials[i];
 			if (!material)
 				continue;
-			
+
 			IPipeline* pipeline = material->getPipeline(usage);
 			if (!pipeline)
 				continue;
@@ -72,11 +94,20 @@ namespace gf
 				prePipeline = pipeline;
 			}
 
-			mMesh->drawSubset(i);
+
+			if (instanceCount == 0)
+				mMesh->drawSubset(i);
+			else
+				mMesh->drawSubsetInstanced(i, instanceCount);
 
 			preMaterial = material;
 		}
+	}
 
+
+	void CModelMeshNode::render(E_PIPELINE_USAGE usage)
+	{
+		renderInstanced(usage, 0, nullptr);
 	}
 
 	void CModelMeshNode::OnRegisterSceneNode(bool bRecursion)

@@ -110,5 +110,18 @@ namespace gf
 		return true;
 	}
 
+	CShaderManager::~CShaderManager()
+	{
+		for (auto it = mShadersMap.begin(); it != mShadersMap.end(); it++)
+		{
+			std::list<IShader*>& shaders = it->second;
+			for (auto sit = shaders.begin(); sit != shaders.end(); sit++)
+			{
+				IShader* shader = *sit;
+				ReleaseReferenceCounted(shader);
+			}
+		}
+	}
+
 
 }

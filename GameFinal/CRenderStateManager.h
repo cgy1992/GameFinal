@@ -13,7 +13,7 @@ namespace gf
 		virtual IRenderState* get(const std::string& name, bool addIfNotFound = true);
 
 		_DEFINE_RESOURCE_DESTROY_METHODS(CRenderStateManager, mRenderStatesMap, IRenderState);
-
+		_DEFINE_RESOURCE_MANAGER_DESTRUCTOR(CRenderStateManager);
 	private:
 
 		void createStockRenderStates();

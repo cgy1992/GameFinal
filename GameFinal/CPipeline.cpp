@@ -26,7 +26,7 @@ namespace gf
 				throw std::runtime_error("can not put the same type shader into one pipeline");
 			}
 			mShaders[type] = shaders[i];
-			mShaders[type]->grab();
+			AddReferenceCounted(mShaders[type]);
 		}
 
 		if (!mInputLayout)
@@ -35,7 +35,7 @@ namespace gf
 			throw std::runtime_error("The input-layout is null");
 		}
 
-		mInputLayout->grab();
+		AddReferenceCounted(mInputLayout);
 	}
 
 	CPipeline::~CPipeline()

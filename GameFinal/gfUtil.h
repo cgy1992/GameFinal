@@ -8,6 +8,11 @@
 #define AddReferenceCounted(x) { if(x){ x->grab();} }
 #endif
 
+#ifndef ReleaseListElementCounted
+#define ReleaseListElementCounted(v) \
+{for (auto it = v.begin(); it != v.end(); it++) ReleaseReferenceCounted((*it));}
+#endif
+
 #if defined(DEBUG) || defined(_DEBUG) 
 #define GF_PRINT_CONSOLE_INFO(format, ...) fprintf(stderr, format, ## __VA_ARGS__)
 #else
@@ -65,12 +70,13 @@
 	{													\
 	for (auto it = map.begin(); it != map.end(); it++)	\
 		ReleaseReferenceCounted(it->second);				\
-	}													\
-	~Class()											\
-	{													\
-		destroyAll();									\
-	}													\
+	}													
+#endif
 
+#ifndef _DEFINE_RESOURCE_MANAGER_DESTRUCTOR
+#define _DEFINE_RESOURCE_MANAGER_DESTRUCTOR(Class)	\
+public:\
+	virtual ~Class() { destroyAll(); }
 #endif
 
 #ifdef GAMEFINAL_EXPORTS

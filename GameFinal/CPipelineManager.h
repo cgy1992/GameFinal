@@ -20,7 +20,7 @@ namespace gf
 		virtual IPipeline* get(const std::string& name, bool bLoadIfNotExist = true);
 
 		_DEFINE_RESOURCE_DESTROY_METHODS(CPipelineManager, mPipelinesCache, IPipeline);
-
+		_DEFINE_RESOURCE_MANAGER_DESTRUCTOR(CPipelineManager);
 	protected:
 
 		std::map<std::string, IPipeline*>					mPipelinesCache;

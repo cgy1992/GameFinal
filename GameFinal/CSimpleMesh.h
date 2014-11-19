@@ -22,6 +22,12 @@ namespace gf
 
 		virtual void draw() const;
 
+		virtual void bind(IMeshBuffer* pInstanceBuffer);
+
+		virtual void drawInstanced(u32 instanceCount) const;
+
+		// virtual void drawInstanced(u32 instanceCount, ) const;
+
 		virtual E_MESH_TYPE getType() const
 		{
 			return EMT_SIMPLE_MESH;

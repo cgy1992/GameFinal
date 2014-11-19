@@ -5,6 +5,12 @@
 #define GF_TEXTURE GF_TEXTURE_0
 #endif
 
+#ifndef GF_DECLARE_INTANCES_VERTEX
+#define GF_DECLARE_INTANCES_VERTEX	\
+	row_major float4x4 World  : WORLD; \
+	uint InstanceId : SV_InstanceID; 
+#endif
+
 struct SDirectionalLight
 {
 	float4	Diffuse;

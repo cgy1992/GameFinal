@@ -16,4 +16,21 @@ namespace gf
 	{
 		mMeshBuffer->bind();
 	}
+
+	void CModelMesh::bind(IMeshBuffer* pInstanceBuffer)
+	{
+		mMeshBuffer->bind(pInstanceBuffer);
+	}
+
+	void CModelMesh::drawSubsetInstanced(u32 subsetIndex, u32 instanceCount) const
+	{
+		if (subsetIndex > mSubsets.size())
+			return;
+
+		const SModelSubset& subset = mSubsets[subsetIndex];
+		mMeshBuffer->drawIndexedInstanced(subset.StartIndexLocation, subset.IndexCount, subset.BaseVertexLocation, instanceCount);
+	}
+
+	
+
 }

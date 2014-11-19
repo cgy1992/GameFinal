@@ -16,7 +16,7 @@ namespace gf
 		DWORD dwRet;
 		dwRet = GetCurrentDirectoryA(MAX_PATH, mProcessPath);
 		//printf("Current Directory: %s\n", Buffer);
-		strcat(mProcessPath, "/");
+		strcat_s(mProcessPath, "/");
 	}
 
 	CWin32Device::~CWin32Device()

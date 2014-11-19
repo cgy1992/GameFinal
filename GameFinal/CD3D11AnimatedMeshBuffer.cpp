@@ -120,6 +120,13 @@ namespace gf
 		return true;
 	}
 
+	CD3D11AnimatedMeshBuffer::~CD3D11AnimatedMeshBuffer()
+	{
+		ReleaseCOM(md3dVertexBuffer);
+		ReleaseCOM(md3dAnimateVertexBuffer);
+		ReleaseCOM(md3dIndexBuffer);
+	}
+
 	void CD3D11AnimatedMeshBuffer::bindIndexBuffer()
 	{
 		md3dDeviceContext->IASetIndexBuffer(md3dIndexBuffer, mIndexFormat, 0);

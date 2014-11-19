@@ -97,6 +97,16 @@ namespace gf
 			mRenderBuffer->drawIndexed(subset.StartIndexLocation, subset.IndexCount, subset.BaseVertexLocation);
 		}
 
+		virtual void bind(IMeshBuffer* pInstanceBuffer)
+		{
+			
+		}
+
+		virtual void drawSubsetInstanced(u32 subsetIndex, u32 instanceCount) const
+		{
+
+		}
+
 		virtual E_MESH_TYPE getType() const
 		{
 			return EMT_ANIMATE_MODEL_MESH;

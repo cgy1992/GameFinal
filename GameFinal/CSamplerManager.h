@@ -15,7 +15,7 @@ namespace gf
 		virtual ISampler* get(const std::string& name) const;
 
 		_DEFINE_RESOURCE_DESTROY_METHODS(CSamplerManager, mSamplerMap, ISampler);
-
+		_DEFINE_RESOURCE_MANAGER_DESTRUCTOR(CSamplerManager);
 	private:
 
 		void createStockSamplers();

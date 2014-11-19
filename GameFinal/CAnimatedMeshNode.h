@@ -34,9 +34,11 @@ namespace gf
 
 			mSubsetBoneTransforms.resize(maxBoneCountInSubset);
 
+			AddReferenceCounted(mMesh);
 			for (u32 i = 0; i < subsets.size(); i++)
 			{
 				mMaterials[i] = subsets[i].Material;
+				AddReferenceCounted(mMaterials[i]);
 			}
 
 			mMesh->getRelativeBoneTransforms(mRelativeBoneTransforms);
@@ -44,13 +46,25 @@ namespace gf
 			mCurrAnimationId = 0;
 		}
 
-		virtual bool setMaterial(IMaterial* material, u32 subset = 0);
+		virtual ~CAnimatedMeshNode()
+		{
+			ReleaseReferenceCounted(mMesh);
+			ReleaseListElementCounted(mMaterials);
+		}
+
+		virtual bool setMaterialName(const std::string& name);
+
+		virtual bool setMaterialName(u32 subset, const std::string& name);
+
+		virtual bool setMaterial(u32 subset, IMaterial* material);
+
+		virtual bool setMaterial(IMaterial* material);
 
 		virtual IMaterial* getMaterial(u32 subset = 0);
 
-		virtual bool setMaterialName(const std::string& name, u32 subset = 0);
-
 		virtual void render(E_PIPELINE_USAGE usage);
+
+		virtual void renderInstanced(E_PIPELINE_USAGE usage, u32 instanceCount, IMeshBuffer* instanceBuffer);
 
 		virtual void OnRegisterSceneNode(bool bRecursion = true);
 

@@ -20,7 +20,12 @@ namespace gf
 
 		virtual void bind() = 0;
 
+		virtual void bind(IMeshBuffer* pInstanceBuffer) = 0;
+
 		virtual void draw() const = 0;
+
+		virtual void drawInstanced(u32 instanceCount) const = 0;
+		
 
 	};
 

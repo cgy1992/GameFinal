@@ -35,17 +35,27 @@ namespace gf
 
 		virtual void OnRegisterSceneNode(bool bRecursion = true);
 
-		virtual bool setMaterialName(const std::string& name, u32 subset = 0);
-
 		virtual void calcSortCode();
 
-		virtual bool setMaterial(IMaterial* material, u32 subset = 0)
+		virtual bool setMaterial(u32 subset, IMaterial* material)
 		{
-			ReleaseReferenceCounted(mMaterial);
-			mMaterial = material;
-			AddReferenceCounted(mMaterial);
+			return setMaterial(material);
+		}
+
+		virtual bool setMaterial(IMaterial* material)
+		{
+			if (material != mMaterial)
+			{
+				ReleaseReferenceCounted(mMaterial);
+				mMaterial = material;
+				AddReferenceCounted(mMaterial);
+			}
 			return true;
 		}
+
+		virtual bool setMaterialName(const std::string& name);
+
+		virtual bool setMaterialName(u32 subset, const std::string& name);
 
 		virtual IMaterial* getMaterial(u32 subset = 0)
 		{
@@ -83,6 +93,8 @@ namespace gf
 		}
 
 		virtual f32 getHeight(f32 x, f32 z, bool localPivot = false) const;
+
+		virtual void renderInstanced(E_PIPELINE_USAGE usage, u32 instanceCount, IMeshBuffer* instanceBuffer){}
 
 	private:
 		ITerrainMesh*			mMesh;

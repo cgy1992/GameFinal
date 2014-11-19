@@ -20,6 +20,11 @@ namespace gf
 			setSamplerState(desc);
 		}
 
+		virtual ~CD3D11Sampler()
+		{
+			
+		}
+
 		virtual void setAddressV(E_ADDRESS_MODE mode)
 		{
 			D3D11_SAMPLER_DESC desc;

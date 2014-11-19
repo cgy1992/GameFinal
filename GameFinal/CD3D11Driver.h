@@ -170,6 +170,9 @@ namespace gf
 		ID3D11RasterizerState*		mShadowMapRasterizeState;
 
 		CCompositorFactory			mCompositorFactory;
+
+		ID3D11Debug*				md3dDebug;
+
 	public:
 		/* this member is to store the current state of d3d11 driver context. */
 		SD3D11DriverState			D3D11DriverState;

@@ -7,6 +7,21 @@
 
 namespace gf
 {
+	void CMeshNode::renderInstanced(E_PIPELINE_USAGE usage, u32 instanceCount, IMeshBuffer* instanceBuffer)
+	{
+		if (!mMaterial)
+			return;
+
+		mMesh->bind(instanceBuffer);
+
+		IPipeline* pipeline = mMaterial->getPipeline(usage);
+
+		CShaderVariableInjection::inject(this, pipeline, 0);
+
+		pipeline->apply(usage);
+
+		mMesh->drawInstanced(instanceCount);
+	}
 
 	void CMeshNode::render(E_PIPELINE_USAGE usage)
 	{
@@ -36,16 +51,18 @@ namespace gf
 		}
 	}
 
-	bool CMeshNode::setMaterialName(const std::string& name, u32 subset)
+	bool CMeshNode::setMaterialName(const std::string& name)
 	{
 		IMaterial* material = mSceneManager->getVideoDriver()->getMaterialManager()->get(name);
 		if (material == nullptr)
 			return false;
 
-		ReleaseReferenceCounted(mMaterial);
-		mMaterial = material;
-		AddReferenceCounted(mMaterial);
-		return true;
+		return setMaterial(material);
+	}
+
+	bool CMeshNode::setMaterialName(u32 subset, const std::string& name)
+	{
+		return setMaterialName(name);
 	}
 
 	void CMeshNode::calcSortCode()
@@ -60,6 +77,8 @@ namespace gf
 
 		mSortCode = ((u64)mRenderOrder << 56) | ((u64)meshCode << 48) | pipeCode;
 	}
+
+
 }
 
 

@@ -71,6 +71,9 @@ namespace gf
 
 		virtual ~CD3D11Shader()
 		{
+			for (u32 i = 0; i < MAX_CONSTANT_BUFFER_NUM; i++)
+				ReleaseCOM(md3dConstantBuffers[i]);
+
 			ReleaseCOM(mShaderBuffer);
 		}
 
@@ -137,6 +140,8 @@ namespace gf
 			const std::map<std::string, SShaderVariableAttribute>& varMap) const;
 
 	protected:
+		const static u32 MAX_CONSTANT_BUFFER_NUM = 16;
+
 		bool setRawData(SShaderConstantVariable* cv, void* data, u32 size);
 
 		ID3D11Device*						md3dDevice;
@@ -146,7 +151,7 @@ namespace gf
 		CD3D11Driver*						md3dDriver;
 
 		std::string							mName;
-		ID3D11Buffer*						md3dConstantBuffers[16];
+		ID3D11Buffer*						md3dConstantBuffers[MAX_CONSTANT_BUFFER_NUM];
 		u32									mSrvNum;
 		u32									mSamplerNum;
 

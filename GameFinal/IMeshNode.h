@@ -24,17 +24,24 @@ namespace gf
 			:ISceneNode(parent, smgr, bStatic, position, rotation, scale)
 			, mOctreeNode(nullptr)
 			, mShadowFlag(0)
+			, mMultiInstanced(false)
 		{
 			setRenderOrder(ERO_MESH);
 		}
 
-		virtual bool setMaterial(IMaterial* material, u32 subset = 0) = 0;
+		virtual bool setMaterial(u32 subset, IMaterial* material) = 0;
+
+		virtual bool setMaterial(IMaterial* material) = 0;
 
 		virtual IMaterial* getMaterial(u32 subset = 0) = 0;
 
-		virtual bool setMaterialName(const std::string& name, u32 subset = 0) = 0;
+		virtual bool setMaterialName(const std::string& name) = 0;
+
+		virtual bool setMaterialName(u32 subset, const std::string& name) = 0;
 
 		virtual void render(E_PIPELINE_USAGE usage) = 0;
+
+		virtual void renderInstanced(E_PIPELINE_USAGE usage, u32 instanceCount, IMeshBuffer* instanceBuffer) = 0;
 
 		virtual u32 getSubsetCount() const = 0;
 
@@ -43,7 +50,6 @@ namespace gf
 			math::SOrientedBox obb;
 			getLocalAxis(obb.Axis);
 			obb.Center = getAbsolutePosition();
-
 
 			XMVECTOR axis, recipLength;
 
@@ -115,7 +121,7 @@ namespace gf
 			mShadowFlag &= (~(1 << lightID));
 		}
 
-		bool isProjectingShadow(u32 lightID)
+		bool isShadowCaster(u32 lightID)
 		{
 			return (mShadowFlag & (1 << lightID)) != 0;
 		}
@@ -126,6 +132,9 @@ namespace gf
 
 		/* 一个32bit的flag, 要投影几号光源的阴影，就把哪一位设置为1 */
 		u32								mShadowFlag;
+
+		/* 该node 是否是多实例的. */
+		bool							mMultiInstanced;
 	};
 
 

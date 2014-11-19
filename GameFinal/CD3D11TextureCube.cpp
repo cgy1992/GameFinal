@@ -48,6 +48,16 @@ namespace gf
 		return true;
 	}
 
+	CD3D11TextureCube::~CD3D11TextureCube()
+	{
+		ReleaseCOM(md3dShaderResourceView);
+
+		for (u32 i = 0; i < 6; i++)
+			ReleaseReferenceCounted(mRenderTargets[i]);
+	
+		ReleaseCOM(md3dTexture);
+	}
+
 
 	bool CD3D11TextureCube::create(u32 size, u32 bindFlags, 
 		void* rawData, u32 miplevel, E_GI_FORMAT format, u32 pitch/*=0*/)

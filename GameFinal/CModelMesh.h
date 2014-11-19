@@ -27,6 +27,10 @@ namespace gf
 
 		virtual void drawSubset(u32 index) const;
 
+		virtual void bind(IMeshBuffer* pInstanceBuffer);
+
+		virtual void drawSubsetInstanced(u32 subsetIndex, u32 instanceCount) const;
+
 		virtual u32 getSubsetCount() const
 		{
 			return mSubsets.size();

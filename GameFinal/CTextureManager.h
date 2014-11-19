@@ -16,7 +16,7 @@ namespace gf
 	public:
 		CTextureManager(IDevice* device, IResourceFactory* pResourceFactory);
 
-		
+		virtual ~CTextureManager();
 
 		virtual ITexture* load(const std::string& name);
 
@@ -106,8 +106,7 @@ namespace gf
 		virtual void updateTemporaryTextures(u32 delta);
 
 		_DEFINE_RESOURCE_DESTROY_METHODS(CTextureManager, mTextureMap, ITexture);
-
-
+		
 	private:
 
 		void createStockTextures();

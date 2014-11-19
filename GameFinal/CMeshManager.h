@@ -103,6 +103,17 @@ namespace gf
 		virtual ISimpleMesh* createQuad(const std::string& name, E_MEMORY_USAGE usage = EMU_STATIC);
 
 		_DEFINE_RESOURCE_DESTROY_METHODS(CMeshManager, mMeshMap, IMesh);
+		//_DEFINE_RESOURCE_MANAGER_DESTRUCTOR(CMeshManager);
+
+		virtual ~CMeshManager()
+		{
+			for (auto it = mMeshMap.begin(); it != mMeshMap.end(); it++)
+			{
+				printf("mesh name: %s, ref:%d\n", it->second->getName().c_str(), it->second->getReferenceCount());
+			}
+
+			destroyAll();
+		}
 
 		/*
 		bool destroy(const std::string& name)

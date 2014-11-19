@@ -92,9 +92,12 @@ namespace gf
 		char pOriginData[MAX_CHAR_NUM] = { 0 };
 		memset(content, 0, sizeof(content));
 
-		FILE* fp = fopen(szFullPath, "r");
-		if (!fp)
+		FILE* fp = nullptr;
+		errno_t err = fopen_s(&fp, szFullPath, "rb");
+		if (err != 0)
+		{
 			return false;
+		}
 
 		fseek(fp, 0, SEEK_END);
 		u32 fileSize = ftell(fp);
@@ -114,16 +117,17 @@ namespace gf
 
 			if (rgmr->getFullPath(shaderName, fullPath, ERFT_SHADER))
 			{
-				strcpy(szIncludeCode, "#include\"");
-				strcat(szIncludeCode, szProcessPath);
-				strcat(szIncludeCode, fullPath.c_str());
-				strcat(szIncludeCode, "\"\n");
-				strcat(content, szIncludeCode);
+				strcpy_s(szIncludeCode, "#include\"");
+				strcat_s(szIncludeCode, szProcessPath);
+				strcat_s(szIncludeCode, fullPath.c_str());
+				strcat_s(szIncludeCode, "\"\n");
+				u32 c = sizeof(content);
+				strcat_s(content, MAX_CHAR_NUM, szIncludeCode);
 			}
 			i++;
 		}
 
-		strcat(content, pOriginData);
+		strcat_s(content, MAX_CHAR_NUM, pOriginData);
 		return true;
 	}
 

@@ -168,6 +168,8 @@ namespace gf
 	CD3D11Texture2D::~CD3D11Texture2D()
 	{
 		ReleaseCOM(md3dSRV);
+		ReleaseReferenceCounted(mDepthStencilSurface);
+		ReleaseReferenceCounted(mRenderTarget);
 		ReleaseCOM(md3dTexture);
 	}
 

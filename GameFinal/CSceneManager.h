@@ -56,6 +56,15 @@ namespace gf
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f));
 
+		virtual IInstanceCollectionNode* addInstanceCollectionNode(
+			IMesh* mesh,
+			ISceneNode* parent,
+			u32 maxInstanceNum,
+			u32 eachInstanceDataSize,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f));
+
 		virtual void registerNodeForRendering(IMeshNode* node, E_NODE_TYPE nodeType = ENT_SOLID_NODE);
 
 		virtual void registerNodeForRendering(ILightNode* node);
@@ -116,7 +125,7 @@ namespace gf
 			ISceneNode* parent = nullptr,
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0));
 
-		
+		virtual IOctreeManager*	getDefaultOctreeManager() { return mDefaultOctree; }
 
 		virtual void setSkyDome(ITextureCube* cubeTexture);
 

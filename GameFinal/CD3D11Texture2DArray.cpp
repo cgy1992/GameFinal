@@ -29,7 +29,7 @@ namespace gf
 
 		for (u32 i = 0; i < mDepthStencilSurfaces.size(); i++)
 			ReleaseReferenceCounted(mDepthStencilSurfaces[i]);
-		
+
 		ReleaseCOM(md3dTexture);
 	}
 

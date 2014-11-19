@@ -92,6 +92,7 @@
     <ClInclude Include="CCompositor.h" />
     <ClInclude Include="CCameraNode.h" />
     <ClInclude Include="CCompositorFactory.h" />
+    <ClInclude Include="CD3D11InstanceMeshBuffer.h" />
     <ClInclude Include="CD3D11Texture2DArray.h" />
     <ClInclude Include="CD3D11TextureCube.h" />
     <ClInclude Include="CD3D11DepthStencilSurface.h" />
@@ -119,6 +120,8 @@
     <ClInclude Include="CFpsCameraNode.h" />
     <ClInclude Include="CGeometryCreator.h" />
     <ClInclude Include="CInputLayoutManager.h" />
+    <ClInclude Include="CInstanceCollectionNode.h" />
+    <ClInclude Include="CInstanceNode.h" />
     <ClInclude Include="CLightNode.h" />
     <ClInclude Include="CMaterialManager.h" />
     <ClInclude Include="CMeshManager.h" />
@@ -164,6 +167,10 @@
     <ClInclude Include="ICameraNode.h" />
     <ClInclude Include="ICompositor.h" />
     <ClInclude Include="ICompositorFactory.h" />
+    <ClInclude Include="IInstanceMeshBuffer.h" />
+    <ClInclude Include="IInstanceCollectionNode.h" />
+    <ClInclude Include="IInstanceNode.h" />
+    <ClInclude Include="IRenderableBuffer.h" />
     <ClInclude Include="ITexture2DArray.h" />
     <ClInclude Include="ITextureCube.h" />
     <ClInclude Include="IDepthStencilSurface.h" />
@@ -250,6 +257,8 @@
     <ClCompile Include="CDirectionalLightNode.cpp" />
     <ClCompile Include="CFpsCameraNode.cpp" />
     <ClCompile Include="CInputLayoutManager.cpp" />
+    <ClCompile Include="CInstanceCollectionNode.cpp" />
+    <ClCompile Include="CInstanceNode.cpp" />
     <ClCompile Include="CMeshManager.cpp" />
     <ClCompile Include="CModelFileParser.cpp" />
     <ClCompile Include="CModelMesh.cpp" />

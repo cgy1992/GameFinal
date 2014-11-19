@@ -4,6 +4,7 @@
 #include "IReferenceCounted.h"
 #include "CSortCodeAllocator.h"
 #include "gfMath.h"
+#include "D3DUtil.h"
 
 namespace gf
 {
@@ -23,6 +24,20 @@ namespace gf
 			:md3dDevice(pd3ddevice)
 		{
 
+		}
+
+		virtual ~CD3D11SamplerStateCache()
+		{
+			//std::map<u32, std::list<SD3D11SamplerStateWrapper>>		mSamplerStateWrappers;
+			for (auto it = mSamplerStateWrappers.begin(); it != mSamplerStateWrappers.end(); it++)
+			{
+				std::list<SD3D11SamplerStateWrapper>& wrappers = it->second;
+				for (auto sit = wrappers.begin(); sit != wrappers.end(); sit++)
+				{
+					ID3D11SamplerState* samplerState = sit->SamplerState;
+					ReleaseCOM(samplerState);
+				}
+			}
 		}
 
 		bool getSamplerState(const D3D11_SAMPLER_DESC& desc, SD3D11SamplerStateWrapper& wrapper, bool addIfNotFound = true)

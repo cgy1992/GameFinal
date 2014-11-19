@@ -21,6 +21,7 @@ namespace gf
 {
 	CD3D11Driver::CD3D11Driver(IDevice* device)
 		:mDevice(device)
+		, md3dDebug(nullptr)
 	{
 
 	}
@@ -148,6 +149,10 @@ namespace gf
 
 		if (FAILED(hr))
 			return false;
+
+#if defined(DEBUG) || defined(_DEBUG)
+		md3dDevice->QueryInterface(__uuidof(ID3D11Debug), reinterpret_cast<void**>(&md3dDebug));
+#endif
 
 		if (featureLevel != D3D_FEATURE_LEVEL_11_0)
 		{
@@ -370,6 +375,10 @@ namespace gf
 		  */
 
 		mDefaultRenderTarget->drop();
+		ReleaseCOM(D3D11DriverState.ShadowMapRasterizerState);
+
+		for (u32 i = 0; i < EST_SHADER_COUNT; i++)
+			clearShader(E_SHADER_TYPE(i));
 
 		ReleaseReferenceCounted(mMeshManager);
 		ReleaseReferenceCounted(mMaterialManager);
@@ -381,6 +390,13 @@ namespace gf
 
 		ReleaseReferenceCounted(mResourceFactory);
 		ReleaseReferenceCounted(mGeometryCreator);
+
+		ReleaseCOM(md3dSwapChain);
+		ReleaseCOM(md3dDeviceContext);
+		ReleaseCOM(md3dDevice);
+		//md3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+
+		ReleaseCOM(md3dDebug);
 	}
 
 	void CD3D11Driver::beginScene(

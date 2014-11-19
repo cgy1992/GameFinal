@@ -23,6 +23,7 @@ namespace gf
 	{
 		ENT_UNKNOWN,
 		ENT_SOLID_NODE,
+		ENT_INSTANCE_NODE,
 		ENT_CAMERA_NODE,
 		ENT_LIGHT_NODE
 	};
@@ -36,6 +37,8 @@ namespace gf
 		ESNT_MODEL_MESH = 0x11,		// 10001
 		ESNT_ANIMATED_MESH = 0x12,	// 10010
 		ESNT_TERRAIN_MESH = 0x13,   // 10011
+		ESNT_INSTANCE_MESH = 0x14,	// 10100
+		ESNT_INSTANCE_COLLECTION_MESH = 0x15, // 10101
 
 		ESNT_CAMERA = 0x20,			// 100000
 		ESNT_FPS_CAMERA = 0x21,		// 100001
@@ -102,13 +105,21 @@ namespace gf
 			}
 		}
 
-		virtual void destroy()
+		void destoryRecursion()
 		{
 			auto it = mChildren.begin();
 			for (; it != mChildren.end(); it++)
-				(*it)->destroy();
-
+			{
+				(*it)->destoryRecursion();
+			}
 			while (!this->drop());
+		}
+
+
+		virtual void destroy()
+		{
+			remove();
+			destoryRecursion();
 		}
 
 		virtual bool removeChild(ISceneNode* child)
@@ -344,6 +355,11 @@ namespace gf
 		virtual XMMATRIX getAbsoluteTransformation()
 		{
 			return XMLoadFloat4x4(&mAbsoluteTransformation);
+		}
+
+		virtual XMFLOAT4X4 getWorldTransformation() 
+		{
+			return mAbsoluteTransformation;
 		}
 
 		virtual void updateAbsoluteTransformation()

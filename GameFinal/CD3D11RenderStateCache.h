@@ -76,6 +76,9 @@ namespace gf
 
 		}
 
+		virtual ~CD3D11RenderStateCache();
+
+
 		u32 getRasterizerStateHashCode(const D3D11_RASTERIZER_DESC& desc)
 		{
 			/* | FrontCounterClockwise | FillMode | CullMode | DepthClipEnable | ScissorEnable | MultisampleEnable | AntialiasedLineEnable |

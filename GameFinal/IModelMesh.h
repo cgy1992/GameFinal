@@ -38,6 +38,10 @@ namespace gf
 
 		virtual void bind() = 0;
 
+		virtual void bind(IMeshBuffer* pInstanceBuffer) = 0;
+
+		virtual void drawSubsetInstanced(u32 subsetIndex, u32 instanceCount) const = 0;
+
 	protected:
 
 

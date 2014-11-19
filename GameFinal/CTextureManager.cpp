@@ -598,6 +598,21 @@ namespace gf
 		free(data);
 	}
 
+	CTextureManager::~CTextureManager()
+	{
+		destroyAll();
+		
+		for (auto it = mIdledRenderTargets.begin(); it != mIdledRenderTargets.end(); it++)
+		{
+			ReleaseReferenceCounted(it->Texture);
+		}
+
+		for (auto it = mIdledDepthStencilTextures.begin(); it != mIdledDepthStencilTextures.end(); it++)
+		{
+			ReleaseReferenceCounted(it->Texture);
+		}
+	}
+
 
 
 }

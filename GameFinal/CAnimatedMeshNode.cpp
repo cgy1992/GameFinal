@@ -6,12 +6,44 @@
 namespace gf
 {
 
-	bool CAnimatedMeshNode::setMaterial(IMaterial* material, u32 subset)
+	bool CAnimatedMeshNode::setMaterialName(const std::string& name)
+	{
+		IMaterial* material = mSceneManager->getVideoDriver()->getMaterialManager()->get(name);
+		if (material == nullptr)
+			return false;
+
+		return setMaterial(material);
+	}
+
+	bool CAnimatedMeshNode::setMaterialName(u32 subset, const std::string& name)
+	{
+		IMaterial* material = mSceneManager->getVideoDriver()->getMaterialManager()->get(name);
+		if (material == nullptr)
+			return false;
+
+		return setMaterial(subset, material);
+	}
+
+	bool CAnimatedMeshNode::setMaterial(u32 subset, IMaterial* material)
 	{
 		if (subset >= mMesh->getSubsetCount())
 			return false;
 
-		mMaterials[subset] = material;
+		if (material != mMaterials[subset])
+		{
+			ReleaseReferenceCounted(mMaterials[subset]);
+			mMaterials[subset] = material;
+			AddReferenceCounted(material);
+		}
+		return true;
+	}
+
+	bool CAnimatedMeshNode::setMaterial(IMaterial* material)
+	{
+		for (u32 i = 0; i < mMesh->getSubsetCount(); i++)
+		{
+			setMaterial(i, material);
+		}
 		return true;
 	}
 
@@ -21,19 +53,6 @@ namespace gf
 			return nullptr;
 
 		return mMaterials[subset];
-	}
-
-	bool CAnimatedMeshNode::setMaterialName(const std::string& name, u32 subset)
-	{
-		if (subset >= mMesh->getSubsetCount())
-			return false;
-
-		IMaterial* material = mSceneManager->getVideoDriver()->getMaterialManager()->get(name);
-		if (material == nullptr)
-			return false;
-
-		mMaterials[subset] = material;
-		return true;
 	}
 
 	void CAnimatedMeshNode::updateSubsetBones(const std::vector<SModelSubsetBone>& bones)
@@ -53,9 +72,17 @@ namespace gf
 
 	void CAnimatedMeshNode::render(E_PIPELINE_USAGE usage)
 	{
-		XMFLOAT4X4 preAbsoluteTransform;
+		renderInstanced(usage, 0, nullptr);
+	}
 
-		mMesh->bind();
+
+	void CAnimatedMeshNode::renderInstanced(E_PIPELINE_USAGE usage, u32 instanceCount, IMeshBuffer* instanceBuffer)
+	{
+		XMFLOAT4X4 preAbsoluteTransform;
+		if (instanceCount == 0)
+			mMesh->bind();
+		else
+			mMesh->bind(instanceBuffer);
 
 		IPipeline* prePipeline = nullptr; /* 记录前一个流水线 */
 		IMaterial* preMaterial = nullptr; /* 记录前一个子集的材质 */
@@ -94,9 +121,6 @@ namespace gf
 			if (!pipeline)
 				continue;
 
-			//	IPipeline* pipeline2 = subsets[0].Material->getPipeline(0);
-			//pipeline = subsets[subsets.size() - 1].Material->getPipeline(0);
-
 			// 如果该子集有动画，骨骼变换都是需要注入的
 			if (subsets[i].Skinned)
 			{
@@ -105,37 +129,39 @@ namespace gf
 					subsets[i].Bones.size());
 			}
 
-			CShaderVariableInjection::inject(this, pipeline, i);
-			pipeline->apply(usage);
-			/*
+			//CShaderVariableInjection::inject(this, pipeline, i);
+			//pipeline->apply(usage);
+			
 
 			//如果当前的流水线和上一条相同，则除了材质外的其他变量不用注入
 			if (pipeline == prePipeline)
 			{
-			//当且仅当材质也不同于上一个时才注入
-			if (preMaterial != material)
-			{
-			CShaderVariableInjection::injectMaterial(material, pipeline);
-			pipeline->apply();
-			}
+				//当且仅当材质也不同于上一个时才注入
+				if (preMaterial != material)
+				{
+					CShaderVariableInjection::injectMaterial(material, pipeline);
+					pipeline->apply(usage);
+				}
 			}
 			else // 如果两条流水线不同，全部变量都需要更新
 			{
-			CShaderVariableInjection::inject(this, pipeline, i);
-			pipeline->apply();
-			prePipeline = pipeline;
+				CShaderVariableInjection::inject(this, pipeline, i);
+				pipeline->apply(usage);
+				prePipeline = pipeline;
 			}
-			*/
+			
+			if (instanceCount == 0)
+				mMesh->drawSubset(i);
+			else
+				mMesh->drawSubsetInstanced(i, instanceCount);
 
-			mMesh->drawSubset(i);
-
-			// 如果世界变换经过了改变，则需要回复 
+			// 如果世界变换经过了改变，则需要恢复
 			if (!subsets[i].Skinned && subsets[i].BoneId >= 0)
 			{
 				mAbsoluteTransformation = preAbsoluteTransform;
 			}
 
-			//preMaterial = material;
+			preMaterial = material;
 		}
 
 	}

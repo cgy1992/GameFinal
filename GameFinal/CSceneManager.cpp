@@ -14,6 +14,7 @@
 #include "CCompositor.h"
 #include "CDirectionalLightNode.h"
 #include "CPointLightNode.h"
+#include "CInstanceCollectionNode.h"
 
 namespace gf
 {
@@ -47,6 +48,8 @@ namespace gf
 		// create default octree.
 		mDefaultOctree = this->addOctreeManagerNode(nullptr, aabb.Extents.x * 2.0f, aabb.Extents.y * 2.0f,
 			aabb.Extents.z * 2.0f, aabb.Center, 8);
+
+		// detach the octree from the scene manager.
 		mDefaultOctree->remove();
 	}
 	
@@ -57,9 +60,14 @@ namespace gf
 
 	CSceneManager::~CSceneManager()
 	{
-		//ReleaseReferenceCounted(mGeometryCreator);
-		//ReleaseReferenceCounted(mSkyDomeNode);
+		//mDefaultOctree->update();
+		mDefaultOctree->destroy();
+
+		if (mSkyDomeNode)
+			mSkyDomeNode->destroy();
+
 		ReleaseReferenceCounted(mQuadMeshNode);
+		ReleaseListElementCounted(mCompositors);
 	}
 
 	ISceneNode* CSceneManager::addEmptyNode(
@@ -136,6 +144,31 @@ namespace gf
 		return node;
 	}
 
+	IInstanceCollectionNode* CSceneManager::addInstanceCollectionNode(
+		IMesh* mesh,
+		ISceneNode* parent,
+		u32 maxInstanceNum,
+		u32 eachInstanceDataSize,
+		const XMFLOAT3& position,
+		const XMFLOAT3& rotation,
+		const XMFLOAT3& scale)
+	{
+		if (!mesh)
+			return nullptr;
+
+		if (!parent)
+			parent = this;
+
+		CInstanceCollectionNode* node = new CInstanceCollectionNode(nullptr, this, position, rotation, scale);
+		if (!node->init(mesh, maxInstanceNum, eachInstanceDataSize))
+		{
+			ReleaseReferenceCounted(node);
+		}
+
+		parent->addChild(node);
+		return node;
+	}
+
 	ITerrainNode* CSceneManager::addTerrainNode(
 		ITerrainMesh* mesh,
 		IMaterial* material,
@@ -181,18 +214,24 @@ namespace gf
 
 	void CSceneManager::registerNodeForRendering(IMeshNode* node, E_NODE_TYPE nodeType)
 	{
-		if (nodeType == ENT_SOLID_NODE)
+		if (!node->needCulling() || !isCulled(node))
 		{
-			if (!node->needCulling() || !isCulled(node))
+			if (!mVideoDriver->isRenderingShadowMap() ||
+				node->isShadowCaster(mCurrentShadowLightID))
 			{
-				if (!mVideoDriver->isRenderingShadowMap() ||
-					node->isProjectingShadow(mCurrentShadowLightID))
+				if (nodeType == ENT_SOLID_NODE)
 				{
 					collectMeshNodeShaders(node);
 					mSolidNodes.push_back(node);
 				}
+				else if (nodeType == ENT_INSTANCE_NODE)
+				{
+					IInstanceNode* instanceNode = dynamic_cast<IInstanceNode*>(node);
+					instanceNode->registerToCollectionForRendering();
+				}
 			}
 		}
+
 	}
 
 	void CSceneManager::registerNodeForRendering(ILightNode* node)

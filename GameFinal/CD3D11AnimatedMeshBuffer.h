@@ -27,6 +27,8 @@ namespace gf
 
 		}
 
+		virtual ~CD3D11AnimatedMeshBuffer();
+
 		bool init(void* vertices,
 			void* animateVertices,
 			void* indices,
@@ -43,17 +45,12 @@ namespace gf
 
 		void drawIndexed(u32 start, u32 count, u32 baseVertex);
 
-		virtual ~CD3D11AnimatedMeshBuffer()
-		{
-			ReleaseCOM(md3dVertexBuffer);
-			ReleaseCOM(md3dAnimateVertexBuffer);
-			ReleaseCOM(md3dIndexBuffer);
-		}
-
+		/*
 		virtual E_MESH_TYPE getType() const
 		{
 			return EMT_ANIMATE_MODEL_MESH;
 		}
+		*/
 
 	private:
 		ID3D11Device*			md3dDevice;

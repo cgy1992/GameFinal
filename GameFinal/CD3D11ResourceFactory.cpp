@@ -37,7 +37,8 @@ namespace gf
 
 	CD3D11ResourceFactory::~CD3D11ResourceFactory()
 	{
-		md3dRenderStateCache->drop();
+		ReleaseReferenceCounted(md3dRenderStateCache);
+		ReleaseReferenceCounted(md3dSamplerStateCache);
 	}
 
 
