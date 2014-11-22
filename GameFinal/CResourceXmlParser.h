@@ -71,7 +71,7 @@ namespace gf
 		bool handleShaderVariableNode(const std::string& filepath,
 			E_SHADER_TYPE shaderType,
 			tinyxml2::XMLElement* node,
-			SPipelineCreateParams& createParams) const;
+			SShaderCreateParams& createParams) const;
 
 		bool handleShaderMacroNode(E_SHADER_TYPE shaderType,
 			tinyxml2::XMLElement* node, 
@@ -104,10 +104,14 @@ namespace gf
 			tinyxml2::XMLElement* node,
 			SMaterialCreateParams& createParams) const;
 
+		bool handleMaterialPipelineNode(const std::string& filepath,
+			tinyxml2::XMLElement* node,
+			SMaterialCreateParams& createParams) const;
+
 		/* handle <texture> element in material file. */
 		bool handleMaterialTextureNode(const std::string& filepath,
 			const std::string& materialName,
-			tinyxml2::XMLElement* node, SMaterialTextureParam& param) const;
+			tinyxml2::XMLElement* node, SMaterialCreateParams& createParams) const;
 
 
 		/* 顶点格式的文本形式与枚举类型的映射 */

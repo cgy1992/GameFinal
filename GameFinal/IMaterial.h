@@ -185,7 +185,7 @@ namespace gf
 		std::string								mName;
 		u32										mSortCode;
 		IPipeline*								mPipelines[EPU_COUNT];
-		ITexture*								mTextures[8];
+		ITexture*								mTextures[MAX_TEXTURE_COUNT];
 		std::map<std::string, XMFLOAT4>			mAttributes;
 	};
 

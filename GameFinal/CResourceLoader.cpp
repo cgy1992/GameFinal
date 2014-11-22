@@ -72,37 +72,19 @@ namespace gf
 		}
 
 
-		u32 shaderCount = createParams.Shaders.size();
-		IShader* shaders[5];
-		IShader* vertexShader;
-		for (u32 i = 0; i < shaderCount; i++)
+		IShader* shaders[5] = { 0 };
+		u32 shaderCount = 0;
+		IShader* vertexShader = nullptr;
+		for (u32 i = 0; i < EST_SHADER_COUNT; i++)
 		{
-			const IResourceXmlParser::SShaderCreateParams shaderCreateParams = createParams.Shaders[i];
+			const IResourceXmlParser::SShaderCreateParams& shaderCreateParams = createParams.Shaders[i];
+			if (!shaderCreateParams.Valid)
+				continue;
+
 			std::string shaderName = mShaderManager->makeUpShaderName(shaderCreateParams.FileName, shaderCreateParams.FunctionName);
 			IShader* shader = mShaderManager->get(shaderName, shaderCreateParams.Macros, true, shaderCreateParams.Type);
 
-			/*
-			if (!shader)
-			{
-				std::string shaderFullPath;
-				if (!mResourceGroupManager->getFullPath(shaderCreateParams.FileName, shaderFullPath))
-				{
-					GF_PRINT_CONSOLE_INFO("Pipeline '%s' creation failed. Because the shader file '%s' doesn't exist.\n",
-						createParams.Name.c_str(), shaderCreateParams.FileName.c_str());
-					return false;
-				}
-
-				shader = mShaderManager->load(shaderCreateParams.Type, shaderCreateParams.FileName, shaderCreateParams.FunctionName);
-				if (shader == nullptr)
-				{
-					GF_PRINT_CONSOLE_INFO("Pipeline '%s' creation failed. Due to the '%s' function in '%s' shader file.\n",
-						createParams.Name.c_str(), shaderCreateParams.FunctionName.c_str(), shaderFullPath.c_str());
-					return false;
-				}
-			}
-			*/
-
-			shaders[i] = shader;
+			shaders[shaderCount++] = shader;
 			/* find the vertex shader, which will be used to create input-layout soon.*/
 			if (shader->getType() == EST_VERTEX_SHADER)
 			{
@@ -172,10 +154,14 @@ namespace gf
 			return false;
 		}
 
-		/* set the shader auto-inject variables. */
-		for (u32 i = 0; i < createParams.ShaderAutoVariables.size(); i++)
+		for (u32 i = 0; i < EST_SHADER_COUNT; i++)
 		{
-			pipeline->addShaderAutoVariable(createParams.ShaderAutoVariables[i]);
+			const IResourceXmlParser::SShaderCreateParams& shaderCreateParams = createParams.Shaders[i];
+			if (shaderCreateParams.Valid)
+			{
+				for (u32 j = 0; j < shaderCreateParams.ShaderAutoVariables.size(); j++)
+					pipeline->addShaderAutoVariable(shaderCreateParams.ShaderAutoVariables[j]);
+			}
 		}
 
 		/* create sampler object */
@@ -279,10 +265,10 @@ namespace gf
 
 		IPipeline* pipelines[EPU_COUNT] = { 0 };
 
-		for (u32 i = 0; i < createParams.PipelineNames.size(); i++)
+		for (u32 i = 0; i < createParams.PipelineParams.size(); i++)
 		{
-			const std::string& pipelineName = createParams.PipelineNames[i];
-			E_PIPELINE_USAGE usage = createParams.PipelineUsages[i];
+			const std::string& pipelineName = createParams.PipelineParams[i].Name;
+			E_PIPELINE_USAGE usage = createParams.PipelineParams[i].Usage;
 
 			IPipeline* pipeline = mPipelineManager->get(pipelineName);
 			if (!pipeline)

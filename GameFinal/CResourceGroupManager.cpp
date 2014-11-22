@@ -474,36 +474,48 @@ namespace gf
 
 	}
 
-	IPipeline* CResourceGroupManager::loadPipeline(const std::string& pipelineName)
+	bool CResourceGroupManager::getPipelineFilePath(const std::string& pipelineName, std::string& filepath) const
 	{
 		auto it = mPipelineNameAndFileNameIndexMapping.find(pipelineName);
 		if (it != mPipelineNameAndFileNameIndexMapping.end())
 		{
 			u32 index = it->second;
 			const std::string& filename = mPipelineFileNames[index];
-			std::string filepath;
 			if (getFullPath(filename, filepath, ERFT_PIPELINE_XML))
-			{
-				return mResourceLoader->loadPipeline(pipelineName, filepath);
-			}
+				return true;
 		}
-		return nullptr;
+		return false;
 	}
 
-	IMaterial* CResourceGroupManager::loadMaterial(const std::string& materialName)
+	IPipeline* CResourceGroupManager::loadPipeline(const std::string& pipelineName)
+	{
+		std::string filepath;
+		if (!getPipelineFilePath(pipelineName, filepath))
+			return nullptr;
+
+		return mResourceLoader->loadPipeline(pipelineName, filepath);
+	}
+
+	bool CResourceGroupManager::getMaterialFilePath(const std::string& materialName, std::string& filepath) const
 	{
 		auto it = mMaterialNameAndFileNameIndexMapping.find(materialName);
 		if (it != mMaterialNameAndFileNameIndexMapping.end())
 		{
 			u32 index = it->second;
 			const std::string& filename = mMaterialFileNames[index];
-			std::string filepath;
 			if (getFullPath(filename, filepath, ERFT_MATERIAL_XML))
-			{
-				return mResourceLoader->loadMaterial(materialName, filepath);
-			}
+				return true;
 		}
-		return nullptr;
+		return false;
+	}
+
+	IMaterial* CResourceGroupManager::loadMaterial(const std::string& materialName)
+	{
+		std::string filepath;
+		if (!getMaterialFilePath(materialName, filepath))
+			return nullptr;
+
+		return mResourceLoader->loadMaterial(materialName, filepath);
 	}
 
 	IMesh* CResourceGroupManager::loadMesh(const std::string& name)

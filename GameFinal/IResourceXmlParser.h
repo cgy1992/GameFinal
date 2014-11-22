@@ -14,10 +14,42 @@ namespace gf
 		/* 该结构体用来存储创建一个shader所需的数据 */
 		struct SShaderCreateParams
 		{
-			E_SHADER_TYPE					Type;
-			std::string						FileName;
-			std::string						FunctionName;
-			SShaderMacroSet					Macros;
+			bool								Valid;
+			E_SHADER_TYPE						Type;
+			std::string							FileName;
+			std::string							FunctionName;
+			SShaderMacroSet						Macros;
+			std::vector<SShaderAutoVariable>	ShaderAutoVariables;
+
+			SShaderCreateParams()
+				:Valid(false)
+			{
+				FunctionName = "";
+				FileName = "";
+			}
+
+			void reset()
+			{
+				Valid = false;
+				FileName = "";
+				FunctionName = "";
+				Macros.reset();
+				ShaderAutoVariables.clear();
+			}
+
+			void addShaderVariable(const SShaderAutoVariable& shaderVariable)
+			{
+				// check if already exists.
+				for (u32 i = 0; i < ShaderAutoVariables.size(); i++)
+				{
+					if (ShaderAutoVariables[i].VariableName == shaderVariable.VariableName)
+					{
+						ShaderAutoVariables[i] = shaderVariable;
+						return;
+					}
+				}
+				ShaderAutoVariables.push_back(shaderVariable);
+			}
 		};
 
 		struct SRenderStateCreateParams
@@ -31,8 +63,7 @@ namespace gf
 		struct SPipelineCreateParams
 		{
 			std::string								Name;
-			std::vector<SShaderCreateParams>		Shaders;
-			std::vector<SShaderAutoVariable>		ShaderAutoVariables;
+			SShaderCreateParams						Shaders[EST_SHADER_COUNT];
 			std::vector<SInputLayoutElement>		InputLayoutElements;
 			E_PRIMITIVE_TYPE						PrimitiveType;
 			std::vector<SRenderStateCreateParams>	RenderStates;
@@ -42,6 +73,25 @@ namespace gf
 			{
 				//std::fill(Shaders, Shaders + EST_SHADER_COUNT, nullptr);
 				PrimitiveType = EPT_TRIANGLELIST;
+			}
+
+			void addRenderState(const SRenderStateCreateParams& renderState)
+			{
+				for (u32 i = 0; i < RenderStates.size(); i++)
+				{
+					if (RenderStates[i].StateType == renderState.StateType)
+					{
+						RenderStates[i] = renderState;
+						return;
+					}
+				}
+
+				RenderStates.push_back(renderState);
+			}
+
+			void addSampler(const std::string& name, const SSamplerDesc& desc)
+			{
+				SamplerDescs[name] = desc;
 			}
 		};
 
@@ -57,13 +107,57 @@ namespace gf
 			XMFLOAT4								Value;
 		};
 
+		struct SMaterialPipelineParam
+		{
+			std::string								Name;
+			E_PIPELINE_USAGE						Usage;
+		};
+
 		struct SMaterialCreateParams
 		{
 			std::string								Name;
 			std::vector<SMaterialAttributeParam>	AttributeParams;
-			std::vector<std::string>				PipelineNames;
-			std::vector<E_PIPELINE_USAGE>			PipelineUsages;
+			std::vector<SMaterialPipelineParam>		PipelineParams;
 			std::vector<SMaterialTextureParam>		TextureParams;
+
+			void addAttribute(const SMaterialAttributeParam& param)
+			{
+				for (u32 i = 0; i < AttributeParams.size(); i++)
+				{
+					if (AttributeParams[i].Name == param.Name)
+					{
+						AttributeParams[i] = param;
+						return;
+					}
+				}
+				AttributeParams.push_back(param);
+			}
+
+			void addTexture(const SMaterialTextureParam& param)
+			{
+				for (u32 i = 0; i < TextureParams.size(); i++)
+				{
+					if (TextureParams[i].Name == param.Name)
+					{
+						TextureParams[i] = param;
+						return;
+					}
+				}
+				TextureParams.push_back(param);
+			}
+
+			void addPipeline(const SMaterialPipelineParam& param)
+			{
+				for (u32 i = 0; i < PipelineParams.size(); i++)
+				{
+					if (PipelineParams[i].Name == param.Name)
+					{
+						PipelineParams[i] = param;
+						return;
+					}
+				}
+				PipelineParams.push_back(param);
+			}
 		};
 
 		struct SRenderTargetParams

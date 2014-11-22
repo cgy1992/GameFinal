@@ -70,6 +70,11 @@ namespace gf
 			return mShaderMacros.size();
 		}
 
+		void reset()
+		{
+			mShaderMacros.clear();
+		}
+
 		void set(const std::string& name, const std::string& definition)
 		{
 			for (auto it = mShaderMacros.begin(); it != mShaderMacros.end(); it++)

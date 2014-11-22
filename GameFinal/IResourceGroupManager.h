@@ -53,6 +53,10 @@ namespace gf
 
 		virtual IMaterial* loadMaterial(const std::string& materialName) = 0;
 
+		virtual bool getPipelineFilePath(const std::string& pipelineName, std::string& path) const = 0;
+
+		virtual bool getMaterialFilePath(const std::string& materialName, std::string& path) const = 0;
+
 		virtual IMesh* loadMesh(const std::string& name) = 0;
 
 		virtual bool getFullPath(const std::string& resourceFileName, 
@@ -62,6 +66,8 @@ namespace gf
 		virtual bool getDirectoryPath(const std::string& resourceFileName,
 			std::string& dirPath,
 			E_RESOURCE_FILE_TYPE filetype = ERFT_UNKNOWN) const = 0;
+
+		
 
 	protected:
 

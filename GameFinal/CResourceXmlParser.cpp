@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "CResourceXmlParser.h"
+#include "IResourceGroupManager.h"
+
 #include <algorithm>
 namespace gf
 {
@@ -230,8 +232,21 @@ namespace gf
 
 	}
 
-	bool CResourceXmlParser::handlePipelineNode(const std::string& filepath, tinyxml2::XMLElement* pipeline_node, SPipelineCreateParams& createParams) const
+	bool CResourceXmlParser::handlePipelineNode(const std::string& filepath, 
+		tinyxml2::XMLElement* pipeline_node, SPipelineCreateParams& createParams) const
 	{
+		/* get prototype */
+		const char* prototype = pipeline_node->Attribute("prototype");
+		if (prototype)
+		{
+			std::string path;
+			IResourceGroupManager* rgmr = IResourceGroupManager::getInstance()->getInstance();
+			if (rgmr->getPipelineFilePath(prototype, path))
+			{
+				parseOnePipeline(path, prototype, createParams);
+			}
+		}
+
 		/* get the name of pipeline. */
 		const char* pipeline_name = pipeline_node->Attribute("name");
 		if (pipeline_name)
@@ -239,7 +254,7 @@ namespace gf
 
 		/* get the primitive type of pipeline. */
 		tinyxml2::XMLElement* primitive_type_node = pipeline_node->FirstChildElement("primitive-type");
-		createParams.PrimitiveType = EPT_TRIANGLELIST;
+		//createParams.PrimitiveType = EPT_TRIANGLELIST;
 		if (primitive_type_node)
 		{
 			const char* primitive_type_text = primitive_type_node->Attribute("value");
@@ -254,72 +269,73 @@ namespace gf
 
 		/* get the input-layout */
 		tinyxml2::XMLElement* input_layout_node = pipeline_node->FirstChildElement("input-layout");
-		if (!input_layout_node)
+		/* if it has no input-layout node, its parent doesn't have either.*/
+		if (!input_layout_node && createParams.InputLayoutElements.empty())
 		{
 			GF_PRINT_CONSOLE_INFO("The <pipeline> doesn't have <input-layout> element in pipeline file (%s).\n", filepath.c_str());
 			return false;
 		}
 
-		tinyxml2::XMLElement* element_node = input_layout_node->FirstChildElement("element");
-
-		u32 slotOffsets[16];
-		memset(slotOffsets, 0, sizeof(slotOffsets));
-
-		while (element_node)
+		if (input_layout_node)
 		{
-			SInputLayoutElement element;
-			if (!handleInputLayoutElementNode(filepath, element_node, element))
-				return false;
+			createParams.InputLayoutElements.clear();
 
-			element.Offset = slotOffsets[element.Slot];
-			slotOffsets[element.Slot] += getFormatOffset(element.Format);
+			tinyxml2::XMLElement* element_node = input_layout_node->FirstChildElement("element");
 
-			createParams.InputLayoutElements.push_back(element);
-			element_node = element_node->NextSiblingElement("element");
+			u32 slotOffsets[16];
+			memset(slotOffsets, 0, sizeof(slotOffsets));
+
+			while (element_node)
+			{
+				SInputLayoutElement element;
+				if (!handleInputLayoutElementNode(filepath, element_node, element))
+					return false;
+
+				element.Offset = slotOffsets[element.Slot];
+				slotOffsets[element.Slot] += getFormatOffset(element.Format);
+
+				createParams.InputLayoutElements.push_back(element);
+				element_node = element_node->NextSiblingElement("element");
+			}
 		}
 
 		// get the shaders root node
 		tinyxml2::XMLElement* shaders_node = pipeline_node->FirstChildElement("shaders");
-		if (!shaders_node)
+		if (shaders_node)
 		{
-			GF_PRINT_CONSOLE_INFO("The <pipeline> doesn't have <shaders> element in pipeline file (%s).\n", filepath.c_str());
-			return false;
-		}
+			// get vertex shader, which is necessary.
+			tinyxml2::XMLElement* vertex_shader_node = shaders_node->FirstChildElement("vertex-shader");
+			if (vertex_shader_node)
+			{
+				handleShaderNode(filepath, EST_VERTEX_SHADER, vertex_shader_node, createParams);
+			}
 
-		// get vertex shader, which is necessary.
-		tinyxml2::XMLElement* vertex_shader_node = shaders_node->FirstChildElement("vertex-shader");
-		if (!vertex_shader_node)
-		{
-			GF_PRINT_CONSOLE_INFO("The <pipeline> doesn't have <vertex-shader> in pipeline file (%s).\n", filepath.c_str());
-			return false;
-		}
-		handleShaderNode(filepath, EST_VERTEX_SHADER, vertex_shader_node, createParams);
+			tinyxml2::XMLElement* pixel_shader_node = shaders_node->FirstChildElement("pixel-shader");
+			if (pixel_shader_node)
+			{
+				handleShaderNode(filepath, EST_PIXEL_SHADER, pixel_shader_node, createParams);
+			}
 
-		tinyxml2::XMLElement* pixel_shader_node = shaders_node->FirstChildElement("pixel-shader");
-		if (pixel_shader_node)
-		{
-			handleShaderNode(filepath, EST_PIXEL_SHADER, pixel_shader_node, createParams);
-		}
+			//get hull shader
+			tinyxml2::XMLElement* hull_shader_node = shaders_node->FirstChildElement("hull-shader");
+			if (hull_shader_node)
+			{
+				handleShaderNode(filepath, EST_HULL_SHADER, hull_shader_node, createParams);
+			}
 
-		//get hull shader
-		tinyxml2::XMLElement* hull_shader_node = shaders_node->FirstChildElement("hull-shader");
-		if (hull_shader_node)
-		{
-			handleShaderNode(filepath, EST_HULL_SHADER, hull_shader_node, createParams);
-		}
+			//get domain shader
+			tinyxml2::XMLElement* domain_shader_node = shaders_node->FirstChildElement("domain-shader");
+			if (domain_shader_node)
+			{
+				handleShaderNode(filepath, EST_DOMAIN_SHADER, domain_shader_node, createParams);
+			}
 
-		//get domain shader
-		tinyxml2::XMLElement* domain_shader_node = shaders_node->FirstChildElement("domain-shader");
-		if (domain_shader_node)
-		{
-			handleShaderNode(filepath, EST_DOMAIN_SHADER, domain_shader_node, createParams);
-		}
-
-		//get geometry shader
-		tinyxml2::XMLElement* geometry_shader_node = shaders_node->FirstChildElement("geometry-shader");
-		if (geometry_shader_node)
-		{
-			handleShaderNode(filepath, EST_GEOMETRY_SHADER, geometry_shader_node, createParams);
+			//get geometry shader
+			tinyxml2::XMLElement* geometry_shader_node = shaders_node->FirstChildElement("geometry-shader");
+			if (geometry_shader_node)
+			{
+				handleShaderNode(filepath, EST_GEOMETRY_SHADER, geometry_shader_node, createParams);
+			}
 		}
 
 		/* get render states */
@@ -402,7 +418,8 @@ namespace gf
 		return EPT_UNDEFINED;
 	}
 
-	bool CResourceXmlParser::handleInputLayoutElementNode(const std::string& filepath, tinyxml2::XMLElement* node, SInputLayoutElement& element) const
+	bool CResourceXmlParser::handleInputLayoutElementNode(const std::string& filepath, 
+		tinyxml2::XMLElement* node, SInputLayoutElement& element) const
 	{
 		// the 'semantic-name' and 'format' attributes are necessary, others are optional. 
 		const char* semanticName = node->Attribute("semantic");
@@ -470,28 +487,38 @@ namespace gf
 		tinyxml2::XMLElement* node,
 		SPipelineCreateParams& createParams) const
 	{
-		SShaderCreateParams shaderCreateParams;
+		SShaderCreateParams& shaderCreateParams = createParams.Shaders[shaderType];
 		shaderCreateParams.Type = shaderType;
+		shaderCreateParams.Valid = true;
 
 		const char* shaderFilename = node->Attribute("file");
-		if (!shaderFilename)
+		if (shaderFilename)
 		{
-			GF_PRINT_CONSOLE_INFO("A 'file' attribute must be in the <'%s'> element in the %s.\n",
-				node->Name(), filepath.c_str());
-			return false;
+			if (_stricmp(shaderFilename, "null") == 0)
+			{
+				shaderCreateParams.reset();
+				return true;
+			}
+			shaderCreateParams.FileName = shaderFilename;
 		}
-
-		shaderCreateParams.FileName = shaderFilename;
 
 		const char* functionName = node->Attribute("main");
-		if (!functionName)
+		if (functionName)
 		{
-			GF_PRINT_CONSOLE_INFO("A 'main' attribute must be in the <'%s'> element in the %s.\n",
-				node->Name(), filepath.c_str());
+			shaderCreateParams.FunctionName = functionName;
+		}
+
+		if (shaderCreateParams.FileName == "")
+		{
+			GF_PRINT_CONSOLE_INFO("shader(%s) name cannot be empty.\n", filepath.c_str());
 			return false;
 		}
 
-		shaderCreateParams.FunctionName = functionName;
+		if (shaderCreateParams.FunctionName == "")
+		{
+			GF_PRINT_CONSOLE_INFO("shader(%s) function name cannot be empty.\n", filepath.c_str());
+			return false;
+		}
 
 		// find macros of this shader.
 		tinyxml2::XMLElement* macro_node = node->FirstChildElement("macro");
@@ -506,11 +533,9 @@ namespace gf
 
 		while (variable_node)
 		{
-			handleShaderVariableNode(filepath, shaderType, variable_node, createParams);
+			handleShaderVariableNode(filepath, shaderType, variable_node, createParams.Shaders[shaderType]);
 			variable_node = variable_node->NextSiblingElement("variable");
 		}
-
-		createParams.Shaders.push_back(shaderCreateParams);
 
 		return true;
 	}
@@ -518,7 +543,7 @@ namespace gf
 	bool CResourceXmlParser::handleShaderVariableNode(const std::string& filepath,
 		E_SHADER_TYPE shaderType,
 		tinyxml2::XMLElement* node,
-		SPipelineCreateParams& createParams) const
+		SShaderCreateParams& createParams) const
 	{
 		const char* variableName = node->Attribute("name");
 		if (!variableName)
@@ -579,8 +604,7 @@ namespace gf
 			var.UpdateFrequency = freq;
 		}
 
-		createParams.ShaderAutoVariables.push_back(var);
-
+		createParams.addShaderVariable(var);
 		return true;
 	}
 
@@ -689,7 +713,7 @@ namespace gf
 
 		if (bValidRenderState)
 		{
-			createParams.RenderStates.push_back(rsCreateParams);
+			createParams.addRenderState(rsCreateParams);
 		}
 		else
 		{
@@ -779,7 +803,7 @@ namespace gf
 		if (value_str)
 			desc.BorderColor = getVectorFromString(value_str);
 
-		createParams.SamplerDescs.insert(std::make_pair(name, desc));
+		createParams.addSampler(name, desc);
 		return true;
 	}
 
@@ -1098,6 +1122,17 @@ namespace gf
 		tinyxml2::XMLElement* node,
 		SMaterialCreateParams& createParams) const
 	{
+		const char* prototype = node->Attribute("prototype");
+		if (prototype)
+		{
+			std::string path;
+			IResourceGroupManager* rgmr = IResourceGroupManager::getInstance()->getInstance();
+			if (rgmr->getMaterialFilePath(prototype, path))
+			{
+				parseOneMaterial(path, prototype, createParams);
+			}
+		}
+
 		const char* name = node->Attribute("name");
 		if (!name)
 		{
@@ -1122,33 +1157,14 @@ namespace gf
 
 		/* handle the pipelines */
 		tinyxml2::XMLElement* pipelines_node = node->FirstChildElement("pipelines");
-		if (!pipelines_node)
+		if (pipelines_node)
 		{
-			GF_PRINT_CONSOLE_INFO("The material '%s' must have a <pipelines> node, and at least one <pipeline> sub-node \
-								  				in the file(%s).\n", name, filepath.c_str());
-
-			return false;
-		}
-
-		tinyxml2::XMLElement* pipeline_node = pipelines_node->FirstChildElement("pipeline");
-		while (pipeline_node)
-		{
-			const char* pipelineName = pipeline_node->Attribute("name");
-			if (pipelineName)
+			tinyxml2::XMLElement* pipeline_node = pipelines_node->FirstChildElement("pipeline");
+			while (pipeline_node)
 			{
-				E_PIPELINE_USAGE usage = getPipelineUsage(pipeline_node->Attribute("usage"));
-				createParams.PipelineNames.push_back(pipelineName);
-				createParams.PipelineUsages.push_back(usage);
+				handleMaterialPipelineNode(filepath, pipeline_node, createParams);
+				pipeline_node = pipeline_node->NextSiblingElement("pipeline");
 			}
-			pipeline_node = pipeline_node->NextSiblingElement("pipeline");
-		}
-
-		// the material at least has one pipeline
-		if (createParams.PipelineNames.empty())
-		{
-			GF_PRINT_CONSOLE_INFO("The material named '%s' must at least have one valid pipeline. (file location: %s).\n",
-				name, filepath.c_str());
-			return false;
 		}
 
 		/* handle the textures */
@@ -1156,29 +1172,10 @@ namespace gf
 		if (textures_node)
 		{
 			tinyxml2::XMLElement* texture_node = textures_node->FirstChildElement("texture");
-			/* 这个数组用来记录每个层中纹理的个数（共8层），如果某层的纹理数超过1，则给出警告. */
-			u32 textureIndexOccupies[8] = { 0 };
 			while (texture_node)
 			{
-				SMaterialTextureParam textureParam;
-				if (handleMaterialTextureNode(filepath, createParams.Name, texture_node, textureParam))
-				{
-					createParams.TextureParams.push_back(textureParam);
-					textureIndexOccupies[textureParam.Index]++;
-				}
+				handleMaterialTextureNode(filepath, createParams.Name, texture_node, createParams);
 				texture_node = texture_node->NextSiblingElement("texture");
-			}
-
-			/* check if two textures with the same index. if so, give warning. */
-			for (u32 i = 0; i < MAX_TEXTURE_COUNT; i++)
-			{
-				if (textureIndexOccupies[i] > 1)
-				{
-					GF_PRINT_CONSOLE_INFO("WARNING: The material '%s' has textures with same index, \
-										  								 which may cause an error at runtime. (file location: %s)",
-																		 name, filepath.c_str());
-					break;
-				}
 			}
 		}
 
@@ -1187,7 +1184,7 @@ namespace gf
 
 	bool CResourceXmlParser::handleMaterialTextureNode(const std::string& filepath,
 		const std::string& materialName,
-		tinyxml2::XMLElement* node, SMaterialTextureParam& param) const
+		tinyxml2::XMLElement* node, SMaterialCreateParams& createParams) const
 	{
 		const char* textureName = node->Attribute("name");
 		if (!textureName)
@@ -1198,8 +1195,17 @@ namespace gf
 		}
 
 		u32 index = node->UnsignedAttribute("index");
+		if (index >= MAX_TEXTURE_COUNT)
+		{
+			GF_PRINT_CONSOLE_INFO("Texture index cannot exceed %d,(material:%s, file:%s)\n",
+				MAX_TEXTURE_COUNT - 1, materialName.c_str(), filepath.c_str());
+
+			return false;
+		}
+		SMaterialTextureParam param;
 		param.Name = textureName;
 		param.Index = index;
+		createParams.addTexture(param);
 
 		return true;
 	}
@@ -1310,11 +1316,26 @@ namespace gf
 				SMaterialAttributeParam attrParam;
 				attrParam.Name = name;
 				attrParam.Value = val;
-				createParams.AttributeParams.push_back(attrParam);
+				createParams.addAttribute(attrParam);
 				return true;
 			}
 		}
 
+		return false;
+	}
+
+	bool CResourceXmlParser::handleMaterialPipelineNode(const std::string& filepath,
+		tinyxml2::XMLElement* node,
+		SMaterialCreateParams& createParams) const
+	{
+		const char* pipelineName = node->Attribute("name");
+		if (pipelineName)
+		{
+			SMaterialPipelineParam param;
+			param.Name = pipelineName;
+			param.Usage = getPipelineUsage(node->Attribute("usage"));
+			createParams.addPipeline(param);
+		}
 		return false;
 	}
 
@@ -1326,7 +1347,15 @@ namespace gf
 		{
 			const char* value = node->Attribute("value");
 			if (!value) value = "";
-			createParams.Macros.set(name, value);
+
+			if (_stricmp(value, "null") == 0)
+			{
+				createParams.Macros.remove(name);
+			}
+			else
+			{
+				createParams.Macros.set(name, value);
+			}
 			return true;
 		}
 		return false;
