@@ -22,10 +22,12 @@ namespace gf
 	public:
 		IMesh(const std::string& name,
 			u32 sortcode,
-			const math::SAxisAlignedBox& aabb)
+			const math::SAxisAlignedBox& aabb,
+			u32 vertexFormat)
 			:mName(name)
 			, mSortCode(sortcode)
 			, mAabb(aabb)
+			, mVertexFormat(vertexFormat)
 		{
 
 		}
@@ -49,11 +51,16 @@ namespace gf
 			return mAabb;
 		}
 
+		u32 getVertexFormat() const
+		{
+			return mVertexFormat;
+		}
+
 	protected:
 		u32					mSortCode;
 		const std::string	mName;
 		math::SAxisAlignedBox		mAabb;
-
+		u32					mVertexFormat;
 	};
 
 }

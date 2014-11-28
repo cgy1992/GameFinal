@@ -14,6 +14,8 @@ using namespace gf;
 #pragma comment(lib, "assimp.lib")
 #pragma comment(lib, "shlwapi.lib")
 
+//#define AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE 0
+
 int main(int argc, char *argv[])
 {
 	SModelFileHeader					model_file_header;
@@ -38,13 +40,14 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	//vertex_elements = EMVE_POSITION | EMVE_NORMAL | EMVE_TEXCOORD;
+	//vertex_elements = EVF_POSITION | EVF_NORMAL | EVF_TEXCOORD;
 	Assimp::Importer importer;
 
 	const aiScene* scene = importer.ReadFile(file_full_path.c_str(),
-		aiProcessPreset_TargetRealtime_Quality |
+		(aiProcessPreset_TargetRealtime_Quality |
 		aiProcess_MakeLeftHanded |
-		aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+		aiProcess_FlipWindingOrder | aiProcess_FlipUVs | aiProcess_GenNormals));
+	// & ~aiProcess_GenSmoothNormals
 
 	if (!scene)
 	{

@@ -190,15 +190,15 @@ bool generatePipelineFile(const std::string& file_name_without_ext,
 	tinyxml2::XMLElement* inputlayout_node = doc.NewElement("input-layout");
 	
 	// create the input-layout's <element> node according to the vertex Components
-	if (header.VertexElements & EMVE_POSITION)
+	if (header.VertexElements & EVF_POSITION)
 		addVertexElementNode(doc, inputlayout_node, "POSITION", "float3");
-	if (header.VertexElements & EMVE_NORMAL)
+	if (header.VertexElements & EVF_NORMAL)
 		addVertexElementNode(doc, inputlayout_node, "NORMAL", "float3");
-	if (header.VertexElements & EMVE_TANGENT)
+	if (header.VertexElements & EVF_TANGENT)
 		addVertexElementNode(doc, inputlayout_node, "TANGENT", "float3");
-	if (header.VertexElements & EMVE_BINORMAL)
+	if (header.VertexElements & EVF_BINORMAL)
 		addVertexElementNode(doc, inputlayout_node, "BINORMAL", "float3");
-	if (header.VertexElements & EMVE_TEXCOORD)
+	if (header.VertexElements & EVF_TEXCOORD0)
 		addVertexElementNode(doc, inputlayout_node, "TEXCOORD", "float2");
 
 	if (animated)
@@ -251,7 +251,7 @@ bool generatePipelineFile(const std::string& file_name_without_ext,
 	pixel_shader_node->SetAttribute("main", "ps_main");
 
 	// if the vertex components include "Texcoord", then add on 'texture' variable
-	if (header.VertexElements & EMVE_TEXCOORD)
+	if (header.VertexElements & EVF_TEXCOORD0)
 	{
 		tinyxml2::XMLElement* texture_variable_node = doc.NewElement("variable");
 		texture_variable_node->SetAttribute("name", "gTexture");
@@ -312,7 +312,7 @@ bool generateShaderFile(const std::string& file_name_without_ext,
 		<< "\tfloat4x4 gViewProj;\n"
 		<< "};\n\n";
 
-	if (header.VertexElements & EMVE_TEXCOORD)
+	if (header.VertexElements & EVF_TEXCOORD0)
 	{
 		file << "Texture2D gTexture;\n"
 			<< "SamplerState gSampleState;\n\n";
@@ -324,19 +324,19 @@ bool generateShaderFile(const std::string& file_name_without_ext,
 		file << "struct VertexIn" << "\n"
 			<< "{\n";
 
-		if (header.VertexElements & EMVE_POSITION)
+		if (header.VertexElements & EVF_POSITION)
 			file << "\t" << "float3 PosL : POSITION;" << "\n";
 
-		if (header.VertexElements & EMVE_NORMAL)
+		if (header.VertexElements & EVF_NORMAL)
 			file << "\t" << "float3 NormalL : NORMAL;" << "\n";
 
-		if (header.VertexElements & EMVE_TANGENT)
+		if (header.VertexElements & EVF_TANGENT)
 			file << "\t" << "float3 TangentL : TANGENT;" << "\n";
 
-		if (header.VertexElements & EMVE_BINORMAL)
+		if (header.VertexElements & EVF_BINORMAL)
 			file << "\t" << "float3 BinormalL : BINORMAL;" << "\n";
 
-		if (header.VertexElements & EMVE_TEXCOORD)
+		if (header.VertexElements & EVF_TEXCOORD0)
 			file << "\t" << "float2 Tex : TEXCOORD;" << "\n";
 
 		file << "};\n\n";
@@ -349,19 +349,19 @@ bool generateShaderFile(const std::string& file_name_without_ext,
 		file << "struct SkeletonVertexIn" << "\n"
 			<< "{\n";
 
-		if (header.VertexElements & EMVE_POSITION)
+		if (header.VertexElements & EVF_POSITION)
 			file << "\t" << "float3 PosL : POSITION;" << "\n";
 
-		if (header.VertexElements & EMVE_NORMAL)
+		if (header.VertexElements & EVF_NORMAL)
 			file << "\t" << "float3 NormalL : NORMAL;" << "\n";
 
-		if (header.VertexElements & EMVE_TANGENT)
+		if (header.VertexElements & EVF_TANGENT)
 			file << "\t" << "float3 TangentL : TANGENT;" << "\n";
 
-		if (header.VertexElements & EMVE_BINORMAL)
+		if (header.VertexElements & EVF_BINORMAL)
 			file << "\t" << "float3 BinormalL : BINORMAL;" << "\n";
 
-		if (header.VertexElements & EMVE_TEXCOORD)
+		if (header.VertexElements & EVF_TEXCOORD0)
 			file << "\t" << "float2 Tex : TEXCOORD;" << "\n";
 
 		file << "\t" << "uint4  BoneIndices : BONEINDICES;" << "\n";
@@ -376,7 +376,7 @@ bool generateShaderFile(const std::string& file_name_without_ext,
 		<< "{\n";
 
 	file << "\t" << "float4 PosH : SV_POSITION;" << "\n";
-	if (header.VertexElements & EMVE_TEXCOORD)
+	if (header.VertexElements & EVF_TEXCOORD0)
 	{
 		file << "\t" << "float2 Tex : TEXCOORD;" << "\n";
 	}
@@ -393,7 +393,7 @@ bool generateShaderFile(const std::string& file_name_without_ext,
 			<< "\t" << "float4 PosW = mul(float4(vin.PosL, 1.0f), gWorld);" << "\n"
 			<< "\t" << "vout.PosH = mul(PosW, gViewProj);" << "\n";
 
-		if (header.VertexElements & EMVE_TEXCOORD)
+		if (header.VertexElements & EVF_TEXCOORD0)
 			file << "\t" << "vout.Tex = vin.Tex;" << "\n";
 
 		file << "\t" << "return vout;" << "\n";
@@ -408,7 +408,7 @@ bool generateShaderFile(const std::string& file_name_without_ext,
 			<< "\t" << "float4 PosW = mul(float4(vin.PosL, 1.0f), gWorld);" << "\n"
 			<< "\t" << "vout.PosH = mul(PosW, gViewProj);" << "\n";
 
-		if (header.VertexElements & EMVE_TEXCOORD)
+		if (header.VertexElements & EVF_TEXCOORD0)
 			file << "\t" << "vout.Tex = vin.Tex;" << "\n";
 
 		file << "\t" << "return vout;" << "\n";
@@ -420,7 +420,7 @@ bool generateShaderFile(const std::string& file_name_without_ext,
 	file << "float4 ps_main(VertexOut pin) : SV_TARGET" << "\n"
 		<< "{\n";
 
-	if (header.VertexElements & EMVE_TEXCOORD)
+	if (header.VertexElements & EVF_TEXCOORD0)
 		file << "\t" << "return gTexture.Sample(gSampleState, pin.Tex);" << "\n";
 	else
 		file << "\t" << "return float4(1.0f, 1.0f, 1.0f, 1.0f);" << "\n";

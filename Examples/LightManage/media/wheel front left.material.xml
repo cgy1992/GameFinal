@@ -1,0 +1,28 @@
+<materials>
+    <material name="wheel front left/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="wheel front left/pipeline_01"/>
+        </pipelines>
+        <textures/>
+    </material>
+    <material name="wheel front left/material_01">
+        <attributes>
+            <attribute name="ambient" value="0.300000, 0.300000, 0.300000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.100000, 0.100000, 0.100000, 1.000000"/>
+            <attribute name="emissive" value="0.100000, 0.100000, 0.100000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="wheel front left/pipeline_01"/>
+        </pipelines>
+        <textures>
+            <texture name="wheel_b_tex.bmp"/>
+        </textures>
+    </material>
+</materials>

@@ -6,7 +6,7 @@
 #include "gfMath.h"
 namespace gf
 {
-
+	/*
 	enum E_MODEL_VERTEX_ELEMENT
 	{
 		EMVE_POSITION = 1,
@@ -15,7 +15,7 @@ namespace gf
 		EMVE_BINORMAL = (1 << 3),
 		EMVE_TEXCOORD = (1 << 4)
 	};
-
+	*/
 
 	struct SModelFileHeader
 	{

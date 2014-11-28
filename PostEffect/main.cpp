@@ -58,7 +58,6 @@ int main()
 
 	ISceneNode* emptyNode = smgr->addEmptyNode();
 	emptyNode->translate(0, 3.0f, 0);
-	emptyNode->scale(2.0f, 2.0f, 2.0f);
 
 	ISimpleMesh* cubeMesh = meshManager->createCubeMesh("cube1");
 	IMeshNode* cubeMeshNode = smgr->addMeshNode(cubeMesh, nullptr, emptyNode, false, XMFLOAT3(0, 0.0f, 0));
@@ -136,6 +135,7 @@ int main()
 		u32 ms = timer->tick();
 		f32 dt = ms * 0.001f;
 
+
 		rotx += dt * 2.0f;
 		roty += dt * 1.0f;
 		rotz += dt * 0.5f;
@@ -148,7 +148,9 @@ int main()
 		XMMATRIX Mz = XMMatrixRotationZ(rotz);
 		XMMATRIX rotM = Mx * My * Mz;
 
-		cubeMeshNode->setOrientation(rotM);
+		cubeMeshNode->resetTransform();
+		cubeMeshNode->scale(2.0f);
+		cubeMeshNode->transform(rotM);
 		animNode->addTime(dt * 3000.0f);
 
 		updateCamera(camera, dt);

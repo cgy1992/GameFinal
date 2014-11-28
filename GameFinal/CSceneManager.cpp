@@ -63,8 +63,8 @@ namespace gf
 		//mDefaultOctree->update();
 		mDefaultOctree->destroy();
 
-		if (mSkyDomeNode)
-			mSkyDomeNode->destroy();
+		//if (mSkyDomeNode)
+		//	mSkyDomeNode->destroy();
 
 		ReleaseReferenceCounted(mQuadMeshNode);
 		ReleaseListElementCounted(mCompositors);

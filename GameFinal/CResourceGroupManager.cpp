@@ -30,6 +30,7 @@ namespace gf
 		mResourceFileExtensions[ERFT_TEXTURE].push_back("png");
 		mResourceFileExtensions[ERFT_TEXTURE].push_back("bmp");
 		mResourceFileExtensions[ERFT_TEXTURE].push_back("dds");
+		mResourceFileExtensions[ERFT_TEXTURE].push_back("tga");
 
 		// init texture xml exts.
 		mResourceFileExtensions[ERFT_TEXTURE_XML].push_back("texture");

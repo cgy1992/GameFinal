@@ -11,6 +11,7 @@ namespace gf
 		virtual ISimpleMesh* createSimpleMesh(
 			const std::string& name,
 			u32 sortcode,
+			u32 vertexFormat,
 			void* vertices,
 			void* indices,
 			u32 vertexCount,
@@ -23,6 +24,7 @@ namespace gf
 		virtual IModelMesh* createModelMesh(
 			const std::string& name,
 			u32 sortcode,
+			u32 vertexFormat,
 			void* vertices,
 			void* indices,
 			u32 vertexCount,
@@ -36,6 +38,7 @@ namespace gf
 		virtual IAnimatedMesh* createAnimatedModelMesh(
 			const std::string& name,
 			u32 sortcode,
+			u32 vertexFormat,
 			void* vertices,
 			void* animateVertices,
 			void* indices,

@@ -1,21 +1,15 @@
-#ifndef __GF_MATH_H__
-#define __GF_MATH_H__
+#ifndef __GF_MATH_HEADER__
+#define __GF_MATH_HEADER__
 
 #include "xnacollision/xnacollision.h"
 
 namespace gf
 {
-	/*
-	class Math
-	{
-	public:
-		static XMMATRIX InverseTranspose(CXMMATRIX M);
-
-		static bool FloatEqual(f32 a, f32 b, f32 elipson = 0.00001f);
-
-		static bool FloatArrayEqual(const f32 color1[], const f32 color2[], u32 elementCount = 4, f32 e = 0.00001f);
-	};
-	*/
+#ifdef GAMEFINAL_EXPORTS
+#define GAMEFINAL_API __declspec(dllexport)
+#else
+#define GAMEFINAL_API __declspec(dllimport)
+#endif
 
 	namespace math
 	{
@@ -95,6 +89,66 @@ namespace gf
 				};
 			};
 		};
+
+		inline XMFLOAT4 VectorAdd(const XMFLOAT4& a, const XMFLOAT4& b)
+		{
+			return XMFLOAT4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);
+		}
+
+		inline XMFLOAT3 VectorAdd(const XMFLOAT3& a, const XMFLOAT3& b)
+		{
+			return XMFLOAT3(a.x + b.x, a.y + b.y, a.z + b.z);
+		}
+
+		inline XMFLOAT4 VectorAdd(const XMFLOAT4& a, const XMFLOAT3& b)
+		{
+			return XMFLOAT4(a.x + b.x, a.y + b.y, a.z + b.z, a.w);
+		}
+
+		inline XMFLOAT4 VectorAdd(const XMFLOAT3& a, const XMFLOAT4& b)
+		{
+			return XMFLOAT4(a.x + b.x, a.y + b.y, a.z + b.z, b.w);
+		}
+
+		inline XMFLOAT4 VectorMinus(const XMFLOAT4& a, const XMFLOAT4& b)
+		{
+			return XMFLOAT4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+		}
+
+		inline XMFLOAT3 VectorMinus(const XMFLOAT3& a, const XMFLOAT3& b)
+		{
+			return XMFLOAT3(a.x - b.x, a.y - b.y, a.z - b.z);
+		}
+
+		inline XMFLOAT3 VectorMultiply(const XMFLOAT3& v, f32 k)
+		{
+			return XMFLOAT3(v.x*k, v.y*k, v.z*k);
+		}
+
+		inline XMFLOAT4 VectorMultiply(const XMFLOAT4& v, f32 k)
+		{
+			return XMFLOAT4(v.x*k, v.y*k, v.z*k, v.w*k);
+		}
+
+		inline XMFLOAT4 VectorMultiply(const XMFLOAT4& a, const XMFLOAT4& b)
+		{
+			return XMFLOAT4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+		}
+
+		inline XMFLOAT3 VectorMultiply(const XMFLOAT3& a, const XMFLOAT3& b)
+		{
+			return XMFLOAT3(a.x * b.x, a.y * b.y, a.z * b.z);
+		}
+		
+		inline XMFLOAT3 VectorOpposite(const XMFLOAT3& a)
+		{
+			return XMFLOAT3(-a.x, -a.y, -a.z);
+		}
+
+		inline XMFLOAT4 VectorOpposite(const XMFLOAT4& a)
+		{
+			return XMFLOAT4(-a.x, -a.y, -a.z, -a.w);
+		}
 
 		XMMATRIX InverseTranspose(CXMMATRIX M);
 

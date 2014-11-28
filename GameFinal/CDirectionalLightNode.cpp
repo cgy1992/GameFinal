@@ -97,7 +97,7 @@ namespace gf
 				ComputeAabbFromPoints(&aabb, 8, corners);
 
 				// 让摄像机位置在往后拉一点, 这样包含更多可能的shadow caster.
-				f32 addedCameraDist = aabb.Extents.z * 0.5f;
+				f32 addedCameraDist = aabb.Extents.z * 0.2f;
 
 				f32 farZ = aabb.Extents.z * 2.0f + addedCameraDist;
 				f32 viewWidth = aabb.Extents.x * 2.0f;

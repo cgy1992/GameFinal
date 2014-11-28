@@ -143,22 +143,23 @@ void fillSubsets(const aiScene* scene,
 
 void calcVertexStride(SModelFileHeader& header)
 {
+	u32 vertexFormat;
 	u32 stride = 0;
 	u32 vertex_elements = header.VertexElements;
 
-	if (vertex_elements & EMVE_POSITION)
+	if (vertex_elements & EVF_POSITION)
 		stride += sizeof(XMFLOAT3);
 
-	if (vertex_elements & EMVE_NORMAL)
+	if (vertex_elements & EVF_NORMAL)
 		stride += sizeof(XMFLOAT3);
 
-	if (vertex_elements & EMVE_TANGENT)
+	if (vertex_elements & EVF_TANGENT)
 		stride += sizeof(XMFLOAT3);
 
-	if (vertex_elements & EMVE_BINORMAL)
+	if (vertex_elements & EVF_BINORMAL)
 		stride += sizeof(XMFLOAT3);
 
-	if (vertex_elements & EMVE_TEXCOORD)
+	if (vertex_elements & EVF_TEXCOORD0)
 		stride += sizeof(XMFLOAT2);
 
 	header.VertexStride = stride;
@@ -215,7 +216,7 @@ void fillVertexAndIndicesData(const aiScene* scene,
 
 		for (u32 j = 0; j < vertexCount; j++)
 		{
-			if (vertex_elements & EMVE_POSITION)
+			if (vertex_elements & EVF_POSITION)
 			{
 				position.x = mesh->mVertices[j].x * mesh_scale;
 				position.y = mesh->mVertices[j].y * mesh_scale;
@@ -240,7 +241,7 @@ void fillVertexAndIndicesData(const aiScene* scene,
 					max_point.z = position.z;
 			}
 
-			if (vertex_elements & EMVE_NORMAL)
+			if (vertex_elements & EVF_NORMAL)
 			{
 				normal.x = mesh->mNormals[j].x;
 				normal.y = mesh->mNormals[j].y;
@@ -250,7 +251,7 @@ void fillVertexAndIndicesData(const aiScene* scene,
 				vertices += sizeof(XMFLOAT3);
 			}
 
-			if (vertex_elements & EMVE_TANGENT)
+			if (vertex_elements & EVF_TANGENT)
 			{
 				tangent.x = mesh->mTangents[j].x;
 				tangent.y = mesh->mTangents[j].y;
@@ -260,7 +261,7 @@ void fillVertexAndIndicesData(const aiScene* scene,
 				vertices += sizeof(XMFLOAT3);
 			}
 
-			if (vertex_elements & EMVE_BINORMAL)
+			if (vertex_elements & EVF_BINORMAL)
 			{
 				binormal.x = mesh->mBitangents[j].x;
 				binormal.y = mesh->mBitangents[j].y;
@@ -270,7 +271,7 @@ void fillVertexAndIndicesData(const aiScene* scene,
 				vertices += sizeof(XMFLOAT3);
 			}
 
-			if (vertex_elements & EMVE_TEXCOORD)
+			if (vertex_elements & EVF_TEXCOORD0)
 			{
 				texcoord.x = mesh->mTextureCoords[0][j].x;
 				texcoord.y = mesh->mTextureCoords[0][j].y;

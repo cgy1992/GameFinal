@@ -24,6 +24,8 @@ namespace gf
 
 		virtual ITexture* get(const std::string& name, bool bLoadIfNotExist = true);
 
+		virtual ITextureCube* getTextureCube(const std::string& name, bool bLoadIfNotExist = true);
+
 		virtual IRenderTarget* getRenderTarget(const std::string& name) const;
 
 		virtual IDepthStencilSurface* getDepthStencilSurface(const std::string& name) const;

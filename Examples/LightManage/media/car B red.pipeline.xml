@@ -1,0 +1,25 @@
+<pipelines>
+    <pipeline name="car B red/pipeline_01">
+        <input-layout>
+            <element semantic="POSITION" format="float3"/>
+            <element semantic="NORMAL" format="float3"/>
+            <element semantic="TANGENT" format="float3"/>
+            <element semantic="TEXCOORD" format="float2"/>
+        </input-layout>
+        <shaders>
+            <vertex-shader file="car B red.hlsl" main="vs_main">
+                <variable name="gWorld" value="world_matrix"/>
+                <variable name="gViewProj" value="viewproj_matrix"/>
+            </vertex-shader>
+            <pixel-shader file="car B red.hlsl" main="ps_main">
+                <variable name="gTexture" value="texture"/>
+            </pixel-shader>
+        </shaders>
+        <!--You can put render-states here.-->
+        <render-states>
+          <!--<render-state name="fill_mode" value="wireframe"/>-->
+
+        </render-states> 
+  </pipeline>
+  
+</pipelines>

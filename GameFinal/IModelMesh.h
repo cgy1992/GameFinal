@@ -20,8 +20,9 @@ namespace gf
 	public:
 		IModelMesh(const std::string& name,
 			u32 sortcode, 
-			const math::SAxisAlignedBox& aabb)
-			:IMesh(name, sortcode, aabb)
+			const math::SAxisAlignedBox& aabb,
+			u32 vertexFormat)
+			:IMesh(name, sortcode, aabb, vertexFormat)
 		{
 
 		}

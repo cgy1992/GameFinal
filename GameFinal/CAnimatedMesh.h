@@ -11,11 +11,12 @@ namespace gf
 		CAnimatedMesh(const std::string& name,
 			u32 sortcode,
 			const math::SAxisAlignedBox& aabb,
+			u32 vertexFormat,
 			const std::vector<SAnimatedModelSubset>& subsets,
 			const std::vector<SModelBone>& bones,
 			const std::vector<SBoneAnimationClip>& animateClips,
 			IAnimatedMeshBuffer* renderBuffer)
-			:IAnimatedMesh(name, sortcode, aabb)
+			:IAnimatedMesh(name, sortcode, aabb, vertexFormat)
 			, mRenderBuffer(renderBuffer)
 			, mSubsets(subsets)
 			, mBonesTree(bones)

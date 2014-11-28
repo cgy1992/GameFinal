@@ -10,6 +10,7 @@ namespace gf
 	ISimpleMesh* CResourceFactory::createSimpleMesh(
 		const std::string& name,
 		u32 sortcode,
+		u32 vertexFormat,
 		void* vertices,
 		void* indices,
 		u32 vertexCount,
@@ -26,7 +27,10 @@ namespace gf
 			return nullptr;
 		}
 
-		CSimpleMesh* mesh = new CSimpleMesh(name, sortcode, aabb, buffer);
+		CSimpleMesh* mesh = new CSimpleMesh(name, sortcode, aabb, 
+			vertexFormat,
+			buffer);
+
 		if (!mesh)
 		{
 			GF_PRINT_CONSOLE_INFO("The mesh ('%s') create failed!. Due to the lack of memory.\n", name.c_str());
@@ -40,6 +44,7 @@ namespace gf
 	IModelMesh* CResourceFactory::createModelMesh(
 		const std::string& name,
 		u32 sortcode,
+		u32 vertexFormat,
 		void* vertices,
 		void* indices,
 		u32 vertexCount,
@@ -63,7 +68,8 @@ namespace gf
 			return nullptr;
 		}
 
-		CModelMesh* mesh = new CModelMesh(name, sortcode, aabb, subsets, buffer);
+		CModelMesh* mesh = new CModelMesh(name, sortcode, aabb, vertexFormat,
+			subsets, buffer);
 		if (!mesh)
 		{
 			GF_PRINT_CONSOLE_INFO("The mesh ('%s') create failed!. Due to the lack of memory.\n", name.c_str());
@@ -77,6 +83,7 @@ namespace gf
 	IAnimatedMesh* CResourceFactory::createAnimatedModelMesh(
 		const std::string& name,
 		u32 sortcode,
+		u32 vertexFormat,
 		void* vertices,
 		void* animateVertices,
 		void* indices,
@@ -108,7 +115,7 @@ namespace gf
 			return nullptr;
 		}
 
-		CAnimatedMesh* mesh = new CAnimatedMesh(name, sortcode, aabb, subsets, bones, animateClips, buffer);
+		CAnimatedMesh* mesh = new CAnimatedMesh(name, sortcode, aabb, vertexFormat, subsets, bones, animateClips, buffer);
 
 		//CModelMesh* mesh = new CModelMesh(name, sortcode, subsets, buffer);
 		if (!mesh)

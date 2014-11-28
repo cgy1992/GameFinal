@@ -25,6 +25,7 @@
 #include "ISceneManager.h"
 #include "IMeshNode.h"
 #include "ILightNode.h"
+#include "gfEnums.h"
 #include "xnacollision/xnacollision.h"
 
 #ifndef GAMEFINAL_H
@@ -39,6 +40,8 @@ namespace gf
 	GAMEFINAL_API IDevice* createDevice(E_DRIVER_TYPE driver, u32 width, u32 height,
 		u32 style = EWS_NONE, bool vsync = false,
 		const SDeviceContextSettings& settings = SDeviceContextSettings());
+
+	
 }
 
 #endif

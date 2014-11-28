@@ -19,6 +19,7 @@ namespace gf
 
 	ISimpleMesh* CMeshManager::createSimpleMesh(
 		const std::string& name,
+		u32 vertexFormat,
 		void* vertices,
 		void* indices,
 		u32 vertexCount,
@@ -45,7 +46,8 @@ namespace gf
 		}
 
 		u32 sortcode = mCodeAllocator.allocate();
-		ISimpleMesh* mesh = mResourceFactory->createSimpleMesh(name, sortcode, vertices, indices,
+		ISimpleMesh* mesh = mResourceFactory->createSimpleMesh(name, 
+			sortcode, vertexFormat, vertices, indices,
 			vertexCount, vertexStride, indiceCount, aabb, bit32Index, usage);
 
 		if (!mesh)
@@ -60,6 +62,7 @@ namespace gf
 	}
 
 	IModelMesh* CMeshManager::createModelMesh(const std::string& name,
+		u32 vertexFormat,
 		void* vertices,
 		void* indices,
 		u32 vertexCount,
@@ -88,7 +91,8 @@ namespace gf
 		}
 
 		u32 sortcode = mCodeAllocator.allocate();
-		IModelMesh* mesh = mResourceFactory->createModelMesh(name, sortcode, vertices, indices,
+		IModelMesh* mesh = mResourceFactory->createModelMesh(name, 
+			sortcode, vertexFormat, vertices, indices,
 			vertexCount, vertexStride, indiceCount, aabb, bit32Index, subsets, usage);
 
 		if (!mesh)
@@ -186,7 +190,10 @@ namespace gf
 		SGeometryData geoData;
 		mGeometryCreator->createCubeData(width, height, depth, geoData);
 
-		ISimpleMesh* mesh = createSimpleMesh(name, &geoData.Vertices[0], &geoData.Indices[0],
+		u32 vertexFormat = EVF_POSITION | EVF_NORMAL | EVF_TANGENT | EVF_TEXCOORD0;
+
+		ISimpleMesh* mesh = createSimpleMesh(name, vertexFormat,
+			&geoData.Vertices[0], &geoData.Indices[0],
 			geoData.Vertices.size(), mGeometryCreator->getVertexStride(), geoData.Indices.size(),
 			geoData.Aabb, false, usage);
 		return mesh;
@@ -213,7 +220,10 @@ namespace gf
 		SGeometryData geoData;
 		mGeometryCreator->createPlaneData(width, depth, xsegments, ysegments, uTiles, vTiles, geoData);
 
-		ISimpleMesh* mesh = createSimpleMesh(name, &geoData.Vertices[0], &geoData.Indices[0],
+		u32 vertexFormat = EVF_POSITION | EVF_NORMAL | EVF_TANGENT | EVF_TEXCOORD0;
+
+		ISimpleMesh* mesh = createSimpleMesh(name, vertexFormat,
+			&geoData.Vertices[0], &geoData.Indices[0],
 			geoData.Vertices.size(), mGeometryCreator->getVertexStride(), geoData.Indices.size(),
 			geoData.Aabb, false, usage);
 
@@ -243,7 +253,10 @@ namespace gf
 		SGeometryData geoData;
 		mGeometryCreator->createSphereData(radius, sliceCount, stackCount, geoData);
 
-		ISimpleMesh* mesh = createSimpleMesh(name, &geoData.Vertices[0], &geoData.Indices[0],
+		u32 vertexFormat = EVF_POSITION | EVF_NORMAL | EVF_TANGENT | EVF_TEXCOORD0;
+
+		ISimpleMesh* mesh = createSimpleMesh(name, vertexFormat,
+			&geoData.Vertices[0], &geoData.Indices[0],
 			geoData.Vertices.size(), mGeometryCreator->getVertexStride(), geoData.Indices.size(),
 			geoData.Aabb, false, usage);
 
@@ -256,13 +269,15 @@ namespace gf
 		math::SAxisAlignedBox aabb;
 		mGeometryCreator->createQuadData(vertices, aabb);
 
-		ISimpleMesh* mesh = createSimpleMesh(name, vertices, nullptr, 6, sizeof(XMFLOAT3), 0, aabb, false, usage);
+		ISimpleMesh* mesh = createSimpleMesh(name, EVF_POSITION,
+			vertices, nullptr, 6, sizeof(XMFLOAT3), 0, aabb, false, usage);
 		return mesh;
 	}
 
 
 	IAnimatedMesh* CMeshManager::createAnimatedModelMesh(
 		const std::string& name,
+		u32 vertexFormat,
 		void* vertices,
 		void* animateVertices,
 		void* indices,
@@ -296,7 +311,8 @@ namespace gf
 		}
 
 		u32 sortcode = mCodeAllocator.allocate();
-		IAnimatedMesh* mesh = mResourceFactory->createAnimatedModelMesh(name, sortcode, vertices,
+		IAnimatedMesh* mesh = mResourceFactory->createAnimatedModelMesh(name, 
+			sortcode, vertexFormat, vertices,
 			animateVertices, indices, vertexCount, animateVertexCount, indicesCount, vertexStride, animateVertexStride, aabb,
 			bit32Index, usage, subsets, bones, animateClips);
 

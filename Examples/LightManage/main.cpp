@@ -78,13 +78,27 @@ int main()
 		}
 	}
 
+	
+	/*
 	IModelMesh* carMesh = meshManager->getModelMesh("myfirst.mesh");
 	IMeshNode* carNode = smgr->addModelMeshNode(carMesh, NULL, false);
 	carNode->translate(0, 0.1f, 0);
 	carNode->setNeedCulling(false);
 	carNode->scale(0.05f, 0.05f, 0.05f);
 	carNode->pitch(XM_PIDIV2);
+	*/
+	
+	IModelMesh* carMesh = meshManager->getModelMesh("car B red.mesh");
+	IMeshNode* carNode = smgr->addModelMeshNode(carMesh, NULL, false);
+	carNode->translate(0, 1.0f, 0);
+	//carNode->setNeedCulling(false);
+	//carNode->scale(0.05f, 0.05f, 0.05f);
+	//carNode->pitch(XM_PIDIV2);
 
+	IModelMesh* wheelleftFrontMesh = meshManager->getModelMesh("wheel front left.mesh");
+	IMeshNode* wheelleftFront = smgr->addModelMeshNode(wheelleftFrontMesh, carNode, false);
+	//carNode->setNeedCulling(false);
+	
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f));
 	camera->setFarZ(3000.0f);
 
@@ -108,15 +122,14 @@ int main()
 		updateCamera(camera, dt);
 		//updateCarPosition(dt, carNode, camera);
 
-		
-
 		smgr->update(ms);
 
 		smgr->drawAll();
 
 		driver->endScene();
 
-		sprintf_s(caption, "FPS:%f", getFps(dt));
+		f32 fps = getFps(dt);
+		sprintf_s(caption, "FPS:%f, delta:%f", fps, 1000.0f/fps);
 		device->setWindowCaption(caption);
 	}
 

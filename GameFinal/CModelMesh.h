@@ -10,9 +10,10 @@ namespace gf
 		CModelMesh(const std::string& name,
 			u32 sortcode,
 			const math::SAxisAlignedBox& aabb,
+			u32	vertexFormat,
 			const std::vector<SModelSubset>& subsets,
 			IMeshBuffer* buffer)
-			:IModelMesh(name, sortcode, aabb)
+			:IModelMesh(name, sortcode, aabb, vertexFormat)
 			, mMeshBuffer(buffer)
 			, mSubsets(subsets)
 		{

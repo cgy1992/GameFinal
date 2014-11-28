@@ -24,11 +24,11 @@ void printHelpingInfo()
 }
 
 /*
-EMVE_POSITION = 1,
-EMVE_NORMAL = (1 << 1),
-EMVE_TANGENT = (1 << 2),
-EMVE_BINORMAL = (1 << 3),
-EMVE_TEXCOORD = (1 << 4)
+EVF_POSITION = 1,
+EVF_NORMAL = (1 << 1),
+EVF_TANGENT = (1 << 2),
+EVF_BINORMAL = (1 << 3),
+EVF_TEXCOORD = (1 << 4)
 */
 
 bool parseVertexElementsParam(const char* str, u32& vertex_elements)
@@ -39,16 +39,16 @@ bool parseVertexElementsParam(const char* str, u32& vertex_elements)
 	struct TextAndVertexElementPair
 	{
 		const char* text;
-		E_MODEL_VERTEX_ELEMENT format;
+		E_VERTEX_FORMAT format;
 	};
 
 	const TextAndVertexElementPair pairs[] =
 	{
-		{ "p", EMVE_POSITION },
-		{ "n", EMVE_NORMAL },
-		{ "t", EMVE_TANGENT},
-		{ "b", EMVE_BINORMAL},
-		{ "tex", EMVE_TEXCOORD }
+		{ "p", EVF_POSITION },
+		{ "n", EVF_NORMAL },
+		{ "t", EVF_TANGENT},
+		{ "b", EVF_BINORMAL},
+		{ "tex", EVF_TEXCOORD0 }
 	};
 
 	u32 i = 0, j = 0;
@@ -76,7 +76,7 @@ bool parseVertexElementsParam(const char* str, u32& vertex_elements)
 	}
 
 	// vertex formats must contain POSITION
-	vertex_elements |= EMVE_POSITION;
+	vertex_elements |= EVF_POSITION;
 
 	return true;
 }

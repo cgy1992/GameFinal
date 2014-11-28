@@ -49,7 +49,12 @@ namespace gf
 		{
 			math::SOrientedBox obb;
 			getLocalAxis(obb.Axis);
-			obb.Center = getAbsolutePosition();
+			obb.Center = aabb.Center;
+
+			XMVECTOR center = XMVectorSet(obb.Center.x, obb.Center.y, obb.Center.z, 1.0f);
+			XMMATRIX worldMatrix = getAbsoluteTransformation();
+			center = XMVector3Transform(center, worldMatrix);
+			XMStoreFloat3(&obb.Center, center);
 
 			XMVECTOR axis, recipLength;
 
@@ -75,9 +80,9 @@ namespace gf
 			f32 scaleZ = 1.0f / XMVectorGetX(recipLength);
 			obb.Extents.z = aabb.Extents.z * scaleZ;
 
-			obb.Center.x += aabb.Center.x * scaleX;
-			obb.Center.y += aabb.Center.y * scaleY;
-			obb.Center.z += aabb.Center.z * scaleZ;
+			//obb.Center.x += aabb.Center.x * scaleX;
+			//obb.Center.y += aabb.Center.y * scaleY;
+			//obb.Center.z += aabb.Center.z * scaleZ;
 
 			return obb;
 		}

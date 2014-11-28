@@ -1,0 +1,26 @@
+<materials>
+    <material name="houseB_mesh/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+      <pipelines>
+        <pipeline name="shadow_pipeline"/>
+        <pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
+      </pipelines>
+        <textures/>
+    </material>
+    <material name="houseB_mesh/material_01" prototype="houseB_mesh/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.430000, 0.430000, 0.430000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <textures>
+            <texture name="houseB_tex.bmp"/>
+        </textures>
+    </material>
+</materials>

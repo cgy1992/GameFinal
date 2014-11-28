@@ -11,8 +11,9 @@ namespace gf
 		CSimpleMesh(const std::string& name,
 			u32 sortcode,
 			const math::SAxisAlignedBox& aabb,
+			u32 vertexFormat,
 			IMeshBuffer* buffer)
-			:ISimpleMesh(name, sortcode, aabb)
+			:ISimpleMesh(name, sortcode, aabb, vertexFormat)
 			, mMeshBuffer(buffer)
 		{
 

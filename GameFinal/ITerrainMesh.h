@@ -16,7 +16,7 @@ namespace gf
 			u32 sortcode,
 			f32 vertexSpace,
 			f32 heightScale)
-			:IMesh(name, sortcode, math::SAxisAlignedBox())
+			:IMesh(name, sortcode, math::SAxisAlignedBox(), 0)
 			, mVertexSpace(vertexSpace)
 			, mHeightScale(heightScale)
 			, mRowVertexNum(0)

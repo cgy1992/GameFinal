@@ -314,6 +314,24 @@ namespace gf
 		return nullptr;
 	}
 
+	ITextureCube* CTextureManager::getTextureCube(const std::string& name, bool bLoadIfNotExist)
+	{
+		auto it = mTextureMap.find(name);
+		if (it != mTextureMap.end())
+		{
+			ITexture* texture = it->second;
+			if (texture->getType() == ETT_TEXTURE_CUBE)
+				return dynamic_cast<ITextureCube*>(texture);
+
+			return nullptr;
+		}
+
+		if (bLoadIfNotExist)
+			return loadCubeTexture(name);
+
+		return nullptr;
+	}
+
 	IRenderTarget* CTextureManager::getRenderTarget(const std::string& name) const
 	{
 		auto it = mTextureMap.find(name);

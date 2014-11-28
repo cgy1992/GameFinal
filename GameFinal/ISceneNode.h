@@ -62,7 +62,7 @@ namespace gf
 			:mParent(parent)
 			, mSceneManager(smgr)
 			, mPosition(position)
-			, mScale(scale)
+			//, mScale(scale)
 			, mVisible(true)
 			, mSortCode(0)
 			, mNeedCulling(true)
@@ -78,8 +78,12 @@ namespace gf
 			//XMVECTOR r = XMQuaternionRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
 			//XMStoreFloat4(&mOrientation, r);
 
-			XMMATRIX rot = XMMatrixIdentity();
-			XMStoreFloat4x4(&mOrientation, rot);
+			XMMATRIX S = XMMatrixScaling(scale.x, scale.y, scale.z);
+			XMMATRIX R = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
+			XMMATRIX T = XMMatrixTranslation(position.x, position.y, position.z);
+			
+			
+			XMStoreFloat4x4(&mTransformation, S * R * T);
 
 			updateAbsoluteTransformation();
 		}
@@ -183,6 +187,16 @@ namespace gf
 			mPosition.x += x;
 			mPosition.y += y;
 			mPosition.z += z;
+
+			XMMATRIX m = XMLoadFloat4x4(&mTransformation);
+			XMMATRIX transMatrix = XMMatrixTranslation(x, y, z);
+			m = m * transMatrix;
+			XMStoreFloat4x4(&mTransformation, m);
+		}
+
+		virtual void translate(const XMFLOAT3& v)
+		{
+			translate(v.x, v.y, v.z);
 		}
 
 		virtual void setPosition(f32 x, f32 y, f32 z)
@@ -190,174 +204,100 @@ namespace gf
 			mPosition.x = x;
 			mPosition.y = y;
 			mPosition.z = z;
+
+			mTransformation._41 = x;
+			mTransformation._42 = y;
+			mTransformation._43 = z;
 		}
 
 		virtual void setPosition(const XMFLOAT3& pos)
 		{
-			mPosition = pos;
+			setPosition(pos.x, pos.y, pos.z);
+		}
+
+		virtual void resetTransform()
+		{
+			XMMATRIX I = XMMatrixIdentity();
+			XMStoreFloat4x4(&mTransformation, I);
+		}
+
+		virtual void setTransform(CXMMATRIX M)
+		{
+			XMStoreFloat4x4(&mTransformation, M);
+		}
+
+		virtual void setTransform(const XMFLOAT4X4& M)
+		{
+			mTransformation = M;
 		}
 		
-
-
-		/*
-		virtual void setOrientation(CXMMATRIX M)
+		virtual void transform(CXMMATRIX M)
 		{
-			XMVECTOR q = XMQuaternionRotationMatrix(M);
-			XMStoreFloat4(&mOrientation, q);
-		}
-
-		virtual void rotate(const XMFLOAT3& axis, f32 angle)
-		{
-			XMVECTOR axisvector = XMLoadFloat3(&axis);
-			XMVECTOR q1 = XMLoadFloat4(&mOrientation);
-			XMVECTOR q2 = XMQuaternionRotationAxis(axisvector, angle);
-			XMVECTOR q	= XMQuaternionMultiply(q2, q1);
-			XMQuaternionNormalize(q);
-			XMStoreFloat4(&mOrientation, q);
-		}
-
-		virtual void rotate(f32 Pitch, f32 Yaw, f32 Roll)
-		{
-			XMVECTOR q1 = XMLoadFloat4(&mOrientation);
-			XMVECTOR q2 = XMQuaternionRotationRollPitchYaw(Pitch, Yaw, Roll);
-			XMVECTOR q = XMQuaternionMultiply(q2, q1);
-			XMQuaternionNormalize(q);
-			XMStoreFloat4(&mOrientation, q);
-		}
-
-		virtual void setOrientation(const XMFLOAT3& axis, f32 angle)
-		{
-			XMVECTOR axisvector = XMLoadFloat3(&axis);
-			XMVECTOR q = XMQuaternionRotationAxis(axisvector, angle);
-			XMQuaternionNormalize(q);
-			XMStoreFloat4(&mOrientation, q);
-		}
-
-		virtual void setOrientation(const XMFLOAT4& quaternion)
-		{
-			mOrientation = quaternion;
-		}
-
-		
-		virtual void pitch(f32 angle)
-		{
-			XMVECTOR unit_x = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-			XMVECTOR q1 = XMLoadFloat4(&mOrientation);
-			XMVECTOR q2 = XMQuaternionRotationNormal(unit_x, angle);
-			XMVECTOR q = XMQuaternionMultiply(q2, q1);
-			XMQuaternionNormalize(q);
-			XMStoreFloat4(&mOrientation, q);
-		}
-
-		virtual void yaw(f32 angle)
-		{
-			XMVECTOR unit_y = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-			XMVECTOR q1 = XMLoadFloat4(&mOrientation);
-			XMVECTOR q2 = XMQuaternionRotationNormal(unit_y, angle);
-			XMVECTOR q = XMQuaternionMultiply(q2, q1);
-			XMQuaternionNormalize(q);
-			XMStoreFloat4(&mOrientation, q);
-		}
-
-		virtual void roll(f32 angle)
-		{
-			XMVECTOR unit_z = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-			XMVECTOR q1 = XMLoadFloat4(&mOrientation);
-			XMVECTOR q2 = XMQuaternionRotationNormal(unit_z, angle);
-			XMVECTOR q = XMQuaternionMultiply(q2, q1);
-			XMQuaternionNormalize(q);
-			XMStoreFloat4(&mOrientation, q);
-		}
-		*/
-		
-		virtual void setOrientation(CXMMATRIX M)
-		{
-			XMStoreFloat4x4(&mOrientation, M);
+			XMMATRIX trans = XMLoadFloat4x4(&mTransformation);
+			trans = XMMatrixMultiply(trans, M);
+			XMStoreFloat4x4(&mTransformation, trans);
 		}
 
 		virtual void pitch(f32 angle)
 		{
-			XMMATRIX m = XMLoadFloat4x4(&mOrientation);
+			XMMATRIX m = XMLoadFloat4x4(&mTransformation);
 			XMMATRIX rotMat = XMMatrixRotationX(angle);
 			m = m * rotMat;
-			XMStoreFloat4x4(&mOrientation, m);
+			XMStoreFloat4x4(&mTransformation, m);
 		}
 
 		virtual void yaw(f32 angle)
 		{
-			XMMATRIX m = XMLoadFloat4x4(&mOrientation);
+			XMMATRIX m = XMLoadFloat4x4(&mTransformation);
 			XMMATRIX rotMat = XMMatrixRotationY(angle);
 			m = m * rotMat;
-			XMStoreFloat4x4(&mOrientation, m);
+			XMStoreFloat4x4(&mTransformation, m);
 		}
 
 		virtual void roll(f32 angle)
 		{
-			XMMATRIX m = XMLoadFloat4x4(&mOrientation);
+			XMMATRIX m = XMLoadFloat4x4(&mTransformation);
 			XMMATRIX rotMat = XMMatrixRotationZ(angle);
 			m = m * rotMat;
-			XMStoreFloat4x4(&mOrientation, m);
+			XMStoreFloat4x4(&mTransformation, m);
 		}
 
-		virtual void setScale(f32 s)
+		virtual void rotate(f32 x, f32 y, f32 z)
 		{
-			mScale.x = s;
-			mScale.y = s;
-			mScale.z = s;
-		}
-
-		virtual void setScale(f32 x, f32 y, f32 z)
-		{
-			mScale.x = x;
-			mScale.y = y;
-			mScale.z = z;
+			XMMATRIX m = XMLoadFloat4x4(&mTransformation);
+			XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(x, y, z);
+			m = m * rotMat;
+			XMStoreFloat4x4(&mTransformation, m);
 		}
 
 		virtual void scale(f32 x, f32 y, f32 z)
 		{
-			mScale.x *= x;
-			mScale.y *= y;
-			mScale.z *= z;
+			XMMATRIX m = XMLoadFloat4x4(&mTransformation);
+			XMMATRIX scaleMatrix = XMMatrixScaling(x, y, z);
+			m = m * scaleMatrix;
+			XMStoreFloat4x4(&mTransformation, m);
 		}
 		
 		virtual void scale(f32 s)
 		{
-			mScale.x *= s;
-			mScale.y *= s;
-			mScale.z *= s;
+			XMMATRIX m = XMLoadFloat4x4(&mTransformation);
+			XMMATRIX scaleMatrix = XMMatrixScaling(s, s, s);
+			m = m * scaleMatrix;
+			XMStoreFloat4x4(&mTransformation, m);
 		}
 
 
 		virtual XMMATRIX getRelativeTransformation() const
 		{
-			/*
-			XMVECTOR S = XMVectorSet(mScale.x, mScale.y, mScale.z, 0.0f);
-			XMVECTOR R = XMLoadFloat4(&mOrientation);
-			XMVECTOR T = XMVectorSet(mPosition.x, mPosition.y, mPosition.z, 0.0f);
-			XMVECTOR zero = XMVectorZero();
-
-			XMMATRIX m = XMMatrixAffineTransformation(S, zero, R, T);
-
-			return m;
-			*/
-			
-			XMMATRIX S = XMMatrixScaling(mScale.x, mScale.y, mScale.z);
-			//	XMVECTOR quat = XMLoadFloat4(&);
-			//	XMMATRIX R = XMMatrixRotationQuaternion(quat);
-			XMMATRIX T = XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
-			XMMATRIX R = XMLoadFloat4x4(&mOrientation);
-			//XMMATRIX R = XMMatrixIdentity();
-
-			return S * R * T;
-			
+			return XMLoadFloat4x4(&mTransformation);
 		}
 
-		virtual XMMATRIX getAbsoluteTransformation()
+		virtual XMMATRIX getAbsoluteTransformation() const
 		{
 			return XMLoadFloat4x4(&mAbsoluteTransformation);
 		}
 
-		virtual XMFLOAT4X4 getWorldTransformation() 
+		virtual XMFLOAT4X4 getWorldTransformation() const
 		{
 			return mAbsoluteTransformation;
 		}
@@ -384,7 +324,8 @@ namespace gf
 
 		XMFLOAT3 getPosition() const
 		{
-			return mPosition;
+			//return mPosition;
+			return XMFLOAT3(mTransformation._41, mTransformation._42, mTransformation._43);
 		}
 
 		virtual void update(u32 delta = 0)
@@ -519,15 +460,17 @@ namespace gf
 		//! Absolute transformation of the node.
 		XMFLOAT4X4 mAbsoluteTransformation;
 
+		XMFLOAT4X4 mTransformation;
+
 		//! Relative translation of the scene node.
 		XMFLOAT3 mPosition;
 
 		//! Relative rotation of the scene node.
 		//XMFLOAT4 mOrientation;
-		XMFLOAT4X4 mOrientation;
+		//XMFLOAT4X4 mOrientation;
 
 		//! Relative scale of the scene node.
-		XMFLOAT3 mScale;
+		//XMFLOAT3 mScale;
 
 		bool mVisible;
 

@@ -27,9 +27,15 @@ namespace gf
 		}
 
 		SMaterial(IPipeline* pipelines[])
-			:SMaterial("", 0, pipelines)
+			:mName(""), mSortCode(0)
 		{
-
+			memset(mTextures, 0, sizeof(mTextures));
+			memset(mPipelines, 0, sizeof(mPipelines));
+			for (u32 i = 0; i < EPU_COUNT; i++)
+			{
+				mPipelines[i] = pipelines[i];
+				AddReferenceCounted(mPipelines[i]);
+			}
 		}
 
 		SMaterial(IPipeline* pipeline)

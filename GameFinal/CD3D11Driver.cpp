@@ -141,7 +141,7 @@ namespace gf
 		D3D_FEATURE_LEVEL featureLevel;
 
 		/* 如果将这个标志设为DEBUG，则绘制效率大大降低，且帧频极不稳定 */
-		//createDeviceFlags = 0;
+		createDeviceFlags = 0;
 
 		HRESULT hr;
 		hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE,
@@ -321,6 +321,7 @@ namespace gf
 
 		// create default depth-stencil-buffer
 		bool multiSampling = (createParam.MultiSamplingCount > 1);
+
 
 		mDepthStencilSurface = mTextureManager->createDepthStencilSurface("_default_depth_stencil_surface", 0, 0, createParam.DepthBits, createParam.StencilBits,
 			multiSampling, createParam.MultiSamplingCount, createParam.MultiSamplingQuality, true);

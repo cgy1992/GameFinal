@@ -372,7 +372,9 @@ namespace gf
 				subsets[i].Material = material;
 			}
 
-			IModelMesh* mesh = mMeshManager->createModelMesh(name, createParams.VertexBuffer, createParams.IndexBuffer,
+			IModelMesh* mesh = mMeshManager->createModelMesh(name,
+				createParams.Header.VertexElements,
+				createParams.VertexBuffer, createParams.IndexBuffer,
 				createParams.Header.VertexCount, createParams.Header.VertexStride,
 				createParams.Header.IndiceCount, createParams.Header.Aabb, subsets, createParams.Header.Bit32Indice, EMU_STATIC);
 
@@ -410,6 +412,7 @@ namespace gf
 			const std::vector<SBoneAnimationClip>& animateClips = createParams.AnimationClips;
 
 			IAnimatedMesh* mesh = mMeshManager->createAnimatedModelMesh(name,
+				createParams.Header.VertexElements,
 				createParams.VertexBuffer,
 				createParams.AnimateVertexBuffer,
 				createParams.IndexBuffer,

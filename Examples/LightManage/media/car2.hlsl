@@ -17,26 +17,28 @@ struct VertexIn
 	float2 Tex : TEXCOORD;
 };
 
+SamplerState gSampleState;
+
 struct VertexOut
 {
-	float4 PosH : SV_POSITION;
-	float3 PosW : POSITION;
-	float3 Normal : NORMAL;
-	float2 Tex : TEXCOORD;
+	float4 PosH		: SV_POSITION;
+	float3 PosW		: POSITION;
+	float3 Normal	: NORMAL; 
+	float2 Tex		: TEXCOORD;
 };
-
-SamplerState gSampleState;
 
 VertexOut vs_main(VertexIn vin)
 {
 	VertexOut vout;
-	float4 PosW = mul(float4(vin.PosL, 1.0f), gWorld);
-		vout.PosH = mul(PosW, gViewProj);
+	float4 PosW = mul(float4(vin.PosL, 1.0f), GF_WORLD);
+	vout.PosH = mul(PosW, GF_VIEW_PROJ);
 	vout.PosW = PosW.xyz;
-	vout.Normal = mul(vin.NormalL, (float3x3)gWorld);
+	vout.Normal = mul(vin.NormalL, (float3x3)GF_WORLD);
 	vout.Tex = vin.Tex;
+
 	return vout;
 }
+
 
 float4 ps_main(VertexOut pin) : SV_TARGET
 {

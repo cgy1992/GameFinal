@@ -17,6 +17,7 @@ namespace gf
 
 		virtual ISimpleMesh* createSimpleMesh(
 			const std::string& name,
+			u32 vertexFormat,
 			void* vertices,
 			void* indices,
 			u32 vertexCount,
@@ -27,6 +28,7 @@ namespace gf
 			E_MEMORY_USAGE usage = EMU_STATIC);
 
 		virtual IModelMesh* createModelMesh(const std::string& name,
+			u32 vertexFormat,
 			void* vertices,
 			void* indices,
 			u32 vertexCount,
@@ -39,6 +41,7 @@ namespace gf
 
 		virtual IAnimatedMesh* createAnimatedModelMesh(
 			const std::string& name,
+			u32 vertexFormat,
 			void* vertices,
 			void* animateVertices,
 			void* indices,

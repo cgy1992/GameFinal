@@ -31,6 +31,19 @@ namespace gf
 		ETBT_DEPTH_STENCIL = (1 << 3),
 	};
 
+
+	enum E_VERTEX_FORMAT
+	{
+		EVF_POSITION = 1,
+		EVF_COLOR = (1 << 1),
+		EVF_NORMAL = (1 << 2),
+		EVF_TANGENT = (1 << 3),
+		EVF_BINORMAL = (1 << 4),
+		EVF_TEXCOORD0 = (1 << 5),
+		EVF_TEXCOORD1 = (1 << 6),
+		EVF_TEXCOORD2 = (1 << 7),
+
+	};
 }
 
 

@@ -103,6 +103,14 @@ public:\
 
 #endif
 
+#ifndef __MATH_CALCULATION_DEFINE__
+#define __MATH_CALCULATION_DEFINE__
+
+//#define Vector3Add(a, b) XMFLOAT3((a).x+(b).x, (a).y+(b).y, (a).z+(b).z)
+//#define Vector4Add();
+
+#endif
+
 
 /*
 #ifndef _DEFINE_RESOURCE_DESTORY_FUNCTIONS

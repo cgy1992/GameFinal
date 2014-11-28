@@ -220,8 +220,9 @@ namespace gf
 	public:
 		IAnimatedMesh(const std::string& name,
 			u32 sortcode, 
-			const math::SAxisAlignedBox& aabb)
-			:IModelMesh(name, sortcode, aabb)
+			const math::SAxisAlignedBox& aabb,
+			u32 vertexFormat)
+			:IModelMesh(name, sortcode, aabb, vertexFormat)
 		{
 
 		}
