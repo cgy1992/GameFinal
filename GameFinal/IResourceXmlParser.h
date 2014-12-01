@@ -137,7 +137,7 @@ namespace gf
 			{
 				for (u32 i = 0; i < TextureParams.size(); i++)
 				{
-					if (TextureParams[i].Name == param.Name)
+					if (TextureParams[i].Index == param.Index)
 					{
 						TextureParams[i] = param;
 						return;

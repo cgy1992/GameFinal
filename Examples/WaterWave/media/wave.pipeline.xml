@@ -1,0 +1,46 @@
+<pipelines>
+  <pipeline name="test/wave_pipeline">
+    <primitive-type value="4_CONTROL_POINT_PATCHLIST"/>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="wave.hlsl" main="VS">
+        <variable name="gWorld" value="world_matrix"/>
+        <variable name="gEyePos" value="camera_position"/>
+      </vertex-shader>
+      <hull-shader file="wave.hlsl" main="HS">
+      </hull-shader>
+      <domain-shader file="wave.hlsl" main="DS">
+        <variable name="gDispTexture1" value="texture" index="2"/>
+        <variable name="gDispTexture2" value="texture" index="5"/>
+        <variable name="gNormalTexture1" value="texture" index="1"/>
+        <variable name="gNormalTexture2" value="texture" index="4"/>
+        <variable name="gViewProj" value="viewproj_matrix"/>
+      </domain-shader>
+      <pixel-shader file="wave.hlsl" main="PS">
+        <variable name="gPointLight" value="light" index="1"/>
+        <variable name="gEyePos" value="camera_position"/>
+        <variable name="gMaterial" value="material_color"/>
+        <variable name="gNormalTexture1" value="texture" index="1"/>
+        <variable name="gNormalTexture2" value="texture" index="4"/>
+        <variable name="gWaterTexture1" value="texture" index="0"/>
+        <variable name="gWaterTexture2" value="texture" index="3"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+      <!--<render-state name="FILL_MODE" value="WIREFRAME"/>-->
+    </render-states>
+
+    <samplers>
+      <sampler name="samLinear"
+        addressU="wrap"
+        addressV="wrap"
+        filter="MIN_MAG_MIP_LINEAR">
+
+      </sampler>
+    </samplers>
+  </pipeline>
+</pipelines>
