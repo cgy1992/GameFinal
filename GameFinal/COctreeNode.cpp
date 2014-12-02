@@ -224,6 +224,7 @@ namespace gf
 		{
 			// register all the nodes in the containedNodes list
 			// register mesh nodes.
+			//std::cout << mStaticMeshNodes.size() << " ";
 
 			for (auto it = mStaticMeshNodes.begin(); it != mStaticMeshNodes.end(); it++)
 			{

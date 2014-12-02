@@ -39,6 +39,11 @@ namespace gf
 		virtual void fly(f32 unit) = 0;
 		virtual void strafe(f32 unit) = 0;
 
+		virtual XMFLOAT3 getPosition() const
+		{
+			return mPosition;
+		}
+
 		virtual XMFLOAT4X4 getViewMatrix() const
 		{
 			return mViewMatrix;

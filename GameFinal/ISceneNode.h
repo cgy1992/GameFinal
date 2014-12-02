@@ -322,10 +322,10 @@ namespace gf
 			return XMFLOAT3(mAbsoluteTransformation._41, mAbsoluteTransformation._42, mAbsoluteTransformation._43);
 		}
 
-		XMFLOAT3 getPosition() const
+		virtual XMFLOAT3 getPosition() const
 		{
-			return mPosition;
-			//return XMFLOAT3(mTransformation._41, mTransformation._42, mTransformation._43);
+			//return mPosition;
+			return XMFLOAT3(mTransformation._41, mTransformation._42, mTransformation._43);
 		}
 
 		virtual void update(u32 delta = 0)

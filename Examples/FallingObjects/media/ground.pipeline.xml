@@ -1,0 +1,17 @@
+<pipelines>
+  <pipeline name="ground_pipeline" prototype="sphere_pipeline">
+    <shaders>
+      <vertex-shader file="ground.hlsl">
+      </vertex-shader>
+      <pixel-shader file="ground.hlsl">
+      </pixel-shader>
+    </shaders>
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    </samplers>
+  </pipeline>
+</pipelines>

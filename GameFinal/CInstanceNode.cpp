@@ -15,7 +15,7 @@ namespace gf
 		:IInstanceNode(parent, smgr, owner, bStatic, position, rotation, scale)
 		, mInstanceData(nullptr)
 	{
-		mNeedCulling = false;
+		//mNeedCulling = true;
 		u32 instanceDataSize = mOwnerCollection->getInstanceDataSize();
 		/* use a memory pool is better. */
 

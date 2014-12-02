@@ -24,10 +24,15 @@ namespace gf
 			mNeedCulling = false;
 		}
 
+		/* 这个函数非常重要，如果aabb太小，InstanceCollectionNode会被八叉树裁剪，所有的instance都无法绘制 */
+		virtual math::SAxisAlignedBox getAabb() const;
+
 		bool init(IMesh* mesh, u32 maxInstanceNum, u32 eachInstanceDataSize);
 
-		virtual IInstanceNode* addInstance(bool bStatic, const XMFLOAT3& position, 
-			const XMFLOAT3& rotation, const XMFLOAT3& scale);
+		virtual IInstanceNode* addInstance(bool bStatic, 
+			const XMFLOAT3& position, 
+			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0, 1.0));
 
 		virtual bool setMaterial(u32 subset, IMaterial* material);
 

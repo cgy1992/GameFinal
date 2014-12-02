@@ -1,0 +1,82 @@
+<pipelines>
+  <pipeline name="sphere_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="sphere.hlsl" main="vs_main">
+        <macro name="SHADOW_ON"/>
+      </vertex-shader>
+      <pixel-shader file="sphere.hlsl" main="ps_main">
+        <macro name="SHADOW_ON"/>
+        <variable name="gLight" value="light" index="1"/>
+        <variable name="gPointLight" value="light" index="2"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+    </render-states>
+  </pipeline>
+
+  <pipeline name="shadow_map_pipeline" prototype="sphere_pipeline">
+    <shaders>
+      <vertex-shader main="shadow_vs_main">
+        <macro name="SHADOW_ON" value="null"/>
+      </vertex-shader>
+      <pixel-shader file="null"/>
+    </shaders>
+  </pipeline>
+
+  <pipeline name="multi_objects_pipeline" prototype="sphere_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+      <element semantic="WORLD" index="0" format="float4" slot="1" instance="true" instance-rate="1"></element>
+      <element semantic="WORLD" index="1" format="float4" slot="1" instance="true" instance-rate="1"></element>
+      <element semantic="WORLD" index="2" format="float4" slot="1" instance="true" instance-rate="1"></element>
+      <element semantic="WORLD" index="3" format="float4" slot="1" instance="true" instance-rate="1"></element>
+      <element semantic="COLOR" format="float4" slot="1" instance="true" instance-rate="1"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="sphere.hlsl" main="vs_main">
+        <macro name="INSTANCES_ON"/>
+      </vertex-shader>
+      <pixel-shader>
+        <macro name="INSTANCES_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+  <pipeline name="shadow_map_multi_objects_pipeline" prototype="multi_objects_pipeline">
+    <shaders>
+      <vertex-shader main="shadow_vs_main">
+      </vertex-shader>
+      <pixel-shader file="null"/>
+    </shaders>
+  </pipeline>
+
+  <pipeline name="point_shadow_map_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="sphere.hlsl" main="point_shadow_vs_main">
+      </vertex-shader>
+      <pixel-shader file="sphere.hlsl" main="point_shadow_ps_main">
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+    </render-states>
+
+  </pipeline>
+
+</pipelines>

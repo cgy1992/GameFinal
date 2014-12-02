@@ -54,6 +54,7 @@ void addBoxToScene(ISceneManager* smgr, ISimpleMesh* mesh, IInstanceCollectionNo
 	aabb.Extents = XMFLOAT3(width / 2, height / 2, width / 2);
 
 	IInstanceNode* boxNode = collection->addInstance(true, XMFLOAT3(x, y, z), XMFLOAT3(0, 0, 0), XMFLOAT3(width, height, depth));
+	boxNode->setNeedCulling(false);
 	boxNode->addShadow(1);
 }
 
@@ -67,6 +68,7 @@ void createBoxes(ISceneManager* smgr)
 	}
 	collection->setMaterialName("multi_box_material");
 	collection->addShadow(1);
+	collection->setNeedCulling(false);
 }
 
 int main()
@@ -80,7 +82,7 @@ int main()
 
 	math::SAxisAlignedBox aabb;
 	aabb.Center = XMFLOAT3(0, 10.0f, 0);
-	aabb.Extents = XMFLOAT3(50.0f, 50.0f, 50.0f);
+	aabb.Extents = XMFLOAT3(500.0f, 500.0f, 500.0f);
 	ISceneManager* smgr = device->createSceneManager(aabb);
 	IMeshManager* meshManager = driver->getMeshManager();
 	IMaterialManager* materialManager = driver->getMaterialManager();

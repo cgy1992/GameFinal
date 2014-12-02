@@ -135,10 +135,20 @@ namespace gf
 
 	void CInstanceCollectionNode::render(E_PIPELINE_USAGE usage)
 	{
+		/*
+		if (usage == EPU_FORWARD)
+		{
+			int a = 1;
+			std::cout << mInstanceNum << std::endl;
+		}
+		*/
+
+
 		// update instance buffer.
 		if (mInstanceNum > 0)
 		{
 			u32 stride = sizeof(XMFLOAT4X4)+mEachInstanceDataSize;
+			
 			mInstanceBuffer->setVertexData(mInstancesData, stride * mInstanceNum);
 
 			mMeshNode->renderInstanced(usage, mInstanceNum, mInstanceBuffer);
@@ -164,6 +174,11 @@ namespace gf
 		{
 			ISceneNode::addChild(child);
 		}
+	}
+
+	math::SAxisAlignedBox CInstanceCollectionNode::getAabb() const
+	{
+		return mSceneManager->getAabb();
 	}
 
 

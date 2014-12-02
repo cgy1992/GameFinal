@@ -22,6 +22,9 @@ namespace gf
 			
 		}
 
+
+		
+
 		/*
 		virtual E_SCENE_NODE_TYPE getNodeType() const
 		{
@@ -39,8 +42,10 @@ namespace gf
 			return mMaxInstanceNum;
 		}
 
-		virtual IInstanceNode* addInstance(bool bStatic, const XMFLOAT3& position,
-			const XMFLOAT3& rotation, const XMFLOAT3& scale) = 0;
+		virtual IInstanceNode* addInstance(bool bStatic, 
+			const XMFLOAT3& position,
+			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0), 
+			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0, 1.0)) = 0;
 
 		virtual IMesh* getMesh() = 0;
 

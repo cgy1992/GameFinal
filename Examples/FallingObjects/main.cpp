@@ -2,6 +2,9 @@
 //
 
 #include "stdafx.h"
+#include "PhysicsEngine.h"
+#include "PhysicsCube.h"
+#include <time.h>
 
 #pragma comment(lib, "GameFinal.lib")
 #pragma comment(lib, "winmm.lib")
@@ -30,26 +33,16 @@ const f32 CAMERA_ROTATE_UNIT = 0.5f;
 
 void updateCamera(ICameraNode* camera, f32 delta);
 void updateLightDirection(f32 delta, ILightNode* light);
-bool initHavokEngine();
-void unloadHavodEngine();
-void setupPhysics();
-hkVisualDebugger* setupVisualDebugger(hkpPhysicsContext* physicsWorlds);
-void stepVisualDebugger(hkVisualDebugger* vdb);
+void setupPhysics(ISceneManager* smgr);
 void updatePhysics(f32 dt);
+void createBoxes(ISceneManager* smgr);
 
-hkpWorld* physicsWorld;
-hkVisualDebugger* visualDebugger;
-hkpRigidBody* floorRigidBody;
-hkpRigidBody* boxRigidBody;
-hkpPhysicsContext* physicsContext;
+PhysicsCube* g_box = nullptr;
+PhysicsCube* g_ground = nullptr;
+const f32 groundSize = 1000.0f;
+const f32 boxSize = 2.0f;
 
-const f32 groundSize = 100.0f;
-const f32 boxHalfSize = 2.0f;
-const f32 boxInitHeight = 2.0f;
-IMeshNode* boxNode;
-
-IMeshNode* boxNode2;
-hkpRigidBody* boxRigidBody2;
+std::vector<PhysicsCube*> g_boxes;
 
 f32 getFps(float dt)
 {
@@ -69,6 +62,8 @@ f32 getFps(float dt)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	srand(time(0));
+
 	SDeviceContextSettings settings;
 	settings.MultiSamplingCount = 4;
 	settings.MultiSamplingQuality = 32;
@@ -87,25 +82,17 @@ int _tmain(int argc, _TCHAR* argv[])
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
 
-	initHavokEngine();
-	setupPhysics();
+	PhysicsEngine::getInstance();
+
+	setupPhysics(smgr);
 
 	// create ground
+	
 	ISimpleMesh* groundMesh = meshManager->createPlaneMesh("ground", groundSize, groundSize, 10, 10, 30.0f, 30.0f);
 	IMeshNode* groundNode = smgr->addMeshNode(groundMesh, nullptr, nullptr, false);
 	groundNode->setMaterialName("ground_material");
-	// create sphere
 
-	ISimpleMesh* boxMesh = meshManager->createCubeMesh("box", boxHalfSize*2.0f,
-		boxHalfSize * 2.0f, boxHalfSize*2.0f);
-	boxNode = smgr->addMeshNode(boxMesh, nullptr, nullptr, false, XMFLOAT3(0, 
-		boxHalfSize, 0));
-	boxNode->setMaterialName("box_material");
-	boxNode->addShadow(1);
-
-	boxNode2 = smgr->addMeshNode(boxMesh, nullptr, nullptr, false);
-	boxNode2->setMaterialName("box_material");
-	boxNode2->addShadow(1);
+	createBoxes(smgr);
 
 	// add directional light
 	XMFLOAT3 light_dir(5.0f, -5.0f, -2.0f);
@@ -125,7 +112,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	camera->lookAt(XMFLOAT3(0, 0, 0));
 	camera->setNearZ(1.0f);
 	camera->setFarZ(1000.0f);
-	camera->setShadowRange(100.0f);
+	camera->setShadowRange(200.0f);
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 
 	updateLightDirection(10.0f, light);
@@ -145,12 +132,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		u32 ms = timer->tick();
 		float dt = ms * 0.001f;
 
-		
-
 		updatePhysics(dt);
 		updateCamera(camera, dt);
-		updateLightDirection(dt, light);
-		//updateCarPosition(dt, carNode, camera);
+		//updateLightDirection(dt, light);
 
 		smgr->update(ms);
 
@@ -160,13 +144,17 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		sprintf_s(caption, "FPS:%f", getFps(dt));
 		device->setWindowCaption(caption);
+
+		//Sleep(10);
 	}
 
 	//sphereMaterial.drop();
 	smgr->destroy();
 	device->drop();
 
-	unloadHavodEngine();
+	delete g_ground;
+	delete g_box;
+	PhysicsEngine::deleteInstance();
 
 	return 0;
 }
@@ -222,8 +210,6 @@ void updateCamera(ICameraNode* camera, f32 delta)
 	{
 		camera->yaw(CAMERA_ROTATE_UNIT * delta);
 	}
-
-
 }
 
 void updateLightDirection(f32 delta, ILightNode* light)
@@ -241,59 +227,13 @@ void updateLightDirection(f32 delta, ILightNode* light)
 
 	light->setDirection(XMFLOAT3(dir.x, dir.y, dir.z));
 	//light->setPosition(XMFLOAT3(dir.x * lightDistance, dir.y * lightDistance, dir.z * lightDistance));
-
 }
 
-static void HK_CALL errorReport(const char* msg, void*)
+void setupPhysics(ISceneManager* smgr)
 {
-	printf("%s", msg);
-#ifdef HK_PLATFORM_WIN32
-#ifndef HK_PLATFORM_WINRT
-	OutputDebugStringA(msg);
-#else
-	// Unicode only 
-	int sLen = hkString::strLen(msg) + 1;
-	wchar_t* wideStr = hkAllocateStack<wchar_t>(sLen);
-	mbstowcs_s(HK_NULL, wideStr, sLen, msg, sLen - 1);
-	OutputDebugString(wideStr);
-	hkDeallocateStack<wchar_t>(wideStr, sLen);
-#endif
-#endif
-}
+	IMeshManager* meshManager = IMeshManager::getInstance();
+	PhysicsEngine* engine = PhysicsEngine::getInstance();
 
-
-bool initHavokEngine()
-{
-	PlatformInit();
-
-	hkMemorySystem::FrameInfo finfo(500 * 1024);	// Allocate 500KB of Physics solver buffer
-	hkMemoryRouter* memoryRouter = hkMemoryInitUtil::initDefault(hkMallocAllocator::m_defaultMallocAllocator, finfo);
-	hkBaseSystem::init(memoryRouter, errorReport);
-
-	// Create the physics world
-	hkpWorldCinfo worldInfo;
-	worldInfo.setupSolverInfo(hkpWorldCinfo::SOLVER_TYPE_4ITERS_MEDIUM);
-	worldInfo.m_gravity = hkVector4(0.0f, -9.8f, 0.0f);
-	worldInfo.m_broadPhaseBorderBehaviour = hkpWorldCinfo::BROADPHASE_BORDER_FIX_ENTITY; // just fix the entity if the object falls off too far
-
-	// You must specify the size of the broad phase - objects should not be simulated outside this region
-	worldInfo.setBroadPhaseWorldSize(1000.0f);
-	physicsWorld = new hkpWorld(worldInfo);
-
-	hkpAgentRegisterUtil::registerAllAgents(physicsWorld->getCollisionDispatcher());
-
-	setupPhysics();
-
-	physicsContext = new hkpPhysicsContext;
-	hkpPhysicsContext::registerAllPhysicsProcesses(); // all the physics viewers
-	physicsContext->addWorld(physicsWorld); // add the physics world so the viewers can see it
-	visualDebugger = setupVisualDebugger(physicsContext);
-
-	return true;
-}
-
-void setupPhysics()
-{
 	hkpRigidBodyCinfo groundInfo;
 	hkVector4 groundSize(groundSize * 0.5f, 0.5, groundSize * 0.5f);
 	hkpBoxShape* groundShape = new hkpBoxShape(groundSize, 0);
@@ -303,122 +243,77 @@ void setupPhysics()
 	groundInfo.m_restitution = 0.9f;
 	groundInfo.m_friction = 0.5f;
 
-	floorRigidBody = new hkpRigidBody(groundInfo);
+	hkpRigidBody* floorRigidBody = new hkpRigidBody(groundInfo);
 	groundShape->removeReference();
-	physicsWorld->addEntity(floorRigidBody);
+	engine->addRigidBody(floorRigidBody);
 	floorRigidBody->removeReference();
 
-	hkpRigidBodyCinfo boxInfo;
-	hkVector4 halfBoxSize(boxHalfSize, boxHalfSize, boxHalfSize);
-	hkpBoxShape* boxShape = new hkpBoxShape(halfBoxSize, 0);
-	boxInfo.m_shape = boxShape;
-	boxInfo.m_position.set(0, boxInitHeight, 0);
-	boxInfo.m_motionType = hkpMotion::MOTION_DYNAMIC;
-	boxInfo.m_restitution = 0.5f;
-	boxInfo.m_friction = 0.5f;
+	// create BOX
+	f32 boxHalfSize = 2.0f;
+	ISimpleMesh* boxMesh = meshManager->createCubeMesh("box", boxHalfSize*2.0f,
+		boxHalfSize * 2.0f, boxHalfSize*2.0f);
+	IMeshNode* boxNode = smgr->addMeshNode(boxMesh, nullptr, nullptr, false);
+	boxNode->setMaterialName("box_material");
+	boxNode->addShadow(1);
 
-	hkReal boxMass = 10.0f;
-	hkMassProperties boxMassProperties;
-	hkpInertiaTensorComputer::computeBoxVolumeMassProperties(halfBoxSize, boxMass, boxMassProperties);
-	boxInfo.m_inertiaTensor = boxMassProperties.m_inertiaTensor;
-	boxInfo.m_centerOfMass = boxMassProperties.m_centerOfMass;
-	boxInfo.m_mass = boxMassProperties.m_mass;
-
-	boxRigidBody = new hkpRigidBody(boxInfo);
-	boxShape->removeReference();
-
-	physicsWorld->addEntity(boxRigidBody);
-	//boxRigidBody->removeReference();
-
-	boxRigidBody2 = new hkpRigidBody(boxInfo);
-	physicsWorld->addEntity(boxRigidBody2);
+	g_box = new PhysicsCube(boxNode, XMFLOAT3(boxHalfSize, boxHalfSize, boxHalfSize), XMFLOAT3(0, 40.0f, 0),
+		false, 0.5f, 0.5f);
 }
 
-
-hkVisualDebugger* setupVisualDebugger(hkpPhysicsContext* physicsWorlds)
-{
-	// Setup the visual debugger
-	hkArray<hkProcessContext*> contexts;
-	contexts.pushBack(physicsWorlds);
-
-	hkVisualDebugger* vdb = new hkVisualDebugger(contexts);
-	vdb->serve();
-
-	// Allocate memory for internal profiling information
-	// You can discard this if you do not want Havok profiling information
-	hkMonitorStream& stream = hkMonitorStream::getInstance();
-	stream.resize(500 * 1024);	// 500K for timer info
-	stream.reset();
-
-	return vdb;
-}
-
-void stepVisualDebugger(hkVisualDebugger* vdb)
-{
-	// Step the debugger
-	vdb->step();
-
-	// Reset internal profiling info for next frame
-	hkMonitorStream::getInstance().reset();
-}
 
 void updatePhysics(f32 dt)
 {
-//	physicsWorld->stepDeltaTime(dt);
+	//	physicsWorld->stepDeltaTime(dt);
 
-	if (dt > 0)
+	//if (dt > 0)
 	{
+		PhysicsEngine* engine = PhysicsEngine::getInstance();
+		engine->update(dt);
+		g_box->update(dt);
 		
-
-		physicsWorld->stepDeltaTime(dt);
-		
-		XMMATRIX M;
-		boxRigidBody->getTransform().get4x4ColumnMajor(&M._11);
-		boxNode->setTransform(M);
-
-		boxRigidBody2->getTransform().get4x4ColumnMajor(&M._11);
-		boxNode2->setTransform(M);
-		
-		hkVector4 pivot(0, 0, 1.0f);
-		
-		if (GetAsyncKeyState('N') & 0x8000)
+		for (u32 i = 0; i < g_boxes.size(); i++)
 		{
-			hkVector4 v(-100.0f, 0, 0);
-			boxRigidBody->applyForce(dt, v, pivot);
-		}
-		else if (GetAsyncKeyState('M') & 0x8000)
-		{
-			hkVector4 v(100.0f, 0, 0);
-			boxRigidBody->applyForce(dt, v, pivot);
+			g_boxes[i]->update(dt);
 		}
 
-
-		if (GetAsyncKeyState('O') & 0x8000)
-		{
-			hkVector4 v(0, 0, 100);
-			boxRigidBody->applyForce(dt, v);
-		}
-		else if (GetAsyncKeyState('L') & 0x8000)
-		{
-			hkVector4 v(0, 0, -100);
-			boxRigidBody->applyForce(dt, v);
-		}
-
-		//visualDebugger->step(dt);
-
-		
 	}
-
 }
 
-void unloadHavodEngine()
+void addBoxInstance(ISceneManager* smgr, ISimpleMesh* mesh, IInstanceCollectionNode* collection)
 {
-	physicsWorld->removeReference();
+	f32 x = math::RandomFloat(-20.0f, 20.0f);
+	f32 z = math::RandomFloat(-20.0f, 20.0f);
+	f32 y = math::RandomFloat(20.0f, 200.0f);
+	//f32 y = 0;
 
-	visualDebugger->removeReference();
+	IInstanceNode* boxNode = collection->addInstance(false, XMFLOAT3(x, y, z), XMFLOAT3(0, 0, 0));
+	boxNode->addShadow(1);
 
-	// Contexts are not reference counted at the base class level by the VDB as
-	// they are just interfaces really. So only delete the context after you have
-	// finished using the VDB.
-	physicsContext->removeReference();
+	f32 r = math::RandomFloat(0, 1.0f);
+	f32 g = math::RandomFloat(0, 1.0f);
+	f32 b = math::RandomFloat(0, 1.0f);
+
+	XMFLOAT4 color(r, g, b, 1.0f);
+	boxNode->setData(&color);
+	//boxNode->setNeedCulling(false);
+
+	XMFLOAT3 boxHalfSize(boxSize / 2, boxSize / 2, boxSize / 2);
+	PhysicsCube* cube = new PhysicsCube(boxNode, boxHalfSize, XMFLOAT3(x, y, z), false, 0.5f, 0.5f);
+	g_boxes.push_back(cube);
+}
+
+void createBoxes(ISceneManager* smgr)
+{
+	ISimpleMesh* boxMesh = IMeshManager::getInstance()->createCubeMesh("box1", boxSize, boxSize, boxSize);
+	u32 boxNum = 3000;
+#if defined(DEBUG) || defined(_DEBUG)
+	boxNum = 100;
+#endif
+	IInstanceCollectionNode* collection = smgr->addInstanceCollectionNode(boxMesh, nullptr, boxNum, sizeof(XMFLOAT4));
+	for (u32 i = 0; i < boxNum; i++)
+	{
+		addBoxInstance(smgr, boxMesh, collection);
+	}
+	collection->setMaterialName("multi_box_material");
+	collection->addShadow(1);
 }
