@@ -144,15 +144,20 @@ namespace gf
 			return mShadowRange;
 		}
 
-		XMMATRIX calcProjMatrix() const
+		XMMATRIX calcProjMatrix(f32 n, f32 f) const
 		{
 			XMMATRIX proj;
 			if (mPerspectiveProj)
-				proj = XMMatrixPerspectiveFovLH(mFovAngleY, mAspectRatio, mNearZ, mFarZ);
+				proj = XMMatrixPerspectiveFovLH(mFovAngleY, mAspectRatio, n, f);
 			else
-				proj = XMMatrixOrthographicLH(mViewWidth, mViewHeight, mNearZ, mFarZ);
+				proj = XMMatrixOrthographicLH(mViewWidth, mViewHeight, n, f);
 
 			return proj;
+		}
+
+		XMMATRIX calcProjMatrix() const
+		{
+			return calcProjMatrix(mNearZ, mFarZ);
 		}
 
 		void setPerspectiveProjection(bool perspectiveProj)
@@ -168,6 +173,21 @@ namespace gf
 		const math::SFrustum& getFrustum() const
 		{
 			return mFrustum;
+		}
+
+		math::SFrustum getFrustum(f32 farZ) const
+		{
+			XMMATRIX proj = calcProjMatrix(mNearZ, farZ);
+			XMMATRIX view = XMLoadFloat4x4(&mViewMatrix);
+
+			XMMATRIX M = view * proj;
+
+			math::SFrustum frustum = mFrustum;
+			frustum.FarPlane.x = M._14 - M._13;
+			frustum.FarPlane.y = M._24 - M._23;
+			frustum.FarPlane.z = M._34 - M._33;
+			frustum.FarPlane.w = M._44 - M._43;
+			return frustum;
 		}
 
 		virtual E_SCENE_NODE_TYPE getNodeType() const

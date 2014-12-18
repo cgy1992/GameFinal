@@ -5,7 +5,6 @@
 GrassLand::GrassLand(ISceneManager* smgr, 
 	ITerrainNode* terrainNode,
 	const std::vector<XMFLOAT3>& positions, 
-	const math::SAxisAlignedBox& aabb,
 	f32 pitchSize,
 	const XMFLOAT2& grassSize)
 	:mGrassSize(grassSize)
@@ -14,6 +13,14 @@ GrassLand::GrassLand(ISceneManager* smgr,
 	IMeshManager* meshManager = IMeshManager::getInstance(); 
 	IMaterialManager* materialManager = IMaterialManager::getInstance();
 	ITextureManager* textureManager = ITextureManager::getInstance();
+	ITerrainMesh* terrainMesh = terrainNode->getTerrainMesh();
+
+	math::SAxisAlignedBox aabb;
+	f32 maxHeight = terrainMesh->getHeightScale() * 255.0f;
+	aabb.Extents.y = (maxHeight + grassSize.y) * 0.5f;
+	aabb.Extents.x = (grassSize.x + pitchSize) * 0.5f;
+	aabb.Extents.z = (grassSize.x + pitchSize) * 0.5f;
+	aabb.Center = XMFLOAT3(0, aabb.Extents.y, 0);
 
 	ISimpleMesh* mesh = meshManager->createSimpleMesh("grass", EVF_POSITION, (void*)&positions[0],
 		0, positions.size(), sizeof(XMFLOAT3), 0, aabb, false);
@@ -26,8 +33,27 @@ GrassLand::GrassLand(ISceneManager* smgr,
 	}
 
 	mMaterial->setTexture(1, radiansTexture);
+	
+	f32 terrainWidth = terrainNode->getTerrainMesh()->getTotalWidth();
+	mPitchNumPerRow = ceilf(terrainWidth / pitchSize);
 
-	mMeshNode = smgr->addMeshNode(mesh, mMaterial, nullptr, true);
+	mMeshNode = smgr->addInstanceCollectionNode(mesh, nullptr, mPitchNumPerRow * mPitchNumPerRow, 0);
+	mMeshNode->setMaterial(mMaterial);
+
+	f32 startX = -terrainWidth * 0.5f + pitchSize * 0.5f;
+	f32 startZ = terrainWidth * 0.5f - pitchSize * 0.5f;
+
+	for (u32 row = 0; row < mPitchNumPerRow; row++)
+	{
+		for (u32 col = 0; col < mPitchNumPerRow; col++)
+		{
+			XMFLOAT3 pos = XMFLOAT3(startX + col * pitchSize, 0, startZ - row * pitchSize);
+			IInstanceNode* instanceNode = mMeshNode->addInstance(true, pos);
+			instanceNode->addShadow(1);
+			instanceNode->setFarCullingDistance(300.0f);
+		}
+	}
+
 	mMeshNode->setRenderOrder(ERO_SKYDOME + 1);
 	mMeshNode->addShadow(1);
 

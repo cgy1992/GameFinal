@@ -18,11 +18,13 @@ cbuffer cb_grass
 struct VertexIn
 {
 	float3 PosL : POSITION;
+	GF_DECLARE_INTANCES_VERTEX
 };
 
 struct VertexOut
 {
 	float3 PosL : POSITION;
+	float4x4 World : WORLD;
 };
 
 struct GeoOut
@@ -34,13 +36,14 @@ struct GeoOut
 #ifndef SHADOW_MAP_PASS
 	float3 Normal : NORMAL;
 #endif
-
+	
 };
 
 VertexOut vs_main(VertexIn vin)
 {
 	VertexOut vout;
 	vout.PosL = vin.PosL;
+	vout.World = vin.World;
 	return vout;
 }
 
@@ -51,7 +54,7 @@ void gs_main(point VertexOut gin[1],
 {
 	float2 sin_cos_value = gRadiansTexture.SampleLevel(gRandomValueSampler, id / 256.0f, 0).xy;
 	float3 extends = float3(gGrassWidth * 0.5f * sin_cos_value.x, gGrassHeight, gGrassWidth * 0.5f * sin_cos_value.y);
-	float3 PosW = mul(float4(gin[0].PosL, 1.0f), GF_WORLD).xyz;
+	float3 PosW = mul(float4(gin[0].PosL, 1.0f), gin[0].World).xyz;
 
 	float2 uv;
 	uv.x = (PosW.x + gTerrainWidth * 0.5f) * gInvTerrainWidth;

@@ -260,7 +260,12 @@ namespace gf
 		if (!camera)
 			return false;
 
-		const math::SFrustum& frustum = camera->getFrustum();
+		math::SFrustum frustum = camera->getFrustum();
+		if (node->getFarCullingDistance() > 0)
+		{
+			frustum = camera->getFrustum(node->getFarCullingDistance());
+		}
+		
 		if (math::IntersectOrientedBoxFrustum(obb, frustum) == math::EIS_OUTSIDE)
 			return true;
 

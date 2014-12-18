@@ -9,8 +9,11 @@
 
 using namespace gf;
 
-const u32 SCREEN_WIDTH = 1024;
-const u32 SCREEN_HEIGHT = 768;
+//const u32 SCREEN_WIDTH = 1024;
+//const u32 SCREEN_HEIGHT = 768;
+
+const u32 SCREEN_WIDTH = 1280;
+const u32 SCREEN_HEIGHT = 960;
 const f32 CAMERA_MOVE_UNIT = 30.0f;
 const f32 CAMERA_ROTATE_UNIT = 1.0f;
 const f32 GROUND_SIZE = 300.0f;
@@ -36,8 +39,6 @@ f32 getFps(float dt)
 	return fps;
 }
 
-
-
 int _tmain(int argc, _TCHAR* argv[])
 {
 	SDeviceContextSettings settings;
@@ -46,7 +47,12 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	IDevice* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
-	ISceneManager* smgr = device->createSceneManager();
+
+	math::SAxisAlignedBox aabb;
+	aabb.Center = XMFLOAT3(0, 0.0f, 0);
+	aabb.Extents = XMFLOAT3(3000.0f, 1000.0f, 3000.0f);
+
+	ISceneManager* smgr = device->createSceneManager(aabb);
 	IMeshManager* meshManager = driver->getMeshManager();
 	IMaterialManager* materialManager = driver->getMaterialManager();
 	ITextureManager* textureManager = driver->getTextureManager();
@@ -189,7 +195,7 @@ void buildGrassLand(ISceneManager* smgr)
 
 	std::string rawFileName("terrain-heightmap4.raw");
 	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", rawFileName,
-		5.0f, 0.3f, false, true, 1.0f);
+		10.0f, 0.3f, false, true, 1.0f);
 
 	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh);
 	terrainNode->setMaterialName("terrain/terrain_material");
@@ -198,7 +204,7 @@ void buildGrassLand(ISceneManager* smgr)
 	f32 grassWidth = 10.0f;
 	f32 grassHeight = 10.0f;
 
-	const u32 grassCount = 2000;
+	const u32 grassCount = 5000;
 	const f32 grassY = 0;
 	std::vector<XMFLOAT3> v(grassCount);
 	for (u32 i = 0; i < grassCount; i++)
@@ -212,7 +218,7 @@ void buildGrassLand(ISceneManager* smgr)
 	aabb.Center = XMFLOAT3(0, grassHeight * 0.5f, 0);
 	aabb.Extents = XMFLOAT3(range + grassWidth * 0.5f, grassHeight, range + grassWidth * 0.5f); 
 
-	g_grassLand = new GrassLand(smgr, terrainNode, v, aabb, 100.0f, XMFLOAT2(grassWidth, grassHeight));
+	g_grassLand = new GrassLand(smgr, terrainNode, v, range * 2, XMFLOAT2(grassWidth, grassHeight));
 }
 
 

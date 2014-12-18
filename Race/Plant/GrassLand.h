@@ -8,7 +8,6 @@ public:
 	GrassLand(ISceneManager* smgr,
 		ITerrainNode* terrainNode,
 		const std::vector<XMFLOAT3>& positions,
-		const math::SAxisAlignedBox& aabb,
 		f32 pitchSize,
 		const XMFLOAT2& grassSize);
 
@@ -21,10 +20,11 @@ public:
 private:
 	XMFLOAT2		mGrassSize;
 	IMaterial*		mMaterial; 
-	IMeshNode*		mMeshNode;
+	IInstanceCollectionNode*	mMeshNode;
 	ITerrainNode*	mTerrainNode;
 
 	XMFLOAT3		mWindDirection;
 	f32				mBladeAmplitude;
+	u32				mPitchNumPerRow;
 };
 
