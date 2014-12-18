@@ -1,0 +1,17 @@
+<materials>
+    <material name="houseA_mesh/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.220000, 0.220000, 0.220000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.100000, 0.100000, 0.100000, 1.000000"/>
+            <attribute name="emissive" value="0.100000, 0.100000, 0.100000, 1.000000"/>
+        </attributes>
+        <pipelines>
+          <pipeline name="shadow_pipeline"/>
+          <pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
+        </pipelines>
+        <textures>
+            <texture name="houseAtexture.png"/>
+        </textures>
+    </material>
+</materials>

@@ -14,6 +14,14 @@ namespace gf
 
 		virtual void updateTemporaryTextures(u32 delta) = 0;
 
+		virtual ITexture* createTexture1D(
+			const std::string& name,
+			u32 width,
+			u32 bindFlags,
+			void* data,
+			u32 mipLevel,
+			E_GI_FORMAT format) = 0;
+
 		virtual ITexture* createTexture2D(
 			const std::string& name,
 			u32 width,

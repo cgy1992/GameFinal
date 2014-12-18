@@ -19,8 +19,4 @@
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <Xml Include="..\Media\materials\terrain.material.xml" />
-    <Xml Include="..\Media\pipelines\terrain.pipeline.xml" />
-  </ItemGroup>
 </Project>

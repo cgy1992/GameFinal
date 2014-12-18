@@ -1,0 +1,49 @@
+<materials>
+  <material name="sphere_material">
+    <attributes>
+      <attribute name="ambient" value="0.7f, 0.5f, 0.1f, 1.0f"/>
+      <attribute name="diffuse" value="1.0f, 0.9f, 0.17f, 1.0f"/>
+      <attribute name="specular" value="0.5f, 0.5f, 0.5f, 32.0f"/>
+      <attribute name="emissive" value="0.0f, 0.0f, 0.0f, 1.0f"/>
+    </attributes>
+
+    <pipelines>
+      <pipeline name="sphere_pipeline"/>
+      <pipeline name="shadow_map_pipeline" usage="shadow_map"/>
+      <pipeline name="point_shadow_map_pipeline" usage="point_shadow_map"/>
+    </pipelines>
+    
+  </material>
+
+  <material name="box_material" prototype="sphere_material">
+    <attributes>
+      <attribute name="ambient" value="0.1f,  0.4f, 0.6f, 1.0f"/>
+      <attribute name="diffuse" value="0.23f, 0.7f, 0.96f, 1.0f"/>
+    </attributes>
+  </material>
+
+  <material name="teapot_material" prototype="box_material">
+    <attributes>
+      <attribute name="ambient" value="0.6f,  0.1f, 0.02f, 1.0f"/>
+      <attribute name="diffuse" value="0.96f, 0.15f, 0.01f, 1.0f"/>
+    </attributes>
+  </material>
+  
+  <material name="multi_box_material">
+    <attributes>
+      <attribute name="ambient" value="0.3f,  0.3f, 0.3f, 1.0f"/>
+      <attribute name="diffuse" value="0.9f, 0.9f, 0.9f, 1.0f"/>
+      <attribute name="specular" value="0.5f, 0.5f, 0.5f, 32.0f"/>
+      <attribute name="emissive" value="0.0f, 0.0f, 0.0f, 1.0f"/>
+    </attributes>
+
+    <pipelines>
+      <pipeline name="multi_objects_pipeline"/>
+      <pipeline name="shadow_map_multi_objects_pipeline" usage="shadow_map"/>
+    </pipelines>
+    
+  </material>
+
+
+  
+</materials>

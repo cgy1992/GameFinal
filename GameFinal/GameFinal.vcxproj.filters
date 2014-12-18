@@ -527,6 +527,12 @@
     <ClInclude Include="CInstanceNode.h">
       <Filter>src\SceneNode\Class</Filter>
     </ClInclude>
+    <ClInclude Include="ITexture1D.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Texture1D.h">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -753,6 +759,9 @@
     </ClCompile>
     <ClCompile Include="CInstanceNode.cpp">
       <Filter>src\SceneNode\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Texture1D.cpp">
+      <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

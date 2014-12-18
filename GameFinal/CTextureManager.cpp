@@ -77,6 +77,45 @@ namespace gf
 		return pTexture;
 	}
 
+	ITexture* CTextureManager::createTexture1D(
+		const std::string& name,
+		u32 width,
+		u32 bindFlags,
+		void* data,
+		u32 mipLevel,
+		E_GI_FORMAT format)
+	{
+		auto it = mTextureMap.find(name);
+		if (it != mTextureMap.end())
+		{
+			ITexture* texture = it->second;
+			if (texture->getType() == ETT_TEXTURE_1D)
+			{
+				GF_PRINT_CONSOLE_INFO("Texture1D named '%s' has already existed.\n", name.c_str());
+				return texture;
+			}
+			else
+			{
+				GF_PRINT_CONSOLE_INFO("Texture named '%s' has already existed, but it's not a 1D Texture\n", name.c_str());
+				return nullptr;
+			}
+		}
+
+		u32 sortcode = mCodeAllocator.allocate();
+
+		ITexture* pTexture = mResourceFactory->createTexture1D(name, sortcode, width,
+			bindFlags, data, mipLevel, format);
+
+		if (pTexture == nullptr)
+		{
+			mCodeAllocator.release(sortcode);
+			return nullptr;
+		}
+
+		mTextureMap.insert(std::make_pair(name, pTexture));
+		return pTexture;
+	}
+
 	ITexture* CTextureManager::createTexture2D(
 		const std::string& name,
 		u32 width,
@@ -90,12 +129,22 @@ namespace gf
 		auto it = mTextureMap.find(name);
 		if (it != mTextureMap.end())
 		{
-			GF_PRINT_CONSOLE_INFO("Texture named '%s' has already existed.\n", name.c_str());
-			return it->second;
+			ITexture* texture = it->second;
+			if (texture->getType() == ETT_TEXTURE_2D)
+			{
+				GF_PRINT_CONSOLE_INFO("Texture2D named '%s' has already existed.\n", name.c_str());
+				return texture;
+			}
+			else
+			{
+				GF_PRINT_CONSOLE_INFO("Texture named '%s' has already existed, but it's not a 2D Texture\n", name.c_str());
+				return nullptr;
+			}
 		}
 
 		u32 sortcode = mCodeAllocator.allocate();
-		ITexture* pTexture = mResourceFactory->createTexture2D(name, sortcode, width, height, bindFlags, data, mipLevel, format, pitch);
+		ITexture* pTexture = mResourceFactory->createTexture2D(name, sortcode, width, 
+			height, bindFlags, data, mipLevel, format, pitch);
 		if (pTexture == nullptr)
 		{
 			mCodeAllocator.release(sortcode);

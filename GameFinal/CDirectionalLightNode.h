@@ -11,15 +11,7 @@ namespace gf
 	public:
 		CDirectionalLightNode(ISceneNode* parent, 
 			ISceneManager* smgr, u32 id,
-			const XMFLOAT3& direction)
-			:ILightNode(parent, smgr, false, id)
-			, mShadowMap(nullptr)
-		{
-			// Directional Light must be no-static.
-			ZeroMemory(&mLightData, sizeof(SDirectionalLight));
-			setDirection(direction);
-			mInsideFrustum = true;
-		}
+			const XMFLOAT3& direction);
 
 		void render(E_PIPELINE_USAGE usage){}
 

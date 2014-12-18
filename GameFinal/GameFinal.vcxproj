@@ -93,6 +93,7 @@
     <ClInclude Include="CCameraNode.h" />
     <ClInclude Include="CCompositorFactory.h" />
     <ClInclude Include="CD3D11InstanceMeshBuffer.h" />
+    <ClInclude Include="CD3D11Texture1D.h" />
     <ClInclude Include="CD3D11Texture2DArray.h" />
     <ClInclude Include="CD3D11TextureCube.h" />
     <ClInclude Include="CD3D11DepthStencilSurface.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="IInstanceCollectionNode.h" />
     <ClInclude Include="IInstanceNode.h" />
     <ClInclude Include="IRenderableBuffer.h" />
+    <ClInclude Include="ITexture1D.h" />
     <ClInclude Include="ITexture2DArray.h" />
     <ClInclude Include="ITextureCube.h" />
     <ClInclude Include="IDepthStencilSurface.h" />
@@ -234,6 +236,7 @@
     <ClCompile Include="CCompositor.cpp" />
     <ClCompile Include="CCameraNode.cpp" />
     <ClCompile Include="CCompositorFactory.cpp" />
+    <ClCompile Include="CD3D11Texture1D.cpp" />
     <ClCompile Include="CD3D11Texture2DArray.cpp" />
     <ClCompile Include="CD3D11TextureCube.cpp" />
     <ClCompile Include="CD3D11DepthStencilSurface.cpp" />

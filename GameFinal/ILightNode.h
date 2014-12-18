@@ -85,8 +85,8 @@ namespace gf
 	{
 	
 	public:
-		ILightNode(ISceneNode* parent, 
-			ISceneManager* smgr, 
+		ILightNode(ISceneNode* parent,
+			ISceneManager* smgr,
 			bool bStatic,
 			u32 id,
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0))

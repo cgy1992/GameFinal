@@ -141,7 +141,7 @@ namespace gf
 		D3D_FEATURE_LEVEL featureLevel;
 
 		/* 如果将这个标志设为DEBUG，则绘制效率大大降低，且帧频极不稳定 */
-		createDeviceFlags = 0;
+		//createDeviceFlags = 0;
 
 		HRESULT hr;
 		hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE,
@@ -416,6 +416,9 @@ namespace gf
 		//md3dDeviceContext->ClearDepthStencilView(mDepthStencilView, clearFlag, depthValue, stencilValue);
 
 		D3D11DriverState.Reset();
+
+		for (u32 i = 0; i < EST_SHADER_COUNT; i++)
+			clearShader((E_SHADER_TYPE)i);
 
 		mCurrentPipelineUsage = EPU_FORWARD;
 

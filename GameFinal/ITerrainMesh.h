@@ -51,6 +51,8 @@ namespace gf
 
 		virtual f32 getHeight(f32 x, f32 z) const = 0;
 
+		virtual f32 getHeightByRowAndCol(u32 row, u32 col) const = 0;
+
 		f32 getVertexSpace() const
 		{
 			return mVertexSpace;

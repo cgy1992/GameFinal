@@ -150,6 +150,15 @@ namespace gf
 			return XMFLOAT4(-a.x, -a.y, -a.z, -a.w);
 		}
 
+		inline XMFLOAT3 GetNormalizedVector(f32 x, f32 y, f32 z)
+		{
+			XMVECTOR v = XMVectorSet(x, y, z, 0);
+			v = XMVector3Normalize(v);
+			XMFLOAT3 vec;
+			XMStoreFloat3(&vec, v);
+			return vec;
+		}
+
 		XMMATRIX InverseTranspose(CXMMATRIX M);
 
 		bool FloatEqual(f32 a, f32 b, f32 elipson = 0.00001f);

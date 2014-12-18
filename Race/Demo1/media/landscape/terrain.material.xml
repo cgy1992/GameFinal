@@ -1,0 +1,44 @@
+<materials>
+  <material name="terrain/terrain_material">
+    <attributes>
+      <attribute name="ambient" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="diffuse" value="0.8f, 0.8f, 0.8f, 1.0f"/>
+      <attribute name="specular" value="0.3f, 0.3f, 0.3f, 32.0f"/>
+      <attribute name="emissive" value="0.3f, 0.3f, 0.3f, 1.0f"/>
+      <attribute name="power" value="32.0f"/>
+    </attributes>
+    <pipelines>
+      <pipeline name="terrain/simple_pipeline"/>
+    </pipelines>
+    <textures>
+      <!--<texture name="ground0026.jpg" index="0"/>-->
+      <!--<texture name="road_dark_stone.png" index="0"/>-->
+      <texture name="ground0017.jpg" index="0"/>
+      <texture name="snowland.jpg" index="1"/>
+      <texture name="rock.png" index="2"/>
+      
+      <texture name="terrain_height_ratio3.png" index="3"/>
+    </textures>
+  </material>
+
+  <material name="terrain/tessellation_material">
+    <attributes>
+      <attribute name="ambient" value="0.6f, 0.6f, 0.6f, 1.0f"/>
+      <attribute name="diffuse" value="0.8f, 0.8f, 0.8f, 1.0f"/>
+      <attribute name="specular" value="0.3f, 0.3f, 0.3f, 32.0f"/>
+      <attribute name="emissive" value="0.3f, 0.3f, 0.3f, 1.0f"/>
+      <attribute name="power" value="32.0f"/>
+    </attributes>
+    <pipelines>
+      <pipeline name="terrain/tessellation_pipeline"/>
+    </pipelines>
+    <textures>
+      <texture name="grass.png" index="0"/>
+      <texture name="sand.png" index="1"/>
+      <texture name="rock.png" index="2"/>
+      <texture name="terrain_height_ratio.png" index="3"/>
+      <!--<texture name="floor.dds"/>-->
+    </textures>
+  </material>
+  
+</materials>

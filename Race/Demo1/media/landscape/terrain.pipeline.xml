@@ -1,0 +1,92 @@
+<pipelines>
+  <pipeline name="terrain/simple_pipeline">
+    <primitive-type value="triangle_list"/>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="terrain.hlsl" main="vs_main">
+        <variable name="gWorld" value="world_matrix"/>
+        <variable name="gViewProj" value="viewproj_matrix"/>
+      </vertex-shader>
+      <pixel-shader file="terrain.hlsl" main="ps_main">
+        <macro name="SHADOW_ON"/>
+        <variable name="gTexture" value="texture" index="0"/>
+        <variable name="gLight" value="light" index="1"/>
+        <variable name="gEyePos" value="camera_position"/>
+        <variable name="gFrustumPlanes" value="frustum"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+      
+      <!--<render-state name="fill_mode" value="wireframe"/>-->
+    </render-states>
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    </samplers>
+  </pipeline>
+
+  <pipeline name="terrain/tessellation_pipeline">
+    <primitive-type value="4_CONTROL_POINT_PATCHLIST"/>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+      <element semantic="BOUNDS" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="terrain2.hlsl" main="vs_main">
+        <variable name="gWorld" value="world_matrix"/>
+        <!--<variable name="gViewProj" value="viewproj_matrix"/>-->
+      </vertex-shader>
+      <hull-shader file="terrain2.hlsl" main="hs_main">
+        <variable name="gEyePos" value="camera_position"/>
+        <variable name="gFrustumPlanes" value="frustum"/>
+      </hull-shader>
+      <domain-shader file="terrain2.hlsl" main="ds_main">
+        <variable name="gEyePos" value="camera_position"/>
+        <variable name="gHeightScale" value="terrain_height_scale"/> 
+        <variable name="gHeightTexture" value="terrain_heightmap"/>
+        <variable name="gViewProj" value="viewproj_matrix"/>
+        <variable name="gTexelCellSpaceU" value="inverse_terrain_row_cell"/>
+        <variable name="gTexelCellSpaceV" value="inverse_terrain_row_cell"/>
+        <variable name="gWorldCellSpace" value="terrain_vertex_space"/>
+      </domain-shader>
+      
+      <pixel-shader file="terrain2.hlsl" main="ps_main">
+        <variable name="gGrassTexture" value="texture" index="0"/>
+        <variable name="gLight" value="light" index="1"/>
+        <variable name="gMaterial" value="material_color"/>
+        <variable name="gEyePos" value="camera_position"/>
+        <variable name="gPower" value="m_power"/>
+        <variable name="gDirLights" value="dir_lights"/>
+        <variable name="gDirLightsNum" value="dir_lights_num"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+     
+      <!--<render-state name="fill_mode" value="wireframe"/>-->
+    </render-states>
+    <samplers>
+      <sampler name="gHeightTextureSampleState"
+                 addressU="clamp"
+                 addressV="clamp"
+                 filter="MIN_MAG_LINEAR_MIP_POINT"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    
+      <sampler name="gGrassTextureSampleState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    </samplers>
+  </pipeline>
+  
+</pipelines>

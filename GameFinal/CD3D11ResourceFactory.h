@@ -28,6 +28,15 @@ namespace gf
 			const std::string& filepath,
 			u32 sortcode);
 
+		virtual ITexture* createTexture1D(
+			const std::string& name,
+			u32 sortcode,
+			u32 width,
+			u32 bindFlags,
+			void* data,
+			u32 mipLevel,
+			E_GI_FORMAT format);
+
 		virtual ITexture* createTexture2D(
 			const std::string& name,
 			u32 sortcode,

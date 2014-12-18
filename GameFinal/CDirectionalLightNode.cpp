@@ -1,9 +1,24 @@
 #include "stdafx.h"
 #include "CDirectionalLightNode.h"
 #include "ISceneManager.h"
+#include "IDevice.h"
 
 namespace gf
 {
+	CDirectionalLightNode::CDirectionalLightNode(ISceneNode* parent, ISceneManager* smgr,
+		u32 id, const XMFLOAT3& direction) :ILightNode(parent, smgr, false, id)
+		, mShadowMap(nullptr)
+	{
+		// Directional Light must be no-static.
+		ZeroMemory(&mLightData, sizeof(SDirectionalLight));
+		setDirection(direction);
+		mInsideFrustum = true;
+
+		mShadowMapWidth = IDevice::getInstance()->getClientWidth();
+		mShadowMapHeight = IDevice::getInstance()->getClientHeight();
+	}
+
+
 	void CDirectionalLightNode::OnRegisterSceneNode(bool bRecursion)
 	{
 		if (mVisible)
@@ -235,5 +250,7 @@ namespace gf
 			XMStoreFloat4x4(&mShadowTransforms[i], combinedShadowMatrix);
 		}
 	}
+
+
 }
 
