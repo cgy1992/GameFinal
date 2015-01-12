@@ -43,7 +43,7 @@ namespace gf
 				memset(VertexBuffers, 0, sizeof(VertexBuffers));
 				IndexBuffer = NULL;
 				Pipeline = NULL;
-				
+
 				memset(Shaders, 0, sizeof(Shaders));
 				//memset(ShaderResourceViews, 0, sizeof(ShaderResourceViews));
 				//memset(ShaderResourceViewIsDirty, 0, sizeof(ShaderResourceViewIsDirty));
@@ -55,7 +55,7 @@ namespace gf
 				DepthStencilState = NULL;
 				RasterizerState = NULL;
 				BlendState = NULL;
-				
+
 				DepthStencilSurface = NULL;
 				DepthStencilView = NULL;
 
@@ -64,7 +64,7 @@ namespace gf
 
 				memset(RenderTargets, 0, sizeof(RenderTargets));
 				memset(RenderTargetViews, 0, sizeof(RenderTargetViews));
-				
+
 			}
 
 			SD3D11DriverState()
@@ -105,6 +105,8 @@ namespace gf
 		virtual void setDefaultRenderTarget();
 
 		virtual void setRenderTarget(IRenderTarget* pRenderTarget);
+
+		virtual void setRenderTargets(IRenderTarget* pRenderTargets[], u32 count);
 
 		virtual IRenderTarget* getRenderTarget(u32 index = 0);
 
@@ -147,12 +149,19 @@ namespace gf
 
 		virtual void setPipelineUsage(E_PIPELINE_USAGE usage);
 
+		virtual void setGBuffersAsRenderTargets();
+
+		virtual void getGBuffers(IRenderTarget* renderTargets[]) const;
+
+		virtual IRenderTarget* getDefaultRenderTarget() { return mDefaultRenderTarget; }
+
 		virtual ~CD3D11Driver();
 
 	private:
 
 		void unbindTextureFromShaders(ID3D11ShaderResourceView* d3dShaderResourceView);
 
+		bool setupGBuffer();
 
 		HWND						mHwnd;
 		IDevice*					mDevice;
@@ -172,6 +181,8 @@ namespace gf
 		CCompositorFactory			mCompositorFactory;
 
 		ID3D11Debug*				md3dDebug;
+
+		
 
 	public:
 		/* this member is to store the current state of d3d11 driver context. */

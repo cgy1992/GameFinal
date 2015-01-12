@@ -23,7 +23,7 @@ namespace gf
 		:mDevice(device)
 		, md3dDebug(nullptr)
 	{
-
+		
 	}
 
 	bool CD3D11Driver::init(SCreationParameters& createParam)
@@ -425,7 +425,6 @@ namespace gf
 		setDefaultRenderTargetAndDepthStencil();
 
 		md3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
 		md3dDeviceContext->ClearRenderTargetView(mDefaultRenderTargetView, clearColor);
 		md3dDeviceContext->ClearDepthStencilView(mDefaultDepthStencilView, clearFlag, depthValue, stencilValue);
 	}
@@ -510,6 +509,59 @@ namespace gf
 			setViewport(viewport);
 		}
 		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetViews[0], D3D11DriverState.DepthStencilView);
+	}
+
+	void CD3D11Driver::setRenderTargets(IRenderTarget* pRenderTargets[], u32 count)
+	{
+		bool bNeedChange = false;
+		const u32 maxTargetCount = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
+		IRenderTarget* renderTargets[maxTargetCount] = { 0 };
+		memcpy(renderTargets, pRenderTargets, sizeof(IRenderTarget*)* count);
+
+		// check whether it needs change.
+		for (u32 i = 0; i < maxTargetCount; i++)
+		{
+			if (D3D11DriverState.RenderTargets[i] != renderTargets[i])
+			{
+				bNeedChange = true;
+				IRenderTarget* pRenderTarget = renderTargets[i];
+				D3D11DriverState.RenderTargets[i] = pRenderTarget;
+				if (pRenderTarget)
+				{
+					CD3D11RenderTarget* d3d11RenderTarget = dynamic_cast<CD3D11RenderTarget*>(pRenderTarget);
+					D3D11DriverState.RenderTargetViews[i] = d3d11RenderTarget->getRenderTargetView();
+
+					// check if the texture has already been bound to a shader.
+					ID3D11ShaderResourceView* d3dShaderResourceView = d3d11RenderTarget->getShaderResourceView();
+
+					if (d3dShaderResourceView)
+						unbindTextureFromShaders(d3dShaderResourceView);
+				}
+				else
+				{
+					D3D11DriverState.RenderTargetViews[i] = NULL;
+				}
+			}
+		}
+
+		if (bNeedChange)
+		{
+			// change viewport size
+			for (u32 i = 0; i < count; i++)
+			{
+				if (pRenderTargets[i])
+				{
+					SViewport viewport = mViewport;
+					viewport.Width = (f32)pRenderTargets[i]->getWidth();
+					viewport.Height = (f32)pRenderTargets[i]->getHeight();
+					setViewport(viewport);
+					break;
+				}
+			}
+
+			md3dDeviceContext->OMSetRenderTargets(maxTargetCount, &D3D11DriverState.RenderTargetViews[0], D3D11DriverState.DepthStencilView);
+		}
+			
 	}
 
 	void CD3D11Driver::unbindTextureFromShaders(ID3D11ShaderResourceView* d3dShaderResourceView)
@@ -703,7 +755,7 @@ namespace gf
 				SViewport viewport = mViewport;
 				viewport.Width = (f32)pRenderTarget->getWidth();
 				viewport.Height = (f32)pRenderTarget->getHeight();
-				viewports.push_back(viewport);
+				viewports[i] = viewport;
 			}
 		}
 
@@ -918,6 +970,33 @@ namespace gf
 	{
 		mCurrentPipelineUsage = usage;
 		D3D11DriverState.Pipeline = nullptr;
+	}
+
+	bool CD3D11Driver::setupGBuffer()
+	{
+		if (mGBuffers[0])
+			return false;
+
+		ITextureManager* textureManager = ITextureManager::getInstance();
+
+		std::string textureNames[] = { "gbuffer0", "gbuffer1", "gbuffer2", "gbuffer3" };
+		for (u32 i = 0; i < EGT_GBUFFER_COUNT; i++)
+		{
+			IRenderTarget* pTarget = textureManager->createRenderTarget(textureNames[i]);
+			assert(pTarget, "set up gbuffer failed!");
+			mGBuffers[i] = pTarget;
+		}
+		return true;
+	}
+	
+	void CD3D11Driver::setGBuffersAsRenderTargets()
+	{
+		setRenderTargets(mGBuffers, EGT_GBUFFER_COUNT);
+	}
+
+	void CD3D11Driver::getGBuffers(IRenderTarget* renderTargets[]) const
+	{
+		memcpy(renderTargets, mGBuffers, EGT_GBUFFER_COUNT * sizeof(IRenderTarget*));
 	}
 
 }

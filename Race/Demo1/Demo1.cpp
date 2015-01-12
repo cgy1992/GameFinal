@@ -188,6 +188,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	const f32 fps = 1.0f / 60.0f;
 	f32 elapseTime = 0;
 
+
 	/*
 	while (device->run())
 	{

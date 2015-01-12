@@ -21,6 +21,16 @@
 
 namespace gf
 {
+	enum E_GBUFFER_TYPE
+	{
+		EGT_GBUFFER_0,
+		EGT_GBUFFER_1,
+		EGT_GBUFFER_2,
+		EGT_GBUFFER_3,
+		EGT_GBUFFER_COUNT,
+	};
+
+
 	struct SViewport
 	{
 		f32 TopLeftX;
@@ -61,8 +71,9 @@ namespace gf
 			, mTextureManager(nullptr)
 			, mRenderStateManager(nullptr)
 			, mMeshManager(nullptr)
+			, mDeferredShading(false)
 		{
-
+			ZeroMemory(mGBuffers, sizeof(mGBuffers));
 		}
 
 		virtual ~IVideoDriver()
@@ -99,6 +110,8 @@ namespace gf
 		virtual void clearRenderTarget(const f32 color[]) = 0;
 
 		virtual void setRenderTarget(IRenderTarget* pRenderTarget) = 0;
+
+		virtual void setRenderTargets(IRenderTarget* pRenderTargets[], u32 count) = 0;
 
 		virtual IRenderTarget* getRenderTarget(u32 index = 0) = 0;
 
@@ -188,7 +201,15 @@ namespace gf
 
 		virtual void setPipelineUsage(E_PIPELINE_USAGE usage) = 0;
 
+		bool isDeferredShading() const { return mDeferredShading; }
 
+		void setDeferredShading(bool deferredShading) { mDeferredShading = deferredShading; }
+
+		virtual void setGBuffersAsRenderTargets() = 0;
+
+		virtual void getGBuffers(IRenderTarget* renderTargets[]) const = 0;
+
+		virtual IRenderTarget* getDefaultRenderTarget() = 0;
 
 		_DECLARE_SINGLETON_INSTANCE(IVideoDriver);
 
@@ -210,7 +231,8 @@ namespace gf
 
 		//bool							mRenderingShadowMap;
 		E_PIPELINE_USAGE				mCurrentPipelineUsage;
-
+		bool							mDeferredShading;
+		IRenderTarget*					mGBuffers[EGT_GBUFFER_COUNT];
 		//	IShaderVariableInjection*		mShaderVariableInjector;
 	};
 

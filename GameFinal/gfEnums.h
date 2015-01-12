@@ -21,6 +21,7 @@ namespace gf
 		EPU_DIR_SHADOW_MAP = 1,
 		EPU_POINT_SHADOW_MAP = 2,
 		EPU_DEBUG = 3,
+		EPU_DEFERRED_SHADING = 4,
 		EPU_COUNT
 	};
 

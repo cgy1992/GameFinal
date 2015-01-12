@@ -306,6 +306,8 @@ namespace gf
 
 	}
 
+	
+
 	void CSceneManager::draw(ISceneNode* node)
 	{
 		mSolidNodes.clear();
@@ -377,16 +379,31 @@ namespace gf
 
 		if (mCompositors.empty())
 		{
-			//ICameraNode* activeCamera = getActiveCameraNode();
-			//setActiveCamera(mShadowMapCamera);
-			draw(mDefaultOctree);
-			//setActiveCamera(activeCamera);
+			if (mVideoDriver->isDeferredShading())
+			{
+				mVideoDriver->setPipelineUsage(EPU_DEFERRED_SHADING);
+				// set gbuffer as render targets.
+				mVideoDriver->setGBuffersAsRenderTargets();
+				draw(mDefaultOctree);
+				mVideoDriver->setPipelineUsage(EPU_FORWARD);
+
+				IRenderTarget* pDefaultTarget = mVideoDriver->getDefaultRenderTarget();
+				IRenderTarget* targets[] = { pDefaultTarget };
+
+				IDepthStencilSurface* depthStencilSurface = mVideoDriver->getDepthStencilSurface();
+				mVideoDriver->setDepthStencilSurface(nullptr);
+				mVideoDriver->setRenderTargets(targets, 1);
+
+				
+			}
+			else
+			{
+				draw(mDefaultOctree);
+			}
 		}
 		else
 		{
 			// if multisampling, then create a new depth buffer
-			const SViewport& viewport = mVideoDriver->getViewport();
-
 			IRenderTarget* target = ITextureManager::getInstance()->getTempRenderTarget(0, 0, EGF_R8G8B8A8_UNORM);
 			target->clear();
 			mVideoDriver->setRenderTarget(target);
