@@ -333,6 +333,10 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="..\Media\built-in-resources\deferred_shading.pipeline.xml">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="..\Media\built-in-resources\post_process.pipeline.xml">
       <SubType>Designer</SubType>
     </Xml>

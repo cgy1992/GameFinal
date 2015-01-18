@@ -107,7 +107,16 @@ namespace gf
 			memcpy(transforms, mShadowTransforms, sizeof(mShadowTransforms));
 		}
 
+		virtual void setVisible(bool visible);
+		
+
+		virtual ~CDirectionalLightNode();
+
 	protected:
+
+		void disableLightInScene(ILightNode* light);
+
+		void enableLightInScene(ILightNode* light);
 
 		SDirectionalLight		mLightData;
 		f32						mShadowCameraViewWidth;

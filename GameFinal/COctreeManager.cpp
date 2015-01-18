@@ -234,7 +234,39 @@ namespace gf
 		return true;
 	}
 
+	void COctreeManager::getLightsInFrustum(const math::SFrustum& frustum, std::vector<ILightNode*>& pointLights)
+	{
+		pointLights.clear();
+		COctreeNode::OctreeIterateCallback callback = [&frustum, &pointLights](ISceneNode* node, COctreeNode* octreeNode)
+		{
+			for (auto it = octreeNode->mStaticLightNodes.begin(); it != octreeNode->mStaticLightNodes.end(); it++)
+			{
+				ILightNode* light = *it;
+				addLightToListIfVisible(light, frustum, pointLights);
+			}
 
+			for (auto it = octreeNode->mDynamicLightNodes.begin(); it != octreeNode->mDynamicLightNodes.end(); it++)
+			{
+				ILightNode* light = *it;
+				addLightToListIfVisible(light, frustum, pointLights);
+			}
+		};
 
+		mRootNode.iterateChildren(nullptr, frustum, callback);
+	}
 
+	void COctreeManager::addLightToListIfVisible(ILightNode* light, 
+		const math::SFrustum& frustum, 
+		std::vector<ILightNode*>& pointLights)
+	{
+		switch (light->getType())
+		{
+		case ELT_POINT:
+			if (light->isVisible() && !light->isCulled(frustum))
+			{
+				pointLights.push_back(light);
+			}
+			break;
+		}
+	}
 }

@@ -1,5 +1,3 @@
-#include "../../../Media/built-in-resources/GameFinal.hlsl"
-
 SamplerState gSampleState;
 
 cbuffer cbPerFrame
@@ -99,4 +97,18 @@ float4 point_light_ps_main(VertexOut pin) : SV_TARGET
 	return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE + 
 		diffuse * GF_MTRL_DIFFUSE + specular * GF_MTRL_SPECULAR;
 #endif
+}
+
+SReturnGBuffers defer_ps_main(VertexOut pin)
+{
+	float3 normal = -normalize(pin.Normal);
+	normal = normal * 0.5f + 0.5f;
+
+	SReturnGBuffers pout;
+	pout.GBuffer0 = float4(normal, 0);
+	pout.GBuffer1 = GF_MTRL_DIFFUSE;
+	pout.GBuffer2 = GF_MTRL_SPECULAR;
+	pout.GBuffer3 = GF_MTRL_AMBIENT;
+
+	return pout;
 }

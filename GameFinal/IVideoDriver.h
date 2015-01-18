@@ -111,7 +111,11 @@ namespace gf
 
 		virtual void setRenderTarget(IRenderTarget* pRenderTarget) = 0;
 
-		virtual void setRenderTargets(IRenderTarget* pRenderTargets[], u32 count) = 0;
+		//virtual void setRenderTargets(IRenderTarget* pRenderTargets[], u32 count) = 0;
+
+		virtual void setMultipleRenderTargets(IRenderTarget* renderTargets[], u32 count) = 0;
+
+		virtual void setMultipleRenderTargets(IRenderTarget* renderTargets[], u32 count, IDepthStencilSurface* pDepthStencilSurface) = 0;
 
 		virtual IRenderTarget* getRenderTarget(u32 index = 0) = 0;
 
@@ -213,6 +217,10 @@ namespace gf
 
 		_DECLARE_SINGLETON_INSTANCE(IVideoDriver);
 
+	public:
+
+		static const u32 MAX_GBUFFER_COUNT = 4;
+
 	protected:
 		int								mVideoCardMemory;
 		char							mVideoCardDescription[128];
@@ -234,6 +242,8 @@ namespace gf
 		bool							mDeferredShading;
 		IRenderTarget*					mGBuffers[EGT_GBUFFER_COUNT];
 		//	IShaderVariableInjection*		mShaderVariableInjector;
+
+		
 	};
 
 }

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CDirectionalLightNode.h"
-#include "ISceneManager.h"
+#include "CSceneManager.h"
 #include "IDevice.h"
 
 namespace gf
@@ -248,6 +248,56 @@ namespace gf
 			XMMATRIX combinedShadowMatrix = lightSpaceMatrix * cropMatrix * texMatrix;
 			XMStoreFloat4x4(&mShadowCropTransforms[i], cropMatrix);
 			XMStoreFloat4x4(&mShadowTransforms[i], combinedShadowMatrix);
+		}
+	}
+
+	void CDirectionalLightNode::disableLightInScene(ILightNode* light)
+	{
+		CSceneManager* sceneManager = dynamic_cast<CSceneManager*>(mSceneManager);
+
+		// remove from mDirectionalLights in sceneManager.
+		std::list<ILightNode*>& dirLightsInScene = sceneManager->mDirectionalLights;
+		for (auto it = dirLightsInScene.begin(); it != dirLightsInScene.end(); it++)
+		{
+			if (*it == this)
+			{
+				dirLightsInScene.erase(it);
+				break;
+			}
+		}
+	}
+
+	void CDirectionalLightNode::enableLightInScene(ILightNode* light)
+	{
+		CSceneManager* sceneManager = dynamic_cast<CSceneManager*>(mSceneManager);
+
+		// check if this is already enabled now.
+		std::list<ILightNode*>& dirLightsInScene = sceneManager->mDirectionalLights;
+		for (auto it = dirLightsInScene.begin(); it != dirLightsInScene.end(); it++)
+		{
+			if (*it == this)
+				return;
+		}
+
+		dirLightsInScene.push_back(this);
+	}
+
+	CDirectionalLightNode::~CDirectionalLightNode()
+	{
+		CSceneManager* sceneManager = dynamic_cast<CSceneManager*>(mSceneManager);
+		sceneManager->mLightNodes.erase(mId);
+	}
+
+	void CDirectionalLightNode::setVisible(bool visible)
+	{
+		mVisible = visible;
+		if (mVisible)
+		{
+			enableLightInScene(this);
+		}
+		else
+		{
+			disableLightInScene(this);
 		}
 	}
 

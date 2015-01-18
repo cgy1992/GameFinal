@@ -224,11 +224,19 @@ namespace gf
 		virtual void setTransform(CXMMATRIX M)
 		{
 			XMStoreFloat4x4(&mTransformation, M);
+
+			mPosition.x = M._41;
+			mPosition.y = M._42;
+			mPosition.z = M._43;
 		}
 
 		virtual void setTransform(const XMFLOAT4X4& M)
 		{
 			mTransformation = M;
+
+			mPosition.x = M._41;
+			mPosition.y = M._42;
+			mPosition.z = M._43;
 		}
 		
 		virtual void transform(CXMMATRIX M)

@@ -229,7 +229,7 @@ namespace gf
 		mPipelineUsageMapping["SHADOW_MAP"] = EPU_DIR_SHADOW_MAP;
 		mPipelineUsageMapping["POINT_SHADOW_MAP"] = EPU_POINT_SHADOW_MAP;
 		mPipelineUsageMapping["DEBUG"] = EPU_DEBUG;
-
+		mPipelineUsageMapping["DEFER"] = EPU_DEFERRED_SHADING;
 	}
 
 	bool CResourceXmlParser::handlePipelineNode(const std::string& filepath, 

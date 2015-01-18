@@ -1,0 +1,71 @@
+<pipelines>
+  <pipeline name="sphere_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="sphere.hlsl" main="vs_main">
+        <macro name="SHADOW_ON"/>
+      </vertex-shader>
+      <pixel-shader file="sphere.hlsl" main="point_light_ps_main">
+        <macro name="SHADOW_ON"/>
+        <variable name="gLight" value="light" index="1"/>
+        <variable name="gPointLight" value="light" index="2"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+    </render-states>
+  </pipeline>
+
+  <pipeline name="shadow_map_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="sphere.hlsl" main="shadow_vs_main">
+      </vertex-shader>
+    </shaders>
+    <render-states>
+      <!--<render-state name="cull_mode" value="CW"/>-->
+      <render-state name="depth_bias" value="100000"/>
+      <render-state name="slope_scaled_depth_bias" value="1.0"/>
+      
+    </render-states>
+  </pipeline>
+
+
+  <pipeline name="point_shadow_map_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="sphere.hlsl" main="point_shadow_vs_main">
+      </vertex-shader>
+      <pixel-shader file="sphere.hlsl" main="point_shadow_ps_main">
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+    </render-states>
+
+  </pipeline>
+
+  <pipeline name="sphere_defer_pipeline" prototype="sphere_pipeline">
+    <shaders>
+      <pixel-shader main="defer_ps_main">
+      </pixel-shader>
+    </shaders>
+    
+  </pipeline>
+  
+</pipelines>

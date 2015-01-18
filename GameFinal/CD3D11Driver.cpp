@@ -424,6 +424,12 @@ namespace gf
 
 		setDefaultRenderTargetAndDepthStencil();
 
+		// if it is deferred shading, setup gbuffer
+		if (mDeferredShading)
+		{
+			setupGBuffer();
+		}
+
 		md3dDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		md3dDeviceContext->ClearRenderTargetView(mDefaultRenderTargetView, clearColor);
 		md3dDeviceContext->ClearDepthStencilView(mDefaultDepthStencilView, clearFlag, depthValue, stencilValue);
@@ -511,6 +517,7 @@ namespace gf
 		md3dDeviceContext->OMSetRenderTargets(1, &D3D11DriverState.RenderTargetViews[0], D3D11DriverState.DepthStencilView);
 	}
 
+	/*
 	void CD3D11Driver::setRenderTargets(IRenderTarget* pRenderTargets[], u32 count)
 	{
 		bool bNeedChange = false;
@@ -563,6 +570,8 @@ namespace gf
 		}
 			
 	}
+	*/
+
 
 	void CD3D11Driver::unbindTextureFromShaders(ID3D11ShaderResourceView* d3dShaderResourceView)
 	{
@@ -980,9 +989,13 @@ namespace gf
 		ITextureManager* textureManager = ITextureManager::getInstance();
 
 		std::string textureNames[] = { "gbuffer0", "gbuffer1", "gbuffer2", "gbuffer3" };
+		
+
+		E_GI_FORMAT formats[] = { EGF_R32G32B32A32_FLOAT, EGF_R8G8B8A8_UNORM, EGF_R8G8B8A8_UNORM, EGF_R8G8B8A8_UNORM };
+
 		for (u32 i = 0; i < EGT_GBUFFER_COUNT; i++)
 		{
-			IRenderTarget* pTarget = textureManager->createRenderTarget(textureNames[i]);
+			IRenderTarget* pTarget = textureManager->createRenderTarget(textureNames[i], 0, 0, formats[i]);
 			assert(pTarget, "set up gbuffer failed!");
 			mGBuffers[i] = pTarget;
 		}
@@ -991,12 +1004,14 @@ namespace gf
 	
 	void CD3D11Driver::setGBuffersAsRenderTargets()
 	{
-		setRenderTargets(mGBuffers, EGT_GBUFFER_COUNT);
+		//setMultipleRenderTargets()
 	}
 
 	void CD3D11Driver::getGBuffers(IRenderTarget* renderTargets[]) const
 	{
 		memcpy(renderTargets, mGBuffers, EGT_GBUFFER_COUNT * sizeof(IRenderTarget*));
 	}
+
+	
 
 }

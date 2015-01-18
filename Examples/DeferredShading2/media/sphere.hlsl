@@ -1,5 +1,3 @@
-#include "../../../Media/built-in-resources/GameFinal.hlsl"
-
 cbuffer cbPerFrame
 {
 	SDirectionalLight gLight;
@@ -72,20 +70,21 @@ float4 point_light_ps_main(VertexOut pin) : SV_TARGET
 	float4 diffuse;
 	float4 specular;
 
-//	bool ComputeIrradianceOfPointLight(float3 pos, SPointLight light, out float3 lightDir,
-//	out float4 diffuse, out float4 specular)
 	float3 lightDir;
-	ComputeIrradianceOfPointLight(pin.PosW, gPointLight, lightDir, diffuse, specular);
+	
+	float4 Color = GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE;
+	if(!ComputeIrradianceOfPointLight(pin.PosW, gPointLight, lightDir, diffuse, specular))
+	{
+		return Color;
+	}
 
 	PhoneShading(pin.PosW, lightDir, normal, diffuse, specular, gPointLight.Specular.w);
 
 #ifdef SHADOW_ON
 	float shadowFactor = CalcPointLightShadowFactor(2, gPointLight.Position, 10.0f);
-	return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE + 
-		diffuse * GF_MTRL_DIFFUSE * shadowFactor + specular * GF_MTRL_SPECULAR * shadowFactor;
+	return Color + diffuse * GF_MTRL_DIFFUSE * shadowFactor + specular * GF_MTRL_SPECULAR * shadowFactor;
 #else
-	return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE + 
-		diffuse * GF_MTRL_DIFFUSE + specular * GF_MTRL_SPECULAR;
+	return Color + diffuse * GF_MTRL_DIFFUSE + specular * GF_MTRL_SPECULAR;
 #endif
 }
 
@@ -110,4 +109,17 @@ float4 point_shadow_ps_main(PointVertexOut pin) : SV_TARGET
 	float distSqrt = dot(vLight, vLight);
 
 	return float4(distSqrt * 1.2f, 0, 0, 1.0f);
+}
+
+SReturnGBuffers defer_ps_main(VertexOut pin)
+{
+	float3 normal = normalize(pin.Normal) * 0.5f + 0.5f;
+
+	SReturnGBuffers pout;
+	pout.GBuffer0 = float4(normal, 0);
+	pout.GBuffer1 = GF_MTRL_DIFFUSE;
+	pout.GBuffer2 = GF_MTRL_SPECULAR;
+	pout.GBuffer3 = GF_MTRL_AMBIENT;
+
+	return pout;
 }

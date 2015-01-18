@@ -28,6 +28,8 @@ namespace gf
 		, mShadowMapCamera(nullptr)
 		, mAmbient(0.5f, 0.5f, 0.5f, 1.0f)
 		, mCurrentShadowLightID(0)
+		, mDeferredShadingPipeline(nullptr)
+		, mRenderingDeferredQuad(false)
 	{
 		//get Video Driver object
 		mVideoDriver = device->getVideoDriver();
@@ -306,8 +308,6 @@ namespace gf
 
 	}
 
-	
-
 	void CSceneManager::draw(ISceneNode* node)
 	{
 		mSolidNodes.clear();
@@ -383,7 +383,17 @@ namespace gf
 			{
 				mVideoDriver->setPipelineUsage(EPU_DEFERRED_SHADING);
 				// set gbuffer as render targets.
-				mVideoDriver->setGBuffersAsRenderTargets();
+				
+				static const u32 gBufferCount = IVideoDriver::MAX_GBUFFER_COUNT;
+				static IRenderTarget* gbuffers[gBufferCount];
+				
+				mVideoDriver->getGBuffers(gbuffers);
+
+				for (u32 i = 0; i < gBufferCount; i++)
+					gbuffers[i]->clear();
+
+				mVideoDriver->setMultipleRenderTargets(gbuffers, gBufferCount);
+				
 				draw(mDefaultOctree);
 				mVideoDriver->setPipelineUsage(EPU_FORWARD);
 
@@ -391,10 +401,34 @@ namespace gf
 				IRenderTarget* targets[] = { pDefaultTarget };
 
 				IDepthStencilSurface* depthStencilSurface = mVideoDriver->getDepthStencilSurface();
-				mVideoDriver->setDepthStencilSurface(nullptr);
-				mVideoDriver->setRenderTargets(targets, 1);
+				mVideoDriver->setMultipleRenderTargets(targets, 1, nullptr);
 
+				// set gBuffers and previous depth buffer as textures input.
+				IPipeline* deferredPipeline = getDeferredShadingPipeline();
+				SMaterial material(deferredPipeline);
 				
+				material.setTexture(0, gbuffers[0]->getTexture());
+				material.setTexture(1, gbuffers[1]->getTexture());
+				material.setTexture(2, gbuffers[2]->getTexture());
+				material.setTexture(3, gbuffers[3]->getTexture());
+				material.setTexture(4, depthStencilSurface->getTexture());
+
+				IMeshNode* quad = getQuadNode();
+				quad->setMaterial(&material);
+
+				mDeferredShadingLights.clear();
+				ICameraNode* camera = getActiveCameraNode();
+				if (camera)
+				{
+					math::SFrustum frustum = camera->getFrustum();
+					mDefaultOctree->getLightsInFrustum(frustum, mDeferredShadingLights.PointLights);
+				}
+
+				mRenderingDeferredQuad = true;
+
+				draw(quad);
+
+				mRenderingDeferredQuad = false;
 			}
 			else
 			{
@@ -740,7 +774,36 @@ namespace gf
 		return mDefaultOctree->getNearLights(node, lightType, lights);
 	}
 
+	void CSceneManager::setDeferredShadingPipeline(IPipeline* pipeline)
+	{
+		// if pipeline is null, then set the default deferred shading pipeline.
+		if (!pipeline)
+		{
+			mDeferredShadingPipeline = IPipelineManager::getInstance()->get("gf/default_deferred_pipeline");
+		}
+		else
+		{
+			mDeferredShadingPipeline = pipeline;
+		}
+	}
 
+	void CSceneManager::setDeferredShadingPipeline(const std::string& name)
+	{
+		IPipeline* pipeline = IPipelineManager::getInstance()->get(name);
+		if (pipeline)
+		{
+			mDeferredShadingPipeline = pipeline;
+		}
+	}
+
+	IPipeline* CSceneManager::getDeferredShadingPipeline()
+	{
+		if (!mDeferredShadingPipeline)
+		{
+			setDeferredShadingPipeline(nullptr);
+		}
+		return mDeferredShadingPipeline;
+	}
 
 
 }

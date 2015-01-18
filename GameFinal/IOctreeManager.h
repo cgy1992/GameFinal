@@ -48,6 +48,8 @@ namespace gf
 
 		virtual bool getNearLights(IMeshNode* node, E_LIGHT_TYPE lightType, std::vector<ILightNode*>& lights) = 0;
 
+		virtual void getLightsInFrustum(const math::SFrustum& frustum, std::vector<ILightNode*>& pointLights) = 0;
+
 	protected:
 
 		f32				mWidth;

@@ -82,6 +82,7 @@ namespace gf
 		const static char* szBuiltInShaderNames[] = {
 			"GameFinal.hlsl",
 			"gfShadow.hlsl",
+		//	"gfDeferredShading.hlsl",
 			NULL
 		};
 

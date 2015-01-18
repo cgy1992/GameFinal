@@ -1,13 +1,8 @@
-#include "../../../Media/built-in-resources/GameFinal.hlsl"
-
-SamplerState gSampleState;
-
 cbuffer cbPerFrame
 {
 	SDirectionalLight gLight;
 	SPointLight gPointLight;
 };
-
 
 struct VertexIn
 {
@@ -21,9 +16,7 @@ struct VertexOut
 {
 	float4 PosH		: SV_POSITION;
 	float3 PosW		: POSITION;
-	float3 Normal	: NORMAL; 
-	float3 Tangent  : TANGENT;
-	float3 Tex		: TEXCOORD;
+	float3 Normal	: NORMAL;
 #ifdef SHADOW_ON
 	//float4 ShadowPosH : TEXCOORD1;
 #endif
@@ -36,8 +29,6 @@ VertexOut vs_main(VertexIn vin)
 	vout.PosH = mul(PosW, GF_VIEW_PROJ);
 	vout.PosW = PosW.xyz;
 	vout.Normal = mul(vin.Normal, (float3x3)GF_WORLD);
-	vout.Tangent = mul(vin.Tangent, (float3x3)GF_WORLD);
-	vout.Tex = vin.PosL;
 
 #ifdef SHADOW_ON
 	//vout.ShadowPosH = CalcShadowPosH(vout.PosW, GF_SHADOW_MAP_TRANSFORM_1);
@@ -45,47 +36,42 @@ VertexOut vs_main(VertexIn vin)
 	return vout;
 }
 
+void shadow_vs_main(VertexIn vin,
+	out float4 PosH: SV_POSITION)
+{
+	PosH = mul(float4(vin.PosL, 1.0f), GF_WVP);
+}
 
 float4 ps_main(VertexOut pin) : SV_TARGET
-{	
+{
+	float3 normal = normalize(pin.Normal);
 	float4 diffuse = gLight.Diffuse;
 	float4 specular = gLight.Specular;
 
-	float3 normal = -normalize(pin.Normal);
-
-	float NdotL = dot(normal, -gLight.Direction.xyz);
-
-	if(NdotL < 0)
-	{
-		return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE;
-	}
-	
 	PhoneShading(pin.PosW, -gLight.Direction.xyz, normal,
 		diffuse, specular, gLight.Specular.w);
 
 #ifdef SHADOW_ON
-	//float shadowFactor = CalcShadowFactor(1, pin.ShadowPosH, 20);
-	float shadowFactor = CalcPointLightShadowFactor(2, gPointLight.Position, 2.0f);
-
-	return GF_AMBIENT * GF_MTRL_AMBIENT 
-		+ GF_MTRL_EMISSIVE + diffuse * GF_MTRL_DIFFUSE * shadowFactor
-		+ specular * GF_MTRL_SPECULAR * shadowFactor;
+	//float shadowFactor = CalcShadowFactor(1,pin.ShadowPosH,5);
+	
+	float shadowFactor = CalcPointLightShadowFactor(2, gPointLight.Position, 5.0f);
+	return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE + 
+		diffuse * GF_MTRL_DIFFUSE * shadowFactor + specular * GF_MTRL_SPECULAR * shadowFactor;
 #else
-	return GF_AMBIENT * GF_MTRL_AMBIENT 
-		+ GF_MTRL_EMISSIVE + diffuse * GF_MTRL_DIFFUSE
-		+ specular * GF_MTRL_SPECULAR;
+	return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE + 
+		diffuse * GF_MTRL_DIFFUSE + specular * GF_MTRL_SPECULAR;
 #endif
-	//float shadowFactor = CalcShadowFactor_9x9(GF_SHADOW_MAP_1, GF_SHADOW_MAP_SIZE_1, pin.ShadowPosH);
-	//float4 texColor = GF_TEXTURE.Sample(gSampleState, pin.Tex);
-	//float CalcShadowFactor(Texture2D shadowMap, float4 shadowMapSize, float4 shadowPosH)
 }
+
 
 float4 point_light_ps_main(VertexOut pin) : SV_TARGET
 {
-	float3 normal = -normalize(pin.Normal);
+	float3 normal = normalize(pin.Normal);
 	float4 diffuse;
 	float4 specular;
 
+//	bool ComputeIrradianceOfPointLight(float3 pos, SPointLight light, out float3 lightDir,
+//	out float4 diffuse, out float4 specular)
 	float3 lightDir;
 	ComputeIrradianceOfPointLight(pin.PosW, gPointLight, lightDir, diffuse, specular);
 
@@ -99,4 +85,40 @@ float4 point_light_ps_main(VertexOut pin) : SV_TARGET
 	return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE + 
 		diffuse * GF_MTRL_DIFFUSE + specular * GF_MTRL_SPECULAR;
 #endif
+}
+
+
+struct PointVertexOut
+{
+	float4 PosH		: SV_POSITION;
+	float3 PosW		: POSITION;
+};
+
+PointVertexOut point_shadow_vs_main(VertexIn vin)
+{
+	PointVertexOut vout;
+	vout.PosH = mul(float4(vin.PosL, 1.0f), GF_WVP);
+	vout.PosW = mul(float4(vin.PosL, 1.0f), GF_WORLD);
+	return vout;
+}
+
+float4 point_shadow_ps_main(PointVertexOut pin) : SV_TARGET
+{
+	float3 vLight = pin.PosW - GF_CAMERA_POS;
+	float distSqrt = dot(vLight, vLight);
+
+	return float4(distSqrt * 1.2f, 0, 0, 1.0f);
+}
+
+SReturnGBuffers defer_ps_main(VertexOut pin)
+{
+	float3 normal = normalize(pin.Normal) * 0.5f + 0.5f;
+
+	SReturnGBuffers pout;
+	pout.GBuffer0 = float4(normal, 0);
+	pout.GBuffer1 = GF_MTRL_DIFFUSE;
+	pout.GBuffer2 = GF_MTRL_SPECULAR;
+	pout.GBuffer3 = GF_MTRL_AMBIENT;
+
+	return pout;
 }

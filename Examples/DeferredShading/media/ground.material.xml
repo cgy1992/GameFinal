@@ -1,0 +1,24 @@
+<materials>
+  
+  <material name="ground_material">
+    
+    <attributes>
+      <attribute name="ambient" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="diffuse" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="specular" value="0.05f, 0.05f, 0.05f, 32.0f"/>
+      <attribute name="emissive" value="0.0f, 0.0f, 0.0f, 1.0f"/>
+    </attributes>
+
+    <pipelines>
+      <pipeline name="ground_pipeline"/>
+      <pipeline name="ground_defer_pipeline" usage="defer"/>
+    </pipelines>
+    
+    <textures>
+      <texture name="Fieldstone.dds" index="0"/>
+      <texture name="Fieldstone_NRM.png" index="1"/>
+    </textures>
+    
+  </material>
+  
+</materials>

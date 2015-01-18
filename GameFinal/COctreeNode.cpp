@@ -7,8 +7,8 @@
 
 namespace gf
 {
-	COctreeNode::COctreeNode(IOctreeManager* octreeManager, 
-		COctreeNode* parent, 
+	COctreeNode::COctreeNode(IOctreeManager* octreeManager,
+		COctreeNode* parent,
 		XMFLOAT3 minCorner, XMFLOAT3 maxCorner, u32 treeHeight)
 		:IOctreeNode(octreeManager, minCorner, maxCorner, treeHeight)
 		, mParentNode(parent)
@@ -40,7 +40,7 @@ namespace gf
 		//f32 mid_z = (mMinCorner.z + mMaxCorner.z) * 0.5f;
 
 		E_OCTREE_QUADRANT quadrant = getQuadrant(node);
-		
+
 		//	if the aabb intersects the boundaries of any sub-octree
 		//  suspend the node directly onto the current octree node
 		if (quadrant == EOQ_CURRENT)
@@ -203,7 +203,10 @@ namespace gf
 			(*it)->setOctreeNode(nullptr);
 
 		for (auto it = mDynamicLightNodes.begin(); it != mDynamicLightNodes.end(); it++)
+		{
 			(*it)->setOctreeNode(nullptr);
+			(*it)->setInsideFrustum(false);
+		}
 
 		for (auto it = mStaticLightNodes.begin(); it != mStaticLightNodes.end(); it++)
 			(*it)->setInsideFrustum(false);
@@ -241,7 +244,22 @@ namespace gf
 			{
 				ILightNode* light = (*it);
 				if (!light->isCulled(frustum))
+				{
 					light->setInsideFrustum(true);
+					light->OnRegisterSceneNode(this);
+				}
+			}
+
+			// register dynamic lights for judging which light is inside frustum.
+			for (auto it = mDynamicLightNodes.begin(); it != mDynamicLightNodes.end(); it++)
+			{
+				ILightNode* light = (*it);
+				if (!light->isCulled(frustum))
+				{
+					light->setInsideFrustum(true);
+					light->OnRegisterSceneNode(this);
+				}
+					
 			}
 
 			// recurse the eight sub-space
@@ -256,7 +274,7 @@ namespace gf
 	/*
 		return a IOctreeNode pointer according to the position of the node
 		but it doesn't mean this node is certainly contained in this octree node.
-	*/
+		*/
 	IOctreeNode* COctreeNode::getBelongedOctreeNode(const ISceneNode* node)
 	{
 		E_OCTREE_QUADRANT quadrant = getQuadrant(node);
@@ -386,6 +404,21 @@ namespace gf
 				if (mChildrenNodes[i])
 				{
 					mChildrenNodes[i]->iterateChildren(node, aabb, callback);
+				}
+			}
+		}
+	}
+
+	void COctreeNode::iterateChildren(ISceneNode* node, const math::SFrustum& frustum, const OctreeIterateCallback& callback)
+	{
+		if(math::IntersectAabbFrustum(this->mAabb, frustum))
+		{
+			callback(node, this);
+			for (u32 i = 0; i < 8; i++)
+			{
+				if (mChildrenNodes[i])
+				{
+					mChildrenNodes[i]->iterateChildren(node, frustum, callback);
 				}
 			}
 		}

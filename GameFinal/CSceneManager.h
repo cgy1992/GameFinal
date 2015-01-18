@@ -7,6 +7,22 @@ namespace gf
 
 	class CSceneManager : public ISceneManager
 	{
+		friend class CDirectionalLightNode;
+		friend class CPointLightNode;
+
+	public:
+
+		struct SLightsInDeferredShading
+		{
+			std::vector<ILightNode*>	PointLights;
+			std::vector<ILightNode*>	SpotLights;
+			void clear()
+			{
+				PointLights.clear();
+				SpotLights.clear();
+			}
+		};
+
 	public:
 		CSceneManager(IDevice* device, const math::SAxisAlignedBox& aabb);
 
@@ -158,16 +174,20 @@ namespace gf
 
 		virtual void addCompositor(ICompositor* compositor);
 
-		virtual void setAmbient(const XMFLOAT4& color) { mAmbient = color;}
+		virtual void setAmbient(const XMFLOAT4& color) { mAmbient = color; }
 
 		virtual XMFLOAT4 getAmbient() { return mAmbient; }
 
-		virtual bool getNearLights(IMeshNode* node, 
+		virtual bool getNearLights(IMeshNode* node,
 			E_LIGHT_TYPE lightType, std::vector<ILightNode*>& lights);
 
 		virtual const std::list<ILightNode*>& getDirectionalLights() const { return mDirectionalLights; }
 
-		
+		virtual void setDeferredShadingPipeline(IPipeline* pipeline);
+
+		virtual void setDeferredShadingPipeline(const std::string& name);
+
+		virtual IPipeline* getDeferredShadingPipeline();
 
 	private:
 
@@ -204,6 +224,12 @@ namespace gf
 		u32								mCurrentShadowLightID;
 	//	E_PIPELINE_USAGE				mCurrentPipelineUsage;
 
+		IPipeline*						mDeferredShadingPipeline;
+
+		bool							mRenderingDeferredQuad;
+
+		SLightsInDeferredShading		mDeferredShadingLights;
+		
 	};
 }
 

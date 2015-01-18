@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CPointLightNode.h"
-#include "ISceneManager.h"
+#include "CSceneManager.h"
 
 namespace gf
 {
@@ -124,6 +124,12 @@ namespace gf
 
 			tmgr->releaseTempDepthStencilSurface(pDepthStencilSurface);
 		}
+	}
+
+	CPointLightNode::~CPointLightNode()
+	{
+		CSceneManager* sceneManager = dynamic_cast<CSceneManager*>(mSceneManager);
+		sceneManager->mLightNodes.erase(mId);
 	}
 
 }

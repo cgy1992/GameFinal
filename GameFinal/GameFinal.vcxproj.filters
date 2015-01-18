@@ -779,5 +779,8 @@
     <Xml Include="..\Media\built-in-resources\post_process.pipeline.xml">
       <Filter>src\built-in-resources</Filter>
     </Xml>
+    <Xml Include="..\Media\built-in-resources\deferred_shading.pipeline.xml">
+      <Filter>src\built-in-resources</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

@@ -144,6 +144,18 @@ Texture2D GF_TEXTURE_6;
 Texture2D GF_TEXTURE_7;
 
 
+// This structure is for pixel shader's return value
+// when using deferred-shading.
+struct SReturnGBuffers
+{
+	float4 GBuffer0 : SV_TARGET0;
+	float4 GBuffer1 : SV_TARGET1;
+	float4 GBuffer2 : SV_TARGET2;
+	float4 GBuffer3 : SV_TARGET3; 
+};
+
+
+
 
 /* @lightDir: from object to light.
    @return: if light can reach the object. */
@@ -194,6 +206,18 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
 	return bumpedNormalW;
 }
 
+
+float3 ComputeWorldPosFromDepthBuffer(Texture2D zbuffer, SamplerState samplerState, float2 Tex)
+{
+	float4 posH;
+	posH.xy = Tex * float2(2.0f, -2.0f) + float2(-1.0f, 1.0f);
+	posH.z = zbuffer.Sample(samplerState, Tex).r; 
+	posH.w = 1.0f;
+
+	float4 posW = mul(posH, GF_INV_VIEW_PROJ);
+	posW = posW / posW.w;
+	return posW.xyz;
+}
 
 
 #endif

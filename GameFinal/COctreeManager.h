@@ -43,11 +43,16 @@ namespace gf
 
 		virtual bool getNearLights(IMeshNode* node, E_LIGHT_TYPE lightType, std::vector<ILightNode*>& lights);
 
+		virtual void getLightsInFrustum(const math::SFrustum& frustum, std::vector<ILightNode*>& pointLights);
+
+
 	private:
 
 		virtual void buildStaticMeshAndLightsMapping(IMeshNode* mesh);
 
 		virtual void buildStaticMeshAndLightsMapping(ILightNode* light);
+
+		static void addLightToListIfVisible(ILightNode* light, const math::SFrustum& frustum, std::vector<ILightNode*>& pointLights);
 
 		void recurseRemoveSceneNode(ISceneNode* node);
 

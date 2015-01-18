@@ -45,6 +45,7 @@ namespace gf
 	
 		virtual void iterateChildren(ISceneNode* node, const XNA::OrientedBox& obb, const OctreeIterateCallback& callback);
 		virtual void iterateChildren(ISceneNode* node, const XNA::AxisAlignedBox& aabb, const OctreeIterateCallback& callback);
+		virtual void iterateChildren(ISceneNode* node, const math::SFrustum& frustum, const OctreeIterateCallback& callback);
 
 		virtual void iterateAncestors(ISceneNode* node, const OctreeIterateCallback& callback);
 		

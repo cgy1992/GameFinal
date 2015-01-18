@@ -98,7 +98,6 @@ namespace gf
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f)) = 0;
 
-
 		virtual ITerrainNode* addTerrainNode(
 			ITerrainMesh* mesh,
 			IMaterial* material = nullptr,
@@ -200,7 +199,11 @@ namespace gf
 			return mAabb;
 		}
 		
-		
+		virtual void setDeferredShadingPipeline(IPipeline* pipeline) = 0;
+
+		virtual void setDeferredShadingPipeline(const std::string& name) = 0;
+
+		virtual IPipeline* getDeferredShadingPipeline() = 0;
 
 	public:
 		const static int MAX_LIGHT_COUNT = 1024;
@@ -212,6 +215,8 @@ namespace gf
 		IDevice*				mDevice;
 		IVideoDriver*			mVideoDriver;
 		math::SAxisAlignedBox	mAabb;
+
+
 	};
 }
 

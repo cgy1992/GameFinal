@@ -106,7 +106,7 @@ namespace gf
 
 		virtual void setRenderTarget(IRenderTarget* pRenderTarget);
 
-		virtual void setRenderTargets(IRenderTarget* pRenderTargets[], u32 count);
+		//virtual void setRenderTargets(IRenderTarget* pRenderTargets[], u32 count);
 
 		virtual IRenderTarget* getRenderTarget(u32 index = 0);
 

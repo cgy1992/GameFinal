@@ -1,0 +1,39 @@
+<pipelines>
+  <pipeline name="wall_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="wall.hlsl" main="vs_main">
+        <macro name="SHADOW_ON"/>
+      </vertex-shader>
+      <pixel-shader file="wall.hlsl" main="point_light_ps_main">
+        <macro name="SHADOW_ON" value="1"/>
+        <variable name="gLight" value="light" index="1"/>
+        <variable name="gPointLight" value="light" index="2"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+      <render-state name="cull_mode" value="CW"/>
+    </render-states>
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    </samplers>
+  </pipeline>
+
+  <pipeline name="wall_defer_pipeline" prototype="wall_pipeline">
+    <shaders>
+      <pixel-shader main="defer_ps_main">
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+  
+</pipelines>

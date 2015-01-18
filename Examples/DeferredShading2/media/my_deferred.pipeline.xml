@@ -1,0 +1,33 @@
+<pipelines>
+
+  <pipeline name="my_deferred_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+    </input-layout>
+
+    <shaders>
+      <vertex-shader file="post_process.hlsl" main="vs_main"/>
+      <pixel-shader  file="my_deferred_shading.hlsl" main="point_light_ps_main">
+        <macro name="SHADOW_ON"/>
+        <variable name="gGBuffer0" value="texture" index="0"/>
+        <variable name="gGBuffer1" value="texture" index="1"/>
+        <variable name="gGBuffer2" value="texture" index="2"/>
+        <variable name="gGBuffer3" value="texture" index="3"/>
+        <variable name="gDepthBuffer" value="texture" index="4"/>
+        <variable name="gLight" value="light" index="1"/>
+        <variable name="gPointLight" value="light" index="2"/>
+      </pixel-shader>
+    </shaders>
+
+    <render-states>
+      <render-state name="depth_enable" value="false"/>
+    </render-states>
+
+    <samplers>
+      <sampler name="gSamplerState" addressU="clamp" addressV="clamp" filter="MIN_MAG_MIP_POINT"/>
+    </samplers>
+  </pipeline>
+
+</pipelines>
+
+
