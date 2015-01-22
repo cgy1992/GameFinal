@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClInclude Include="CAnimatedMeshNode.h" />
     <ClInclude Include="CAnimatedMesh.h" />
+    <ClInclude Include="CBillboardCollectionMesh.h" />
     <ClInclude Include="CBloomCompositor.h" />
     <ClInclude Include="CBlurCompositor.h" />
     <ClInclude Include="CCompositor.h" />
@@ -165,6 +166,7 @@
     <ClInclude Include="gfUtil.h" />
     <ClInclude Include="IAnimatedMeshNode.h" />
     <ClInclude Include="IAnimatedMesh.h" />
+    <ClInclude Include="IBillboardCollectionMesh.h" />
     <ClInclude Include="ICameraNode.h" />
     <ClInclude Include="ICompositor.h" />
     <ClInclude Include="ICompositorFactory.h" />
@@ -231,6 +233,7 @@
   <ItemGroup>
     <ClCompile Include="CAnimatedMesh.cpp" />
     <ClCompile Include="CAnimatedMeshNode.cpp" />
+    <ClCompile Include="CBillboardCollectionMesh.cpp" />
     <ClCompile Include="CBloomCompositor.cpp" />
     <ClCompile Include="CBlurCompositor.cpp" />
     <ClCompile Include="CCompositor.cpp" />
@@ -333,6 +336,12 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <Xml Include="..\Media\built-in-resources\billboard.material.xml">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Xml>
+    <Xml Include="..\Media\built-in-resources\billboard.pipeline.xml">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </Xml>
     <Xml Include="..\Media\built-in-resources\deferred_shading.pipeline.xml">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <SubType>Designer</SubType>

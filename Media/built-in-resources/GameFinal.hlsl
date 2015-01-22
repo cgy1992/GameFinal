@@ -50,6 +50,13 @@ struct SMaterial
 	float4 Emissive;
 };
 
+struct SBillboard
+{
+	float3 Position;
+	float2 Tex;
+	float3 Color;
+};
+
 cbuffer gf_cb_world
 {
 	float4x4 GF_WORLD;
@@ -122,9 +129,13 @@ cbuffer gf_cb_scene_info
 	float4 GF_AMBIENT;
 };
 
+#ifndef GF_MAX_POINT_LIGHTS_NUM
+#define GF_MAX_POINT_LIGHTS_NUM 32
+#endif
+
 cbuffer gf_cb_point_lights
 {
-	SPointLight		GF_POINT_LIGHTS[32];
+	SPointLight		GF_POINT_LIGHTS[GF_MAX_POINT_LIGHTS_NUM];
 	uint			GF_POINT_LIGHTS_NUM;
 };
 
@@ -190,7 +201,17 @@ void PhoneShading(float3 pos, float3 lightDir, float3 normal,
 	specular = specular * atten * pow(specAtten, power);
 }
 
+void BlinnPhoneShading(float3 pos, float3 lightDir, float3 normal, 
+	inout float4 diffuse, inout float4 specular, float power)
+{
+	float3 h = normalize(lightDir + normal);
 
+	float atten = saturate(dot(normal, lightDir));
+	float specAtten = saturate(dot(h, normal));
+
+	diffuse = diffuse * atten;
+	specular = specular * atten * pow(specAtten, power);
+}
 
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
 {

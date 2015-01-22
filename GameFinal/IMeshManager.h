@@ -6,6 +6,7 @@
 #include "IAnimatedMesh.h"
 #include "IAnimatedMeshBuffer.h"
 #include "ITerrainMesh.h"
+#include "IBillboardCollectionMesh.h"
 
 namespace gf
 {
@@ -90,6 +91,13 @@ namespace gf
 			f32 fTexcoordScale = 1.0f,
 			u32 cellsPerPatch = 64,
 			E_MEMORY_USAGE usage = EMU_STATIC) = 0;
+
+		virtual IBillboardCollectionMesh* createBillboardCollectionMesh(
+			const std::string& name,
+			const math::SAxisAlignedBox& aabb,
+			bool alterable,
+			u32 maxNum,
+			const std::vector<SBillboard>& billboards) = 0;
 
 		virtual ISimpleMesh* createQuad(const std::string& name, E_MEMORY_USAGE usage = EMU_STATIC) = 0;
 

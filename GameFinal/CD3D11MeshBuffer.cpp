@@ -227,7 +227,7 @@ namespace gf
 		md3dDeviceContext->DrawInstanced(vertexCountPerInstance, instanceCount, start, 0);
 	}
 
-	bool CD3D11MeshBuffer::setVertexData(void* data, u32 size)
+	bool CD3D11MeshBuffer::setVertexData(void* data, u32 count)
 	{
 		if (!md3dVertexBuffer)
 			return false;
@@ -237,8 +237,10 @@ namespace gf
 
 		D3D11_MAPPED_SUBRESOURCE mappedData;
 		md3dDeviceContext->Map(md3dVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
-		memcpy(mappedData.pData, data, size);
+		memcpy(mappedData.pData, data, count * mVertexStride);
 		md3dDeviceContext->Unmap(md3dVertexBuffer, 0);
+
+		mVertexCount = count;
 		return true;
 	}
 

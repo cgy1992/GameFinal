@@ -53,6 +53,11 @@ namespace gf
 
 		virtual void draw() const;
 
+		virtual IRenderableBuffer* getRenderableBuffer()
+		{
+			return mMeshBuffer;
+		}
+
 	protected:
 
 		std::vector<f32>			mHeightValues;

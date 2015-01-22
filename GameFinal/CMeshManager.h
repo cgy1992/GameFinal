@@ -95,6 +95,13 @@ namespace gf
 			u32 cellsPerPatch = 64,
 			E_MEMORY_USAGE usage = EMU_STATIC);
 
+		virtual IBillboardCollectionMesh* createBillboardCollectionMesh(
+			const std::string& name,
+			const math::SAxisAlignedBox& aabb,
+			bool alterable,
+			u32 maxNum,
+			const std::vector<SBillboard>& billboards);
+
 		virtual ISimpleMesh* getSimpleMesh(const std::string& name);
 
 		virtual IModelMesh* getModelMesh(const std::string& name, bool bLoadIfNotExist = true);

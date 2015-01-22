@@ -246,7 +246,7 @@ namespace gf
 				if (!light->isCulled(frustum))
 				{
 					light->setInsideFrustum(true);
-					light->OnRegisterSceneNode(this);
+					light->OnRegisterSceneNode(false);
 				}
 			}
 
@@ -257,7 +257,7 @@ namespace gf
 				if (!light->isCulled(frustum))
 				{
 					light->setInsideFrustum(true);
-					light->OnRegisterSceneNode(this);
+					light->OnRegisterSceneNode(false);
 				}
 					
 			}

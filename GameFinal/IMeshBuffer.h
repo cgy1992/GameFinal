@@ -23,7 +23,7 @@ namespace gf
 			u32 vertexStride,
 			bool bit32Index) = 0;
 
-		virtual bool setVertexData(void* data, u32 size) = 0;
+		virtual bool setVertexData(void* data, u32 count) = 0;
 
 		virtual void bind() = 0;
 

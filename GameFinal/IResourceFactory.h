@@ -19,6 +19,7 @@
 #include "IDepthStencilSurface.h"
 #include "ITexture3D.h"
 #include "ITexture2DArray.h"
+#include "IBillboardCollectionMesh.h"
 
 namespace gf
 {
@@ -158,6 +159,15 @@ namespace gf
 			const math::SAxisAlignedBox& aabb,
 			bool bit32Index,
 			E_MEMORY_USAGE usage = EMU_STATIC) = 0;
+
+		virtual IBillboardCollectionMesh* createBillboardCollectionMesh(
+			const std::string& name,
+			u32 sortcode,
+			const math::SAxisAlignedBox& aabb,
+			bool alterable,
+			u32 maxNum,
+			const std::vector<SBillboard>& billboards) = 0;
+
 
 		virtual IModelMesh* createModelMesh(
 			const std::string& name,

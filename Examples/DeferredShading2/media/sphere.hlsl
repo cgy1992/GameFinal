@@ -63,29 +63,29 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 #endif
 }
 
-
 float4 point_light_ps_main(VertexOut pin) : SV_TARGET
 {
 	float3 normal = normalize(pin.Normal);
+	float4 diffuseSum = float4(0, 0, 0, 0);
+	float4 specularSum = float4(0, 0, 0, 0);
+	float3 lightDir;
 	float4 diffuse;
 	float4 specular;
 
-	float3 lightDir;
-	
 	float4 Color = GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE;
-	if(!ComputeIrradianceOfPointLight(pin.PosW, gPointLight, lightDir, diffuse, specular))
+	for(int i = 0; i < GF_POINT_LIGHTS_NUM; i++)
 	{
-		return Color;
+		SPointLight pointLight = GF_POINT_LIGHTS[i];
+		if(ComputeIrradianceOfPointLight(pin.PosW, pointLight, lightDir, diffuse, specular))
+		{
+			BlinnPhoneShading(pin.PosW, lightDir, normal, diffuse, specular, pointLight.Specular.w);
+			
+			diffuseSum += diffuse;
+			specularSum += specular;
+		}
 	}
 
-	PhoneShading(pin.PosW, lightDir, normal, diffuse, specular, gPointLight.Specular.w);
-
-#ifdef SHADOW_ON
-	float shadowFactor = CalcPointLightShadowFactor(2, gPointLight.Position, 10.0f);
-	return Color + diffuse * GF_MTRL_DIFFUSE * shadowFactor + specular * GF_MTRL_SPECULAR * shadowFactor;
-#else
-	return Color + diffuse * GF_MTRL_DIFFUSE + specular * GF_MTRL_SPECULAR;
-#endif
+	return Color + diffuseSum * GF_MTRL_DIFFUSE + specularSum * GF_MTRL_SPECULAR;
 }
 
 

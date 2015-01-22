@@ -1,0 +1,35 @@
+<pipelines>
+
+  <pipeline name="gf/default_billboard_pipeline">
+    <primitive-type value="POINT_LIST"/>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+      <element semantic="SIZE" format="float2"></element>
+      <element semantic="COLOR" format="float3"></element>
+    </input-layout>
+
+    <shaders>
+      <vertex-shader file="billboard.hlsl" main="default_vs_main"/>
+      <geometry-shader file="billboard.hlsl" main="default_gs_main">
+        <variable name="gTexOffset" value="m_TexOffset"/>
+      </geometry-shader>
+      <pixel-shader  file="billboard.hlsl" main="default_ps_main"/>
+    </shaders>
+
+    <render-states>
+      <render-state name="blend_enable" value="true"/>
+      <render-state name="src_blend" value="SRC_ALPHA"/>
+      <render-state name="dest_blend" value="ONE"/>
+      <render-state name="blend_op" value="ADD"/>
+      <render-state name="DEPTH_WRITE_ENABLE" value="false"/>
+    </render-states>
+
+    <samplers>
+      <sampler name="gSamplerState" addressU="clamp" addressV="clamp" 
+               filter="MIN_MAG_MIP_LINEAR"/>
+      
+    </samplers>
+  </pipeline>
+
+</pipelines>

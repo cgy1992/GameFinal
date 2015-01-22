@@ -35,6 +35,14 @@ namespace gf
 			const std::vector<IModelMesh::SModelSubset>& subsets,
 			E_MEMORY_USAGE usage = EMU_STATIC);
 
+		virtual IBillboardCollectionMesh* createBillboardCollectionMesh(
+			const std::string& name,
+			u32 sortcode,
+			const math::SAxisAlignedBox& aabb,
+			bool alterable,
+			u32 maxNum,
+			const std::vector<SBillboard>& billboards);
+
 		virtual IAnimatedMesh* createAnimatedModelMesh(
 			const std::string& name,
 			u32 sortcode,

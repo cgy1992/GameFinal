@@ -43,7 +43,12 @@ namespace gf
 		EVF_TEXCOORD0 = (1 << 5),
 		EVF_TEXCOORD1 = (1 << 6),
 		EVF_TEXCOORD2 = (1 << 7),
-
+		EVF_TEXCOORD3 = (1 << 8),
+		EVF_TEXCOORD4 = (1 << 9),
+		EVF_TEXCOORD5 = (1 << 10),
+		EVF_TEXCOORD6 = (1 << 11),
+		EVF_TEXCOORD7 = (1 << 12),
+		EVF_SIZE = (1 << 13),
 	};
 }
 

@@ -171,6 +171,7 @@ namespace gf
 		return node;
 	}
 
+
 	ITerrainNode* CSceneManager::addTerrainNode(
 		ITerrainMesh* mesh,
 		IMaterial* material,
@@ -423,7 +424,7 @@ namespace gf
 					math::SFrustum frustum = camera->getFrustum();
 					mDefaultOctree->getLightsInFrustum(frustum, mDeferredShadingLights.PointLights);
 				}
-
+				
 				mRenderingDeferredQuad = true;
 
 				draw(quad);
@@ -771,6 +772,12 @@ namespace gf
 
 	bool CSceneManager::getNearLights(IMeshNode* node, E_LIGHT_TYPE lightType, std::vector<ILightNode*>& lights)
 	{
+		if (mRenderingDeferredQuad)
+		{
+			lights = mDeferredShadingLights.PointLights;
+			return true;
+		}
+
 		return mDefaultOctree->getNearLights(node, lightType, lights);
 	}
 

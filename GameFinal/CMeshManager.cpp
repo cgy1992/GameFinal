@@ -61,6 +61,44 @@ namespace gf
 		return mesh;
 	}
 
+	IBillboardCollectionMesh* CMeshManager::createBillboardCollectionMesh(
+		const std::string& name,
+		const math::SAxisAlignedBox& aabb,
+		bool alterable,
+		u32 maxNum,
+		const std::vector<SBillboard>& billboards)
+	{
+		auto it = mMeshMap.find(name);
+		if (it != mMeshMap.end())
+		{
+			if (it->second->getType() == EMT_BILLBOARD_COLLECTION_MESH)
+			{
+				GF_PRINT_CONSOLE_INFO("WARNING: The billboard mesh named '%s' has already existed.\n", name.c_str());
+				return dynamic_cast<IBillboardCollectionMesh*>(it->second);
+			}
+			else
+			{
+				GF_PRINT_CONSOLE_INFO("WARNING: The mesh named '%s' has already existed. "
+					"Futhermore it is not a billboard mesh.\n", name.c_str());
+				return nullptr;
+			}
+		}
+
+		u32 sortcode = mCodeAllocator.allocate();
+		IBillboardCollectionMesh* mesh = mResourceFactory->createBillboardCollectionMesh(name, sortcode,
+			aabb, alterable, maxNum, billboards);
+
+		if (!mesh)
+		{
+			GF_PRINT_CONSOLE_INFO("ERROR:The mesh named '%s' created failed!\n", name.c_str());
+			mCodeAllocator.release(sortcode);
+			return nullptr;
+		}
+
+		mMeshMap.insert(std::make_pair(name, mesh));
+		return mesh;
+	}
+
 	IModelMesh* CMeshManager::createModelMesh(const std::string& name,
 		u32 vertexFormat,
 		void* vertices,

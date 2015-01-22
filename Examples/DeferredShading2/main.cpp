@@ -29,6 +29,12 @@ struct SPointLightInfo
 };
 
 SPointLightInfo g_pointLightInfo;
+IBillboardCollectionMesh* g_BillboardMesh = nullptr;
+IMeshNode* g_BillboardNode;
+std::vector<SPointLightInfo> g_pointLightInfos;
+const u32 g_pointLightCount = 500;
+const f32 g_pointLightRange = 5.0f;
+
 
 f32 getFps(float dt)
 {
@@ -49,7 +55,7 @@ f32 getFps(float dt)
 void setupSpheres(ISceneManager* smgr, f32 roomSize)
 {
 	IMeshManager* meshManager = IMeshManager::getInstance();
-	ISimpleMesh* sphereMesh = meshManager->createSphereMesh("sphere", 1.0f, 100, 100);
+	ISimpleMesh* sphereMesh = meshManager->createSphereMesh("sphere", 1.0f, 200, 200);
 
 	const u32 countPerRow = 9;
 	const f32 sphereRadius = 1.0f;
@@ -79,23 +85,101 @@ void setupScene(ISceneManager* smgr)
 
 	// setup room
 	const f32 roomSize = 30.0f;
-	const f32 roomHeight = 14.0f; 
+	const f32 roomHeight = 10.0f; 
 	ISimpleMesh* roomMesh = meshManager->createCubeMesh("room", roomSize, roomHeight, roomSize);
 	IMeshNode* roomNode = smgr->addMeshNode(roomMesh, nullptr, nullptr, true, XMFLOAT3(0, roomHeight / 2, 0));
 	roomNode->setMaterialName("wall_material");
 
+	// setup sphere
 	setupSpheres(smgr, roomSize);
+
+	// setup lights
+	
+	std::vector<SBillboard> billboards;
+	g_pointLightInfos.resize(g_pointLightCount);
+	billboards.resize(g_pointLightCount);
+	for (u32 i = 0; i < g_pointLightCount; i++)
+	{
+		f32 radius = math::RandomFloat(roomSize * 0.1f, roomSize * 0.7f);
+		f32 angle = math::RandomFloat(0, XM_2PI);
+		f32 angleSpeed = math::RandomFloat(0.1f, 0.5f);
+
+		XMFLOAT3 pos;
+		pos.y = math::RandomFloat(0, roomHeight);
+		pos.x = radius * cosf(angle);
+		pos.z = radius * sinf(angle);
+
+		ILightNode* light = smgr->addPointLight(i, nullptr, false, pos, g_pointLightRange);
+		
+		XMFLOAT4 diffuse;
+		diffuse.x = math::RandomFloat(0, 1.0f);
+		diffuse.y = math::RandomFloat(0, 1.0f);
+		diffuse.z = math::RandomFloat(0, 1.0f);
+		diffuse.w = 1.0f;
+
+		light->setDiffuse(diffuse);
+		//light->setSpecular(diffuse);
+		light->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
+
+		f32 a1 = math::RandomFloat(1.0f, 4.0f);
+		f32 a2 = math::RandomFloat(0, 3.0f);
+		light->setAttenuation(1.0f, a1, a2);
+
+		SPointLightInfo info;
+		info.AngularSpeed = angleSpeed;
+		info.CurrentAngular = angle;
+		info.RotateRadius = radius;
+		info.Height = pos.y;
+		info.LightNode = light;
+		g_pointLightInfos[i] = info;
+
+
+		billboards[i].Position = pos;
+		billboards[i].Color = diffuse;
+		billboards[i].Size = XMFLOAT2(0.1f, 0.1f);
+		billboards[i].Texcoord = XMFLOAT2(0.5f, 0.5f);
+	}
+
+	math::SAxisAlignedBox aabb;
+	aabb.Center = XMFLOAT3(0, 0, 0);
+	aabb.Extents = XMFLOAT3(10.0f, 10.0f, 10.0f);
+	g_BillboardMesh = meshManager->createBillboardCollectionMesh(
+		"point_lights", aabb, true, g_pointLightCount, billboards);
+
+	IMaterialManager* materialManager = IMaterialManager::getInstance();
+	IMaterial* material = materialManager->get("gf/default_billboard_material");
+	g_BillboardNode = smgr->addMeshNode(g_BillboardMesh, material, nullptr, false);
+	g_BillboardNode->setRenderOrder(240);
+	//g_BillboardNode->setVisible(false);
 }
 
-void updatePointLights(f32 delta, SPointLightInfo& info)
+void updatePointLights(f32 delta)
 {
-	ILightNode* light = info.LightNode;
-	XMMATRIX T = XMMatrixTranslation(info.RotateRadius, info.Height, 0);
-	XMMATRIX R = XMMatrixRotationY(info.CurrentAngular);
-	XMMATRIX M = T * R;
-	light->setTransform(M);
+	IBillboardCollectionMesh::SBillboardIterator it = g_BillboardMesh->getIterator();
+	for (u32 i = 0; i < g_pointLightInfos.size(); i++)
+	{
+		SPointLightInfo& info = g_pointLightInfos[i];
+		ILightNode* light = info.LightNode;
 
-	info.CurrentAngular += delta * info.AngularSpeed;
+		XMFLOAT3 pos = XMFLOAT3(0, 0, 0);
+		XMVECTOR pos_v = XMLoadFloat3(&pos);
+		XMMATRIX T = XMMatrixTranslation(info.RotateRadius, info.Height, 0);
+		XMMATRIX R = XMMatrixRotationY(info.CurrentAngular);
+		pos_v = XMVector3Transform(pos_v, T * R);
+		XMStoreFloat3(&pos, pos_v);
+
+		//light->setTransform(M);
+		light->setPosition(pos);
+		info.CurrentAngular += delta * info.AngularSpeed;
+		
+		pos = light->getAbsolutePosition();
+
+		SBillboard& billboard = it;
+		billboard.Position = pos;
+		it.next();
+	}
+
+	g_BillboardMesh->submitUpdate();
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -124,42 +208,13 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	setupScene(smgr);
 
-	
-
-	// add directional light
-	XMFLOAT3 light_dir(5.0f, -5.0f, -2.0f);
-	f32 lightDistance = -20;
-	ILightNode* light = smgr->addDirectionalLight(1, nullptr, light_dir);
-	light->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
-	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	light->setShadowCameraOrthographicSize(10.0f, 7.0f);
-
-	XMFLOAT4 unit_dir = light->getDirection();
-	light->setPosition(XMFLOAT3(unit_dir.x * lightDistance, unit_dir.y * lightDistance, unit_dir.z * lightDistance));
-	light->setShadowMapSize(SCREEN_WIDTH, SCREEN_HEIGHT);
-	light->setShadowCameraOrthographicSize(10.0f, 7.0f);
-	//light->enableShadow(true);
-
-	// add point light
-	ILightNode* light2 = smgr->addPointLight(2, nullptr, false, XMFLOAT3(2.0f, 3.0f, 0), 10.0f);
-	light2->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
-	light2->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	light2->setAttenuation(0.1f, 1.2f, 0.2f);
-	light2->enableShadow(true);
-	light2->setShadowMapSize(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-
-	g_pointLightInfo.AngularSpeed = 0.3f;
-	g_pointLightInfo.RotateRadius = 7.0f;
-	g_pointLightInfo.Height = 3.0f;
-	g_pointLightInfo.LightNode = light2;
-
-	updatePointLights(0, g_pointLightInfo);
-
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
 	camera->setFarZ(500.0f);
 	camera->setShadowRange(100.0f);
 
-	smgr->setAmbient(XMFLOAT4(0.3f, 0.3f, 0.3f, 0));
+	//smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 0));
+	//smgr->setAmbient(XMFLOAT4(0.2, 0.2, 0.2, 0.2));
+	//smgr->setAmbient(XMFLOAT4(0.05f, 0.05f, 0.05f, 0));
 	smgr->setAmbient(XMFLOAT4(0, 0, 0, 0));
 
 	char caption[200];
@@ -169,7 +224,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	const f32 color2[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
-	driver->setDeferredShading(false);
+	driver->setDeferredShading(true);
 	smgr->setDeferredShadingPipeline("my_deferred_pipeline");
 
 	while (device->run())
@@ -190,13 +245,18 @@ int _tmain(int argc, _TCHAR* argv[])
 		float dt = ms * 0.001f;
 
 		updateCamera(camera, dt);
-		updateLightDirection(dt, light);
-		//updateCarPosition(dt, carNode, camera);
-		//updatePointLights(dt, g_pointLightInfo);
+		//updateLightDirection(dt, light);
+		updatePointLights(dt);
 
 		smgr->update(ms);
 
 		smgr->drawAll();
+
+		if (driver->isDeferredShading())
+		{
+			driver->setDefaultDepthStencilSurface();
+			smgr->draw(g_BillboardNode);
+		}
 
 		driver->endScene();
 

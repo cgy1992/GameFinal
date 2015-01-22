@@ -132,12 +132,12 @@ namespace gf
 			return (mShadowFlag & (1 << lightID)) != 0;
 		}
 
-		void setFarCullingDistance(u32 dist)
+		void setFarCullingDistance(f32 dist)
 		{
 			mFarCullingDist = dist;
 		}
 
-		u32 getFarCullingDistance() const
+		f32 getFarCullingDistance() const
 		{
 			return mFarCullingDist;
 		}
@@ -145,7 +145,7 @@ namespace gf
 	protected:
 		math::SOrientedBox				mOBB;
 		IOctreeNode*					mOctreeNode; // belong to which node in an octree.
-		u32								mFarCullingDist; // 最远裁剪距离, 如果为0, 则使用摄像机的farZ进行裁剪
+		f32								mFarCullingDist; // 最远裁剪距离, 如果为0, 则使用摄像机的farZ进行裁剪
 		
 		/* 一个32bit的flag, 要投影几号光源的阴影，就把哪一位设置为1 */
 		u32								mShadowFlag;

@@ -79,6 +79,11 @@ namespace gf
 			}
 		}
 
+		virtual IRenderableBuffer* getRenderableBuffer()
+		{
+			return mMeshBuffer;
+		}
+
 	protected:
 		IMeshBuffer*							mMeshBuffer;
 		std::vector<SModelSubset>				mSubsets;

@@ -12,15 +12,18 @@ namespace gf
 		if (!mMaterial)
 			return;
 
-		mMesh->bind(instanceBuffer);
-
 		IPipeline* pipeline = mMaterial->getPipeline(usage);
+		
+		if (pipeline)
+		{
+			mMesh->bind(instanceBuffer);
 
-		CShaderVariableInjection::inject(this, pipeline, 0);
+			CShaderVariableInjection::inject(this, pipeline, 0);
 
-		pipeline->apply(usage);
+			pipeline->apply(usage);
 
-		mMesh->drawInstanced(instanceCount);
+			mMesh->drawInstanced(instanceCount);
+		}
 	}
 
 	void CMeshNode::render(E_PIPELINE_USAGE usage)
@@ -28,16 +31,18 @@ namespace gf
 		if (!mMaterial)
 			return;
 
-		mMesh->bind();
-
 		IPipeline* pipeline = mMaterial->getPipeline(usage);
-
-		CShaderVariableInjection::inject(this, pipeline, 0);
-
-		pipeline->apply(usage);
-
-		mMesh->draw();
 		
+		if (pipeline)
+		{
+			mMesh->bind();
+
+			CShaderVariableInjection::inject(this, pipeline, 0);
+
+			pipeline->apply(usage);
+
+			mMesh->draw();
+		}
 	}
 
 	void CMeshNode::OnRegisterSceneNode(bool bRecursion)

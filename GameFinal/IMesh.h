@@ -14,7 +14,8 @@ namespace gf
 		EMT_SIMPLE_MESH = 0,
 		EMT_MODEL_MESH,
 		EMT_ANIMATE_MODEL_MESH,
-		EMT_TERRAIN_MESH
+		EMT_TERRAIN_MESH,
+		EMT_BILLBOARD_COLLECTION_MESH,
 	};
 
 	class IMesh : public IReferenceCounted
@@ -55,6 +56,9 @@ namespace gf
 		{
 			return mVertexFormat;
 		}
+
+		virtual IRenderableBuffer* getRenderableBuffer() = 0;
+
 
 	protected:
 		u32					mSortCode;

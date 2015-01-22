@@ -98,6 +98,7 @@ namespace gf
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f)) = 0;
 
+
 		virtual ITerrainNode* addTerrainNode(
 			ITerrainMesh* mesh,
 			IMaterial* material = nullptr,

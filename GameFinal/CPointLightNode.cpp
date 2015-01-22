@@ -8,8 +8,6 @@ namespace gf
 	{
 		if (mVisible)
 		{
-			mLightData.Position = getAbsolutePosition();
-
 			computeBoundingVolumn();
 
 			mSceneManager->registerNodeForRendering(this);
@@ -28,6 +26,7 @@ namespace gf
 
 	void CPointLightNode::computeBoundingVolumn()
 	{
+		mLightData.Position = getAbsolutePosition();
 		mSphere.Center = mLightData.Position;
 		mSphere.Radius = mLightData.Range;
 

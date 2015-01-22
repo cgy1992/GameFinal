@@ -4,6 +4,7 @@
 #include "CModelMesh.h"
 #include "CAnimatedMesh.h"
 #include "CTerrainMesh.h"
+#include "CBillboardCollectionMesh.h"
 
 namespace gf
 {
@@ -39,6 +40,70 @@ namespace gf
 		}
 
 		return mesh;
+	}
+
+	IBillboardCollectionMesh* CResourceFactory::createBillboardCollectionMesh(
+		const std::string& name,
+		u32 sortcode,
+		const math::SAxisAlignedBox& aabb,
+		bool alterable,
+		u32 maxNum,
+		const std::vector<SBillboard>& billboards)
+	{
+		IMeshBuffer* buffer = nullptr;
+		if (alterable)
+		{
+			if (billboards.size() > maxNum)
+			{
+				GF_PRINT_CONSOLE_INFO("Billboard buffer creation failed."
+					"billboards' number exceeds the maxNum.\n");
+
+				return nullptr;
+			}
+
+			void* vertices = nullptr;
+			if (!billboards.empty())
+				vertices = (void*)&billboards[0];
+
+			buffer = createMeshBuffer(EMU_DYNAMIC, nullptr, nullptr, maxNum, 0,
+				sizeof(SBillboard), true);
+
+			buffer->setVertexData(vertices, billboards.size());
+		}
+		else 
+		{
+			// create a static buffer.
+			// use the size of billboards as the maxNum. just ignore the 'maxNum' 
+			maxNum = billboards.size();
+			if (maxNum == 0)
+			{
+				GF_PRINT_CONSOLE_INFO("billboards cannot be empty when creating a "
+					"billboard mesh");
+				return nullptr;
+			}
+			
+			buffer = createMeshBuffer(EMU_STATIC, (void*)&billboards[0],
+				nullptr, billboards.size(), 0, sizeof(SBillboard), true);
+		}
+
+		if (!buffer)
+		{
+			GF_PRINT_CONSOLE_INFO("The mesh ('%s') create failed!. Due to the failure of mesh buffer.\n", name.c_str());
+			return nullptr;
+		}
+
+		CBillboardCollectionMesh* mesh = new CBillboardCollectionMesh(name, sortcode, aabb,
+			maxNum, alterable, billboards, buffer);
+
+		if (!mesh)
+		{
+			GF_PRINT_CONSOLE_INFO("The mesh ('%s') create failed!. Due to the lack of memory.\n", name.c_str());
+			buffer->drop();
+			return nullptr;
+		}
+
+		return mesh;
+
 	}
 
 	IModelMesh* CResourceFactory::createModelMesh(

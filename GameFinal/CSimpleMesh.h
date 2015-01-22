@@ -27,6 +27,8 @@ namespace gf
 
 		virtual void drawInstanced(u32 instanceCount) const;
 
+		virtual IRenderableBuffer* getRenderableBuffer();
+
 		// virtual void drawInstanced(u32 instanceCount, ) const;
 
 		virtual E_MESH_TYPE getType() const

@@ -1,0 +1,16 @@
+<materials>
+  <material name="gf/default_billboard_material">
+
+    <attributes>
+      <attribute name="TexOffset" value="0.25f, 0.25f"/>
+    </attributes>
+    
+    <pipelines>
+      <pipeline name="gf/default_billboard_pipeline"/>
+    </pipelines>
+
+    <textures>
+      <texture name="particles.png" index="0"/>
+    </textures>
+  </material>
+</materials>

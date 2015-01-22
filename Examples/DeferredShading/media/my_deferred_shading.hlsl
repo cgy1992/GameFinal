@@ -20,45 +20,6 @@ struct VertexOut
 	float2 Tex : TEXCOORD;
 };
 
-/*
-SReturnGBuffers defer_ps_main(VertexOut pin)
-{
-	float3 normal = normalize(pin.Normal) * 0.5f + 0.5f;
-
-	SReturnGBuffers pout;
-	pout.GBuffer0 = float4(normal, 0);
-	pout.GBuffer1 = GF_MTRL_DIFFUSE;
-	pout.GBuffer2 = GF_MTRL_SPECULAR;
-	pout.GBuffer3 = GF_MTRL_AMBIENT;
-
-	return pout;
-}
-
-
-float4 point_light_ps_main(VertexOut pin) : SV_TARGET
-{
-	float3 normal = normalize(pin.Normal);
-	float4 diffuse;
-	float4 specular;
-
-//	bool ComputeIrradianceOfPointLight(float3 pos, SPointLight light, out float3 lightDir,
-//	out float4 diffuse, out float4 specular)
-	float3 lightDir;
-	ComputeIrradianceOfPointLight(pin.PosW, gPointLight, lightDir, diffuse, specular);
-
-	PhoneShading(pin.PosW, lightDir, normal, diffuse, specular, gPointLight.Specular.w);
-
-#ifdef SHADOW_ON
-	float shadowFactor = CalcPointLightShadowFactor(2, gPointLight.Position, 10.0f);
-	return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE + 
-		diffuse * GF_MTRL_DIFFUSE * shadowFactor + specular * GF_MTRL_SPECULAR * shadowFactor;
-#else
-	return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE + 
-		diffuse * GF_MTRL_DIFFUSE + specular * GF_MTRL_SPECULAR;
-#endif
-}
-*/
-
 float4 point_light_ps_main(VertexOut pin) : SV_TARGET
 {
 	//ComputeWorldPosFromDepthBuffer(Texture2D zbuffer, SamplerState samplerState, float2 Tex)

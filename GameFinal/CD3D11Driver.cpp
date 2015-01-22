@@ -996,7 +996,7 @@ namespace gf
 		for (u32 i = 0; i < EGT_GBUFFER_COUNT; i++)
 		{
 			IRenderTarget* pTarget = textureManager->createRenderTarget(textureNames[i], 0, 0, formats[i]);
-			assert(pTarget, "set up gbuffer failed!");
+			assert("set up gbuffer failed!");
 			mGBuffers[i] = pTarget;
 		}
 		return true;

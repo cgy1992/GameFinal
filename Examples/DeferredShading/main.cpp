@@ -12,8 +12,6 @@ const f32 CAMERA_MOVE_UNIT = 10.0f;
 const f32 CAMERA_ROTATE_UNIT = 1.0f;
 
 void updateCamera(ICameraNode* camera, f32 delta);
-
-void updateCarPosition(f32 delta, IMeshNode* car, ICameraNode* followCamera);
 void updateLightDirection(f32 delta, ILightNode* light);
 
 f32 getFps(float dt)
@@ -111,13 +109,6 @@ int main()
 	camera->setFarZ(500.0f);
 	camera->setShadowRange(100.0f);
 	
-	/*
-	camera->setPosition(XMFLOAT3(unit_dir.x * lightDistance, unit_dir.y * lightDistance, unit_dir.z * lightDistance));
-	camera->look(XMFLOAT3(unit_dir.x, unit_dir.y, unit_dir.z));
-	camera->setViewWidth(10);
-	camera->setViewHeight(7);
-	*/
-
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 
 	char caption[200];
@@ -229,66 +220,6 @@ void updateCamera(ICameraNode* camera, f32 delta)
 	{
 		camera->roll(-CAMERA_ROTATE_UNIT * delta);
 	}
-}
-
-void updateCarPosition(f32 delta, IMeshNode* car, ICameraNode* followCamera)
-{
-	XMFLOAT3 axises[3];
-	car->getLocalAxis(axises);
-	XMFLOAT3 xAxis = axises[0];
-	XMFLOAT3 zAxis = axises[2];
-	f32 movement_x = xAxis.x * delta * CAMERA_MOVE_UNIT;
-	f32 movement_y = xAxis.y * delta * CAMERA_MOVE_UNIT;
-	f32 movement_z = xAxis.z * delta * CAMERA_MOVE_UNIT;
-
-	if (GetAsyncKeyState('W') & 0x8000)
-	{
-		car->translate(movement_x, movement_y, movement_z);
-	}
-
-	if (GetAsyncKeyState('S') & 0x8000)
-	{
-		car->translate(-movement_x, -movement_y, -movement_z);
-	}
-
-	if (GetAsyncKeyState('A') & 0x8000)
-	{
-		car->yaw(-CAMERA_ROTATE_UNIT * delta);
-	}
-
-	if (GetAsyncKeyState('D') & 0x8000)
-	{
-		car->yaw(CAMERA_ROTATE_UNIT * delta);
-	}
-
-	f32 fCarCameraDist = 8.0f;
-
-	XMFLOAT3 carPos = car->getPosition();
-
-
-	XMVECTOR cameraPos = XMLoadFloat3(&followCamera->getPosition());
-	XMVECTOR pos = XMLoadFloat3(&carPos);
-	XMVECTOR invForword = XMVectorSet(-xAxis.x, -xAxis.y, -xAxis.z, 0.0f);
-	XMVECTOR forwardRight = XMVectorSet(-zAxis.x, -zAxis.y, -zAxis.z, 0.0f);
-
-	XMMATRIX rotM = XMMatrixRotationAxis(forwardRight, XM_PI / 10);
-	XMVECTOR v = XMVector3TransformNormal(invForword, rotM);
-	XMVECTOR dist = XMVectorSet(fCarCameraDist, fCarCameraDist, fCarCameraDist, 0.0f);
-	XMVECTOR cameraTargetPos = XMVectorMultiplyAdd(v, dist, pos);
-
-	XMVECTOR transVec = cameraTargetPos - cameraPos;
-	transVec = XMVectorScale(transVec, 0.1f);
-
-	XMVECTOR lookTargetVec = pos + XMVectorScale(invForword, -fCarCameraDist);
-	XMFLOAT3 lookTarget;
-	XMStoreFloat3(&lookTarget, lookTargetVec);
-
-	XMFLOAT3 trans;
-	XMStoreFloat3(&trans, transVec);
-
-	followCamera->lookAt(lookTarget);
-	followCamera->translate(trans.x, trans.y, trans.z);
-
 }
 
 void updateLightDirection(f32 delta, ILightNode* light)

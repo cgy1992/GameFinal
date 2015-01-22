@@ -12,6 +12,7 @@
       </vertex-shader>
       <pixel-shader file="sphere.hlsl" main="point_light_ps_main">
         <macro name="SHADOW_ON"/>
+        <macro name="GF_MAX_POINT_LIGHTS_NUM" value="1000"/>
         <variable name="gLight" value="light" index="1"/>
         <variable name="gPointLight" value="light" index="2"/>
       </pixel-shader>

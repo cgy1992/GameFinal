@@ -533,6 +533,12 @@
     <ClInclude Include="CD3D11Texture1D.h">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
+    <ClInclude Include="IBillboardCollectionMesh.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CBillboardCollectionMesh.h">
+      <Filter>src\ResourceObject\Class</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -763,6 +769,9 @@
     <ClCompile Include="CD3D11Texture1D.cpp">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
+    <ClCompile Include="CBillboardCollectionMesh.cpp">
+      <Filter>src\ResourceObject\Class</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Media\built-in-resources\skydome.hlsl">
@@ -780,6 +789,12 @@
       <Filter>src\built-in-resources</Filter>
     </Xml>
     <Xml Include="..\Media\built-in-resources\deferred_shading.pipeline.xml">
+      <Filter>src\built-in-resources</Filter>
+    </Xml>
+    <Xml Include="..\Media\built-in-resources\billboard.material.xml">
+      <Filter>src\built-in-resources</Filter>
+    </Xml>
+    <Xml Include="..\Media\built-in-resources\billboard.pipeline.xml">
       <Filter>src\built-in-resources</Filter>
     </Xml>
   </ItemGroup>

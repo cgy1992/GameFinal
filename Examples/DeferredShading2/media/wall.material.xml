@@ -3,7 +3,7 @@
   <material name="wall_material">
     
     <attributes>
-      <attribute name="ambient" value="0.0f, 0.0f, 0.0f, 1.0f"/>
+      <attribute name="ambient" value="0.5f, 0.5f, 0.5f, 1.0f"/>
       <attribute name="diffuse" value="0.5f, 0.5f, 0.5f, 1.0f"/>
       <attribute name="specular" value="0.05f, 0.05f, 0.05f, 32.0f"/>
       <attribute name="emissive" value="0.0f, 0.0f, 0.0f, 1.0f"/>

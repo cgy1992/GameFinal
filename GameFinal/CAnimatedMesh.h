@@ -130,6 +130,10 @@ namespace gf
 			}
 		}
 
+		virtual IRenderableBuffer* getRenderableBuffer()
+		{
+			return mRenderBuffer;
+		}
 
 	private:
 

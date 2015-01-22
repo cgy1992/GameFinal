@@ -22,4 +22,9 @@ namespace gf
 		mMeshBuffer->drawInstanced(instanceCount);
 	}
 
+	IRenderableBuffer* CSimpleMesh::getRenderableBuffer()
+	{
+		return mMeshBuffer;
+	}
+
 }
