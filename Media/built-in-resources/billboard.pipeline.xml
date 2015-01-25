@@ -12,7 +12,6 @@
     <shaders>
       <vertex-shader file="billboard.hlsl" main="default_vs_main"/>
       <geometry-shader file="billboard.hlsl" main="default_gs_main">
-        <variable name="gTexOffset" value="m_TexOffset"/>
       </geometry-shader>
       <pixel-shader  file="billboard.hlsl" main="default_ps_main"/>
     </shaders>

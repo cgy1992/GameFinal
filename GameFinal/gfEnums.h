@@ -50,6 +50,20 @@ namespace gf
 		EVF_TEXCOORD7 = (1 << 12),
 		EVF_SIZE = (1 << 13),
 	};
+	
+	//orientation
+	enum E_SPACE_ORIENTATION
+	{
+		ESO_LEFT_UP_FRONT = 0,	// 000
+		ESO_LEFT_UP_BACK,		// 001
+		ESO_LEFT_DOWN_FRONT,	// 010
+		ESO_LEFT_DOWN_BACK,		// 011
+		ESO_RIGHT_UP_FRONT,		// 100
+		ESO_RIGHT_UP_BACK,		// 101
+		ESO_RIGHT_DOWN_FRONT,	// 110
+		ESO_RIGHT_DOWN_BACK,	// 111
+	};
+
 }
 
 

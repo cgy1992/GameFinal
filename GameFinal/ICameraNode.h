@@ -190,6 +190,56 @@ namespace gf
 			return frustum;
 		}
 
+		math::SFrustum getFrustumFromProjSpace(XMFLOAT2 leftTopProjPoint, XMFLOAT2 rightBottomProjPoint) const
+		{
+			const u32 LEFT_UP = 0;
+			const u32 RIGHT_UP = 1;
+			const u32 LEFT_DOWN = 2;
+			const u32 RIGHT_DOWN = 3;
+
+			XMFLOAT4 cornersInProjSpace[4];
+			cornersInProjSpace[LEFT_UP] = XMFLOAT4(leftTopProjPoint.x, leftTopProjPoint.y, 0, 1.0f); // left
+			cornersInProjSpace[RIGHT_UP] = XMFLOAT4(rightBottomProjPoint.x, leftTopProjPoint.y, 0, 1.0f);
+			cornersInProjSpace[LEFT_DOWN] = XMFLOAT4(leftTopProjPoint.x, rightBottomProjPoint.y, 0, 1.0f);
+			cornersInProjSpace[RIGHT_DOWN] = XMFLOAT4(rightBottomProjPoint.x, rightBottomProjPoint.y, 0, 1.0f);
+
+			XMVECTOR leftUpCorner = XMLoadFloat4(&cornersInProjSpace[LEFT_UP]);
+			XMVECTOR rightUpCorner = XMLoadFloat4(&cornersInProjSpace[RIGHT_UP]);
+			XMVECTOR leftDownCorner = XMLoadFloat4(&cornersInProjSpace[LEFT_DOWN]);
+			XMVECTOR rightDownCorner = XMLoadFloat4(&cornersInProjSpace[RIGHT_DOWN]);
+			XMVECTOR cameraPos = XMVectorSet(mPosition.x, mPosition.y, mPosition.z, 1.0f);
+
+			XMMATRIX invViewProj = XMLoadFloat4x4(&mInvViewProjMatrix);
+
+			leftUpCorner = XMVector4Transform(leftUpCorner, invViewProj);
+			leftUpCorner = XMVectorDivide(leftUpCorner, XMVectorSplatW(leftUpCorner));
+			rightUpCorner = XMVector4Transform(rightUpCorner, invViewProj);
+			rightUpCorner = XMVectorDivide(rightUpCorner, XMVectorSplatW(rightUpCorner));
+			leftDownCorner = XMVector4Transform(leftDownCorner, invViewProj);
+			leftDownCorner = XMVectorDivide(leftDownCorner, XMVectorSplatW(leftDownCorner));
+			rightDownCorner = XMVector4Transform(rightDownCorner, invViewProj);
+			rightDownCorner = XMVectorDivide(rightDownCorner, XMVectorSplatW(rightDownCorner));
+
+			math::SFrustum frustum;
+			
+			XMVECTOR topPlane = XMPlaneFromPoints(rightUpCorner, leftUpCorner, cameraPos);
+			XMVECTOR bottomPlane = XMPlaneFromPoints(leftDownCorner, rightDownCorner, cameraPos);
+			XMVECTOR leftPlane = XMPlaneFromPoints(cameraPos, leftUpCorner, leftDownCorner);
+			XMVECTOR rightPlane = XMPlaneFromPoints(cameraPos, rightDownCorner, rightUpCorner);
+
+			XMStoreFloat4(&frustum.TopPlane, topPlane);
+			XMStoreFloat4(&frustum.BottomPlane, bottomPlane);
+			XMStoreFloat4(&frustum.LeftPlane, leftPlane);
+			XMStoreFloat4(&frustum.RightPlane, rightPlane);
+
+			frustum.NearPlane = mFrustum.NearPlane;
+			frustum.FarPlane = mFrustum.FarPlane;
+
+			return frustum;
+		}
+
+		
+
 		virtual E_SCENE_NODE_TYPE getNodeType() const
 		{
 			return ESNT_CAMERA;
@@ -256,6 +306,8 @@ namespace gf
 			}
 		}
 
+		
+
 		const f32* getShadowSegments()
 		{
 			return mShadowSegments;
@@ -290,6 +342,7 @@ namespace gf
 		XMFLOAT4X4		mViewMatrix;
 		XMFLOAT4X4		mProjMatrix;
 		XMFLOAT4X4		mViewProjMatrix;
+		XMFLOAT4X4		mInvViewProjMatrix;
 		math::SFrustum	mFrustum;
 
 		f32				mFovAngleY;

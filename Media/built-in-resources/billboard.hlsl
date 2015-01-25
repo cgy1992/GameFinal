@@ -5,7 +5,7 @@ SamplerState gSamplerState;
 
 cbuffer cb_billboard
 {
-	float2 gTexOffset;
+	float2 m_TexOffset;
 };
 
 struct VertexIn
@@ -46,9 +46,9 @@ void default_gs_main(point VertexOut gin[1], inout TriangleStream<GeoOut> triStr
 {
 	static float2 texOffsets[4] = {
 		float2(0, 0), 
-		float2(gTexOffset.x, 0),
-		float2(0, gTexOffset.y),
-		float2(gTexOffset.x, gTexOffset.y)
+		float2(m_TexOffset.x, 0),
+		float2(0, m_TexOffset.y),
+		float2(m_TexOffset.x, m_TexOffset.y)
 	};
 
 	float3 up = float3(0, 1.0f, 0);

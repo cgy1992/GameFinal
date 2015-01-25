@@ -32,8 +32,8 @@ SPointLightInfo g_pointLightInfo;
 IBillboardCollectionMesh* g_BillboardMesh = nullptr;
 IMeshNode* g_BillboardNode;
 std::vector<SPointLightInfo> g_pointLightInfos;
-const u32 g_pointLightCount = 500;
-const f32 g_pointLightRange = 5.0f;
+const u32 g_pointLightCount = 1000;
+const f32 g_pointLightRange = 3.0f;
 
 
 f32 getFps(float dt)
@@ -225,6 +225,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	const f32 color2[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
 	driver->setDeferredShading(true);
+	driver->setDeferredShadingAlgorithm(EDSA_TILED_BASED_DEFERRED_SHADING);
 	smgr->setDeferredShadingPipeline("my_deferred_pipeline");
 
 	while (device->run())
@@ -236,6 +237,15 @@ int _tmain(int argc, _TCHAR* argv[])
 		else if (GetAsyncKeyState(0x32) & 0x8000)
 		{
 			driver->setDeferredShading(true);
+		}
+
+		if (GetAsyncKeyState(0x33) & 0x8000)
+		{
+			driver->setDeferredShadingAlgorithm(EDSA_NORMAL_DEFERRED_SHADING);
+		}
+		else if (GetAsyncKeyState(0x34) & 0x8000)
+		{
+			driver->setDeferredShadingAlgorithm(EDSA_TILED_BASED_DEFERRED_SHADING);
 		}
 
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -260,7 +270,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		driver->endScene();
 
-		sprintf_s(caption, "FPS:%f", getFps(dt));
+		sprintf_s(caption, "%s, %s, FPS:%f", 
+			driver->isDeferredShading() ? "Deferred" : "Forward",
+			driver->getDeferredShadingAlgorithm() == EDSA_NORMAL_DEFERRED_SHADING ? "Normal" : "Tile-Based",
+			getFps(dt));
 		device->setWindowCaption(caption);
 	}
 

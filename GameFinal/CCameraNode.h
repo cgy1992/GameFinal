@@ -276,7 +276,12 @@ namespace gf
 
 			XMStoreFloat4x4(&mViewMatrix, view);
 			XMStoreFloat4x4(&mProjMatrix, proj);
-			XMStoreFloat4x4(&mViewProjMatrix, view * proj);
+			XMMATRIX viewProj = view * proj;
+			XMStoreFloat4x4(&mViewProjMatrix, viewProj);
+
+			XMVECTOR det = XMMatrixDeterminant(viewProj);
+			XMMATRIX invViewProj = XMMatrixInverse(&det, viewProj);
+			XMStoreFloat4x4(&mInvViewProjMatrix, invViewProj);
 
 			// update frustum
 			XMFLOAT4X4 M = mViewProjMatrix;

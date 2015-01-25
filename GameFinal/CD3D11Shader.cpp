@@ -680,6 +680,20 @@ namespace gf
 				var.IndexParam = attr.IndexParam;
 				pipeline->addShaderAutoVariable(var);
 			}
+			else if (varname.length() > 2 && varname.substr(0, 2) == "m_")
+			{
+				// it is a material attribute
+				std::string attrName = varname.substr(2);
+				SShaderAutoVariable var;
+				var.ShaderType = getType();
+				var.VariableName = varname;
+				var.Type = ESAVT_MATERIAL_ATTRIBUTE;
+				var.UpdateFrequency = EUF_PER_OBJECT;
+				var.IndexParam = 0;
+				var.MaterialAttributeName = attrName;
+				pipeline->addShaderAutoVariable(var);
+			}
+
 		}
 
 		for (auto i = mShaderResourceDescs.begin(); i != mShaderResourceDescs.end(); i++)

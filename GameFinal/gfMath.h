@@ -192,7 +192,7 @@ namespace gf
 
 		void ComputeAabbFromOrientedBox(SAxisAlignedBox* aabb, const SOrientedBox& obb);
 
-		void intersectOrientedBoxOrientedBox(const SOrientedBox& obb1, const SOrientedBox& obb2);
+		void ComputeFrustumFromCorners(const XMFLOAT3 corners[]);
 	}
 }
 

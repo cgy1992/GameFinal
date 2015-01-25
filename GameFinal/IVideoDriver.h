@@ -30,6 +30,11 @@ namespace gf
 		EGT_GBUFFER_COUNT,
 	};
 
+	enum E_DEFERRED_SHADING_ALGORITHM
+	{
+		EDSA_NORMAL_DEFERRED_SHADING,
+		EDSA_TILED_BASED_DEFERRED_SHADING,
+	};
 
 	struct SViewport
 	{
@@ -72,6 +77,7 @@ namespace gf
 			, mRenderStateManager(nullptr)
 			, mMeshManager(nullptr)
 			, mDeferredShading(false)
+			, mDeferredShadingAlgorithm(EDSA_NORMAL_DEFERRED_SHADING)
 		{
 			ZeroMemory(mGBuffers, sizeof(mGBuffers));
 		}
@@ -206,8 +212,9 @@ namespace gf
 		virtual void setPipelineUsage(E_PIPELINE_USAGE usage) = 0;
 
 		bool isDeferredShading() const { return mDeferredShading; }
-
 		void setDeferredShading(bool deferredShading) { mDeferredShading = deferredShading; }
+		E_DEFERRED_SHADING_ALGORITHM getDeferredShadingAlgorithm() { return mDeferredShadingAlgorithm; }
+		void setDeferredShadingAlgorithm(E_DEFERRED_SHADING_ALGORITHM method) { mDeferredShadingAlgorithm = method; }
 
 		virtual void setGBuffersAsRenderTargets() = 0;
 
@@ -240,6 +247,8 @@ namespace gf
 		//bool							mRenderingShadowMap;
 		E_PIPELINE_USAGE				mCurrentPipelineUsage;
 		bool							mDeferredShading;
+		E_DEFERRED_SHADING_ALGORITHM	mDeferredShadingAlgorithm;
+		f32								mDeferredShadingTileSize;
 		IRenderTarget*					mGBuffers[EGT_GBUFFER_COUNT];
 		//	IShaderVariableInjection*		mShaderVariableInjector;
 

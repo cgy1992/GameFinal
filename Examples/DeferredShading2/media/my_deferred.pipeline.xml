@@ -6,7 +6,7 @@
     </input-layout>
 
     <shaders>
-      <vertex-shader file="post_process.hlsl" main="vs_main"/>
+      <vertex-shader file="deferred_shading.hlsl" main="default_vs_main"/>
       <pixel-shader  file="my_deferred_shading.hlsl" main="point_light_ps_main">
         <macro name="SHADOW_ON"/>
         <macro name="GF_MAX_POINT_LIGHTS_NUM" value="1000"/>

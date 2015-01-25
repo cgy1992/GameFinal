@@ -40,6 +40,8 @@ namespace gf
 
 		virtual void render(E_PIPELINE_USAGE);
 
+		
+
 		virtual ISceneNode* addEmptyNode(
 			ISceneNode* parent = nullptr,
 			bool bStatic = false,
@@ -196,6 +198,8 @@ namespace gf
 		void registerToOctree(ISceneNode* scene);
 
 		ISceneNode* getParentNode(ISceneNode* parent, bool bStatic);
+
+		void drawDeferredShading(IRenderTarget* target);
 
 		std::vector<ISceneNode*>		mSolidNodes;
 		std::map<u32, ILightNode*>		mLightNodes;
