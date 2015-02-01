@@ -5,6 +5,7 @@
 #include "CCompositorFactory.h"
 
 #define _GF_SHADER_RESOURCE_VIEW_COUNT 32
+#define _GF_UNORDERED_ACCESS_VIEW_COUNT 32
 
 namespace gf
 {
@@ -16,10 +17,12 @@ namespace gf
 			ID3D11Buffer*				VertexBuffers[16];
 			ID3D11Buffer*				IndexBuffer;
 			IPipeline*					Pipeline;
-			IShader*					Shaders[5];
-			ID3D11ShaderResourceView*	ShaderResourceViews[5][_GF_SHADER_RESOURCE_VIEW_COUNT];
-			bool						ShaderResourceViewIsDirty[5];
-			ID3D11SamplerState*			SamplerStates[5][_GF_SHADER_RESOURCE_VIEW_COUNT];
+			IShader*					Shaders[EST_SHADER_COUNT + 1];
+			ID3D11ShaderResourceView*	ShaderResourceViews[EST_SHADER_COUNT + 1][_GF_SHADER_RESOURCE_VIEW_COUNT];
+			bool						ShaderResourceViewIsDirty[EST_SHADER_COUNT + 1];
+			ID3D11UnorderedAccessView*	UnorderedAccessViews[_GF_UNORDERED_ACCESS_VIEW_COUNT]; // only compute shader needs uav.
+			bool						UnorderedAccessViewIsDirty;
+			ID3D11SamplerState*			SamplerStates[EST_SHADER_COUNT + 1][_GF_SHADER_RESOURCE_VIEW_COUNT];
 			bool						SamplerStateIsDirty[5];
 
 			IInputLayout*				InputLayout;
@@ -72,6 +75,8 @@ namespace gf
 				memset(Shaders, 0, sizeof(Shaders));
 				memset(ShaderResourceViews, 0, sizeof(ShaderResourceViews));
 				memset(ShaderResourceViewIsDirty, 0, sizeof(ShaderResourceViewIsDirty));
+				UnorderedAccessViewIsDirty = false;
+				memset(UnorderedAccessViews, 0, sizeof(UnorderedAccessViews));
 				memset(SamplerStates, 0, sizeof(SamplerStates));
 				memset(SamplerStateIsDirty, 0, sizeof(SamplerStateIsDirty));
 				ShadowMapRasterizerState = NULL;
@@ -130,9 +135,13 @@ namespace gf
 
 		void setSampler(E_SHADER_TYPE shadertype, u32 slot, ISampler* sampler);
 
+		void setRWTexture(u32 slot, ID3D11UnorderedAccessView* unorderedAccessView);
+
 		void bindTexture(E_SHADER_TYPE shaderType, u32 textureCount);
 
 		void bindSampler(E_SHADER_TYPE shaderType, u32 samplerCount);
+
+		void bindRWTexture(u32 count);
 
 		virtual void clearShader(E_SHADER_TYPE shaderType);
 
@@ -154,6 +163,11 @@ namespace gf
 		virtual void getGBuffers(IRenderTarget* renderTargets[]) const;
 
 		virtual IRenderTarget* getDefaultRenderTarget() { return mDefaultRenderTarget; }
+
+		virtual bool runComputeShader(IShader* shader, u32 x, u32 y, u32 z,
+			ISceneNode* node = nullptr);
+
+		virtual void resetRWTextures();
 
 		virtual ~CD3D11Driver();
 

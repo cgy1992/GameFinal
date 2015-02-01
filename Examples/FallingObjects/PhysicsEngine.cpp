@@ -99,7 +99,7 @@ void PhysicsEngine::stepVisualDebugger()
 
 void PhysicsEngine::update(f32 deltaTime)
 {
-	//if (deltaTime > 0)
+	if (deltaTime > 0)
 	{
 		mPhysicsWorld->stepDeltaTime(deltaTime);
 	}

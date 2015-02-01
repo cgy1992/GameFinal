@@ -100,7 +100,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	ILightNode* light = smgr->addDirectionalLight(1, nullptr, light_dir);
 	light->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	light->setShadowCameraOrthographicSize(10.0f, 7.0f);
+	//light->setShadowCameraOrthographicSize(10.0f, 7.0f);
 
 	XMFLOAT4 unit_dir = light->getDirection();
 	light->setPosition(XMFLOAT3(unit_dir.x * lightDistance, unit_dir.y * lightDistance, unit_dir.z * lightDistance));
@@ -265,7 +265,7 @@ void updatePhysics(f32 dt)
 {
 	//	physicsWorld->stepDeltaTime(dt);
 
-	//if (dt > 0)
+	if (dt > 0)
 	{
 		PhysicsEngine* engine = PhysicsEngine::getInstance();
 		engine->update(dt);
@@ -305,7 +305,7 @@ void addBoxInstance(ISceneManager* smgr, ISimpleMesh* mesh, IInstanceCollectionN
 void createBoxes(ISceneManager* smgr)
 {
 	ISimpleMesh* boxMesh = IMeshManager::getInstance()->createCubeMesh("box1", boxSize, boxSize, boxSize);
-	u32 boxNum = 3000;
+	u32 boxNum = 300;
 #if defined(DEBUG) || defined(_DEBUG)
 	boxNum = 100;
 #endif

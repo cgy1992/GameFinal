@@ -299,8 +299,19 @@ namespace gf
 				}
 			}
 		}
+
+		// apply samplers in shader.
+		for (u32 i = 0; i < EST_SHADER_COUNT; i++)
+		{
+			IShader* shader = mShaders[i];
+			if (shader)
+			{
+				shader->applySamplers();
+			}
+		}
 	}
 
+	/*
 	void CPipeline::registerAutoSamplers(const std::map<std::string, ISampler*>& samplerMap)
 	{
 		for (auto it = samplerMap.begin(); it != samplerMap.end(); it++)
@@ -308,6 +319,6 @@ namespace gf
 			setSampler(it->first, it->second);
 		}
 	}
-
+	*/
 }
 

@@ -4,7 +4,7 @@
 
 namespace gf
 {
-	bool CD3D11Shader::compile(const char* szFileName, const char* szFunctionName, E_SHADER_TYPE type)
+	bool CD3D11Shader::compile(const char* szFileName, const char* szFunctionName)
 	{
 		HRESULT hr;
 		IResourceGroupManager* rmgr = IResourceGroupManager::getInstance();
@@ -153,35 +153,63 @@ namespace gf
 		shaderReflection->GetDesc(&shaderDesc);
 
 		D3D11_SHADER_INPUT_BIND_DESC resourceDesc;
-		s32 uiMaxTextureBindPoint = -1;
+		s32 uiMaxSRVBindPoint = -1;
+		s32 uiMaxUAVBindPoint = -1;
+
 		s32 uiMaxSamplerBindPoint = -1;
+
 		for (u32 i = 0; i < shaderDesc.BoundResources; i++)
 		{
 			shaderReflection->GetResourceBindingDesc(i, &resourceDesc);
+			std::string name;
+			s32 bindPoint;
+			SD3D11ShaderBindResourceInfo info;
+			name = resourceDesc.Name;
+			info.Desc = resourceDesc;
 
-			//std::cout << resourceDesc.Name << std::endl;
-
-			if (resourceDesc.Type == D3D10_SIT_TEXTURE)
+			switch (resourceDesc.Type)
 			{
-				std::string name = resourceDesc.Name;
-				mShaderResourceDescs.insert(std::make_pair(name, resourceDesc));
+			case D3D10_SIT_TEXTURE:
+			case D3D11_SIT_STRUCTURED:
+			case D3D11_SIT_BYTEADDRESS:
+				info.Type = ESBRT_SHADER_RESOURCE;
+				mBindingResourceInfos.insert(std::make_pair(name, info));
 
-				s32 bindPoint = resourceDesc.BindPoint;
-				if (bindPoint > uiMaxTextureBindPoint)
-					uiMaxTextureBindPoint = bindPoint;
-			}
-			else if (resourceDesc.Type == D3D_SIT_SAMPLER)
-			{
-				std::string name = resourceDesc.Name;
-				mShaderSamplerDescs.insert(std::make_pair(name, resourceDesc));
+				bindPoint = resourceDesc.BindPoint;
+				if (bindPoint > uiMaxSRVBindPoint)
+					uiMaxSRVBindPoint = bindPoint;
+				break;
 
-				s32 bindPoint = resourceDesc.BindPoint;
+			case D3D11_SIT_UAV_RWTYPED:
+			case D3D11_SIT_UAV_RWSTRUCTURED:
+			case D3D11_SIT_UAV_RWBYTEADDRESS:
+			case D3D11_SIT_UAV_APPEND_STRUCTURED:
+			case D3D11_SIT_UAV_CONSUME_STRUCTURED:
+
+				info.Type = ESBRT_UNORDERRED_ACCESS;
+				mBindingResourceInfos.insert(std::make_pair(name, info));
+
+				bindPoint = resourceDesc.BindPoint;
+				if (bindPoint > uiMaxUAVBindPoint)
+					uiMaxUAVBindPoint = bindPoint;
+				break;
+
+			case D3D10_SIT_SAMPLER:
+				info.Type = ESBRT_SAMPLER;
+				mBindingResourceInfos.insert(std::make_pair(name, info));
+				bindPoint = resourceDesc.BindPoint;
 				if (bindPoint > uiMaxSamplerBindPoint)
 					uiMaxSamplerBindPoint = bindPoint;
+				break;
+			
+				
+			default:
+				break;
 			}
 		}
 
-		mSrvNum = (uiMaxTextureBindPoint >= 0) ? uiMaxTextureBindPoint + 1 : 0;
+		mSrvNum = (uiMaxSRVBindPoint >= 0) ? uiMaxSRVBindPoint + 1 : 0;
+		mUavNum = (uiMaxUAVBindPoint >= 0) ? uiMaxUAVBindPoint + 1 : 0;
 		mSamplerNum = (uiMaxSamplerBindPoint >= 0) ? uiMaxSamplerBindPoint + 1 : 0;
 
 		for (u32 i = 0; i < shaderDesc.ConstantBuffers; i++)
@@ -537,35 +565,54 @@ namespace gf
 
 	bool CD3D11Shader::setTexture(const std::string& varname, ITexture* texture)
 	{
-		auto it = mShaderResourceDescs.find(varname);
-		if (it == mShaderResourceDescs.end())
+		auto it = mBindingResourceInfos.find(varname);
+		if (it == mBindingResourceInfos.end())
 			return false;
 
-		const D3D11_SHADER_INPUT_BIND_DESC& desc = it->second;
-		if (desc.Type != D3D10_SIT_TEXTURE)
-			return false;
+		//const D3D11_SHADER_INPUT_BIND_DESC& desc = it->second;
+		const SD3D11ShaderBindResourceInfo& info = it->second;
 
-		u32 bindPoint = desc.BindPoint;
-		//md3dDriver->setTexture(getType(), bindPoint, texture);
-		texture->apply(getType(), bindPoint);
+		if (info.Type == ESBRT_SHADER_RESOURCE)
+		{
+			texture->apply(getType(), info.Desc.BindPoint, ETBT_SHADER_RESOURCE);
+			return true;
+		}
+		
+		if (info.Type == ESBRT_UNORDERRED_ACCESS)
+		{
+			texture->apply(getType(), info.Desc.BindPoint, ETBT_UNORDERED_ACCESS);
+			return true;
+		}
 
-		return true;
+		return false;
 	}
 
 	bool CD3D11Shader::setSampler(const std::string& varname, ISampler* sampler)
 	{
-		auto it = mShaderSamplerDescs.find(varname);
-		if (it == mShaderSamplerDescs.end())
+		auto it = mBindingResourceInfos.find(varname);
+		if (it == mBindingResourceInfos.end())
 			return false;
 
-		const D3D11_SHADER_INPUT_BIND_DESC& desc = it->second;
-		md3dDriver->setSampler(getType(), desc.BindPoint, sampler);
-		return true;
+		const SD3D11ShaderBindResourceInfo& info = it->second;
+		if (info.Type == ESBRT_SAMPLER)
+		{
+			md3dDriver->setSampler(getType(), info.Desc.BindPoint, sampler);
+			return true;
+		}
+
+		return false;
 	}
 
 	bool CD3D11Shader::existSampler(const std::string& name) const
 	{
-		return mShaderSamplerDescs.find(name) != mShaderSamplerDescs.end();
+		auto it = mBindingResourceInfos.find(name);
+		if (it != mBindingResourceInfos.end())
+		{
+			if (it->second.Type == ESBRT_SAMPLER)
+				return true;
+		}
+
+		return false;
 	}
 
 
@@ -658,12 +705,14 @@ namespace gf
 		return mConstantVariables.find(varname) != mConstantVariables.end();
 	}
 
+	/*
 	bool CD3D11Shader::isTextureVariable(const std::string& varname) const
 	{
 		return mShaderResourceDescs.find(varname) != mShaderResourceDescs.end();
 	}
+	*/
 
-	void CD3D11Shader::registerAutoVariablesToPipeline(IPipeline* pipeline, const std::map<std::string, SShaderVariableAttribute>& varMap) const
+	void CD3D11Shader::registerAutoVariables(const std::map<std::string, SShaderVariableAttribute>& varMap)
 	{
 		for (auto i = mConstantVariables.begin(); i != mConstantVariables.end(); i++)
 		{
@@ -678,7 +727,8 @@ namespace gf
 				var.Type = attr.Meaning;
 				var.UpdateFrequency = attr.DefaultUpdateFrequency;
 				var.IndexParam = attr.IndexParam;
-				pipeline->addShaderAutoVariable(var);
+
+				addShaderAutoVariable(var);
 			}
 			else if (varname.length() > 2 && varname.substr(0, 2) == "m_")
 			{
@@ -691,12 +741,12 @@ namespace gf
 				var.UpdateFrequency = EUF_PER_OBJECT;
 				var.IndexParam = 0;
 				var.MaterialAttributeName = attrName;
-				pipeline->addShaderAutoVariable(var);
-			}
 
+				addShaderAutoVariable(var);
+			}
 		}
 
-		for (auto i = mShaderResourceDescs.begin(); i != mShaderResourceDescs.end(); i++)
+		for (auto i = mBindingResourceInfos.begin(); i != mBindingResourceInfos.end(); i++)
 		{
 			const std::string& varname = i->first;
 			auto j = varMap.find(varname);
@@ -709,12 +759,9 @@ namespace gf
 				var.Type = attr.Meaning;
 				var.UpdateFrequency = attr.DefaultUpdateFrequency;
 				var.IndexParam = attr.IndexParam;
-				pipeline->addShaderAutoVariable(var);
+				addShaderAutoVariable(var);
 			}
 		}
 	}
-
-
-
 
 }

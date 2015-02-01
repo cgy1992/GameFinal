@@ -67,7 +67,7 @@ namespace gf
 				//mShadowMap = tmgr->createDepthStencilSurface(name, mShadowMapWidth, mShadowMapHeight, 32, 0);
 
 				mShadowMap = tmgr->createTexture2DArray(name + std::string("d"), mShadowMapWidth, mShadowMapHeight,
-					4, ETBT_SHADER | ETBT_DEPTH_STENCIL, nullptr, 1, EGF_D32, 0);
+					4, ETBT_SHADER_RESOURCE | ETBT_DEPTH_STENCIL, nullptr, 1, EGF_D32, 0);
 
 			}
 

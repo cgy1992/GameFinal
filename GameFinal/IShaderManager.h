@@ -15,6 +15,10 @@ namespace gf
 			const std::string& functionName,
 			const SShaderMacroSet& macros) = 0;
 
+		virtual IShader* load(E_SHADER_TYPE shaderType,
+			const std::string& filename,
+			const std::string& functionName) = 0;
+
 		virtual IShader* get(const std::string& name, 
 			bool bLoadIfNotExist = true, 
 			E_SHADER_TYPE shaderType = EST_UNDEFINED_SHADER) = 0;

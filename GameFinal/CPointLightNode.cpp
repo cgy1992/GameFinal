@@ -70,7 +70,7 @@ namespace gf
 				name += getId();
 
 				mShadowMapTexture = tmgr->createTextureCube(name, mShadowMapWidth,
-					ETBT_SHADER | ETBT_RENDER_TARGET, nullptr, 1, EGF_R32_FLOAT);
+					ETBT_SHADER_RESOURCE | ETBT_RENDER_TARGET, nullptr, 1, EGF_R32_FLOAT);
 			}
 
 			ICameraNode* camera = mSceneManager->getActiveCameraNode();

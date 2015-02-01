@@ -149,7 +149,7 @@ namespace gf
 		{
 			u32 stride = sizeof(XMFLOAT4X4)+mEachInstanceDataSize;
 			
-			mInstanceBuffer->setVertexData(mInstancesData, stride * mInstanceNum);
+			mInstanceBuffer->setVertexData(mInstancesData, mInstanceNum);
 
 			mMeshNode->renderInstanced(usage, mInstanceNum, mInstanceBuffer);
 

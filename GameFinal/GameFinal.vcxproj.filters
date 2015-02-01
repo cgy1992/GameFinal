@@ -102,6 +102,15 @@
     <Filter Include="src\effect\compositor">
       <UniqueIdentifier>{39470482-b0b0-46b6-9e9a-f52cf29e5e86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ResourceObject\Direct3D11\shader">
+      <UniqueIdentifier>{1e87b977-d597-49b7-81ff-870a9cb12e03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ResourceObject\Direct3D11\texture">
+      <UniqueIdentifier>{c7507995-e674-4839-a1d4-2d6cb9379006}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ResourceObject\Direct3D11\mesh">
+      <UniqueIdentifier>{af06bf02-976f-4861-baa3-fddce2ad35ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -116,28 +125,13 @@
     <ClInclude Include="GameFinal.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="CD3D11Shader.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
     <ClInclude Include="CD3D11InputLayout.h">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
     <ClInclude Include="CD3D11Pipeline.h">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
-    <ClInclude Include="CD3D11PixelShader.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
     <ClInclude Include="CD3D11RenderState.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11ShaderContext.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11SimpleMesh.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11VertexShader.h">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
     <ClInclude Include="IShader.h">
@@ -386,9 +380,6 @@
     <ClInclude Include="IAnimatedMeshBuffer.h">
       <Filter>src\ResourceObject\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="CD3D11AnimatedMeshBuffer.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
     <ClInclude Include="ISampler.h">
       <Filter>src\ResourceObject\Interface</Filter>
     </ClInclude>
@@ -403,15 +394,6 @@
     </ClInclude>
     <ClInclude Include="CSamplerManager.h">
       <Filter>src\ResourceManager\Class</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11GeometryShader.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11HullShader.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11DomainShader.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
     <ClInclude Include="COctreeManager.h">
       <Filter>src\SceneManager\Class</Filter>
@@ -485,23 +467,11 @@
     <ClInclude Include="ITexture3D.h">
       <Filter>src\ResourceObject\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="CD3D11Texture3D.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
     <ClInclude Include="ITextureCube.h">
       <Filter>src\ResourceObject\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="CD3D11TextureCube.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11Texture2D.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
     <ClInclude Include="ITexture2DArray.h">
       <Filter>src\ResourceObject\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11Texture2DArray.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
     <ClInclude Include="gfStructs.h">
       <Filter>src\Util\Headers</Filter>
@@ -511,9 +481,6 @@
     </ClInclude>
     <ClInclude Include="IInstanceMeshBuffer.h">
       <Filter>src\ResourceObject\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11InstanceMeshBuffer.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClInclude>
     <ClInclude Include="IInstanceCollectionNode.h">
       <Filter>src\SceneNode\Interface</Filter>
@@ -527,17 +494,62 @@
     <ClInclude Include="CInstanceNode.h">
       <Filter>src\SceneNode\Class</Filter>
     </ClInclude>
-    <ClInclude Include="ITexture1D.h">
-      <Filter>src\ResourceObject\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="CD3D11Texture1D.h">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClInclude>
     <ClInclude Include="IBillboardCollectionMesh.h">
       <Filter>src\ResourceObject\Interface</Filter>
     </ClInclude>
     <ClInclude Include="CBillboardCollectionMesh.h">
       <Filter>src\ResourceObject\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="CShader.h">
+      <Filter>src\ResourceObject\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="IBuffer.h">
+      <Filter>src\ResourceObject\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Shader.h">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11PixelShader.h">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11HullShader.h">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11GeometryShader.h">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11DomainShader.h">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11ComputeShader.h">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11VertexShader.h">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11TextureCube.h">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Texture3D.h">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Texture2DArray.h">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Texture2D.h">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Texture1D.h">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11Buffer.h">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11AnimatedMeshBuffer.h">
+      <Filter>src\ResourceObject\Direct3D11\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="CD3D11SimpleMesh.h">
+      <Filter>src\ResourceObject\Direct3D11\mesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -571,22 +583,7 @@
     <ClCompile Include="CD3D11Pipeline.cpp">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
-    <ClCompile Include="CD3D11PixelShader.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
     <ClCompile Include="CD3D11RenderState.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11Shader.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11ShaderContext.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11SimpleMesh.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11VertexShader.cpp">
       <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
     <ClCompile Include="CPipeline.cpp">
@@ -682,9 +679,6 @@
     <ClCompile Include="CModelMeshNode.cpp">
       <Filter>src\SceneNode\Class</Filter>
     </ClCompile>
-    <ClCompile Include="CD3D11AnimatedMeshBuffer.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
     <ClCompile Include="SMaterial.cpp">
       <Filter>src\ResourceObject\Class</Filter>
     </ClCompile>
@@ -696,15 +690,6 @@
     </ClCompile>
     <ClCompile Include="CSamplerManager.cpp">
       <Filter>src\ResourceManager\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11GeometryShader.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11HullShader.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11DomainShader.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
     </ClCompile>
     <ClCompile Include="COctreeManager.cpp">
       <Filter>src\SceneManager\Class</Filter>
@@ -748,29 +733,62 @@
     <ClCompile Include="CPointLightNode.cpp">
       <Filter>src\SceneNode\Class</Filter>
     </ClCompile>
-    <ClCompile Include="CD3D11Texture3D.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11TextureCube.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11Texture2D.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CD3D11Texture2DArray.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
     <ClCompile Include="CInstanceCollectionNode.cpp">
       <Filter>src\SceneNode\Class</Filter>
     </ClCompile>
     <ClCompile Include="CInstanceNode.cpp">
       <Filter>src\SceneNode\Class</Filter>
     </ClCompile>
-    <ClCompile Include="CD3D11Texture1D.cpp">
-      <Filter>src\ResourceObject\Direct3D11</Filter>
-    </ClCompile>
     <ClCompile Include="CBillboardCollectionMesh.cpp">
       <Filter>src\ResourceObject\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CShader.cpp">
+      <Filter>src\ResourceObject\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Shader.cpp">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11PixelShader.cpp">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11HullShader.cpp">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11GeometryShader.cpp">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11DomainShader.cpp">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11ComputeShader.cpp">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11VertexShader.cpp">
+      <Filter>src\ResourceObject\Direct3D11\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11TextureCube.cpp">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Texture3D.cpp">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Texture2DArray.cpp">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Texture2D.cpp">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Texture1D.cpp">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11AnimatedMeshBuffer.cpp">
+      <Filter>src\ResourceObject\Direct3D11\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11SimpleMesh.cpp">
+      <Filter>src\ResourceObject\Direct3D11\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="CD3D11Buffer.cpp">
+      <Filter>src\ResourceObject\Direct3D11\texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

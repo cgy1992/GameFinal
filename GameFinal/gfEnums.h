@@ -27,9 +27,13 @@ namespace gf
 
 	enum E_TEXTURE_BIND_TYPE
 	{
-		ETBT_SHADER = (1),
+		ETBT_SHADER_RESOURCE = (1),
 		ETBT_RENDER_TARGET = (1 << 2),
 		ETBT_DEPTH_STENCIL = (1 << 3),
+		ETBT_UNORDERED_ACCESS = (1 << 4),
+		ETBT_CPU_ACCESS_READ = (1 << 5),
+		ETBT_CPU_ACCESS_WRITE = (1 << 6),
+		ETBT_BUFFER_APPEND = (1 << 7),
 	};
 
 

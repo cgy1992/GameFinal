@@ -14,13 +14,23 @@ namespace gf
 
 		virtual void updateTemporaryTextures(u32 delta) = 0;
 
+		virtual IBuffer* createBuffer(
+			const std::string& name,
+			u32 elementNum,
+			u32 bindFlags,
+			E_GI_FORMAT format,
+			u32 elementSize,
+			void* rawData = nullptr,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN) = 0;
+
 		virtual ITexture* createTexture1D(
 			const std::string& name,
 			u32 width,
 			u32 bindFlags,
 			void* data,
 			u32 mipLevel,
-			E_GI_FORMAT format) = 0;
+			E_GI_FORMAT format,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN) = 0;
 
 		virtual ITexture* createTexture2D(
 			const std::string& name,
@@ -30,7 +40,8 @@ namespace gf
 			void* data,
 			u32 mipLevel,
 			E_GI_FORMAT format,
-			u32 pitch = 0) = 0;
+			u32 pitch = 0,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN) = 0;
 
 		virtual ITexture2DArray* createTexture2DArray(
 			const std::string& name,
@@ -41,7 +52,8 @@ namespace gf
 			void* data,
 			u32 mipLevel,
 			E_GI_FORMAT format,
-			u32 pitch = 0) = 0;
+			u32 pitch = 0,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN) = 0;
 
 		virtual ITexture3D* createTexture3D(
 			const std::string& name,
@@ -53,7 +65,8 @@ namespace gf
 			u32 mipLevel,
 			E_GI_FORMAT format,
 			u32 pitch = 0,
-			u32 slicePitch = 0) = 0;
+			u32 slicePitch = 0,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN) = 0;
 
 		virtual ITextureCube* createTextureCube(
 			const std::string& name,
@@ -62,7 +75,8 @@ namespace gf
 			void* data,
 			u32 miplevel,
 			E_GI_FORMAT format,
-			u32 pitch = 0) = 0;
+			u32 pitch = 0,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN) = 0;
 
 		virtual IRenderTarget* createRenderTarget(
 			const std::string& name,

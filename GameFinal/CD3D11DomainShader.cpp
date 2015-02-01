@@ -7,7 +7,7 @@ namespace gf
 	bool CD3D11DomainShader::loadFromFile(const char* szFileName, const char* szFunctionName)
 	{
 		HRESULT hr;
-		if (!compile(szFileName, szFunctionName, EST_HULL_SHADER))
+		if (!compile(szFileName, szFunctionName))
 			return false;
 
 		hr = md3dDevice->CreateDomainShader(mShaderBuffer->GetBufferPointer(), mShaderBuffer->GetBufferSize(), NULL, &md3dDomainShader);

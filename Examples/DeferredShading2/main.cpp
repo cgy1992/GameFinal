@@ -142,7 +142,7 @@ void setupScene(ISceneManager* smgr)
 
 	math::SAxisAlignedBox aabb;
 	aabb.Center = XMFLOAT3(0, 0, 0);
-	aabb.Extents = XMFLOAT3(10.0f, 10.0f, 10.0f);
+	aabb.Extents = XMFLOAT3(20.0f, 20.0f, 20.0f);
 	g_BillboardMesh = meshManager->createBillboardCollectionMesh(
 		"point_lights", aabb, true, g_pointLightCount, billboards);
 

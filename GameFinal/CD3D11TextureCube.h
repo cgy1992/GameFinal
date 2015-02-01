@@ -28,7 +28,8 @@ namespace gf
 		bool loadFromFile(const std::string& filename);
 
 		bool create(u32 size, u32 bindFlags,
-			void* rawData, u32 miplevel, E_GI_FORMAT format, u32 pitch = 0);
+			void* rawData, u32 miplevel, E_GI_FORMAT format, u32 pitch = 0,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN);
 		
 		virtual u32 getWidth() const
 		{
@@ -53,7 +54,10 @@ namespace gf
 			return nullptr;
 		}
 
-		virtual void apply(E_SHADER_TYPE shaderType, u32 slot);
+		virtual void apply(E_SHADER_TYPE shaderType, u32 slot,
+			E_TEXTURE_BIND_TYPE bindType = ETBT_SHADER_RESOURCE);
+
+		virtual u32 getElementSize() const;
 
 	private:
 

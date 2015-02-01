@@ -15,6 +15,7 @@ namespace gf
 			, md3dDevice(pd3dDevice)
 			, md3dDeviceContext(pd3dDeviceContext)
 			, md3dShaderResourceView(NULL)
+			, md3dUAV(NULL)
 			, md3dTexture(NULL)
 			, mTextureWidth(0)
 			, mTextureHeight(0)
@@ -26,9 +27,10 @@ namespace gf
 		virtual ~CD3D11Texture3D();
 
 		bool create(u32 width, u32 height, u32 depth, 
+			u32 bindFlags,
 			void* rawData,
 			u32 miplevel, E_GI_FORMAT format, u32 pitch = 0,
-			u32 slicePitch = 0);
+			u32 slicePitch = 0, E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN);
 
 
 		virtual u32 getWidth() const
@@ -51,7 +53,10 @@ namespace gf
 			return nullptr;
 		}
 
-		virtual void apply(E_SHADER_TYPE shaderType, u32 slot);
+		virtual void apply(E_SHADER_TYPE shaderType, u32 slot,
+			E_TEXTURE_BIND_TYPE bindType = ETBT_SHADER_RESOURCE);
+
+		virtual u32 getElementSize() const;
 
 	private:
 		ID3D11Device*					md3dDevice;
@@ -59,6 +64,7 @@ namespace gf
 		CD3D11Driver*					md3d11Driver;
 		ID3D11Texture3D*				md3dTexture;
 		ID3D11ShaderResourceView*		md3dShaderResourceView;
+		ID3D11UnorderedAccessView*		md3dUAV;
 		u32								mTextureWidth;
 		u32								mTextureHeight;
 		u32								mTextureDepth;

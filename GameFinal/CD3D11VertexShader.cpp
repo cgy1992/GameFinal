@@ -11,7 +11,7 @@ namespace gf
 	bool CD3D11VertexShader::loadFromFile(const char* szFileName, const char* szFunctionName)
 	{
 		HRESULT hr;
-		if (!compile(szFileName, szFunctionName, EST_VERTEX_SHADER))
+		if (!compile(szFileName, szFunctionName))
 			return false;
 
 		hr = md3dDevice->CreateVertexShader(mShaderBuffer->GetBufferPointer(), mShaderBuffer->GetBufferSize(), NULL, &m_pd3dShader);

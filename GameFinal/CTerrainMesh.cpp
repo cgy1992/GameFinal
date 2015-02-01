@@ -266,7 +266,7 @@ namespace gf
 		if (!mHeightMapTexture)
 		{
 			mHeightMapTexture = textureManager->createTexture2D(heightmapFileName, mRowVertexNum, mRowVertexNum,
-				ETBT_SHADER, (void*)&textureData[0],
+				ETBT_SHADER_RESOURCE, (void*)&textureData[0],
 				1, EGF_R16_FLOAT, 0);
 		}
 

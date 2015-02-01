@@ -9,7 +9,8 @@ namespace gf
 		EMU_STATIC,
 		EMU_DEFAULT,
 		EMU_DYNAMIC,
-		EMU_STAGING
+		EMU_STAGING,
+		EMU_UNKNOWN
 	};
 
 

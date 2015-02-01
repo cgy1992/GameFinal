@@ -93,7 +93,8 @@
     <ClInclude Include="CCompositor.h" />
     <ClInclude Include="CCameraNode.h" />
     <ClInclude Include="CCompositorFactory.h" />
-    <ClInclude Include="CD3D11InstanceMeshBuffer.h" />
+    <ClInclude Include="CD3D11Buffer.h" />
+    <ClInclude Include="CD3D11ComputeShader.h" />
     <ClInclude Include="CD3D11Texture1D.h" />
     <ClInclude Include="CD3D11Texture2DArray.h" />
     <ClInclude Include="CD3D11TextureCube.h" />
@@ -135,13 +136,13 @@
     <ClInclude Include="COctreeNode.h" />
     <ClInclude Include="CPipeline.h" />
     <ClInclude Include="CD3D11Shader.h" />
-    <ClInclude Include="CD3D11ShaderContext.h" />
     <ClInclude Include="CPointLightNode.h" />
     <ClInclude Include="CResourceFactory.h" />
     <ClInclude Include="CResourceGroupManager.h" />
     <ClInclude Include="CResourceLoader.h" />
     <ClInclude Include="CResourceXmlParser.h" />
     <ClInclude Include="CSamplerManager.h" />
+    <ClInclude Include="CShader.h" />
     <ClInclude Include="CShaderManager.h" />
     <ClInclude Include="CPipelineManager.h" />
     <ClInclude Include="CRenderStateManager.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="IAnimatedMeshNode.h" />
     <ClInclude Include="IAnimatedMesh.h" />
     <ClInclude Include="IBillboardCollectionMesh.h" />
+    <ClInclude Include="IBuffer.h" />
     <ClInclude Include="ICameraNode.h" />
     <ClInclude Include="ICompositor.h" />
     <ClInclude Include="ICompositorFactory.h" />
@@ -174,7 +176,6 @@
     <ClInclude Include="IInstanceCollectionNode.h" />
     <ClInclude Include="IInstanceNode.h" />
     <ClInclude Include="IRenderableBuffer.h" />
-    <ClInclude Include="ITexture1D.h" />
     <ClInclude Include="ITexture2DArray.h" />
     <ClInclude Include="ITextureCube.h" />
     <ClInclude Include="IDepthStencilSurface.h" />
@@ -239,6 +240,8 @@
     <ClCompile Include="CCompositor.cpp" />
     <ClCompile Include="CCameraNode.cpp" />
     <ClCompile Include="CCompositorFactory.cpp" />
+    <ClCompile Include="CD3D11Buffer.cpp" />
+    <ClCompile Include="CD3D11ComputeShader.cpp" />
     <ClCompile Include="CD3D11Texture1D.cpp" />
     <ClCompile Include="CD3D11Texture2DArray.cpp" />
     <ClCompile Include="CD3D11TextureCube.cpp" />
@@ -258,7 +261,6 @@
     <ClCompile Include="CD3D11ResourceFactory.cpp" />
     <ClCompile Include="CD3D11Sampler.cpp" />
     <ClCompile Include="CD3D11SamplerStateCache.cpp" />
-    <ClCompile Include="CD3D11ShaderContext.cpp" />
     <ClCompile Include="CD3D11Texture3D.cpp" />
     <ClCompile Include="CDirectionalLightNode.cpp" />
     <ClCompile Include="CFpsCameraNode.cpp" />
@@ -276,6 +278,7 @@
     <ClCompile Include="CResourceLoader.cpp" />
     <ClCompile Include="CResourceXmlParser.cpp" />
     <ClCompile Include="CSamplerManager.cpp" />
+    <ClCompile Include="CShader.cpp" />
     <ClCompile Include="CShaderManager.cpp" />
     <ClCompile Include="CD3D11SimpleMesh.cpp" />
     <ClCompile Include="CD3D11Shader.cpp" />

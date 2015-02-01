@@ -6,7 +6,7 @@ namespace gf
 	bool CD3D11PixelShader::loadFromFile(const char* szFileName, const char* szFunctionName)
 	{
 		HRESULT hr;
-		if (!compile(szFileName, szFunctionName, EST_PIXEL_SHADER))
+		if (!compile(szFileName, szFunctionName))
 			return false;
 
 		hr = md3dDevice->CreatePixelShader(mShaderBuffer->GetBufferPointer(), mShaderBuffer->GetBufferSize(), NULL, &m_pd3dShader);

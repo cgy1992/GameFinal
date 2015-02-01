@@ -16,6 +16,7 @@
 #include "CSamplerManager.h"
 #include "CD3D11RenderTarget.h"
 #include "CD3D11DepthStencilSurface.h"
+#include "CShaderVariableInjection.h"
 
 namespace gf
 {
@@ -284,6 +285,11 @@ namespace gf
 		mMaterialManager = new CMaterialManager;
 		IMaterialManager::_setInstance(mMaterialManager);
 
+		//create sampler manager
+		mSamplerManager = new CSamplerManager(mResourceFactory);
+		ISamplerManager::_setInstance(mSamplerManager);
+
+
 		// create shadermanager
 		mShaderManager = new CShaderManager(mResourceFactory);
 		IShaderManager::_setInstance(mShaderManager);
@@ -304,10 +310,7 @@ namespace gf
 		mMeshManager = new CMeshManager(mResourceFactory, mGeometryCreator, mTextureManager);
 		IMeshManager::_setInstance(mMeshManager);
 
-		//create sampler manager
-		mSamplerManager = new CSamplerManager(mResourceFactory);
-		ISamplerManager::_setInstance(mSamplerManager);
-
+		
 		//create pipeline manager
 		mPipeManager = new CPipelineManager(mResourceFactory);
 		IPipelineManager::_setInstance(mPipeManager);
@@ -417,7 +420,7 @@ namespace gf
 
 		D3D11DriverState.Reset();
 
-		for (u32 i = 0; i < EST_SHADER_COUNT; i++)
+		for (u32 i = 0; i <= EST_SHADER_COUNT; i++)
 			clearShader((E_SHADER_TYPE)i);
 
 		mCurrentPipelineUsage = EPU_FORWARD;
@@ -804,6 +807,15 @@ namespace gf
 		}
 	}
 
+	void CD3D11Driver::setRWTexture(u32 slot, ID3D11UnorderedAccessView* unorderedAccessView)
+	{
+		if (unorderedAccessView != D3D11DriverState.UnorderedAccessViews[slot])
+		{
+			D3D11DriverState.UnorderedAccessViews[slot] = unorderedAccessView;
+			D3D11DriverState.UnorderedAccessViewIsDirty = true;
+		}
+	}
+
 	void CD3D11Driver::setSampler(E_SHADER_TYPE shadertype, u32 slot, ISampler* sampler)
 	{
 		CD3D11Sampler* d3d11Sampler = dynamic_cast<CD3D11Sampler*>(sampler);
@@ -853,6 +865,13 @@ namespace gf
 				D3D11DriverState.ShaderResourceViewIsDirty[EST_PIXEL_SHADER] = false;
 			}
 			break;
+		case EST_COMPUTE_SHADER:
+			if (D3D11DriverState.ShaderResourceViewIsDirty[EST_COMPUTE_SHADER])
+			{
+				md3dDeviceContext->CSSetShaderResources(0, textureCount, D3D11DriverState.ShaderResourceViews[EST_COMPUTE_SHADER]);
+				D3D11DriverState.ShaderResourceViewIsDirty[EST_COMPUTE_SHADER] = false;
+			}
+			break;
 		}
 	}
 
@@ -895,6 +914,22 @@ namespace gf
 				D3D11DriverState.SamplerStateIsDirty[EST_PIXEL_SHADER] = false;
 			}
 			break;
+		case EST_COMPUTE_SHADER:
+			if (D3D11DriverState.SamplerStateIsDirty[EST_COMPUTE_SHADER])
+			{
+				md3dDeviceContext->CSSetSamplers(0, samplerCount, D3D11DriverState.SamplerStates[EST_COMPUTE_SHADER]);
+				D3D11DriverState.SamplerStateIsDirty[EST_COMPUTE_SHADER] = false;
+			}
+			break;
+		}
+	}
+
+	void CD3D11Driver::bindRWTexture(u32 count)
+	{
+		if (D3D11DriverState.UnorderedAccessViewIsDirty)
+		{
+			md3dDeviceContext->CSSetUnorderedAccessViews(0, count, D3D11DriverState.UnorderedAccessViews, 0);
+			D3D11DriverState.UnorderedAccessViewIsDirty = false;
 		}
 	}
 
@@ -907,6 +942,7 @@ namespace gf
 		case EST_GEOMETRY_SHADER: md3dDeviceContext->GSSetShader(NULL, 0, 0); break;
 		case EST_HULL_SHADER:	  md3dDeviceContext->HSSetShader(NULL, 0, 0); break;
 		case EST_DOMAIN_SHADER:   md3dDeviceContext->DSSetShader(NULL, 0, 0); break;
+		case EST_COMPUTE_SHADER:  md3dDeviceContext->CSSetShader(NULL, 0, 0); break;
 		}
 	}
 
@@ -1010,6 +1046,54 @@ namespace gf
 	void CD3D11Driver::getGBuffers(IRenderTarget* renderTargets[]) const
 	{
 		memcpy(renderTargets, mGBuffers, EGT_GBUFFER_COUNT * sizeof(IRenderTarget*));
+	}
+
+	bool CD3D11Driver::runComputeShader(IShader* shader, u32 x, u32 y, u32 z,
+		ISceneNode* node)
+	{
+		if (!shader || shader->getType() != EST_COMPUTE_SHADER)
+			return false;
+
+		// following actions must be done before calling this method
+		// 1, setTexture or setRWTexture
+		// 2, setVariable, except for auto variable.
+
+		CShaderVariableInjection::injectToComputeShader(shader, node);
+		
+		// update constant variables
+		shader->update();
+		
+		// update samplers
+		shader->applySamplers();
+
+		bindTexture(EST_COMPUTE_SHADER, shader->getTextureCount());
+		bindRWTexture(shader->getRWTextureCount());
+		bindSampler(EST_COMPUTE_SHADER, shader->getSamplerCount());
+
+		shader->submit();
+
+		md3dDeviceContext->Dispatch(x, y, z);
+
+		return true;
+	}
+
+	void CD3D11Driver::resetRWTextures()
+	{
+		u32 maxPoint = 0;
+		for (u32 i = 0; i < _GF_UNORDERED_ACCESS_VIEW_COUNT; i++)
+		{
+			if (D3D11DriverState.UnorderedAccessViews[i])
+			{
+				maxPoint = i + 1;
+				D3D11DriverState.UnorderedAccessViews[i] = NULL;
+			}
+		}
+
+		if (maxPoint > 0)
+		{
+			md3dDeviceContext->CSSetUnorderedAccessViews(0, maxPoint, D3D11DriverState.UnorderedAccessViews, NULL);
+		}
+		D3D11DriverState.UnorderedAccessViewIsDirty = false;
 	}
 
 	

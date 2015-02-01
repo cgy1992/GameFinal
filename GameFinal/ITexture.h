@@ -2,6 +2,7 @@
 #define __ITEXTURE_H_INCLUDE__
 
 #include "IReferenceCounted.h"
+#include "gfEnums.h"
 #include "gfGIFormat.h"
 
 namespace gf
@@ -15,6 +16,7 @@ namespace gf
 		ETT_TEXTURE_3D,
 		ETT_TEXTURE_CUBE,
 		ETT_TEXTURE_2D_ARRAY,
+		ETT_BUFFER,
 	};
 
 	class IRenderTarget;
@@ -26,6 +28,7 @@ namespace gf
 	public:
 		ITexture(const std::string& name, u32 sortcode)
 			:mName(name), mSortCode(sortcode), mFormat(EGF_UNKNOWN)
+			, mBindFlags(0)
 		{}
 
 		const std::string& getName()
@@ -44,7 +47,8 @@ namespace gf
 
 		virtual E_TEXTURE_TYPE getType() const = 0;
 
-		virtual void apply(E_SHADER_TYPE shaderType, u32 slot) = 0;
+		virtual void apply(E_SHADER_TYPE shaderType, u32 slot,
+			E_TEXTURE_BIND_TYPE bindType = ETBT_SHADER_RESOURCE) = 0;
 
 		virtual IRenderTarget* getRenderTarget(u32 index = 0) = 0;
 
@@ -54,12 +58,15 @@ namespace gf
 		{
 			return mFormat;
 		}
+		
+		virtual u32 getElementSize() const = 0;
 
 		virtual ~ITexture() {}
 	protected:
 		std::string		mName;
 		u32				mSortCode;
 		E_GI_FORMAT		mFormat;
+		u32				mBindFlags;
 	};
 
 }

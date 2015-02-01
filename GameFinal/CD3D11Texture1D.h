@@ -17,7 +17,8 @@ namespace gf
 		//bool loadFromFile(const std::string& filename);
 
 		bool create(u32 width, u32 bindFlags,
-			void* rawData, u32 miplevel, E_GI_FORMAT format);
+			void* rawData, u32 miplevel, 
+			E_GI_FORMAT format, E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN);
 
 		ID3D11ShaderResourceView* getShaderResourceView()
 		{
@@ -49,7 +50,10 @@ namespace gf
 			return nullptr;
 		}
 
-		virtual void apply(E_SHADER_TYPE shaderType, u32 slot);
+		virtual void apply(E_SHADER_TYPE shaderType, u32 slot,
+			E_TEXTURE_BIND_TYPE bindType = ETBT_SHADER_RESOURCE);
+
+		virtual u32 getElementSize() const;
 
 		virtual ~CD3D11Texture1D();
 
@@ -59,6 +63,7 @@ namespace gf
 		CD3D11Driver*					md3d11Driver;
 		ID3D11Texture1D*				md3dTexture;
 		ID3D11ShaderResourceView*		md3dSRV;
+		ID3D11UnorderedAccessView*		md3dUAV;
 
 		u32								mTextureWidth;
 		u32								mBindFlags;

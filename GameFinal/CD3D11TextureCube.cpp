@@ -60,7 +60,8 @@ namespace gf
 
 
 	bool CD3D11TextureCube::create(u32 size, u32 bindFlags, 
-		void* rawData, u32 miplevel, E_GI_FORMAT format, u32 pitch/*=0*/)
+		void* rawData, u32 miplevel, E_GI_FORMAT format, u32 pitch/*=0*/
+		, E_MEMORY_USAGE memoryUsage)
 	{
 		HRESULT hr;
 		ID3D11Texture2D* pd3dTexture = NULL;
@@ -78,10 +79,12 @@ namespace gf
 		texDesc.BindFlags = getD3dx11BindFlags(bindFlags);
 		texDesc.CPUAccessFlags = 0;
 		texDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+		texDesc.Usage = getD3d11Usage(memoryUsage);
 
 		if (rawData)
 		{
-			texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			if (memoryUsage == EMU_UNKNOWN)
+				texDesc.Usage = D3D11_USAGE_IMMUTABLE;
 			
 			D3D11_SUBRESOURCE_DATA texData;
 			texData.pSysMem = rawData;
@@ -94,14 +97,15 @@ namespace gf
 		}
 		else
 		{
-			texDesc.Usage = D3D11_USAGE_DEFAULT;
+			if (memoryUsage == EMU_UNKNOWN)
+				texDesc.Usage = D3D11_USAGE_DEFAULT;
 			hr = md3dDevice->CreateTexture2D(&texDesc, NULL, &pd3dTexture);
 		}
 
 		if (FAILED(hr))
 			return false;
 
-		if (bindFlags & ETBT_SHADER)
+		if (bindFlags & ETBT_SHADER_RESOURCE)
 		{
 			D3D11_SHADER_RESOURCE_VIEW_DESC desc;
 			desc.Format = texDesc.Format;
@@ -152,10 +156,14 @@ namespace gf
 
 
 
-	void CD3D11TextureCube::apply(E_SHADER_TYPE shaderType, u32 slot)
+	void CD3D11TextureCube::apply(E_SHADER_TYPE shaderType, u32 slot,
+		E_TEXTURE_BIND_TYPE bindType)
 	{
-		if (md3dShaderResourceView)
-			md3d11Driver->setTexture(shaderType, slot, md3dShaderResourceView);
+		if (bindType == ETBT_SHADER_RESOURCE)
+		{
+			if (md3dShaderResourceView)
+				md3d11Driver->setTexture(shaderType, slot, md3dShaderResourceView);
+		}
 	}
 
 	void CD3D11TextureCube::clearRenderTargets(CD3D11RenderTarget* pRenderTargets[])
@@ -164,6 +172,11 @@ namespace gf
 		{
 			ReleaseReferenceCounted(pRenderTargets[i]);
 		}
+	}
+
+	u32 CD3D11TextureCube::getElementSize() const
+	{
+		return getFormatOffset(mFormat);
 	}
 
 }

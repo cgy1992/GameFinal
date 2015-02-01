@@ -13,7 +13,8 @@ namespace gf
 		
 		IPipeline* pipeline = mMaterial->getPipeline(usage);
 
-		CShaderVariableInjection::injectForTerrainNode(this, pipeline);
+		CShaderVariableInjection::inject(this, pipeline, 0);
+
 
 		pipeline->apply(usage);
 

@@ -5,64 +5,26 @@ namespace gf
 {
 	void CShaderVariableInjection::inject(IMeshNode* node, IPipeline* pipeline, u32 subset)
 	{
-		//IVideoDriver* driver = IVideoDriver::getInstance();
-		//bool isRenderingShadow = driver->isRenderingShadowMap();
-
 		const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
 		u32 shaderVariableCount = shaderVariables.size();
 
 		for (u32 i = 0; i < shaderVariableCount; i++)
 		{
-			//这里不允许PixelShader注入变量是有问题的，以后再改
-			/*
-			if (!(shaderVariables[i].ShaderType == EST_PIXEL_SHADER && isRenderingShadow))
+			IShader* shader = pipeline->getShader(shaderVariables[i].ShaderType);
+			if (shader)
+				injectVariable(shaderVariables[i], node, pipeline, shader, subset);
+		}
+
+
+		for (u32 i = 0; i < EST_SHADER_COUNT; i++)
+		{
+			IShader* shader = pipeline->getShader((E_SHADER_TYPE)i);
+			if (shader)
 			{
-				injectVariable(shaderVariables[i], node, pipeline, subset);
+				const std::vector<SShaderAutoVariable>& vars = shader->getShaderAutoVariables();
+				for (u32 j = 0; j < vars.size(); j++)
+					injectVariable(vars[j], node, pipeline, shader, subset);
 			}
-			*/
-
-			injectVariable(shaderVariables[i], node, pipeline, subset);
-		}
-	}
-
-	void CShaderVariableInjection::injectBoneTransforms(IPipeline* pipeline, const f32* matrixs, u32 count)
-	{
-		const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
-		u32 shaderVariableCount = shaderVariables.size();
-
-		for (u32 i = 0; i < shaderVariableCount; i++)
-		{
-			if (shaderVariables[i].Type == ESAVT_BONE_TRANSFORMS)
-			{
-				pipeline->setTransposedMatrixArray(shaderVariables[i].ShaderType,
-					shaderVariables[i].VariableName,
-					matrixs, count, shaderVariables[i].UpdateFrequency == EUF_PER_FRAME);
-			}
-		}
-	}
-
-	void CShaderVariableInjection::injectVariable(
-		const SShaderAutoVariable& var,
-		IMeshNode* mesh,
-		IPipeline* pipeline,
-		u32 subset)
-	{
-		E_SHADER_AUTO_VARIABLE_TYPE type = var.Type;
-		if (type >= ESAVT_TRANSFORMS_BEGIN && type <= ESAVT_TRANSFORMS_END)
-		{
-			injectTransformations(var, mesh, pipeline);
-		}
-		else if (type >= ESAVT_MATERIAL_BEGIN && type <= ESAVT_MATERIAL_END)
-		{
-			injectMaterial(var, pipeline, mesh->getMaterial(subset));
-		}
-		else if (type >= ESAVT_SCENE_BEGIN && type <= ESAVT_SCENE_END)
-		{
-			injectSceneInfo(var, mesh, pipeline);
-		}
-		else if (type >= ESAVT_WINDOW_SYSTEM_BEGIN && type <= ESAVT_WINDOW_SYSTEM_END)
-		{
-			injectWindowSystemInfo(var, mesh, pipeline);
 		}
 	}
 
@@ -73,19 +35,122 @@ namespace gf
 
 		for (u32 i = 0; i < shaderVariableCount; i++)
 		{
-			const SShaderAutoVariable& var = shaderVariables[i];
-			if (var.Type >= ESAVT_MATERIAL_BEGIN && var.Type <= ESAVT_MATERIAL_END)
+			IShader* shader = pipeline->getShader(shaderVariables[i].ShaderType);
+			if (shader)
+				injectMaterial(shaderVariables[i], shader, material);
+		}
+
+		for (u32 i = 0; i < EST_SHADER_COUNT; i++)
+		{
+			IShader* shader = pipeline->getShader((E_SHADER_TYPE)i);
+			if (shader)
 			{
-				injectMaterial(var, pipeline, material);
+				const std::vector<SShaderAutoVariable>& vars = shader->getShaderAutoVariables();
+				for (u32 j = 0; j < vars.size(); j++)
+					injectMaterial(vars[j], shader, material);
+			}
+		}
+	}
+
+	void CShaderVariableInjection::injectBoneTransforms(IPipeline* pipeline, const f32* matrixs, u32 count)
+	{
+		const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
+		u32 shaderVariableCount = shaderVariables.size();
+
+		for (u32 i = 0; i < shaderVariableCount; i++)
+		{
+			IShader* shader = pipeline->getShader(shaderVariables[i].ShaderType);
+			if (shader && shaderVariables[i].Type == ESAVT_BONE_TRANSFORMS)
+			{
+				shader->setTransposedMatrixArray(shaderVariables[i].VariableName,
+					matrixs, count, shaderVariables[i].UpdateFrequency == EUF_PER_FRAME);
+			}
+		}
+
+		for (u32 i = 0; i < EST_SHADER_COUNT; i++)
+		{
+			IShader* shader = pipeline->getShader((E_SHADER_TYPE)i);
+			if (shader)
+			{
+				const std::vector<SShaderAutoVariable>& vars = shader->getShaderAutoVariables();
+				for (u32 j = 0; j < vars.size(); j++)
+				{
+					if (vars[j].Type == ESAVT_BONE_TRANSFORMS)
+					{
+						shader->setTransposedMatrixArray(vars[j].VariableName,
+							matrixs, count, vars[j].UpdateFrequency == EUF_PER_FRAME);
+					}
+				}
+			}
+		}
+
+	}
+
+	void CShaderVariableInjection::injectVariable(
+		const SShaderAutoVariable& var,
+		IMeshNode* node,
+		IPipeline* pipeline,
+		IShader* shader,
+		u32 subset)
+	{
+		E_SHADER_AUTO_VARIABLE_TYPE type = var.Type;
+		if (type >= ESAVT_TRANSFORMS_BEGIN && type <= ESAVT_TRANSFORMS_END)
+		{
+			injectTransformations(var, node, shader);
+		}
+		else if (type >= ESAVT_MATERIAL_BEGIN && type <= ESAVT_MATERIAL_END)
+		{
+			injectMaterial(var, shader, node->getMaterial(subset));
+		}
+		else if (type >= ESAVT_SCENE_BEGIN && type <= ESAVT_SCENE_END)
+		{
+			injectSceneInfo(var, node, pipeline, shader);
+		}
+		else if (type >= ESAVT_WINDOW_SYSTEM_BEGIN && type <= ESAVT_WINDOW_SYSTEM_END)
+		{
+			injectWindowSystemInfo(var, shader);
+		}
+		else if (type >= ESAVT_TERRAIN_BEGIN && type <= ESAVT_TERRAIN_END)
+		{
+			if (node->getNodeType() == ESNT_TERRAIN_MESH)
+			{
+				ITerrainNode* terrainNode = dynamic_cast<ITerrainNode*>(node);
+				injectTerrainVariable(var, terrainNode->getTerrainMesh(), shader);
+			}
+		}
+	}
+
+	void CShaderVariableInjection::injectToComputeShader(IShader* shader, ISceneNode* node)
+	{
+		const std::vector<SShaderAutoVariable>& vars = shader->getShaderAutoVariables();
+		for (u32 i = 0; i < vars.size(); i++)
+		{
+			const SShaderAutoVariable& var = vars[i];
+			E_SHADER_AUTO_VARIABLE_TYPE type = var.Type;
+			if (type >= ESAVT_TRANSFORMS_BEGIN && type <= ESAVT_TRANSFORMS_END)
+			{
+				injectTransformations(var, node, shader);
+			}
+			else if (type >= ESAVT_SCENE_BEGIN && type <= ESAVT_SCENE_END)
+			{
+				injectSceneInfo(var, node, nullptr, shader);
+			}
+			else if (type >= ESAVT_WINDOW_SYSTEM_BEGIN && type <= ESAVT_WINDOW_SYSTEM_END)
+			{
+				injectWindowSystemInfo(var, shader);
 			}
 		}
 	}
 
 
-	void CShaderVariableInjection::injectTransformations(const SShaderAutoVariable& var, ISceneNode* node, IPipeline* pipeline)
+	void CShaderVariableInjection::injectTransformations(const SShaderAutoVariable& var, ISceneNode* node, IShader* shader)
 	{
 		XMMATRIX M;
 		ICameraNode* camera = nullptr;
+		if (!shader)
+			return;
+		if (!node) 
+			return;
 
 		ISceneManager* sceneManager = node->getSceneManager();
 
@@ -100,6 +165,7 @@ namespace gf
 			break;
 		case ESAVT_INVERSE_WORLD_MATRIX:
 		{
+										   
 										   M = node->getAbsoluteTransformation();
 										   XMVECTOR det = XMMatrixDeterminant(M);
 										   M = XMMatrixInverse(&det, M);
@@ -240,14 +306,17 @@ namespace gf
 		{
 			E_SHADER_TYPE shaderType = var.ShaderType;
 			bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
-			pipeline->setMatrix(shaderType, var.VariableName, M, ignoreIfAlreadyUpdate);
+			shader->setMatrix(var.VariableName, M, ignoreIfAlreadyUpdate);
 		}
 
 	}
 
-	void CShaderVariableInjection::injectMaterial(const SShaderAutoVariable& var, IPipeline* pipeline, IMaterial* material)
+	void CShaderVariableInjection::injectMaterial(const SShaderAutoVariable& var, IShader* shader, IMaterial* material)
 	{
 		if (!material)
+			return;
+
+		if (!shader)
 			return;
 
 		E_SHADER_TYPE shaderType = var.ShaderType;
@@ -263,34 +332,34 @@ namespace gf
 									 materialColor[1] = material->getAttribute("diffuse");
 									 materialColor[2] = material->getAttribute("specular");
 									 materialColor[3] = material->getAttribute("emissive");
-									 pipeline->setRawValue(shaderType, var.VariableName, &materialColor[0], sizeof(materialColor), ignoreIfAlreadyUpdate);
+									 shader->setRawData(var.VariableName, &materialColor[0], sizeof(materialColor), ignoreIfAlreadyUpdate);
 		}
 		case ESAVT_MATERIAL_AMBIENT:
 		{
 									   XMFLOAT4 ambient;
 									   ambient = material->getAttribute("ambient");
-									   pipeline->setAttribute(shaderType, var.VariableName, ambient, ignoreIfAlreadyUpdate);
+									   shader->setAttribute(var.VariableName, ambient, ignoreIfAlreadyUpdate);
 		}
 			break;
 		case ESAVT_MATERIAL_DIFFUSE:
 		{
 									   XMFLOAT4 diffuse;
 									   diffuse = material->getAttribute("diffuse");
-									   pipeline->setAttribute(shaderType, var.VariableName, diffuse, ignoreIfAlreadyUpdate);
+									   shader->setAttribute(var.VariableName, diffuse, ignoreIfAlreadyUpdate);
 		}
 			break;
 		case ESAVT_MATERIAL_SPECULAR:
 		{
 									   XMFLOAT4 specular;
 									   specular = material->getAttribute("specular");
-									   pipeline->setAttribute(shaderType, var.VariableName, specular, ignoreIfAlreadyUpdate);
+									   shader->setAttribute(var.VariableName, specular, ignoreIfAlreadyUpdate);
 		}
 			break;
 		case ESAVT_MATERIAL_EMISSIVE:
 		{
 										XMFLOAT4 emissive;
 										emissive = material->getAttribute("emissive");
-										pipeline->setAttribute(shaderType, var.VariableName, emissive, ignoreIfAlreadyUpdate);
+										shader->setAttribute(var.VariableName, emissive, ignoreIfAlreadyUpdate);
 		}
 			break;
 		case ESAVT_MATERIAL_ATTRIBUTE:
@@ -298,7 +367,7 @@ namespace gf
 										 XMFLOAT4 val;
 										 if (material->getAttribute(var.MaterialAttributeName, val))
 										 {
-											 pipeline->setAttribute(shaderType, var.VariableName, val, ignoreIfAlreadyUpdate);
+											 shader->setAttribute(var.VariableName, val, ignoreIfAlreadyUpdate);
 										 }
 		}
 			break;
@@ -307,21 +376,21 @@ namespace gf
 			pTexture = material->getTexture(var.IndexParam);
 			if (pTexture)
 			{
-				pipeline->setTexture(shaderType, var.VariableName, pTexture);
+				shader->setTexture(var.VariableName, pTexture);
 			}
 			break;
 		case ESAVT_TEXTURE_WIDTH:
 			pTexture = material->getTexture(var.IndexParam);
 			if (pTexture)
 			{
-				pipeline->setUint(shaderType, var.VariableName, pTexture->getWidth(), ignoreIfAlreadyUpdate);
+				shader->setUint(var.VariableName, pTexture->getWidth(), ignoreIfAlreadyUpdate);
 			}
 			break;
 		case ESAVT_TEXTURE_HEIGHT:
 			pTexture = material->getTexture(var.IndexParam);
 			if (pTexture)
 			{
-				pipeline->setUint(shaderType, var.VariableName, pTexture->getHeight(), ignoreIfAlreadyUpdate);
+				shader->setUint(var.VariableName, pTexture->getHeight(), ignoreIfAlreadyUpdate);
 			}
 			break;
 		case ESAVT_INVERSE_TEXTURE_WIDTH:
@@ -329,7 +398,7 @@ namespace gf
 			if (pTexture)
 			{
 				f32 invWidth = 1.0f / pTexture->getWidth();
-				pipeline->setFloat(shaderType, var.VariableName, invWidth, ignoreIfAlreadyUpdate);
+				shader->setFloat(var.VariableName, invWidth, ignoreIfAlreadyUpdate);
 			}
 			break;
 		case ESAVT_INVERSE_TEXTURE_HEIGHT:
@@ -337,16 +406,23 @@ namespace gf
 			if (pTexture)
 			{
 				f32 invHeight = 1.0f / pTexture->getHeight();
-				pipeline->setFloat(shaderType, var.VariableName, invHeight, ignoreIfAlreadyUpdate);
+				shader->setFloat(var.VariableName, invHeight, ignoreIfAlreadyUpdate);
 			}
 			break;
 		}
 	}
 
 
-	void CShaderVariableInjection::injectSceneInfo(const SShaderAutoVariable& var, ISceneNode* node, IPipeline* pipeline)
+	void CShaderVariableInjection::injectSceneInfo(const SShaderAutoVariable& var, 
+		ISceneNode* node, IPipeline* pipeline, IShader* shader)
 	{
+		if (!shader)
+			return;
+
 		ISceneManager* sceneManager = node->getSceneManager();
+		if (!sceneManager)
+			return;
+
 		E_SHADER_TYPE shaderType = var.ShaderType;
 		bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
 
@@ -359,7 +435,7 @@ namespace gf
 				XMFLOAT3 pos = camera->getAbsolutePosition();
 				XMFLOAT4 p = XMFLOAT4(pos.x, pos.y, pos.z, 1.0f);
 				//pipeline->setVector(shaderType, var.VariableName, reinterpret_cast<f32*>(&p), ignoreIfAlreadyUpdate);
-				pipeline->setAttribute(shaderType, var.VariableName, p, ignoreIfAlreadyUpdate);
+				shader->setAttribute(var.VariableName, p, ignoreIfAlreadyUpdate);
 			}
 			return;
 		}
@@ -369,7 +445,7 @@ namespace gf
 			if (camera)
 			{
 				math::SFrustum frustum = camera->getFrustum();
-				pipeline->setRawValue(shaderType, var.VariableName, &frustum, sizeof(math::SFrustum), ignoreIfAlreadyUpdate);
+				shader->setRawData(var.VariableName, &frustum, sizeof(math::SFrustum), ignoreIfAlreadyUpdate);
 			}
 			return;
 		}
@@ -379,14 +455,14 @@ namespace gf
 			if (camera)
 			{
 				const f32* segments = camera->getShadowSegments();
-				pipeline->setVector(shaderType, var.VariableName, &segments[1], ignoreIfAlreadyUpdate);
+				shader->setVector(var.VariableName, &segments[1], ignoreIfAlreadyUpdate);
 			}
 			return;
 		}
 		else if (var.Type == ESAVT_AMBIENT)
 		{
 			XMFLOAT4 ambient = sceneManager->getAmbient();
-			pipeline->setVector(shaderType, var.VariableName, ambient, ignoreIfAlreadyUpdate);
+			shader->setVector(var.VariableName, ambient, ignoreIfAlreadyUpdate);
 			return;
 		}
 		else if (var.Type == ESAVT_LIGHT)
@@ -399,19 +475,19 @@ namespace gf
 				{
 					SDirectionalLight lightData;
 					light->getLightData(&lightData);
-					pipeline->setRawValue(shaderType, var.VariableName, (void*)&lightData, sizeof(lightData), ignoreIfAlreadyUpdate);
+					shader->setRawData(var.VariableName, (void*)&lightData, sizeof(lightData), ignoreIfAlreadyUpdate);
 				}
 				else if (lightType == ELT_POINT)
 				{
 					SPointLight lightData;
 					light->getLightData(&lightData);
-					pipeline->setRawValue(shaderType, var.VariableName, (void*)&lightData, sizeof(lightData), ignoreIfAlreadyUpdate);
+					shader->setRawData(var.VariableName, (void*)&lightData, sizeof(lightData), ignoreIfAlreadyUpdate);
 				}
 				else if (lightType == ELT_SPOT)
 				{
 					SSpotLight lightData;
 					light->getLightData(&lightData);
-					pipeline->setRawValue(shaderType, var.VariableName, (void*)&lightData, sizeof(lightData), ignoreIfAlreadyUpdate);
+					shader->setRawData(var.VariableName, (void*)&lightData, sizeof(lightData), ignoreIfAlreadyUpdate);
 				}
 			}
 			return;
@@ -433,21 +509,12 @@ namespace gf
 					for (u32 i = 0; i < lightCount; i++)
 						lights[i]->getLightData(&lightDataArray[i]);
 					
-					lightCount = pipeline->setArray(shaderType, var.VariableName, 
+					lightCount = shader->setArray(var.VariableName,
 						(void*)&lightDataArray[0], lightCount, sizeof(SPointLight), ignoreIfAlreadyUpdate);
 				}
 
 				// inject point lights number, if have.
-				const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
-				for (u32 i = 0; i < shaderVariables.size(); i++)
-				{
-					const SShaderAutoVariable& var = shaderVariables[i];
-					if (var.Type == ESAVT_NEAR_POINT_LIGHTS_NUM)
-					{
-						bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
-						pipeline->setUint(var.ShaderType, var.VariableName, lightCount, ignoreIfAlreadyUpdate);
-					}
-				}
+				injectLightSourceNum(pipeline, shader, ESAVT_NEAR_POINT_LIGHTS_NUM, lightCount);
 			}
 		}
 		else if (var.Type == ESAVT_DIRECTIONAL_LIGHTS)
@@ -463,21 +530,12 @@ namespace gf
 				for (auto it = lights.begin(); it != lights.end(); it++, i++)
 					(*it)->getLightData(&lightDataArray[i]);
 				
-				lightCount = pipeline->setArray(shaderType, var.VariableName,
+				lightCount = shader->setArray(var.VariableName,
 					(void*)&lightDataArray[0], lightCount, sizeof(SDirectionalLight), ignoreIfAlreadyUpdate);
 			}
 
 			// inject point lights number, if have.
-			const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
-			for (u32 i = 0; i < shaderVariables.size(); i++)
-			{
-				const SShaderAutoVariable& var = shaderVariables[i];
-				if (var.Type == ESAVT_DIRECTIONAL_LIGHTS_NUM)
-				{
-					bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
-					pipeline->setUint(var.ShaderType, var.VariableName, lightCount, ignoreIfAlreadyUpdate);
-				}
-			}
+			injectLightSourceNum(pipeline, shader, ESAVT_DIRECTIONAL_LIGHTS_NUM, lightCount);
 		}
 		else if (var.Type == ESAVT_SHADOW_MAP)
 		{
@@ -489,7 +547,7 @@ namespace gf
 			ITexture* shadowMapTexture = light->getShadowMap();
 			if (shadowMapTexture)
 			{
-				pipeline->setTexture(var.ShaderType, var.VariableName, shadowMapTexture);
+				shader->setTexture(var.VariableName, shadowMapTexture);
 			}
 		}
 		else if (var.Type == ESAVT_SHADOW_MAP_TRANSFORM)
@@ -500,7 +558,7 @@ namespace gf
 				return;
 
 			XMFLOAT4X4 viewProjMatrix = light->getShadowMapTransform();
-			pipeline->setMatrix(var.ShaderType, var.VariableName, viewProjMatrix, ignoreIfAlreadyUpdate);
+			shader->setMatrix(var.VariableName, viewProjMatrix, ignoreIfAlreadyUpdate);
 		}
 		else if (var.Type == ESAVT_SHADOW_MAP_TRANSFORMS)
 		{
@@ -513,7 +571,7 @@ namespace gf
 			{
 				XMFLOAT4X4 shadowMapTransforms[ICameraNode::CASCADE_SHADOW_LEVEL];
 				light->getShadowMapTransforms(shadowMapTransforms);
-				pipeline->setMatrixArray(var.ShaderType, var.VariableName, shadowMapTransforms, ICameraNode::CASCADE_SHADOW_LEVEL, ignoreIfAlreadyUpdate);
+				shader->setMatrixArray(var.VariableName, shadowMapTransforms, ICameraNode::CASCADE_SHADOW_LEVEL, ignoreIfAlreadyUpdate);
 			}
 		}
 		else if (var.Type == ESAVT_SHADOW_MAP_SIZE)
@@ -528,7 +586,7 @@ namespace gf
 			{
 				f32 w = static_cast<f32>(shadowMapTexture->getWidth());
 				f32 h = static_cast<f32>(shadowMapTexture->getHeight());
-				pipeline->setVector(var.ShaderType, var.VariableName, XMFLOAT4(w, h, 1.0f / w, 1.0f / h), ignoreIfAlreadyUpdate);
+				shader->setVector(var.VariableName, XMFLOAT4(w, h, 1.0f / w, 1.0f / h), ignoreIfAlreadyUpdate);
 			}
 		}
 		else if (var.Type == ESAVT_SHADOW_MAP_JITTER_TEXTURE)
@@ -536,113 +594,138 @@ namespace gf
 			ITexture* texture = ITextureManager::getInstance()->get(ITextureManager::SHADOW_MAP_JITTER_TEXTURE, false);
 			if (texture)
 			{
-				pipeline->setTexture(var.ShaderType, var.VariableName, texture);
+				shader->setTexture(var.VariableName, texture);
 			}
 		}
 
 	}
 
-	void CShaderVariableInjection::injectForTerrainNode(ITerrainNode* node, IPipeline* pipeline)
+	void CShaderVariableInjection::injectLightSourceNum(IPipeline* pipeline,
+		IShader* shader,
+		E_SHADER_AUTO_VARIABLE_TYPE shaderVariableType,
+		u32 lightCount)
 	{
-		const std::vector<SShaderAutoVariable>& shaderVariables = pipeline->getShaderAutoVariables();
-		u32 shaderVariableCount = shaderVariables.size();
-
-		for (u32 i = 0; i < shaderVariableCount; i++)
+		// inject point lights number, if have.
+		if (pipeline)
 		{
-			injectVariable(shaderVariables[i], node, pipeline, 0);
-			injectTerrainVariable(shaderVariables[i], node->getTerrainMesh(), pipeline);
+			const std::vector<SShaderAutoVariable>& pipelineVariables = pipeline->getShaderAutoVariables();
+			for (u32 i = 0; i < pipelineVariables.size(); i++)
+			{
+				const SShaderAutoVariable& var = pipelineVariables[i];
+				if (var.Type == shaderVariableType)
+				{
+					bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
+					shader->setUint(var.VariableName, lightCount, ignoreIfAlreadyUpdate);
+				}
+			}
+		}
+
+		const std::vector<SShaderAutoVariable>& shaderVariables = shader->getShaderAutoVariables();
+		for (u32 i = 0; i < shaderVariables.size(); i++)
+		{
+			const SShaderAutoVariable& var = shaderVariables[i];
+			if (var.Type == shaderVariableType)
+			{
+				bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
+				shader->setUint(var.VariableName, lightCount, ignoreIfAlreadyUpdate);
+			}
 		}
 	}
 
-	void CShaderVariableInjection::injectTerrainVariable(const SShaderAutoVariable& var, ITerrainMesh* mesh, IPipeline* pipeline)
+	void CShaderVariableInjection::injectTerrainVariable(const SShaderAutoVariable& var, ITerrainMesh* mesh, IShader* shader)
 	{
+		if (!shader)
+			return;
+
 		bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
 
 		if (var.Type == ESAVT_TERRAIN_ROW_CELL)
 		{
 			u32 cellNum = mesh->getRowCellNum();
-			pipeline->setUint(var.ShaderType, var.VariableName, cellNum, ignoreIfAlreadyUpdate);
+			shader->setUint(var.VariableName, cellNum, ignoreIfAlreadyUpdate);
 		}
 		else if (var.Type == ESAVT_INVERSE_TERRAIN_ROW_CELL)
 		{
 			f32 cellNumReciprocal = 1.0f / mesh->getRowCellNum();
-			pipeline->setFloat(var.ShaderType, var.VariableName, cellNumReciprocal, ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, cellNumReciprocal, ignoreIfAlreadyUpdate);
 		}
 		else if (var.Type == ESAVT_TERRAIN_ROW_VERTEX)
 		{
 			u32 vertexNum = mesh->getRowVertexNum();
-			pipeline->setUint(var.ShaderType, var.VariableName, vertexNum, ignoreIfAlreadyUpdate);
+			shader->setUint(var.VariableName, vertexNum, ignoreIfAlreadyUpdate);
 		}
 		else if (var.Type == ESAVT_TERRAIN_HEIGHT_SCALE)
 		{
 			f32 heightScale = mesh->getHeightScale();
-			pipeline->setFloat(var.ShaderType, var.VariableName, heightScale, ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, heightScale, ignoreIfAlreadyUpdate);
 		}
 		else if (var.Type == ESAVT_TERRAIN_VERTEX_SPACE)
 		{
 			f32 vertexSpace = mesh->getVertexSpace();
-			pipeline->setFloat(var.ShaderType, var.VariableName, vertexSpace, ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, vertexSpace, ignoreIfAlreadyUpdate);
 		}
 		else if (var.Type == ESAVT_TERRAIN_TEXCOORD_SCALE)
 		{
 			f32 texcoordScale = mesh->getTexcoordScale();
-			pipeline->setFloat(var.ShaderType, var.VariableName, texcoordScale, ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, texcoordScale, ignoreIfAlreadyUpdate);
 		}
 		else if (var.Type == ESAVT_TERRAIN_HEIGHTMAP_TEXTURE)
 		{
 			ITexture* texture = mesh->getHeightMapTexture();
-			pipeline->setTexture(var.ShaderType, var.VariableName, texture);
+			shader->setTexture(var.VariableName, texture);
 		}
 		else if (var.Type == ESAVT_TERRAIN_WIDTH)
 		{
 			f32 width = mesh->getTotalWidth();
-			pipeline->setFloat(var.ShaderType, var.VariableName, width, ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, width, ignoreIfAlreadyUpdate);
 		}
 		else if (var.Type == ESAVT_TERRAIN_PATCH_WIDTH)
 		{
 			f32 patchWidth = mesh->getPatchWidth();
-			pipeline->setFloat(var.ShaderType, var.VariableName, patchWidth, ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, patchWidth, ignoreIfAlreadyUpdate);
 		}
 		else if (var.Type == ESAVT_TERRAIN_ROW_PATCH)
 		{
 			u32 patchNum = mesh->getRowPatchNum();
-			pipeline->setUint(var.ShaderType, var.VariableName, patchNum, ignoreIfAlreadyUpdate);
+			shader->setUint(var.VariableName, patchNum, ignoreIfAlreadyUpdate);
 		}
 	}
 
-	void CShaderVariableInjection::injectWindowSystemInfo(const SShaderAutoVariable& var, ISceneNode* node, IPipeline* pipeline)
+	void CShaderVariableInjection::injectWindowSystemInfo(const SShaderAutoVariable& var, IShader* shader)
 	{
+		if (!shader)
+			return;
+
 		bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
 
-		ISceneManager* smgr = node->getSceneManager();
-		IVideoDriver* driver = smgr->getVideoDriver();
-		IDevice* device = smgr->getDevice();
+		IVideoDriver* driver = IVideoDriver::getInstance();
+		IDevice* device = IDevice::getInstance();
 
 		switch (var.Type)
 		{
 		case ESAVT_VIEWPORT_WIDTH:
-			pipeline->setFloat(var.ShaderType, var.VariableName, driver->getViewport().Width, ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, driver->getViewport().Width, ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_VIEWPORT_HEIGHT:
-			pipeline->setFloat(var.ShaderType, var.VariableName, driver->getViewport().Height, ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, driver->getViewport().Height, ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_INVERSE_VIEWPORT_WIDTH:
-			pipeline->setFloat(var.ShaderType, var.VariableName, 1.0f / driver->getViewport().Width, ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, 1.0f / driver->getViewport().Width, ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_INVERSE_VIEWPORT_HEIGHT:
-			pipeline->setFloat(var.ShaderType, var.VariableName, 1.0f / driver->getViewport().Height, ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, 1.0f / driver->getViewport().Height, ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_WINDOW_WIDTH:
-			pipeline->setUint(var.ShaderType, var.VariableName, device->getClientWidth(), ignoreIfAlreadyUpdate);
+			shader->setUint(var.VariableName, device->getClientWidth(), ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_WINDOW_HEIGHT:
-			pipeline->setUint(var.ShaderType, var.VariableName, device->getClientHeight(), ignoreIfAlreadyUpdate);
+			shader->setUint(var.VariableName, device->getClientHeight(), ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_INVERSE_WINDOW_WIDTH:
-			pipeline->setFloat(var.ShaderType, var.VariableName, 1.0f / device->getClientWidth(), ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, 1.0f / device->getClientWidth(), ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_INVERSE_WINDOW_HEIGHT:
-			pipeline->setFloat(var.ShaderType, var.VariableName, 1.0f / device->getClientHeight(), ignoreIfAlreadyUpdate);
+			shader->setFloat(var.VariableName, 1.0f / device->getClientHeight(), ignoreIfAlreadyUpdate);
 			break;
 		case ESAVT_SCREEN_SIZE:
 		{
@@ -660,7 +743,7 @@ namespace gf
 									  h = viewport.Height;
 								  }
 								  f32 screenSize[] = { w, h, 1.0f / w, 1.0f / h };
-								  pipeline->setVector(var.ShaderType, var.VariableName, screenSize, ignoreIfAlreadyUpdate);
+								  shader->setVector(var.VariableName, screenSize, ignoreIfAlreadyUpdate);
 		}
 			break;
 		}

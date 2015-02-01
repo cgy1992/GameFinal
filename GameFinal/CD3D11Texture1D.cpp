@@ -15,6 +15,7 @@ namespace gf
 		, md3dDeviceContext(pd3dDeviceContext)
 		, md3dTexture(NULL)
 		, md3dSRV(NULL)
+		, md3dUAV(NULL)
 		, mTextureWidth(0)
 		, md3d11Driver(d3d11Driver)
 		, mBindFlags(0)
@@ -23,11 +24,13 @@ namespace gf
 	}
 
 	bool CD3D11Texture1D::create(u32 width, u32 bindFlags,
-		void* rawData, u32 miplevel, E_GI_FORMAT format)
+		void* rawData, u32 miplevel, E_GI_FORMAT format,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		HRESULT hr;
 		ID3D11Texture1D* pd3dTexture = NULL;
 		ID3D11ShaderResourceView* pd3dSRV = NULL;
+		ID3D11UnorderedAccessView* pd3dUAV = NULL;
 
 		D3D11_TEXTURE1D_DESC texDesc;
 		texDesc.Width = width;
@@ -37,6 +40,7 @@ namespace gf
 		texDesc.BindFlags = getD3dx11BindFlags(bindFlags);
 		texDesc.CPUAccessFlags = 0;
 		texDesc.MiscFlags = 0;
+		texDesc.Usage = getD3d11Usage(memoryUsage);
 
 		UINT support;
 		md3dDevice->CheckFormatSupport(DXGI_FORMAT_R32_FLOAT, &support);
@@ -47,7 +51,9 @@ namespace gf
 
 		if (rawData)
 		{
-			texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			if (memoryUsage == EMU_UNKNOWN)
+				texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			
 			D3D11_SUBRESOURCE_DATA texData;
 			texData.pSysMem = rawData;
 
@@ -58,7 +64,9 @@ namespace gf
 		}
 		else
 		{
-			texDesc.Usage = D3D11_USAGE_DEFAULT;
+			if (memoryUsage == EMU_UNKNOWN)
+				texDesc.Usage = D3D11_USAGE_DEFAULT;
+			
 			hr = md3dDevice->CreateTexture1D(&texDesc, NULL, &pd3dTexture);
 		}
 
@@ -67,7 +75,7 @@ namespace gf
 			return false;
 		}
 
-		if (bindFlags & ETBT_SHADER)
+		if (bindFlags & ETBT_SHADER_RESOURCE)
 		{
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 			srvDesc.Format = texDesc.Format;
@@ -83,11 +91,28 @@ namespace gf
 			}
 		}
 
+		if (bindFlags & ETBT_UNORDERED_ACCESS)
+		{
+			D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+			uavDesc.Format = texDesc.Format;
+			uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE1D;
+			uavDesc.Texture1D.MipSlice = 0;
+			hr = md3dDevice->CreateUnorderedAccessView(pd3dTexture, &uavDesc, &pd3dUAV);
+			if (FAILED(hr))
+			{
+				ReleaseCOM(pd3dTexture);
+				return false;
+			}
+		}
+
 		ReleaseCOM(md3dSRV);
+		ReleaseCOM(md3dUAV);
 		ReleaseCOM(md3dTexture);
+
 
 		md3dTexture = pd3dTexture;
 		md3dSRV = pd3dSRV;
+		md3dUAV = pd3dUAV;
 		mTextureWidth = width;
 		mFormat = format;
 
@@ -97,13 +122,27 @@ namespace gf
 	CD3D11Texture1D::~CD3D11Texture1D()
 	{
 		ReleaseCOM(md3dSRV);
+		ReleaseCOM(md3dUAV);
 		ReleaseCOM(md3dTexture);
 	}
 
-	void CD3D11Texture1D::apply(E_SHADER_TYPE shaderType, u32 slot)
+	void CD3D11Texture1D::apply(E_SHADER_TYPE shaderType, u32 slot,E_TEXTURE_BIND_TYPE bindType)
 	{
-		if (md3dSRV)
-			md3d11Driver->setTexture(shaderType, slot, md3dSRV);
+		if (bindType == ETBT_SHADER_RESOURCE)
+		{
+			if (md3dSRV)
+				md3d11Driver->setTexture(shaderType, slot, md3dSRV);
+		}
+		else if (bindType == ETBT_UNORDERED_ACCESS)
+		{
+			if (md3dUAV)
+				md3d11Driver->setRWTexture(slot, md3dUAV);
+		}
+	}
+
+	u32 CD3D11Texture1D::getElementSize() const
+	{
+		return getFormatOffset(mFormat);
 	}
 
 }

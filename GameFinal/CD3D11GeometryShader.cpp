@@ -7,7 +7,7 @@ namespace gf
 	bool CD3D11GeometryShader::loadFromFile(const char* szFileName, const char* szFunctionName)
 	{
 		HRESULT hr;
-		if (!compile(szFileName, szFunctionName, EST_GEOMETRY_SHADER))
+		if (!compile(szFileName, szFunctionName))
 			return false;
 
 		hr = md3dDevice->CreateGeometryShader(mShaderBuffer->GetBufferPointer(), mShaderBuffer->GetBufferSize(), NULL, &md3dGeometryShader);

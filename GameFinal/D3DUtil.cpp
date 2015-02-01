@@ -97,12 +97,24 @@ namespace gf
 	UINT getD3dx11BindFlags(u32 flags)
 	{
 		UINT d3dFlags = 0;
-		if (flags & ETBT_SHADER)
+		if (flags & ETBT_SHADER_RESOURCE)
 			d3dFlags |= D3D11_BIND_SHADER_RESOURCE;
 		if (flags & ETBT_RENDER_TARGET)
 			d3dFlags |= D3D11_BIND_RENDER_TARGET;
 		if (flags & ETBT_DEPTH_STENCIL)
 			d3dFlags |= D3D11_BIND_DEPTH_STENCIL;
+		if (flags & ETBT_UNORDERED_ACCESS)
+			d3dFlags |= D3D11_BIND_UNORDERED_ACCESS;
+		return d3dFlags;
+	}
+
+	UINT getD3dx11CpuAccessFlag(u32 flags)
+	{
+		UINT d3dFlags = 0;
+		if (flags & ETBT_CPU_ACCESS_READ)
+			d3dFlags |= D3D11_CPU_ACCESS_READ;
+		if (flags & ETBT_CPU_ACCESS_WRITE)
+			d3dFlags |= D3D11_CPU_ACCESS_WRITE;
 
 		return d3dFlags;
 	}
@@ -118,6 +130,11 @@ namespace gf
 			return DXGI_FORMAT_R32_FLOAT;
 
 		return getDxgiFormat(format);
+	}
+
+	DXGI_FORMAT getDxgiUAVFormat(E_GI_FORMAT format)
+	{
+		return getDxgiSRVFormat(format);
 	}
 
 	DXGI_FORMAT getDxgiDSVFormat(E_GI_FORMAT format)

@@ -55,9 +55,15 @@ namespace gf
 
 	UINT getD3dx11BindFlags(u32 flags);
 
+	UINT getD3dx11CpuAccessFlag(u32 flags);
+
 	DXGI_FORMAT getDxgiSRVFormat(E_GI_FORMAT format);
 
 	DXGI_FORMAT getDxgiDSVFormat(E_GI_FORMAT format);
+
+	DXGI_FORMAT getDxgiUAVFormat(E_GI_FORMAT format);
+
+
 }
 
 

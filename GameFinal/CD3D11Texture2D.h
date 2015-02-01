@@ -19,7 +19,9 @@ namespace gf
 		bool loadFromFile(const std::string& filename);
 
 		bool create(u32 width, u32 height, u32 bindFlags, 
-			void* rawData, u32 miplevel, E_GI_FORMAT format, u32 pitch = 0);
+			void* rawData, u32 miplevel, 
+			E_GI_FORMAT format, u32 pitch = 0, 
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN);
 
 		bool createDepthStencilTexture(u32 width, u32 height,
 			u32 depthBitNum, u32 stencilBitNum,
@@ -56,7 +58,10 @@ namespace gf
 			return mDepthStencilSurface;
 		}
 
-		virtual void apply(E_SHADER_TYPE shaderType, u32 slot);
+		virtual void apply(E_SHADER_TYPE shaderType, u32 slot, 
+			E_TEXTURE_BIND_TYPE bindType = ETBT_SHADER_RESOURCE);
+
+		virtual u32 getElementSize() const;
 
 		virtual ~CD3D11Texture2D();
 
@@ -66,6 +71,7 @@ namespace gf
 		CD3D11Driver*					md3d11Driver;
 		ID3D11Texture2D*				md3dTexture;
 		ID3D11ShaderResourceView*		md3dSRV;
+		ID3D11UnorderedAccessView*		md3dUAV;
 		
 		u32								mTextureWidth;
 		u32								mTextureHeight;

@@ -20,6 +20,10 @@ namespace gf
 			const std::string& functionName,
 			const SShaderMacroSet& macros);
 
+		virtual IShader* load(E_SHADER_TYPE shaderType,
+			const std::string& filename,
+			const std::string& functionName);
+
 		virtual IShader* get(const std::string& name,
 			bool bLoadIfNotExist = true,
 			E_SHADER_TYPE shaderType = EST_UNDEFINED_SHADER);
@@ -46,6 +50,9 @@ namespace gf
 		std::map<std::string, std::list<IShader*>>			mShadersMap;
 
 		CSortCodeAllocator<MAX_SHADER_SORT_CODE>			mCodeAllocator[5];
+
+		std::map<std::string, SShaderVariableAttribute>			mBuiltInVariables;
+		std::map<std::string, ISampler*>						mBuiltInSamplers;
 
 	};
 }

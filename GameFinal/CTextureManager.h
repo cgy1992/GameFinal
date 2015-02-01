@@ -30,13 +30,23 @@ namespace gf
 
 		virtual IDepthStencilSurface* getDepthStencilSurface(const std::string& name) const;
 
+		virtual IBuffer* createBuffer(
+			const std::string& name,
+			u32 elementNum,
+			u32 bindFlags,
+			E_GI_FORMAT format,
+			u32 elementSize,
+			void* rawData = nullptr,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN);
+
 		virtual ITexture* createTexture1D(
 			const std::string& name,
 			u32 width,
 			u32 bindFlags,
 			void* data,
 			u32 mipLevel,
-			E_GI_FORMAT format);
+			E_GI_FORMAT format,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN);
 
 		virtual ITexture* createTexture2D(
 			const std::string& name,
@@ -46,7 +56,8 @@ namespace gf
 			void* data,
 			u32 mipLevel,
 			E_GI_FORMAT format,
-			u32 pitch = 0);
+			u32 pitch = 0,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN);
 
 		virtual ITexture2DArray* createTexture2DArray(
 			const std::string& name,
@@ -57,7 +68,8 @@ namespace gf
 			void* data,
 			u32 mipLevel,
 			E_GI_FORMAT format,
-			u32 pitch = 0);
+			u32 pitch = 0,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN);
 
 		virtual ITexture3D* createTexture3D(
 			const std::string& name,
@@ -69,7 +81,8 @@ namespace gf
 			u32 mipLevel,
 			E_GI_FORMAT format,
 			u32 pitch = 0,
-			u32 slicePitch = 0);
+			u32 slicePitch = 0,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN);
 
 		virtual ITextureCube* createTextureCube(
 			const std::string& name,
@@ -78,7 +91,8 @@ namespace gf
 			void* data,
 			u32 miplevel,
 			E_GI_FORMAT format,
-			u32 pitch = 0);
+			u32 pitch = 0,
+			E_MEMORY_USAGE memoryUsage = EMU_UNKNOWN);
 
 		virtual IRenderTarget* createRenderTarget(
 			const std::string& name,

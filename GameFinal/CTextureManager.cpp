@@ -83,7 +83,8 @@ namespace gf
 		u32 bindFlags,
 		void* data,
 		u32 mipLevel,
-		E_GI_FORMAT format)
+		E_GI_FORMAT format,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		auto it = mTextureMap.find(name);
 		if (it != mTextureMap.end())
@@ -104,7 +105,7 @@ namespace gf
 		u32 sortcode = mCodeAllocator.allocate();
 
 		ITexture* pTexture = mResourceFactory->createTexture1D(name, sortcode, width,
-			bindFlags, data, mipLevel, format);
+			bindFlags, data, mipLevel, format, memoryUsage);
 
 		if (pTexture == nullptr)
 		{
@@ -116,6 +117,47 @@ namespace gf
 		return pTexture;
 	}
 
+	IBuffer* CTextureManager::createBuffer(
+		const std::string& name,
+		u32 elementNum,
+		u32 bindFlags,
+		E_GI_FORMAT format,
+		u32 elementSize,
+		void* rawData,
+		E_MEMORY_USAGE memoryUsage)
+	{
+		auto it = mTextureMap.find(name);
+		if (it != mTextureMap.end())
+		{
+			ITexture* texture = it->second;
+			if (texture->getType() == ETT_BUFFER)
+			{
+				GF_PRINT_CONSOLE_INFO("Buffer named '%s' has already existed.\n", name.c_str());
+				return dynamic_cast<IBuffer*>(texture);
+			}
+			else
+			{
+				GF_PRINT_CONSOLE_INFO("Texture named '%s' has already existed, but it's not a Buffer\n", name.c_str());
+				return nullptr;
+			}
+		}
+
+
+		u32 sortcode = mCodeAllocator.allocate();
+
+		IBuffer* pBuffer = mResourceFactory->createBuffer(name, sortcode,
+			elementNum, bindFlags, format, elementSize, rawData, memoryUsage);
+
+		if (pBuffer == nullptr)
+		{
+			mCodeAllocator.release(sortcode);
+			return nullptr;
+		}
+
+		mTextureMap.insert(std::make_pair(name, pBuffer));
+		return pBuffer;
+	}
+
 	ITexture* CTextureManager::createTexture2D(
 		const std::string& name,
 		u32 width,
@@ -124,7 +166,8 @@ namespace gf
 		void* data,
 		u32 mipLevel,
 		E_GI_FORMAT format,
-		u32 pitch)
+		u32 pitch,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		auto it = mTextureMap.find(name);
 		if (it != mTextureMap.end())
@@ -144,7 +187,7 @@ namespace gf
 
 		u32 sortcode = mCodeAllocator.allocate();
 		ITexture* pTexture = mResourceFactory->createTexture2D(name, sortcode, width, 
-			height, bindFlags, data, mipLevel, format, pitch);
+			height, bindFlags, data, mipLevel, format, pitch, memoryUsage);
 		if (pTexture == nullptr)
 		{
 			mCodeAllocator.release(sortcode);
@@ -164,7 +207,8 @@ namespace gf
 		void* data,
 		u32 mipLevel,
 		E_GI_FORMAT format,
-		u32 pitch)
+		u32 pitch,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		auto it = mTextureMap.find(name);
 		if (it != mTextureMap.end())
@@ -185,7 +229,7 @@ namespace gf
 
 		u32 sortcode = mCodeAllocator.allocate();
 		ITexture2DArray* pTexture = mResourceFactory->createTexture2DArray(name, sortcode, width, height, 
-			arraySize, bindFlags, data, mipLevel, format, pitch);
+			arraySize, bindFlags, data, mipLevel, format, pitch, memoryUsage);
 		if (pTexture == nullptr)
 		{
 			mCodeAllocator.release(sortcode);
@@ -206,7 +250,8 @@ namespace gf
 		u32 mipLevel,
 		E_GI_FORMAT format,
 		u32 pitch,
-		u32 slicePitch)
+		u32 slicePitch,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		auto it = mTextureMap.find(name);
 		if (it != mTextureMap.end())
@@ -225,7 +270,7 @@ namespace gf
 
 		u32 sortcode = mCodeAllocator.allocate();
 		ITexture3D* pTexture = mResourceFactory->createTexture3D(name, sortcode, width, height, depth, bindFlags, 
-			data, mipLevel, format, pitch, slicePitch);
+			data, mipLevel, format, pitch, slicePitch, memoryUsage);
 		
 		if (pTexture == nullptr)
 		{
@@ -245,7 +290,8 @@ namespace gf
 		void* data,
 		u32 miplevel,
 		E_GI_FORMAT format,
-		u32 pitch)
+		u32 pitch,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		auto it = mTextureMap.find(name);
 		if (it != mTextureMap.end())
@@ -263,7 +309,8 @@ namespace gf
 		}
 
 		u32 sortcode = mCodeAllocator.allocate();
-		ITextureCube* pTexture = mResourceFactory->createTextureCube(name, sortcode, size, bindFlags, data, miplevel, format, pitch);
+		ITextureCube* pTexture = mResourceFactory->createTextureCube(name, sortcode, size, bindFlags, 
+			data, miplevel, format, pitch, memoryUsage);
 		if (pTexture == nullptr)
 		{
 			mCodeAllocator.release(sortcode);
@@ -294,7 +341,7 @@ namespace gf
 			height = mDevice->getClientHeight();
 
 		u32 sortcode = mCodeAllocator.allocate();
-		ITexture* pTexture = mResourceFactory->createTexture2D(name, sortcode, width, height, ETBT_SHADER | ETBT_RENDER_TARGET,
+		ITexture* pTexture = mResourceFactory->createTexture2D(name, sortcode, width, height, ETBT_SHADER_RESOURCE | ETBT_RENDER_TARGET,
 			nullptr, 1, format);
 
 		if (!pTexture)
@@ -426,7 +473,7 @@ namespace gf
 		// if no idled render target, then create one.
 		u32 sortcode = mCodeAllocator.allocate();
 		ITexture* pTexture = mResourceFactory->createTexture2D("temp-render-target", sortcode, width, height, 
-			ETBT_SHADER | ETBT_RENDER_TARGET, nullptr, 1, format);
+			ETBT_SHADER_RESOURCE | ETBT_RENDER_TARGET, nullptr, 1, format);
 
 		GF_PRINT_CONSOLE_INFO("[[[create RT]]]\n");
 
@@ -598,7 +645,7 @@ namespace gf
 		}
 		
 		createTexture3D(ITextureManager::SHADOW_MAP_JITTER_TEXTURE,
-			width, height, depth, ETBT_SHADER, data, 1, EGF_R8G8B8A8_UNORM);
+			width, height, depth, ETBT_SHADER_RESOURCE, data, 1, EGF_R8G8B8A8_UNORM);
 		
 		free(data);
 	}
@@ -660,7 +707,7 @@ namespace gf
 		}
 		
 		createTexture3D(ITextureManager::PL_SHADOW_MAP_JITTER_TEXTURE,
-			width, height, depth, ETBT_SHADER, data, 1, EGF_R8G8B8A8_UNORM);
+			width, height, depth, ETBT_SHADER_RESOURCE, data, 1, EGF_R8G8B8A8_UNORM);
 
 		free(data);
 	}

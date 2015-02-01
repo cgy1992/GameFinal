@@ -4,6 +4,7 @@
 #include "GameFinal.h"
 #include "D3DUtil.h"
 #include "CD3D11Driver.h"
+#include "CShader.h"
 namespace gf
 {
 	struct SShaderConstantBuffer
@@ -37,8 +38,24 @@ namespace gf
 		D3D11_SHADER_TYPE_DESC			TypeDesc;
 	};
 
-	class CD3D11Shader : public IShader
+	
+
+	class CD3D11Shader : public CShader
 	{
+	public:
+		enum E_SHADER_BIND_RESOURCE_TYPE
+		{
+			ESBRT_SHADER_RESOURCE,
+			ESBRT_UNORDERRED_ACCESS,
+			ESBRT_SAMPLER,
+		};
+
+		struct SD3D11ShaderBindResourceInfo
+		{
+			E_SHADER_BIND_RESOURCE_TYPE				Type;
+			D3D11_SHADER_INPUT_BIND_DESC			Desc;
+		};
+
 	public:
 		CD3D11Shader(u32 id,
 			const std::string& name,
@@ -46,10 +63,13 @@ namespace gf
 			ID3D11Device* pd3dDevice,
 			ID3D11DeviceContext* pd3dDeviceContext,
 			CD3D11Driver* pd3dDriver)
-			:IShader(id, name, macros),
+			:CShader(id, name, macros),
 			md3dDevice(pd3dDevice),
 			md3dDeviceContext(pd3dDeviceContext),
-			md3dDriver(pd3dDriver)
+			md3dDriver(pd3dDriver),
+			mSrvNum(0),
+			mUavNum(0),
+			mSamplerNum(0)
 		{
 
 		}
@@ -65,7 +85,7 @@ namespace gf
 			return mShaderBuffer;
 		}
 
-		bool compile(const char* szFileName, const char* szFunctionName, E_SHADER_TYPE type);
+		bool compile(const char* szFileName, const char* szFunctionName);
 
 		bool initContext();
 
@@ -128,16 +148,20 @@ namespace gf
 			return mSamplerNum;
 		}
 
+		virtual u32 getRWTextureCount() const
+		{
+			return mUavNum; 
+		}
+
 		virtual void reset();
 
 		virtual bool isAlreadyUpdated(const std::string& varname);
 
 		virtual bool isContantVariable(const std::string& varname) const;
 
-		virtual bool isTextureVariable(const std::string& varname) const;
+		//virtual bool isTextureVariable(const std::string& varname) const;
 
-		virtual void registerAutoVariablesToPipeline(IPipeline* pipeline,
-			const std::map<std::string, SShaderVariableAttribute>& varMap) const;
+		virtual void registerAutoVariables(const std::map<std::string, SShaderVariableAttribute>& varMap);
 
 	protected:
 		const static u32 MAX_CONSTANT_BUFFER_NUM = 16;
@@ -153,13 +177,16 @@ namespace gf
 		std::string							mName;
 		ID3D11Buffer*						md3dConstantBuffers[MAX_CONSTANT_BUFFER_NUM];
 		u32									mSrvNum;
+		u32									mUavNum;
 		u32									mSamplerNum;
 
 		std::vector<std::unique_ptr<SShaderConstantBuffer>>		mConstantBuffers;
 		std::map<std::string, SShaderConstantVariable>			mConstantVariables;
 
-		std::map<std::string, D3D11_SHADER_INPUT_BIND_DESC>		mShaderResourceDescs;
-		std::map<std::string, D3D11_SHADER_INPUT_BIND_DESC>		mShaderSamplerDescs;
+		//std::map<std::string, D3D11_SHADER_INPUT_BIND_DESC>		mShaderResourceDescs;
+		//std::map<std::string, D3D11_SHADER_INPUT_BIND_DESC>		mShaderSamplerDescs;
+
+		std::map<std::string, SD3D11ShaderBindResourceInfo>		mBindingResourceInfos;
 	};
 }
 #endif

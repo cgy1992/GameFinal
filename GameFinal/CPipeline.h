@@ -80,7 +80,7 @@ namespace gf
 
 		virtual void addShaderAutoVariable(const SShaderAutoVariable& var);
 
-		virtual void registerAutoSamplers(const std::map<std::string, ISampler*>& samplerMap);
+		//virtual void registerAutoSamplers(const std::map<std::string, ISampler*>& samplerMap);
 
 		virtual bool setSampler(const std::string& varname, ISampler* sampler);
 

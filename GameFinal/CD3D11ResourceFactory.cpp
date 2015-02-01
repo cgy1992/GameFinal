@@ -13,12 +13,14 @@
 #include "CD3D11SamplerStateCache.h"
 #include "CD3D11HullShader.h"
 #include "CD3D11DomainShader.h"
+#include "CD3D11ComputeShader.h"
 #include "CD3D11RenderTarget.h"
 #include "CD3D11DepthStencilSurface.h"
 #include "CD3D11TextureCube.h"
 #include "CD3D11Texture1D.h"
 #include "CD3D11Texture3D.h"
 #include "CD3D11Texture2DArray.h"
+#include "CD3D11Buffer.h"
 #include "gfUtil.h"
 
 namespace gf
@@ -72,6 +74,27 @@ namespace gf
 		return pTexture;
 	}
 
+
+	IBuffer* CD3D11ResourceFactory::createBuffer(const std::string& name,
+		u32 sortcode,
+		u32 elementNum,
+		u32 bindFlags,
+		E_GI_FORMAT format,
+		u32 elementSize,
+		void* rawData,
+		E_MEMORY_USAGE memoryUsage)
+	{
+		CD3D11Buffer* pd3dBuffer = new CD3D11Buffer(md3dDevice, md3dDeviceContext,
+			name, sortcode, md3dDriver);
+
+		if (!pd3dBuffer->create(elementNum, bindFlags, format, elementSize, rawData, memoryUsage))
+		{
+			ReleaseReferenceCounted(pd3dBuffer);
+		}
+
+		return pd3dBuffer;
+	}
+
 	ITexture* CD3D11ResourceFactory::createTexture1D(
 		const std::string& name,
 		u32 sortcode,
@@ -79,11 +102,12 @@ namespace gf
 		u32 bindFlags,
 		void* data,
 		u32 mipLevel,
-		E_GI_FORMAT format)
+		E_GI_FORMAT format,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		CD3D11Texture1D* pTexture = new CD3D11Texture1D(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
 
-		if (!pTexture->create(width, bindFlags, data, mipLevel, format))
+		if (!pTexture->create(width, bindFlags, data, mipLevel, format, memoryUsage))
 		{
 			pTexture->drop();
 			pTexture = nullptr;
@@ -100,11 +124,12 @@ namespace gf
 		void* data,
 		u32 mipLevel,
 		E_GI_FORMAT format,
-		u32 pitch)
+		u32 pitch,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		CD3D11Texture2D* pTexture = new CD3D11Texture2D(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
 
-		if (!pTexture->create(width, height, bindFlags, data, mipLevel, format, pitch))
+		if (!pTexture->create(width, height, bindFlags, data, mipLevel, format, pitch, memoryUsage))
 		{
 			pTexture->drop();
 			pTexture = nullptr;
@@ -123,10 +148,11 @@ namespace gf
 		void* data,
 		u32 mipLevel,
 		E_GI_FORMAT format,
-		u32 pitch)
+		u32 pitch,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		CD3D11Texture2DArray* pTexture = new CD3D11Texture2DArray(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
-		if (!pTexture->create(width, height, arraySize, bindFlags, data, mipLevel, format, pitch))
+		if (!pTexture->create(width, height, arraySize, bindFlags, data, mipLevel, format, pitch, memoryUsage))
 		{
 			pTexture->drop();
 			pTexture = nullptr;
@@ -142,10 +168,11 @@ namespace gf
 		void* rawData,
 		u32 miplevel,
 		E_GI_FORMAT format,
-		u32 pitch)
+		u32 pitch,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		CD3D11TextureCube* pTexture = new CD3D11TextureCube(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
-		if (!pTexture->create(size, bindFlags, rawData, miplevel, format, pitch))
+		if (!pTexture->create(size, bindFlags, rawData, miplevel, format, pitch, memoryUsage))
 		{
 			pTexture->drop();
 			pTexture = nullptr;
@@ -181,12 +208,20 @@ namespace gf
 	}
 
 	ITexture3D* CD3D11ResourceFactory::createTexture3D(const std::string& name,
-		u32 sortcode, u32 width, u32 height, u32 depth, u32	bindFlags,
-		void* data, u32 mipLevel, E_GI_FORMAT format,
-		u32 pitch /*= 0*/, u32 slicePitch /*= 0*/)
+		u32 sortcode, 
+		u32 width, 
+		u32 height, 
+		u32 depth, 
+		u32	bindFlags,
+		void* data, 
+		u32 mipLevel, 
+		E_GI_FORMAT format,
+		u32 pitch /*= 0*/, 
+		u32 slicePitch /*= 0*/,
+		E_MEMORY_USAGE memoryUsage)
 	{
 		CD3D11Texture3D* pTexture = new CD3D11Texture3D(md3dDevice, md3dDeviceContext, name, sortcode, md3dDriver);
-		if (!pTexture->create(width, height, depth, data, mipLevel, format, pitch, slicePitch))
+		if (!pTexture->create(width, height, depth, bindFlags, data, mipLevel, format, pitch, slicePitch, memoryUsage))
 		{
 			pTexture->drop();
 			pTexture = nullptr;
@@ -329,6 +364,9 @@ namespace gf
 			break;
 		case EST_DOMAIN_SHADER:
 			shader = new CD3D11DomainShader(id, shaderName, macros, md3dDevice, md3dDeviceContext, md3dDriver);
+			break;
+		case EST_COMPUTE_SHADER:
+			shader = new CD3D11ComputeShader(id, shaderName, macros, md3dDevice, md3dDeviceContext, md3dDriver);
 			break;
 		}
 
