@@ -220,6 +220,9 @@ namespace gf
 			D3D11_SHADER_BUFFER_DESC cbDesc;
 			cbReflection->GetDesc(&cbDesc);
 
+			if (cbDesc.Type != D3D11_CT_CBUFFER)
+				continue;
+
 			SShaderConstantBuffer* pCbStruct = new SShaderConstantBuffer(cbDesc.Name);
 			pCbStruct->Size = cbDesc.Size;
 

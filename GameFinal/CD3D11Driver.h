@@ -169,6 +169,8 @@ namespace gf
 
 		virtual void resetRWTextures();
 
+		virtual void resetTextures(E_SHADER_TYPE shaderType = EST_UNDEFINED_SHADER);
+
 		virtual ~CD3D11Driver();
 
 	private:

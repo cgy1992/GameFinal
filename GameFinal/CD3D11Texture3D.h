@@ -43,6 +43,11 @@ namespace gf
 			return mTextureWidth;
 		}
 
+		virtual u32 getDepth() const
+		{
+			return mTextureDepth;
+		}
+
 		virtual IRenderTarget* getRenderTarget(u32 index = 0)
 		{
 			return nullptr;
@@ -57,6 +62,12 @@ namespace gf
 			E_TEXTURE_BIND_TYPE bindType = ETBT_SHADER_RESOURCE);
 
 		virtual u32 getElementSize() const;
+
+		virtual bool copyDataToAnotherTexture(ITexture* dest);
+
+		virtual bool lock(E_TEXTURE_LOCK_TYPE lockType, STextureData* texData, u32 index = 0);
+
+		virtual void unlock();
 
 	private:
 		ID3D11Device*					md3dDevice;

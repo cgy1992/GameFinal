@@ -21,6 +21,8 @@ namespace gf
 
 		virtual ~ITexture3D() {}
 
+		virtual u32 getDepth() const = 0;
+
 	};
 }
 

@@ -13,10 +13,7 @@ namespace gf
 			return XMMatrixTranspose(XMMatrixInverse(&det, A));
 		}
 
-		bool FloatEqual(f32 a, f32 b, f32 e)
-		{
-			return a - b <= e || a - b >= -e;
-		}
+
 
 		bool FloatArrayEqual(const f32 color1[], const f32 color2[], u32 elementCount, f32 e)
 		{

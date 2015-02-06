@@ -146,6 +146,8 @@ namespace gf
 		virtual bool runComputeShader(IShader* shader, u32 x, u32 y, u32 z, 
 			ISceneNode* node = nullptr) = 0;
 
+		virtual void resetTextures(E_SHADER_TYPE shaderType = EST_UNDEFINED_SHADER) = 0;
+
 		virtual void resetRWTextures() = 0;
 
 		const SViewport& getViewport() const { return mViewport; }

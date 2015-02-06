@@ -54,14 +54,22 @@ namespace gf
 
 		if (memoryUsage == EMU_UNKNOWN)
 		{
-			if ((bindFlags & ETBT_CPU_ACCESS_READ))
+			if ((bindFlags & ETBT_CPU_ACCESS_READ)) {
 				bufDesc.Usage = D3D11_USAGE_STAGING;
-			else if (bindFlags & ETBT_CPU_ACCESS_WRITE)
+				memoryUsage = EMU_STAGING;
+			}
+			else if (bindFlags & ETBT_CPU_ACCESS_WRITE) {
 				bufDesc.Usage = D3D11_USAGE_DEFAULT;
-			else if (rawData)
+				memoryUsage = EMU_DEFAULT;
+			}
+			else if (rawData) {
 				bufDesc.Usage = D3D11_USAGE_IMMUTABLE;
-			else if (!rawData)
+				memoryUsage = EMU_STATIC;
+			}
+			else if (!rawData) {
 				bufDesc.Usage = D3D11_USAGE_DEFAULT;
+				memoryUsage = EMU_DEFAULT;
+			}
 		}
 		else
 		{
@@ -80,6 +88,14 @@ namespace gf
 					GF_PRINT_CONSOLE_INFO("Dynamic Buffer cannot be read by CPU.\n");
 					return false;
 				}
+			}
+		}
+
+		if (memoryUsage == D3D11_USAGE_STAGING)
+		{
+			if ((bindFlags & ETBT_SHADER_RESOURCE) || (bindFlags & ETBT_UNORDERED_ACCESS)){
+				GF_PRINT_CONSOLE_INFO("Buffer with the memory usage 'STARING' cannot have SHADER_RESOURCE or UNORDERED_ACCESS.");
+				return false;
 			}
 		}
 
@@ -171,56 +187,55 @@ namespace gf
 		}
 	}
 
-	bool CD3D11Buffer::getData(void* data)
+	bool CD3D11Buffer::lock(E_TEXTURE_LOCK_TYPE lockType, STextureData* texData, u32 index)
 	{
-		if (mBindFlags & ETBT_CPU_ACCESS_READ)
+		D3D11_MAP MapType = getD3d11MapType(lockType);
+		D3D11_MAPPED_SUBRESOURCE mappedData;
+		HRESULT hr = md3dDeviceContext->Map(md3dBuffer, 0, MapType, 0, &mappedData);
+		if (FAILED(hr))
+			return false;
+		if (texData)
 		{
-			D3D11_MAPPED_SUBRESOURCE mappedData;
-			md3dDeviceContext->Map(md3dBuffer, 0, D3D11_MAP_READ, 0, &mappedData);
-			memcpy(data, mappedData.pData, mElementNum * mElementStride);
-			md3dDeviceContext->Unmap(md3dBuffer, 0);
-			return true;
+			texData->Data = mappedData.pData;
+			texData->RowPitch = mappedData.RowPitch;
+			texData->DepthPitch = mappedData.DepthPitch;
 		}
-
-		return false;
+		return true;
 	}
 
-	bool CD3D11Buffer::setData(void* data, u32 elementCount)
+	void CD3D11Buffer::unlock()
 	{
-		elementCount = min(elementCount, mElementNum);
-
-		if (mBindFlags & ETBT_CPU_ACCESS_WRITE)
-		{
-			D3D11_MAPPED_SUBRESOURCE mappedData;
-			md3dDeviceContext->Map(md3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
-			memcpy(mappedData.pData, data, mElementStride * elementCount);
-			md3dDeviceContext->Unmap(md3dBuffer, 0);
-			return true;
-		}
-
-		return false;
+		md3dDeviceContext->Unmap(md3dBuffer, 0);
 	}
 
-	bool CD3D11Buffer::copyDataToAnotherBuffer(IBuffer* anotherBuffer)
+	bool CD3D11Buffer::copyDataToAnotherTexture(ITexture* dest)
 	{
-		if (!anotherBuffer)
+		if (!dest)
 			return false;
 
-		if (mElementStride != anotherBuffer->getElementSize())
+		if (dest->getType() != ETT_BUFFER)
+		{
+			GF_PRINT_CONSOLE_INFO("Texture's data cannot be copied between different types\n");
+			return false;
+		}
+
+		CD3D11Buffer* pAnotherBuffer = dynamic_cast<CD3D11Buffer*>(dest);
+
+		if (mElementStride != pAnotherBuffer->getElementSize())
 		{
 			GF_PRINT_CONSOLE_INFO("Buffers with different element size couldn't copy data with each other.\n");
 			return false;
 		}
 
-		if (mElementNum > anotherBuffer->getElementNum())
+		if (mElementNum > pAnotherBuffer->getElementNum())
 		{
 			GF_PRINT_CONSOLE_INFO("Destination Buffer' size is smaller than Source Buffer.\n");
 			return false;
 		}
 
-		CD3D11Buffer* pd3dAnotherBuffer = dynamic_cast<CD3D11Buffer*>(anotherBuffer);
-		md3dDeviceContext->CopyResource(pd3dAnotherBuffer->md3dBuffer, md3dBuffer);
+		md3dDeviceContext->CopyResource(pAnotherBuffer->md3dBuffer, md3dBuffer);
 		return true;
+
 	}
 
 }

@@ -19,6 +19,17 @@ namespace gf
 		ETT_BUFFER,
 	};
 
+	
+
+	struct STextureData
+	{
+		void*		Data;
+		u32			RowPitch;
+		u32			DepthPitch;
+	};
+
+	
+
 	class IRenderTarget;
 	class IDepthStencilSurface;
 
@@ -45,7 +56,12 @@ namespace gf
 
 		virtual u32 getHeight() const = 0;
 
+		
+		
+		
 		virtual E_TEXTURE_TYPE getType() const = 0;
+
+
 
 		virtual void apply(E_SHADER_TYPE shaderType, u32 slot,
 			E_TEXTURE_BIND_TYPE bindType = ETBT_SHADER_RESOURCE) = 0;
@@ -61,6 +77,12 @@ namespace gf
 		
 		virtual u32 getElementSize() const = 0;
 
+		virtual bool copyDataToAnotherTexture(ITexture* dest) = 0;
+
+		virtual bool lock(E_TEXTURE_LOCK_TYPE lockType, STextureData* texData, u32 index=0) = 0;
+
+		virtual void unlock() = 0;
+		
 		virtual ~ITexture() {}
 	protected:
 		std::string		mName;

@@ -63,6 +63,8 @@ namespace gf
 
 	DXGI_FORMAT getDxgiUAVFormat(E_GI_FORMAT format);
 
+	D3D11_MAP getD3d11MapType(E_TEXTURE_LOCK_TYPE lockType);
+
 
 }
 

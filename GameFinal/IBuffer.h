@@ -40,11 +40,7 @@ namespace gf
 
 		virtual IDepthStencilSurface* getDepthStencilSurface(u32 index = 0) { return nullptr; }
 
-		virtual bool getData(void* data) = 0;
-
-		virtual bool setData(void* data, u32 elementCount) = 0;
-
-		virtual bool copyDataToAnotherBuffer(IBuffer* anotherBuffer) = 0;
+		
 
 		virtual ~IBuffer() {}
 

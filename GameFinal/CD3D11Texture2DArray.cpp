@@ -210,7 +210,32 @@ namespace gf
 		return getFormatOffset(mFormat);
 	}
 
+	bool CD3D11Texture2DArray::copyDataToAnotherTexture(ITexture* dest)
+	{
+		GF_PRINT_CONSOLE_INFO("TextureArray cannot copy now.\n");
+		return false;
+	}
 
+	bool CD3D11Texture2DArray::lock(E_TEXTURE_LOCK_TYPE lockType, STextureData* texData, u32 index)
+	{
+		D3D11_MAP MapType = getD3d11MapType(lockType);
+		D3D11_MAPPED_SUBRESOURCE mappedData;
+		HRESULT hr = md3dDeviceContext->Map(md3dTexture, index, MapType, 0, &mappedData);
+		if (FAILED(hr))
+			return false;
+		if (texData)
+		{
+			texData->Data = mappedData.pData;
+			texData->RowPitch = mappedData.RowPitch;
+			texData->DepthPitch = mappedData.DepthPitch;
+		}
+		return true;
+	}
+
+	void CD3D11Texture2DArray::unlock()
+	{
+		md3dDeviceContext->Unmap(md3dTexture, 0);
+	}
 	
 
 }

@@ -26,11 +26,11 @@ namespace gf
 		virtual void apply(E_SHADER_TYPE shaderType, u32 slot,
 			E_TEXTURE_BIND_TYPE bindType = ETBT_SHADER_RESOURCE);
 
-		virtual bool getData(void* data);
+		virtual bool lock(E_TEXTURE_LOCK_TYPE lockType, STextureData* texData, u32 index = 0);
 
-		virtual bool setData(void* data, u32 elementCount);
+		virtual void unlock();
 
-		virtual bool copyDataToAnotherBuffer(IBuffer* anotherBuffer);
+		virtual bool copyDataToAnotherTexture(ITexture* dest);
 
 		~CD3D11Buffer();
 

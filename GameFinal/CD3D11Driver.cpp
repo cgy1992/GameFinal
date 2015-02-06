@@ -1096,6 +1096,46 @@ namespace gf
 		D3D11DriverState.UnorderedAccessViewIsDirty = false;
 	}
 
-	
+	void CD3D11Driver::resetTextures(E_SHADER_TYPE shaderType)
+	{
+		if (shaderType == EST_UNDEFINED_SHADER)
+		{
+			resetTextures(EST_VERTEX_SHADER);
+			resetTextures(EST_PIXEL_SHADER);
+			resetTextures(EST_HULL_SHADER);
+			resetTextures(EST_DOMAIN_SHADER);
+			resetTextures(EST_GEOMETRY_SHADER);
+			resetTextures(EST_COMPUTE_SHADER);
+			return;
+		}
 
+		for (u32 i = 0; i < _GF_SHADER_RESOURCE_VIEW_COUNT; i++)
+			D3D11DriverState.ShaderResourceViews[shaderType][i] = NULL;
+		//memcpy(D3D11DriverState.ShaderResourceViews[shaderType], 0, sizeof(D3D11DriverState.ShaderResourceViews[shaderType]));
+		D3D11DriverState.ShaderResourceViewIsDirty[shaderType] = false;
+
+		switch (shaderType)
+		{
+		case EST_VERTEX_SHADER:
+			md3dDeviceContext->VSSetShaderResources(0, _GF_SHADER_RESOURCE_VIEW_COUNT, D3D11DriverState.ShaderResourceViews[shaderType]);
+			break;
+		case EST_GEOMETRY_SHADER:
+			md3dDeviceContext->GSSetShaderResources(0, _GF_SHADER_RESOURCE_VIEW_COUNT, D3D11DriverState.ShaderResourceViews[shaderType]);
+			break;
+		case EST_HULL_SHADER:
+			md3dDeviceContext->HSSetShaderResources(0, _GF_SHADER_RESOURCE_VIEW_COUNT, D3D11DriverState.ShaderResourceViews[shaderType]);
+			break;
+		case EST_DOMAIN_SHADER:
+			md3dDeviceContext->DSSetShaderResources(0, _GF_SHADER_RESOURCE_VIEW_COUNT, D3D11DriverState.ShaderResourceViews[shaderType]);
+			break;
+		case EST_PIXEL_SHADER:
+			md3dDeviceContext->PSSetShaderResources(0, _GF_SHADER_RESOURCE_VIEW_COUNT, D3D11DriverState.ShaderResourceViews[shaderType]);
+			break;
+		case EST_COMPUTE_SHADER:
+			md3dDeviceContext->CSSetShaderResources(0, _GF_SHADER_RESOURCE_VIEW_COUNT, D3D11DriverState.ShaderResourceViews[shaderType]);
+			break;
+		default:
+			break;
+		}
+	}
 }

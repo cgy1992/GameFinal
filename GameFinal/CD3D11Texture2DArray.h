@@ -75,6 +75,12 @@ namespace gf
 
 		virtual u32 getElementSize() const;
 
+		virtual bool copyDataToAnotherTexture(ITexture* dest);
+
+		virtual bool lock(E_TEXTURE_LOCK_TYPE lockType, STextureData* texData, u32 index = 0);
+
+		virtual void unlock();
+
 		virtual ~CD3D11Texture2DArray();
 
 	private:

@@ -148,5 +148,18 @@ namespace gf
 
 		return getDxgiFormat(format);
 	}
+
+	D3D11_MAP getD3d11MapType(E_TEXTURE_LOCK_TYPE lockType)
+	{
+		switch (lockType)
+		{
+		case ETLT_READ: return D3D11_MAP_READ;
+		case ETLT_WRITE: return D3D11_MAP_WRITE;
+		case ETLT_READ_WRITE: return D3D11_MAP_READ_WRITE;
+		case ETLT_WRITE_DISCARD: return D3D11_MAP_WRITE_DISCARD;
+		case ETLT_WRITE_NO_OVERWRITE: return D3D11_MAP_WRITE_NO_OVERWRITE;
+		}
+		return D3D11_MAP_READ;
+	}
 }
 

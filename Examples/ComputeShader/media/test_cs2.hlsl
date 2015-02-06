@@ -1,12 +1,11 @@
-//Texture2D gInputA;
-Texture2D gInputA;
-Texture2D gInputB;
-RWTexture2D<float4> gOutput;
+Buffer<float> gInputA;
+Buffer<float> gInputB;
+RWBuffer<float> gOutput;
 
-[numthreads(16, 16, 1)]
+[numthreads(32, 1, 1)]
 void cs_main(int3 dispatchThreadID : SV_DispatchThreadID)
 {
 // Sum the xyth texels and store the result in the xyth texel of
 // gOutput.
-	gOutput[dispatchThreadID.xy] = gInputA[dispatchThreadID.xy] * 0.5f + gInputB[dispatchThreadID.xy] * 0.5f;
+	gOutput[dispatchThreadID.x] = gInputA[dispatchThreadID.x] + gInputB[dispatchThreadID.x];
 }

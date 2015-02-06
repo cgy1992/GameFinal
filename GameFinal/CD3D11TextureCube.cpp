@@ -179,5 +179,54 @@ namespace gf
 		return getFormatOffset(mFormat);
 	}
 
+	bool CD3D11TextureCube::copyDataToAnotherTexture(ITexture* dest)
+	{
+		if (!dest)
+			return false;
+
+		if (dest->getType() != ETT_TEXTURE_CUBE) {
+			GF_PRINT_CONSOLE_INFO("Texture's data cannot be copied between different types\n");
+			return false;
+		}
+
+		CD3D11TextureCube* pAnotherTexture = dynamic_cast<CD3D11TextureCube*>(dest);
+
+		if (getElementSize() != pAnotherTexture->getElementSize())
+		{
+			GF_PRINT_CONSOLE_INFO("Buffers with different element size couldn't copy data with each other.\n");
+			return false;
+		}
+
+		if (mTextureWidth > pAnotherTexture->getWidth())
+		{
+			GF_PRINT_CONSOLE_INFO("Destination Buffer' size is smaller than Source Buffer.\n");
+			return false;
+		}
+
+		md3dDeviceContext->CopyResource(pAnotherTexture->md3dTexture, md3dTexture);
+		return true;
+	}
+
+	bool CD3D11TextureCube::lock(E_TEXTURE_LOCK_TYPE lockType, STextureData* texData, u32 index)
+	{
+		D3D11_MAP MapType = getD3d11MapType(lockType);
+		D3D11_MAPPED_SUBRESOURCE mappedData;
+		HRESULT hr = md3dDeviceContext->Map(md3dTexture, index, MapType, 0, &mappedData);
+		if (FAILED(hr))
+			return false;
+		if (texData)
+		{
+			texData->Data = mappedData.pData;
+			texData->RowPitch = mappedData.RowPitch;
+			texData->DepthPitch = mappedData.DepthPitch;
+		}
+		return true;
+	}
+
+	void CD3D11TextureCube::unlock()
+	{
+		md3dDeviceContext->Unmap(md3dTexture, 0);
+	}
+
 }
 
