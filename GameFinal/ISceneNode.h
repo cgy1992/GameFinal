@@ -336,7 +336,7 @@ namespace gf
 			return XMFLOAT3(mTransformation._41, mTransformation._42, mTransformation._43);
 		}
 
-		virtual void update(u32 delta = 0)
+		virtual void update(f32 delta = 0)
 		{
 			if (mVisible)
 			{

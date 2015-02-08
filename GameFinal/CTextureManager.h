@@ -6,7 +6,7 @@
 #include "IResourceFactory.h"
 #include "CSortCodeAllocator.h"
 
-#define _RENDER_STATE_IDLE_TIME_ 2000 
+#define _RENDER_STATE_IDLE_TIME_ (2.0f) 
 
 
 namespace gf
@@ -127,7 +127,7 @@ namespace gf
 
 		virtual bool releaseTempDepthStencilSurface(IDepthStencilSurface* pDepthStencilSurface);
 
-		virtual void updateTemporaryTextures(u32 delta);
+		virtual void updateTemporaryTextures(f32 delta);
 
 		_DEFINE_RESOURCE_DESTROY_METHODS(CTextureManager, mTextureMap, ITexture);
 		
@@ -146,7 +146,7 @@ namespace gf
 
 		struct STemporaryTextureInfo
 		{
-			u32				IdledTime;
+			f32				IdledTime;
 			ITexture*		Texture;
 		};
 

@@ -10,21 +10,26 @@ namespace gf
 	public:
 		CWin32Timer();
 
-		virtual u32 tick();
-		virtual u32 getElapseTime() const;
+		virtual f32 tick();
+		virtual f32 getElapseTime() const;
 
 		virtual void start(); // Call when unpaused.
 		virtual void stop();  // Call when paused.
-
 		virtual void reset();
+
+		// get the total time from the computer starting.
+		virtual f32 getTime() const;
+	
 	private:
 
-		u32			mBaseTime;
-		u32			mPausedTime;
-		u32			mStopTime;
-		u32			mPrevTime;
-		u32			mCurrTime;
+		double mSecondsPerCount;
+	//	double mDeltaTime;
 
+		__int64 mBaseTime;
+		__int64 mPausedTime;
+		__int64 mStopTime;
+		__int64 mPrevTime;
+		__int64 mCurrTime;
 
 		bool mStopped;
 	};

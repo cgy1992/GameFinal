@@ -132,9 +132,7 @@ int main()
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		u32 ms = timer->tick();
-		f32 dt = ms * 0.001f;
-
+		f32 dt = timer->tick();
 
 		rotx += dt * 2.0f;
 		roty += dt * 1.0f;
@@ -162,7 +160,7 @@ int main()
 		if (GetAsyncKeyState(0x33) & 0x8000)
 			compositor->setIntAttribute(ECA_ALGORITHM, SCompositorCreateParam::EBLUR_GAUSSIAN);
 
-		smgr->update(ms);
+		smgr->update(dt);
 
 		smgr->drawAll();
 

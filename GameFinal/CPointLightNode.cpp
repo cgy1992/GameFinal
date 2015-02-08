@@ -39,7 +39,7 @@ namespace gf
 		memcpy(data, &mLightData, sizeof(mLightData));
 	}
 
-	void CPointLightNode::update(u32 delta /* = 0 */)
+	void CPointLightNode::update(f32 delta /* = 0 */)
 	{
 		ISceneNode::update(delta);
 		computeBoundingVolumn();

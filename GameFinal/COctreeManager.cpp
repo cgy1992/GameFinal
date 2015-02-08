@@ -58,7 +58,7 @@ namespace gf
 		mRootNode.registerVisibleNodes(frustum);
 	}
 
-	void COctreeManager::update(u32 delta)
+	void COctreeManager::update(f32 delta)
 	{
 		// don't need to update all nodes in it.
 		// because all child nodes are static nodes.

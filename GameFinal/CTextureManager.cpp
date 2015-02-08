@@ -557,7 +557,7 @@ namespace gf
 		return false;
 	}
 
-	void CTextureManager::updateTemporaryTextures(u32 delta)
+	void CTextureManager::updateTemporaryTextures(f32 delta)
 	{
 		for (auto it = mIdledRenderTargets.begin(); it != mIdledRenderTargets.end();)
 		{

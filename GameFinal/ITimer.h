@@ -9,13 +9,15 @@ namespace gf
 	class ITimer : public IReferenceCounted
 	{
 	public:
-		virtual u32 tick() = 0;
-		virtual u32 getElapseTime() const = 0;
+		virtual f32 tick() = 0;
+		virtual f32 getElapseTime() const = 0;
 
 		virtual void start() = 0; // Call when unpaused.
 		virtual void stop() = 0;  // Call when paused.
 
 		virtual void reset() = 0;
+
+		virtual f32 getTime() const = 0;
 	};
 }
 #endif

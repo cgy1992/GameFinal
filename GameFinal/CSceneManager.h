@@ -164,7 +164,7 @@ namespace gf
 			return mRenderedMeshNum;
 		}
 
-		virtual void update(u32 delta = 0);
+		virtual void update(f32 delta = 0);
 
 		bool isCulled(const IMeshNode* node);
 
@@ -213,7 +213,7 @@ namespace gf
 		u32								mRenderedMeshNum;
 
 		f32								mSecondsDelta;
-		u32								mMillisecondsDelta;
+		//u32								mMillisecondsDelta;
 
 		IMeshNode*						mSkyDomeNode;
 		IMeshNode*						mQuadMeshNode;

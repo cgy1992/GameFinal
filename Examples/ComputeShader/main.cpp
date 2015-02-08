@@ -85,12 +85,11 @@ int main()
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		u32 ms = timer->tick();
-		float dt = ms * 0.001f;
+		f32 dt = timer->tick();
 
 		updateCamera(camera, dt);
 
-		smgr->update(ms);
+		smgr->update(dt);
 
 		smgr->drawAll();
 
@@ -433,6 +432,8 @@ void TestCase5()
 	IVideoDriver* driver = IVideoDriver::getInstance();
 	IShaderManager* shaderMgr = driver->getShaderManager();
 	IShader* shader = shaderMgr->load(EST_COMPUTE_SHADER, "test_cs4.hlsl", "matmul_cs_main");
+	ITimer* timer = IDevice::getInstance()->getTimer();
+
 
 	const u32 dimension = 512;
 	const u32 sq_dimension = dimension * dimension;
@@ -482,11 +483,11 @@ void TestCase5()
 	if (blockNum * 8 != dimension)
 		blockNum++;
 
-	f32 start_time = timeGetTime() * 0.001f;
+	f32 start_time = timer->getTime();
 
 	driver->runComputeShader(shader, blockNum, blockNum, 1);
 
-	f32 end_time = timeGetTime() * 0.001f;
+	f32 end_time = timer->getTime();
 
 	driver->resetRWTextures();
 	driver->resetTextures();

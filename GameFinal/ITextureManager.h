@@ -12,7 +12,7 @@ namespace gf
 
 		virtual ITextureCube* loadCubeTexture(const std::string& name) = 0;
 
-		virtual void updateTemporaryTextures(u32 delta) = 0;
+		virtual void updateTemporaryTextures(f32 delta) = 0;
 
 		virtual IBuffer* createBuffer(
 			const std::string& name,

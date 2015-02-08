@@ -20,7 +20,7 @@ namespace gf
 {
 	CSceneManager::CSceneManager(IDevice* device, const math::SAxisAlignedBox& aabb)
 		:ISceneManager(device, aabb)
-		, mMillisecondsDelta(0)
+		//, mMillisecondsDelta(0)
 		, mSecondsDelta(0)
 		, mSkyDomeNode(nullptr)
 		, mQuadMeshNode(nullptr)
@@ -276,10 +276,10 @@ namespace gf
 		return false;
 	}
 
-	void CSceneManager::update(u32 delta)
+	void CSceneManager::update(f32 delta)
 	{
-		mMillisecondsDelta = delta;
-		mSecondsDelta = static_cast<f32>(delta)* 0.001f;
+		mSecondsDelta = delta;
+		//mSecondsDelta = static_cast<f32>(delta)* 0.001f;
 
 		ITextureManager::getInstance()->updateTemporaryTextures(delta);
 

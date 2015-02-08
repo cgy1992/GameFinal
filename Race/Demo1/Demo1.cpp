@@ -217,11 +217,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	while (device->run())
 	{
+		f32 dt = timer->tick();
+		if (dt > 1.0f / 60)
+			dt = 1.0f / 60;
+		/*
 		u32 ms = timer->tick();
 		if (ms > 1000 / 60)
 			ms = 1000 / 60;
-
 		float dt = ms * 0.001f;
+		*/
 		elapseTime += dt;
 
 		if (elapseTime > fps)

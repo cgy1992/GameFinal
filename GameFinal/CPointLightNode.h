@@ -98,7 +98,7 @@ namespace gf
 
 		virtual void getLightData(void* data) const;
 
-		virtual void update(u32 delta = 0);
+		virtual void update(f32 delta = 0);
 
 		virtual ITexture* getShadowMap();
 
