@@ -108,7 +108,10 @@ namespace gf
 		}
 
 		virtual void setVisible(bool visible);
-		
+
+		virtual bool intersectRay(FXMVECTOR Origin, FXMVECTOR Direction, f32* pDist) const { return false; }
+
+		virtual bool intersectRay(const math::SRay& ray, f32* pDist) const { return false; }
 
 		virtual ~CDirectionalLightNode();
 

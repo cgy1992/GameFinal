@@ -29,6 +29,7 @@ namespace gf
 		, mAmbient(0.5f, 0.5f, 0.5f, 1.0f)
 		, mCurrentShadowLightID(0)
 		, mDeferredShadingPipeline(nullptr)
+		, mTileBasedDeferredShadingCS(nullptr)
 		, mRenderingDeferredQuad(false)
 	{
 		//get Video Driver object
@@ -53,6 +54,9 @@ namespace gf
 
 		// detach the octree from the scene manager.
 		mDefaultOctree->remove();
+
+		//setTileBasedDeferredShadingCS(nullptr);
+		//setDeferredShadingPipeline(nullptr);
 	}
 	
 	void CSceneManager::init()
@@ -418,12 +422,12 @@ namespace gf
 
 	void CSceneManager::drawDeferredShading(IRenderTarget* target)
 	{
-		mVideoDriver->setPipelineUsage(EPU_DEFERRED_SHADING);
-		// set gbuffer as render targets.
-
+		IMeshNode* quad = getQuadNode();
 		static const u32 gBufferCount = IVideoDriver::MAX_GBUFFER_COUNT;
 		static IRenderTarget* gbuffers[gBufferCount];
 
+		mVideoDriver->setPipelineUsage(EPU_DEFERRED_SHADING);
+		// set gbuffer as render targets.
 		mVideoDriver->getGBuffers(gbuffers);
 
 		for (u32 i = 0; i < gBufferCount; i++)
@@ -432,30 +436,30 @@ namespace gf
 		mVideoDriver->setMultipleRenderTargets(gbuffers, gBufferCount);
 
 		draw(mDefaultOctree);
+
 		mVideoDriver->setPipelineUsage(EPU_FORWARD);
 
-		IRenderTarget* targets[] = { target };
-
 		IDepthStencilSurface* depthStencilSurface = mVideoDriver->getDepthStencilSurface();
-		mVideoDriver->setMultipleRenderTargets(targets, 1, nullptr);
-
-		// set gBuffers and previous depth buffer as textures input.
-		IPipeline* deferredPipeline = getDeferredShadingPipeline();
-		SMaterial material(deferredPipeline);
-
-		material.setTexture(0, gbuffers[0]->getTexture());
-		material.setTexture(1, gbuffers[1]->getTexture());
-		material.setTexture(2, gbuffers[2]->getTexture());
-		material.setTexture(3, gbuffers[3]->getTexture());
-		material.setTexture(4, depthStencilSurface->getTexture());
-
-		IMeshNode* quad = getQuadNode();
-		quad->setMaterial(&material);
 		mRenderingDeferredQuad = true;
 
 		E_DEFERRED_SHADING_ALGORITHM deferredShadingAlgorithm = mVideoDriver->getDeferredShadingAlgorithm();
 		if (deferredShadingAlgorithm == EDSA_NORMAL_DEFERRED_SHADING)
 		{
+			IRenderTarget* targets[] = { target };
+			mVideoDriver->setMultipleRenderTargets(targets, 1, nullptr);
+
+			// set gBuffers and previous depth buffer as textures input.
+			IPipeline* deferredPipeline = getDeferredShadingPipeline();
+			SMaterial material(deferredPipeline);
+
+			material.setTexture(0, gbuffers[0]->getTexture());
+			material.setTexture(1, gbuffers[1]->getTexture());
+			material.setTexture(2, gbuffers[2]->getTexture());
+			material.setTexture(3, gbuffers[3]->getTexture());
+			material.setTexture(4, depthStencilSurface->getTexture());
+			
+			quad->setMaterial(&material);
+
 			ICameraNode* camera = getActiveCameraNode();
 			if (camera)
 			{
@@ -470,6 +474,21 @@ namespace gf
 		}
 		else if (deferredShadingAlgorithm == EDSA_TILED_BASED_DEFERRED_SHADING)
 		{
+			IRenderTarget* targets[] = { target };
+			mVideoDriver->setMultipleRenderTargets(targets, 1, nullptr);
+
+			// set gBuffers and previous depth buffer as textures input.
+			IPipeline* deferredPipeline = getDeferredShadingPipeline();
+			SMaterial material(deferredPipeline);
+
+			material.setTexture(0, gbuffers[0]->getTexture());
+			material.setTexture(1, gbuffers[1]->getTexture());
+			material.setTexture(2, gbuffers[2]->getTexture());
+			material.setTexture(3, gbuffers[3]->getTexture());
+			material.setTexture(4, depthStencilSurface->getTexture());
+
+			quad->setMaterial(&material);
+
 			const u32 RowTileNum = 16;
 			const u32 ColTileNum = 16;
 
@@ -502,6 +521,99 @@ namespace gf
 				}
 			}
 		}
+		else if (deferredShadingAlgorithm == EDSA_CS_TILE_BASED_DEFERRED_SHADING)
+		{
+			const u32 maxPointsLightNum = 2000;
+			static SPointLight pointLightsData[maxPointsLightNum];
+
+			u32 screenWidth = IDevice::getInstance()->getClientWidth();
+			u32 screenHeight = IDevice::getInstance()->getClientHeight();
+			const u32 ColTileNum = screenWidth / 16;
+			const u32 RowTileNum = screenHeight / 16;
+
+			ITextureManager* textureManager = ITextureManager::getInstance();
+
+			std::string outputTextureName("cs_tile_based_deferred_shading_output");
+			std::string postProcessPipelineName("gf/default_cs_tile_based_ds_post_process");
+			std::string pointLightsBufferName("cs_ds_point_lights_buffer");
+
+			ITexture* outputTexture = textureManager->get(outputTextureName, false);
+			if (!outputTexture)
+			{
+				outputTexture = textureManager->createTexture2D(outputTextureName, screenWidth, screenHeight,
+					ETBT_SHADER_RESOURCE | ETBT_UNORDERED_ACCESS, nullptr, 1, EGF_R8G8B8A8_UNORM,
+					0, EMU_DEFAULT);
+			}
+			
+			//create point lights buffer in Compute Shader.
+			IBuffer* pointLightsBuffer = textureManager->getBuffer(pointLightsBufferName);
+			if (!pointLightsBuffer)
+			{
+				pointLightsBuffer = textureManager->createBuffer(pointLightsBufferName, maxPointsLightNum,
+					ETBT_SHADER_RESOURCE | ETBT_CPU_ACCESS_WRITE, EGF_UNKNOWN, sizeof(SPointLight), nullptr);
+			}
+			
+
+			IPipeline* postProcessPipeline = IPipelineManager::getInstance()->get(postProcessPipelineName, true);
+			IShader* shader = getTileBasedDeferredShadingCS();
+
+			
+			// set Render targets to null
+			IRenderTarget* nulltargets[] = { 0, 0, 0, 0 };
+			mVideoDriver->setMultipleRenderTargets(nulltargets, 4, nullptr);
+			
+			shader->setTexture("gGBuffer0", gbuffers[0]->getTexture());
+			shader->setTexture("gGBuffer1", gbuffers[1]->getTexture());
+			shader->setTexture("gGBuffer2", gbuffers[2]->getTexture());
+			shader->setTexture("gGBuffer3", gbuffers[3]->getTexture());
+			shader->setTexture("gDepthBuffer", depthStencilSurface->getTexture());
+			shader->setTexture("gOutputTexture", outputTexture);
+
+			ICameraNode* camera = getActiveCameraNode();
+			math::SFrustum frustum = camera->getFrustum();
+			mDefaultOctree->getLightsInFrustum(frustum, mDeferredShadingLights.PointLights);
+			u32 lightCount = mDeferredShadingLights.PointLights.size();
+
+			if (lightCount > 0)
+			{
+				for (u32 i = 0; i < lightCount; i++)
+					mDeferredShadingLights.PointLights[i]->getLightData(&pointLightsData[i]);
+
+				STextureData texData;
+				pointLightsBuffer->lock(ETLT_WRITE_DISCARD, &texData);
+				memcpy(texData.Data, pointLightsData, lightCount * sizeof(SPointLight));
+				pointLightsBuffer->unlock();
+			}
+
+			shader->setTexture("gPointLights", pointLightsBuffer);
+			shader->setUint("gPointLightsNum", lightCount);
+			XMFLOAT4 tileNums;
+			tileNums.x = ColTileNum;
+			tileNums.y = RowTileNum;
+			tileNums.z = 1.0f / ColTileNum;
+			tileNums.w = 1.0f / RowTileNum;
+			shader->setVector("gTilesNum", tileNums);
+
+			mVideoDriver->runComputeShader(shader, ColTileNum, RowTileNum, 1, this);
+			mVideoDriver->resetRWTextures();
+			mVideoDriver->resetTextures(EST_COMPUTE_SHADER);
+			
+			IRenderTarget* targets[] = { target };
+			mVideoDriver->setMultipleRenderTargets(targets, 1, nullptr);
+
+			SMaterial material(postProcessPipeline);
+			material.setTexture(0, outputTexture);
+
+			
+
+			
+			quad->setMaterial(&material);
+
+			draw(quad);
+
+			mVideoDriver->setDepthStencilSurface(depthStencilSurface);
+		}
+
 
 		mRenderingDeferredQuad = false;
 	}
@@ -656,7 +768,7 @@ namespace gf
 		return camera;
 	}
 
-	ICameraNode* CSceneManager::getActiveCameraNode()
+	ICameraNode* CSceneManager::getActiveCameraNode() const
 	{
 		return mCameraNodes[0];
 	}
@@ -744,6 +856,7 @@ namespace gf
 				mSkyDomeNode = addMeshNode(mesh, material);
 				mSkyDomeNode->setRenderOrder(ERO_SKYDOME);
 				mSkyDomeNode->setNeedCulling(false);
+				mSkyDomeNode->setTag(EN_TAG_SKYDOME);
 			}
 			else
 			{
@@ -862,6 +975,61 @@ namespace gf
 		return mDeferredShadingPipeline;
 	}
 
+	IShader* CSceneManager::getTileBasedDeferredShadingCS()
+	{
+		if (!mTileBasedDeferredShadingCS)
+		{
+			setTileBasedDeferredShadingCS(nullptr);
+		}
+		return mTileBasedDeferredShadingCS;
+	}
+
+	bool CSceneManager::setTileBasedDeferredShadingCS(IShader* shader)
+	{
+		if (!shader)
+		{
+			IShaderManager* shaderManager = IShaderManager::getInstance();
+			shader = shaderManager->get("tile_based_deferred_shading.hlsl", "cs_main", true, EST_COMPUTE_SHADER);
+			if (!shader)
+				return false;
+		}
+
+		if (shader->getType() != EST_COMPUTE_SHADER)
+			return false;
+
+		mTileBasedDeferredShadingCS = shader;
+		return true;
+	}
+
+	math::SRay CSceneManager::getPickingRay(u32 sx, u32 sy) const
+	{
+		SViewport viewport = mVideoDriver->getViewport();
+		
+		ICameraNode* camera = getActiveCameraNode();
+		XMFLOAT4X4 proj = camera->getProjMatrix();
+		XMFLOAT4X4 view = camera->getViewMatrix();
+
+		f32 vx = (2.0f * (sx - viewport.TopLeftX) / viewport.Width - 1.0f) / proj(0, 0);
+		f32 vy = (-2.0f * (sy - viewport.TopLeftY) / viewport.Height + 1.0f) / proj(1, 1);
+		
+		XMVECTOR dir = XMVectorSet(vx, vy, 1.0f, 0);
+		XMMATRIX viewMatrix = XMLoadFloat4x4(&view);
+		XMMATRIX invViewMatrix = XMMatrixInverse(&XMMatrixDeterminant(viewMatrix), viewMatrix);
+
+		dir = XMVector3TransformNormal(dir, invViewMatrix);
+		dir = XMVector3Normalize(dir);
+
+		math::SRay ray;
+		XMStoreFloat3(&ray.Direction, dir);
+		ray.Origin = XMFLOAT3(invViewMatrix._41, invViewMatrix._42, invViewMatrix._43);
+		return ray;
+	}
+
+	ISceneNode* CSceneManager::intersectRay(const math::SRay& ray, f32* pDist,
+		u32 nodeType /*= ENT_SOLID_NODE | ENT_LIGHT_NODE*/) const
+	{
+		return mDefaultOctree->intersectRay(ray, pDist, nodeType);
+	}
 
 }
 

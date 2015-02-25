@@ -55,6 +55,10 @@ namespace gf
 
 		virtual void reset() = 0;
 
+		virtual void intersectRay(FXMVECTOR Origin, FXMVECTOR Direction, 
+			f32* pDist, ISceneNode** ppSceneNode, 
+			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const = 0;
+
 	protected:
 		IOctreeManager*					mOctreeManager;
 

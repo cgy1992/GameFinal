@@ -46,6 +46,10 @@ namespace gf
 		//const SCreationParameters& params = mDevice->getCreationParameters();
 
 		// Create a DirectX graphics interface factory.
+
+		mBackBufferWidth = createParam.BackBufferWidth;
+		mBackBufferHeight = createParam.BackBufferHeight;
+
 		result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
 		if (FAILED(result))
 		{
@@ -91,9 +95,9 @@ namespace gf
 		// When a match is found store the numerator and denominator of the refresh rate for that monitor.
 		for (i = 0; i < numModes; i++)
 		{
-			if (displayModeList[i].Width == (unsigned int)createParam.ClientWidth)
+			if (displayModeList[i].Width == (unsigned int)createParam.BackBufferWidth)
 			{
-				if (displayModeList[i].Height == (unsigned int)createParam.ClientHeight)
+				if (displayModeList[i].Height == (unsigned int)createParam.BackBufferHeight)
 				{
 					numerator = displayModeList[i].RefreshRate.Numerator;
 					denominator = displayModeList[i].RefreshRate.Denominator;
@@ -177,8 +181,8 @@ namespace gf
 		ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 
 		// Set the width and height of the back buffer.
-		swapChainDesc.BufferDesc.Width = createParam.ClientWidth;
-		swapChainDesc.BufferDesc.Height = createParam.ClientHeight;
+		swapChainDesc.BufferDesc.Width = createParam.BackBufferWidth;
+		swapChainDesc.BufferDesc.Height = createParam.BackBufferHeight;
 
 		// Set regular 32-bit surface for the back buffer.
 		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -224,7 +228,7 @@ namespace gf
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 
 		// Set the handle for the window to render to.
-		swapChainDesc.OutputWindow = (HWND)createParam.WindowHandle;
+		swapChainDesc.OutputWindow = (HWND)createParam.BackBufferWindowHandle;
 
 		// Set to full screen or windowed mode.
 		if (createParam.WindowStyle & EWS_FULLSCREEN)
@@ -264,13 +268,13 @@ namespace gf
 		ReleaseCOM(backBuffer);
 
 		mDefaultRenderTarget = new CD3D11RenderTarget(md3dDevice, md3dDeviceContext, mDefaultRenderTargetView,
-			createParam.ClientWidth, createParam.ClientHeight);
+			createParam.BackBufferWidth, createParam.BackBufferHeight);
 
 		// Initialize the description of the depth buffer.
 		ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
 
 		// Setup the viewport for rendering.
-		setViewport(0, 0, static_cast<f32>(mDevice->getClientWidth()), static_cast<f32>(mDevice->getClientHeight()));
+		setViewport(0, 0, static_cast<f32>(mBackBufferWidth), static_cast<f32>(mBackBufferHeight));
 
 		//create resource factory
 		mResourceFactory = new CD3D11ResourceFactory(
@@ -326,7 +330,8 @@ namespace gf
 		bool multiSampling = (createParam.MultiSamplingCount > 1);
 
 
-		mDepthStencilSurface = mTextureManager->createDepthStencilSurface("_default_depth_stencil_surface", 0, 0, createParam.DepthBits, createParam.StencilBits,
+		mDepthStencilSurface = mTextureManager->createDepthStencilSurface("_default_depth_stencil_surface",
+			0, 0, createParam.DepthBits, createParam.StencilBits,
 			multiSampling, createParam.MultiSamplingCount, createParam.MultiSamplingQuality, true);
 
 		if (!mDepthStencilSurface)
@@ -609,8 +614,8 @@ namespace gf
 
 			// set default viewport size
 			SViewport viewport = mViewport;
-			viewport.Width = (f32)IDevice::getInstance()->getClientWidth();
-			viewport.Height = (f32)IDevice::getInstance()->getClientHeight();
+			viewport.Width = (f32)mBackBufferWidth;
+			viewport.Height = (f32)mBackBufferHeight;
 			setViewport(viewport);
 		}
 	}
@@ -736,8 +741,8 @@ namespace gf
 
 		// set default viewport size
 		SViewport viewport = mViewport;
-		viewport.Width = (f32)(IDevice::getInstance()->getClientWidth());
-		viewport.Height = (f32)(IDevice::getInstance()->getClientHeight());
+		viewport.Width = (f32)(mBackBufferWidth);
+		viewport.Height = (f32)(mBackBufferHeight);
 		setViewport(viewport);
 	}
 
@@ -767,6 +772,13 @@ namespace gf
 				SViewport viewport = mViewport;
 				viewport.Width = (f32)pRenderTarget->getWidth();
 				viewport.Height = (f32)pRenderTarget->getHeight();
+				viewports[i] = viewport;
+			}
+			else
+			{
+				SViewport viewport = mViewport;
+				viewport.Width = static_cast<f32>(mBackBufferWidth);
+				viewport.Height = static_cast<f32>(mBackBufferHeight);
 				viewports[i] = viewport;
 			}
 		}
@@ -1051,6 +1063,8 @@ namespace gf
 	bool CD3D11Driver::runComputeShader(IShader* shader, u32 x, u32 y, u32 z,
 		ISceneNode* node)
 	{
+		shader->reset();
+
 		if (!shader || shader->getType() != EST_COMPUTE_SHADER)
 			return false;
 

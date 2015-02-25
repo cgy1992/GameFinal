@@ -105,7 +105,7 @@ namespace gf
 				memoryUsage = EMU_STAGING;
 			}
 			else if (bindFlags & ETBT_CPU_ACCESS_WRITE) {
-				texDesc.Usage = D3D11_USAGE_DEFAULT;
+				texDesc.Usage = D3D11_USAGE_DYNAMIC;
 				memoryUsage = EMU_DEFAULT;
 			}
 			else if (rawData) {

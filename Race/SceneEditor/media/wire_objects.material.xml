@@ -1,0 +1,22 @@
+<materials>
+  <material name="picking_cube_material">
+    <attributes>
+      <attribute name="diffuse" value="1.0f, 1.0f, 0.0f, 0.0f"/>
+    </attributes>
+    
+    <pipelines>
+      <pipeline name="wire_objects_pipeline"/>
+    </pipelines>
+  </material>
+
+  <material name="selected_cube_material">
+    <attributes>
+      <attribute name="diffuse" value="1.0f, 1.0f, 1.0f, 0.0f"/>
+    </attributes>
+
+    <pipelines>
+      <pipeline name="wire_objects_pipeline"/>
+    </pipelines>
+  </material>
+
+</materials>

@@ -12,11 +12,15 @@ namespace gf
 
 	CWin32Device::CWin32Device(SCreationParameters& params)
 		:IDevice(params)
+		, mDefinedWndProc(NULL)
 	{
 		DWORD dwRet;
 		dwRet = GetCurrentDirectoryA(MAX_PATH, mProcessPath);
 		//printf("Current Directory: %s\n", Buffer);
 		strcat_s(mProcessPath, "/");
+
+		if (params.WindowsProcedure)
+			mDefinedWndProc = (WNDPROC)(params.WindowsProcedure);
 	}
 
 	CWin32Device::~CWin32Device()
@@ -40,7 +44,7 @@ namespace gf
 		static TCHAR className[] = TEXT("MyGame");
 
 		// Setup the windows class with default settings.
-		wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+		wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC | CS_DBLCLKS;
 		wc.lpfnWndProc = gf::WndProc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
@@ -48,7 +52,7 @@ namespace gf
 		wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
 		wc.hIconSm = wc.hIcon;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+		wc.hbrBackground = (HBRUSH)GetStockObject(LTGRAY_BRUSH);
 		wc.lpszMenuName = NULL;
 		wc.lpszClassName = className;
 		wc.cbSize = sizeof(WNDCLASSEX);
@@ -101,11 +105,18 @@ namespace gf
 		SetForegroundWindow(mHwnd);
 		SetFocus(mHwnd);
 
-		m_CreationParams.WindowHandle = (u32)mHwnd;
+		m_CreationParams.FrameWindowHandle = (u32)mHwnd;
 		//std::cout << sizeof(mHwnd) << std::endl;
 
 		// Hide the mouse cursor.
 		// ShowCursor(false);
+
+		// if backbuffersize is not equal with screen size
+		HWND hBufferWnd = CreateWindow(TEXT("static"), NULL, WS_CHILD | WS_VISIBLE | SS_WHITERECT,
+			0, 0, m_CreationParams.BackBufferWidth, m_CreationParams.BackBufferHeight,
+			mHwnd, (HMENU)9, m_hInstance, NULL);
+
+		m_CreationParams.BackBufferWindowHandle = (u32)hBufferWnd;
 
 		if (m_CreationParams.DriverType == EDT_DIRECT3D11)
 		{
@@ -149,6 +160,11 @@ namespace gf
 
 	LRESULT CALLBACK CWin32Device::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
+		if (mDefinedWndProc)
+		{
+			mDefinedWndProc(hwnd, msg, wParam, lParam);
+		}
+
 		switch (msg)
 		{
 		case WM_DESTROY:
@@ -178,5 +194,21 @@ namespace gf
 	void CWin32Device::setWindowCaption(const char* caption)
 	{
 		SetWindowTextA(mHwnd, caption);
+	}
+
+	void CWin32Device::clientToScreen(u32& x, u32& y) const
+	{
+		POINT point = { x, y };
+		ClientToScreen(mHwnd, &point);
+		x = point.x;
+		y = point.y;
+	}
+
+	void CWin32Device::screenToClient(u32& x, u32& y) const
+	{
+		POINT point = { x, y };
+		ScreenToClient(mHwnd, &point);
+		x = point.x;
+		y = point.y;
 	}
 }

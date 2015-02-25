@@ -84,6 +84,9 @@ namespace gf
 
 		virtual IMesh* loadMesh(const std::string& name);
 
+		virtual void listResourceNames(E_RESOURCE_FILE_TYPE resourceType, 
+			std::vector<std::string>& results) const;
+
 	private:
 		bool isResourceGroupLexical(const std::string& s, std::string& groupname);
 

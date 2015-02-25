@@ -160,7 +160,7 @@ namespace gf
 
 		virtual IOctreeManager*	getDefaultOctreeManager() = 0;
 
-		virtual ICameraNode* getActiveCameraNode() = 0;
+		virtual ICameraNode* getActiveCameraNode() const = 0;
 
 		virtual u32 getActiveCameraId() const = 0;
 
@@ -205,6 +205,15 @@ namespace gf
 		virtual void setDeferredShadingPipeline(const std::string& name) = 0;
 
 		virtual IPipeline* getDeferredShadingPipeline() = 0;
+
+		virtual IShader* getTileBasedDeferredShadingCS() = 0;
+
+		virtual bool setTileBasedDeferredShadingCS(IShader* shader) = 0;
+
+		virtual math::SRay getPickingRay(u32 sx, u32 sy) const = 0;
+
+		virtual ISceneNode* intersectRay(const math::SRay& ray, f32* pDist,
+			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const = 0;
 
 	public:
 		const static int MAX_LIGHT_COUNT = 1024;

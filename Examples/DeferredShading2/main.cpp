@@ -89,6 +89,7 @@ void setupScene(ISceneManager* smgr)
 	ISimpleMesh* roomMesh = meshManager->createCubeMesh("room", roomSize, roomHeight, roomSize);
 	IMeshNode* roomNode = smgr->addMeshNode(roomMesh, nullptr, nullptr, true, XMFLOAT3(0, roomHeight / 2, 0));
 	roomNode->setMaterialName("wall_material");
+	roomNode->setRenderOrder(250);
 
 	// setup sphere
 	setupSpheres(smgr, roomSize);
@@ -189,9 +190,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	settings.MultiSamplingQuality = 0;
 	settings.DepthBits = 32;
 	settings.StencilBits = 0;
+	
 
 	IDevice* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
+	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
+	resourceGroupManager->init("Resources.cfg");
 
 	math::SAxisAlignedBox aabb;
 	aabb.Center = XMFLOAT3(0, 0, 0);
@@ -202,9 +206,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	IMaterialManager* materialManager = driver->getMaterialManager();
 	ITextureManager* textureManager = driver->getTextureManager();
 	IPipelineManager* pipelineManager = driver->getPipelineManager();
-
-	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
-	resourceGroupManager->init("Resources.cfg");
 
 	setupScene(smgr);
 
@@ -225,7 +226,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	const f32 color2[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
 	driver->setDeferredShading(true);
-	driver->setDeferredShadingAlgorithm(EDSA_TILED_BASED_DEFERRED_SHADING);
+	driver->setDeferredShadingAlgorithm(EDSA_CS_TILE_BASED_DEFERRED_SHADING);
 	smgr->setDeferredShadingPipeline("my_deferred_pipeline");
 
 	while (device->run())
@@ -251,14 +252,14 @@ int _tmain(int argc, _TCHAR* argv[])
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		u32 ms = timer->tick();
-		float dt = ms * 0.001f;
+		f32 dt = timer->tick();
+		//float dt = ms * 0.001f;
 
 		updateCamera(camera, dt);
 		//updateLightDirection(dt, light);
 		updatePointLights(dt);
 
-		smgr->update(ms);
+		smgr->update(dt);
 
 		smgr->drawAll();
 

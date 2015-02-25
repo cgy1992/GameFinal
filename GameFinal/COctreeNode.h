@@ -41,6 +41,10 @@ namespace gf
 		// whether a scene-node is in current octree-node.
 		virtual bool intersect(const math::SAxisAlignedBox& aabb);
 
+		virtual void intersectRay(FXMVECTOR Origin, FXMVECTOR Direction, f32* pDist,
+			ISceneNode** ppSceneNode,
+			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const;
+
 	protected:
 	
 		virtual void iterateChildren(ISceneNode* node, const XNA::OrientedBox& obb, const OctreeIterateCallback& callback);

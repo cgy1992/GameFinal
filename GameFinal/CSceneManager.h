@@ -149,7 +149,7 @@ namespace gf
 
 		virtual ILightNode* getLightNode(u32 id);
 
-		virtual ICameraNode* getActiveCameraNode();
+		virtual ICameraNode* getActiveCameraNode() const;
 
 		virtual u32 getActiveCameraId() const;
 
@@ -191,6 +191,15 @@ namespace gf
 
 		virtual IPipeline* getDeferredShadingPipeline();
 
+		virtual IShader* getTileBasedDeferredShadingCS();
+
+		virtual bool setTileBasedDeferredShadingCS(IShader* shader);
+
+		virtual math::SRay getPickingRay(u32 sx, u32 sy) const;
+
+		virtual ISceneNode* intersectRay(const math::SRay& ray, f32* pDist,
+			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const;
+
 	private:
 
 		void collectMeshNodeShaders(IMeshNode* node);
@@ -229,6 +238,7 @@ namespace gf
 	//	E_PIPELINE_USAGE				mCurrentPipelineUsage;
 
 		IPipeline*						mDeferredShadingPipeline;
+		IShader*						mTileBasedDeferredShadingCS;
 
 		bool							mRenderingDeferredQuad;
 

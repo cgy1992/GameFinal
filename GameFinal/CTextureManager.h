@@ -30,6 +30,8 @@ namespace gf
 
 		virtual IDepthStencilSurface* getDepthStencilSurface(const std::string& name) const;
 
+		virtual IBuffer* getBuffer(const std::string& name) const;
+
 		virtual IBuffer* createBuffer(
 			const std::string& name,
 			u32 elementNum,

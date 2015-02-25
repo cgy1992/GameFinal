@@ -34,6 +34,7 @@ namespace gf
 	{
 		EDSA_NORMAL_DEFERRED_SHADING,
 		EDSA_TILED_BASED_DEFERRED_SHADING,
+		EDSA_CS_TILE_BASED_DEFERRED_SHADING,
 	};
 
 	struct SViewport
@@ -78,6 +79,8 @@ namespace gf
 			, mMeshManager(nullptr)
 			, mDeferredShading(false)
 			, mDeferredShadingAlgorithm(EDSA_NORMAL_DEFERRED_SHADING)
+			, mBackBufferWidth(0)
+			, mBackBufferHeight(0)
 		{
 			ZeroMemory(mGBuffers, sizeof(mGBuffers));
 		}
@@ -229,6 +232,10 @@ namespace gf
 
 		virtual IRenderTarget* getDefaultRenderTarget() = 0;
 
+		u32 getBackBufferWidth() const { return mBackBufferWidth; }
+
+		u32 getBackBufferHeight() const { return  mBackBufferHeight; }
+
 		_DECLARE_SINGLETON_INSTANCE(IVideoDriver);
 
 	public:
@@ -250,6 +257,8 @@ namespace gf
 		IResourceGroupManager*			mResourceGroupManager;
 		ISamplerManager*				mSamplerManager;
 		SViewport						mViewport;
+		u32								mBackBufferWidth;
+		u32								mBackBufferHeight;
 
 		//bool							mRenderingShadowMap;
 		E_PIPELINE_USAGE				mCurrentPipelineUsage;

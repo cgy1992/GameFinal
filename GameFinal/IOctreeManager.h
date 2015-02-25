@@ -49,6 +49,9 @@ namespace gf
 		virtual bool getNearLights(IMeshNode* node, E_LIGHT_TYPE lightType, std::vector<ILightNode*>& lights) = 0;
 
 		virtual void getLightsInFrustum(const math::SFrustum& frustum, std::vector<ILightNode*>& pointLights) = 0;
+		
+		virtual ISceneNode* intersectRay(const math::SRay& ray, f32* pDist, 
+			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const = 0;
 
 	protected:
 

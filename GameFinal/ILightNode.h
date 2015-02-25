@@ -135,6 +135,10 @@ namespace gf
 
 		virtual bool intersect(const XNA::OrientedBox& obb) const = 0;
 
+		virtual bool intersectRay(const math::SRay& ray, f32* pDist) const = 0;
+
+		virtual bool intersectRay(FXMVECTOR Origin, FXMVECTOR Direction, FLOAT* pDist) const = 0;
+
 		virtual void getLightData(void* data) const = 0;
 
 		virtual bool castShadow() const { return mCastShadow; }

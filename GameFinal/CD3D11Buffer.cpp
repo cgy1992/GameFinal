@@ -59,7 +59,7 @@ namespace gf
 				memoryUsage = EMU_STAGING;
 			}
 			else if (bindFlags & ETBT_CPU_ACCESS_WRITE) {
-				bufDesc.Usage = D3D11_USAGE_DEFAULT;
+				bufDesc.Usage = D3D11_USAGE_DYNAMIC;
 				memoryUsage = EMU_DEFAULT;
 			}
 			else if (rawData) {

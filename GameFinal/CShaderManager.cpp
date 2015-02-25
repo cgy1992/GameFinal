@@ -226,6 +226,16 @@ namespace gf
 		return get(name, macros, bLoadIfNotExist, shaderType);
 	}
 
+	IShader* CShaderManager::get(const std::string& filename,
+		const std::string& functionName,
+		bool bLoadIfNotExist,
+		E_SHADER_TYPE shaderType)
+	{
+		SShaderMacroSet macros;
+		std::string name = makeUpShaderName(filename, functionName);
+		return get(name, macros, bLoadIfNotExist, shaderType);
+	}
+
 
 	std::string CShaderManager::makeUpShaderName(const std::string& filename,
 		const std::string& functionName) const

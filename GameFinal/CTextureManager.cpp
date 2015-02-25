@@ -375,10 +375,12 @@ namespace gf
 			return it->second->getDepthStencilSurface();
 		}
 
+		IVideoDriver* driver = IVideoDriver::getInstance();
+
 		if (width == 0)
-			width = mDevice->getClientWidth();
+			width = driver->getBackBufferWidth();
 		if (height == 0)
-			height = mDevice->getClientHeight();
+			height = driver->getBackBufferHeight();
 
 		u32 sortcode = mCodeAllocator.allocate();
 		ITexture* pTexture = mResourceFactory->createDepthStencilTexture(name, sortcode,
@@ -425,6 +427,18 @@ namespace gf
 		if (bLoadIfNotExist)
 			return loadCubeTexture(name);
 
+		return nullptr;
+	}
+
+	IBuffer* CTextureManager::getBuffer(const std::string& name) const
+	{
+		auto it = mTextureMap.find(name);
+		if (it != mTextureMap.end())
+		{
+			ITexture* texture = it->second;
+			if (texture->getType() == ETT_BUFFER)
+				return dynamic_cast<IBuffer*>(texture);
+		}
 		return nullptr;
 	}
 

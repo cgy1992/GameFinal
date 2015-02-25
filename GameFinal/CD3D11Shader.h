@@ -69,9 +69,10 @@ namespace gf
 			md3dDriver(pd3dDriver),
 			mSrvNum(0),
 			mUavNum(0),
-			mSamplerNum(0)
+			mSamplerNum(0),
+			mShaderBuffer(nullptr)
 		{
-
+			memset(md3dConstantBuffers, 0, sizeof(md3dConstantBuffers));
 		}
 
 		virtual const char* getShaderProfile() const = 0;

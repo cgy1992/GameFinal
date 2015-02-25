@@ -52,6 +52,11 @@ namespace gf
 		ESNT_SCENE_MANAGER = 0x200,	// 100000,0000
 	};
 
+	enum E_NODE_TAG
+	{
+		EN_TAG_SKYDOME = 0x01,
+	};
+
 	class ISceneNode : public IReferenceCounted
 	{
 	public:
@@ -68,6 +73,7 @@ namespace gf
 			, mNeedCulling(true)
 			, mRenderOrder(0)
 			, mStatic(bStatic)
+			, mTag(0)
 		{
 			//XMMATRIX rot = XMMatrixIdentity();
 			//XMStoreFloat4x4(&mOrientation, rot);
@@ -424,6 +430,9 @@ namespace gf
 			return mStatic;
 		}
 
+		u32	getTag() const { return mTag; }
+
+		void setTag(u32 tag) { mTag = tag; }
 		
 
 		class CSceneNodeIterator
@@ -491,6 +500,7 @@ namespace gf
 		// if the node is static in the scene.
 		bool mStatic;
 
+		u32	mTag;
 	};
 
 }

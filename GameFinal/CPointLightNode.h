@@ -88,7 +88,11 @@ namespace gf
 		virtual bool isCulled(const math::SFrustum& frustum) const;
 
 		virtual bool intersect(const XNA::OrientedBox& obb) const;
+
+		virtual bool intersectRay(FXMVECTOR Origin, FXMVECTOR Direction, f32* pDist) const;
 		
+		virtual bool intersectRay(const math::SRay& ray, f32* pDist) const;
+
 		virtual math::SAxisAlignedBox getAabb() const
 		{
 			return mAabb;

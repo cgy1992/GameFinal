@@ -526,5 +526,22 @@ namespace gf
 		return meshManager->getMesh(name, false);
 	}
 
+	void CResourceGroupManager::listResourceNames(E_RESOURCE_FILE_TYPE resourceType,
+		std::vector<std::string>& results) const
+	{
+		for (u32 i = 0; i < mResourceGroups.size(); i++)
+		{
+			const SResourceGroup& group = mResourceGroups[i];
+			for (u32 j = 0; j < group.Files.size(); j++)
+			{
+				const SResourceFile& file = group.Files[j];
+				if (file.Type == resourceType)
+				{
+					results.push_back(file.Name);
+				}
+			}
+		}
+	}
+
 }
 

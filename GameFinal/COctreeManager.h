@@ -45,6 +45,8 @@ namespace gf
 
 		virtual void getLightsInFrustum(const math::SFrustum& frustum, std::vector<ILightNode*>& pointLights);
 
+		virtual ISceneNode* intersectRay(const math::SRay& ray, f32* pDist,
+			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const;
 
 	private:
 

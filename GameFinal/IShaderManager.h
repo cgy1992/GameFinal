@@ -23,6 +23,11 @@ namespace gf
 			bool bLoadIfNotExist = true, 
 			E_SHADER_TYPE shaderType = EST_UNDEFINED_SHADER) = 0;
 
+		virtual IShader* get(const std::string& filename,
+			const std::string& functionName,
+			bool bLoadIfNotExist = true,
+			E_SHADER_TYPE shaderType = EST_UNDEFINED_SHADER) = 0;
+
 		virtual IShader* get(const std::string& name,
 			const SShaderMacroSet& macros,
 			bool bLoadIfNotExist = true,

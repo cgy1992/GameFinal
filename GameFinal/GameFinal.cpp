@@ -26,6 +26,15 @@ namespace gf
 		creationParams.StencilBits = settings.StencilBits;
 		creationParams.MultiSamplingCount = settings.MultiSamplingCount;
 		creationParams.MultiSamplingQuality = settings.MultiSamplingQuality;
+		creationParams.WindowsProcedure = settings.WindowsProcedure;
+		creationParams.BackBufferWidth = settings.BackBufferWidth;
+		creationParams.BackBufferHeight = settings.BackBufferHeight;
+
+		if (settings.BackBufferWidth == 0)
+			creationParams.BackBufferWidth = width;
+
+		if (settings.BackBufferHeight == 0)
+			creationParams.BackBufferHeight = height;
 
 		CWin32Device* device = new CWin32Device(creationParams);
 		HRESULT hr = device->init();

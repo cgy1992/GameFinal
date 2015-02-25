@@ -28,12 +28,17 @@ namespace gf
 	};
 
 	// This is used as the parameters of the createDevice function by the user 
+	//typedef LRESULT(CALLBACK* WNDPROC) (HWND, UINT, WPARAM, LPARAM);
+	//typedef u32 (CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 	struct SDeviceContextSettings
 	{
 		u32				DepthBits;
 		u32				StencilBits;
 		u32				MultiSamplingCount;
 		u32				MultiSamplingQuality;
+		u32				BackBufferWidth;
+		u32				BackBufferHeight;
+		void*			WindowsProcedure;
 
 		SDeviceContextSettings()
 		{
@@ -41,6 +46,9 @@ namespace gf
 			StencilBits = 8;
 			MultiSamplingCount = 1;
 			MultiSamplingQuality = 0;
+			WindowsProcedure = nullptr;
+			BackBufferHeight = 0;
+			BackBufferWidth = 0;
 		}
 	};
 
@@ -49,30 +57,39 @@ namespace gf
 		E_DRIVER_TYPE	DriverType;
 		u32				ClientWidth;
 		u32				ClientHeight;
+		u32				BackBufferWidth;
+		u32				BackBufferHeight;
 		E_WINDOW_STYLE  WindowStyle;
 		bool			VsyncEnabled;
-		u32				WindowHandle;
+		u32				FrameWindowHandle;
+		u32				BackBufferWindowHandle;
 
 		/* fields below are from SDeviceContextSettings*/
 		u32				DepthBits;
 		u32				StencilBits;
 		u32				MultiSamplingCount;
 		u32				MultiSamplingQuality;
-
+		void*			WindowsProcedure;
 
 		SCreationParameters()
 		{
 			DriverType = EDT_DIRECT3D11;
 			ClientHeight = 0;
 			ClientWidth = 0;
+			
+			BackBufferWidth = 0;
+			BackBufferHeight = 0;
+
 			WindowStyle = EWS_NONE;
 			VsyncEnabled = false;
-			WindowHandle = 0;
+			FrameWindowHandle = 0;
+			BackBufferWindowHandle = 0;
 
 			DepthBits = 24;
 			StencilBits = 8;
 			MultiSamplingCount = 1;
 			MultiSamplingQuality = 0;
+			WindowsProcedure = nullptr;
 		}
 	};
 
@@ -126,6 +143,9 @@ namespace gf
 		{
 			return m_CreationParams.ClientHeight;
 		}
+
+		virtual void clientToScreen(u32& x, u32& y) const = 0;
+		virtual void screenToClient(u32& x, u32& y) const = 0;
 
 		virtual ITimer* getTimer() const
 		{

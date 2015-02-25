@@ -86,12 +86,11 @@ int _tmain(int argc, _TCHAR* argv[])
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		u32 ms = timer->tick();
-		float dt = ms * 0.001f;
+		f32 dt = timer->tick();
 		updateCamera(camera, dt);
 		g_grassLand->update(dt);
 
-		smgr->update(ms);
+		smgr->update(dt);
 		smgr->drawAll();
 
 		driver->endScene();
@@ -120,7 +119,7 @@ void testCreateTexture1D()
 	}
 
 	ITexture* texture = textureManager->createTexture1D("test_texture_1d", width, 
-		ETBT_SHADER, &data[0], 1, EGF_R32_FLOAT);
+		ETBT_SHADER_RESOURCE, &data[0], 1, EGF_R32_FLOAT);
 	
 	IMaterial* material = IMaterialManager::getInstance()->get("ground_material");
 	material->setTexture(0, texture);

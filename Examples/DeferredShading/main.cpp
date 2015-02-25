@@ -40,14 +40,17 @@ int main()
 
 	IDevice* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
+	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
+	resourceGroupManager->init("Resources.cfg");
+
+
 	ISceneManager* smgr = device->createSceneManager();
 	IMeshManager* meshManager = driver->getMeshManager();
 	IMaterialManager* materialManager = driver->getMaterialManager();
 	ITextureManager* textureManager = driver->getTextureManager();
 	IPipelineManager* pipelineManager = driver->getPipelineManager();
 
-	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
-	resourceGroupManager->init("Resources.cfg");
+	
 
 	// create ground
 
@@ -135,14 +138,14 @@ int main()
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		u32 ms = timer->tick();
-		float dt = ms * 0.001f;
+		f32 dt = timer->tick();
+		//float dt = ms * 0.001f;
 
 		updateCamera(camera, dt);
 		updateLightDirection(dt, light);
 		//updateCarPosition(dt, carNode, camera);
 
-		smgr->update(ms);
+		smgr->update(dt);
 
 		smgr->drawAll();
 

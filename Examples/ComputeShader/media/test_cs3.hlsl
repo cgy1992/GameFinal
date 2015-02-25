@@ -17,7 +17,8 @@ StructuredBuffer<SInputData> gInputB;
 RWStructuredBuffer<SOutputData> gOutput;
 
 [numthreads(32, 1, 1)]
-void cs_main(int3 dispatchThreadID : SV_DispatchThreadID)
+void cs_main(int3 dispatchThreadID : SV_DispatchThreadID,
+	int3  groundThreadID : SV_GroupThreadID)
 {
 // Sum the xyth texels and store the result in the xyth texel of
 // gOutput.

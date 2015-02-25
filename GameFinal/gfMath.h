@@ -90,6 +90,12 @@ namespace gf
 			};
 		};
 
+		struct SRay
+		{
+			XMFLOAT3	Origin;
+			XMFLOAT3	Direction;
+		};
+
 		inline XMFLOAT4 VectorAdd(const XMFLOAT4& a, const XMFLOAT4& b)
 		{
 			return XMFLOAT4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);

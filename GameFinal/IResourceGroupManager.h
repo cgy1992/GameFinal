@@ -67,7 +67,8 @@ namespace gf
 			std::string& dirPath,
 			E_RESOURCE_FILE_TYPE filetype = ERFT_UNKNOWN) const = 0;
 
-		
+		virtual void listResourceNames(E_RESOURCE_FILE_TYPE resourceType,
+			std::vector<std::string>& results) const = 0;
 
 	protected:
 

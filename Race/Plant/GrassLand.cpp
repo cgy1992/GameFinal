@@ -96,7 +96,7 @@ ITexture* GrassLand::createRadiansTexture()
 	}
 
 	ITexture* texture = ITextureManager::getInstance()->createTexture1D("radians_texture", width,
-		ETBT_SHADER, (void*)&data[0], 1, EGF_R32G32_FLOAT);
+		ETBT_SHADER_RESOURCE, (void*)&data[0], 1, EGF_R32G32_FLOAT);
 
 	return texture;
 }

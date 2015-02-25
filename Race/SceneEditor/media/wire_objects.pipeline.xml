@@ -1,0 +1,19 @@
+<pipelines>
+
+  <!--no alpha testing, no specular, no shadow -->
+  <pipeline name="wire_objects_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="wire_objects.hlsl" main="vs_main"/>
+      <pixel-shader file="wire_objects.hlsl" main="ps_main"/>
+    </shaders>
+    <render-states>
+      <render-state name="fill_mode" value="wireframe"/>
+    </render-states>
+  </pipeline>
+</pipelines>

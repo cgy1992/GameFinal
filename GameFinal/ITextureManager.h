@@ -104,6 +104,7 @@ namespace gf
 
 		virtual IDepthStencilSurface* getDepthStencilSurface(const std::string& name) const = 0;
 
+		virtual IBuffer* getBuffer(const std::string& name) const = 0;
 
 		virtual IRenderTarget* getTempRenderTarget(
 			u32 width = 0,

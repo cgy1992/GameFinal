@@ -57,6 +57,19 @@ struct SBillboard
 	float3 Color;
 };
 
+struct SFrustum
+{
+	float4 Planes[6];
+};
+
+// these definitions are used for SFrustum.
+#define GF_LEFT_PLANE 0
+#define GF_RIGHT_PLANE 1
+#define GF_TOP_PLANE 2
+#define GF_BOTTOM_PLANE 3
+#define GF_NEAR_PLANE 4
+#define GF_FAR_PLANE 5
+
 cbuffer gf_cb_world
 {
 	float4x4 GF_WORLD;
@@ -239,6 +252,7 @@ float3 ComputeWorldPosFromDepthBuffer(Texture2D zbuffer, SamplerState samplerSta
 	posW = posW / posW.w;
 	return posW.xyz;
 }
+
 
 
 #endif

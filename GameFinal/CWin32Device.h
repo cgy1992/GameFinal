@@ -25,10 +25,15 @@ namespace gf
 
 		virtual ISceneManager* createSceneManager();
 
+		virtual void clientToScreen(u32& x, u32& y) const;
+
+		virtual void screenToClient(u32& x, u32& y) const;
+
 		virtual ~CWin32Device();
 	private:
 		HWND			mHwnd;
 		HINSTANCE		m_hInstance;
+		WNDPROC			mDefinedWndProc;
 	};
 }
 #endif
