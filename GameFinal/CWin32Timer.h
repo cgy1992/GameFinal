@@ -19,10 +19,13 @@ namespace gf
 
 		// get the total time from the computer starting.
 		virtual f32 getTime() const;
+
+		virtual f64 getMilliseconds() const;
 	
 	private:
 
 		double mSecondsPerCount;
+		double mMillisecondsPerCount;
 	//	double mDeltaTime;
 
 		__int64 mBaseTime;

@@ -523,7 +523,7 @@ namespace gf
 		}
 		else if (deferredShadingAlgorithm == EDSA_CS_TILE_BASED_DEFERRED_SHADING)
 		{
-			const u32 maxPointsLightNum = 2000;
+			const u32 maxPointsLightNum = 3000;
 			static SPointLight pointLightsData[maxPointsLightNum];
 
 			u32 screenWidth = IDevice::getInstance()->getClientWidth();
@@ -571,7 +571,12 @@ namespace gf
 
 			ICameraNode* camera = getActiveCameraNode();
 			math::SFrustum frustum = camera->getFrustum();
+
+			ITimer* timer = mDevice->getTimer();
+			f64 start = timer->getMilliseconds();
 			mDefaultOctree->getLightsInFrustum(frustum, mDeferredShadingLights.PointLights);
+			
+
 			u32 lightCount = mDeferredShadingLights.PointLights.size();
 
 			if (lightCount > 0)
@@ -584,6 +589,7 @@ namespace gf
 				memcpy(texData.Data, pointLightsData, lightCount * sizeof(SPointLight));
 				pointLightsBuffer->unlock();
 			}
+			
 
 			shader->setTexture("gPointLights", pointLightsBuffer);
 			shader->setUint("gPointLightsNum", lightCount);
@@ -612,6 +618,9 @@ namespace gf
 			draw(quad);
 
 			mVideoDriver->setDepthStencilSurface(depthStencilSurface);
+
+			f64 end = timer->getMilliseconds();
+			std::cout << end - start << std::endl;
 		}
 
 

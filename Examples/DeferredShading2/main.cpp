@@ -32,7 +32,7 @@ SPointLightInfo g_pointLightInfo;
 IBillboardCollectionMesh* g_BillboardMesh = nullptr;
 IMeshNode* g_BillboardNode;
 std::vector<SPointLightInfo> g_pointLightInfos;
-const u32 g_pointLightCount = 1000;
+const u32 g_pointLightCount = 3000;
 const f32 g_pointLightRange = 3.0f;
 
 
@@ -199,7 +199,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	math::SAxisAlignedBox aabb;
 	aabb.Center = XMFLOAT3(0, 0, 0);
-	aabb.Extents = XMFLOAT3(30.0f, 30.0f, 30.0f);
+	aabb.Extents = XMFLOAT3(300.0f, 300.0f, 300.0f);
 
 	ISceneManager* smgr = device->createSceneManager(aabb);
 	IMeshManager* meshManager = driver->getMeshManager();
@@ -210,7 +210,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	setupScene(smgr);
 
 	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
-	camera->setFarZ(500.0f);
+	camera->setFarZ(400.0f);
 	camera->setShadowRange(100.0f);
 
 	//smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 0));
@@ -226,8 +226,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	const f32 color2[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
 	driver->setDeferredShading(true);
+	//driver->setDeferredShadingAlgorithm(EDSA_NORMAL_DEFERRED_SHADING);
+	//smgr->setDeferredShadingPipeline("gf/default_deferred_pipeline");
+	
 	driver->setDeferredShadingAlgorithm(EDSA_CS_TILE_BASED_DEFERRED_SHADING);
 	smgr->setDeferredShadingPipeline("my_deferred_pipeline");
+	
 
 	while (device->run())
 	{

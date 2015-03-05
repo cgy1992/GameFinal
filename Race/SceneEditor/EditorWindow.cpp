@@ -1,11 +1,9 @@
 #include "stdafx.h"
 #include "EditorWindow.h"
 #include "EditorScene.h"
-#include <windowsx.h>
+#include "ControlIDs.h"
 
-#define IDC_NEWBTN 200
-#define IDC_CANCELBTN 201
-#define IDC_MESH_COMBO 202
+
 
 EditorWindow* EditorWindow::_instance = nullptr;
 
@@ -38,32 +36,18 @@ LRESULT CALLBACK EditorWindow::WindowsProcedure(HWND hwnd, UINT msg, WPARAM wPar
 	{
 	case WM_CREATE:
 		mHwnd = hwnd;
-		mNewButton = CreateWindow(TEXT("button"), TEXT("New"),
-			WS_CHILD | WS_VISIBLE, 0, 0, 40, 20, hwnd,
-			(HMENU)IDC_NEWBTN, hInst, NULL);
-		mCancelButton = CreateWindow(TEXT("button"), TEXT("Cancel"),
-			WS_CHILD | WS_VISIBLE, 50, 0, 40, 20, hwnd,
-			(HMENU)IDC_CANCELBTN, hInst, NULL);
-		mMeshNamesComboBox = CreateWindow(TEXT("combobox"), NULL,
-			WS_CHILDWINDOW | WS_VISIBLE | LBS_STANDARD,
-			10, 80, 150, 400, hwnd, (HMENU)IDC_MESH_COMBO, hInst, NULL);
+		mLeftSubWindow = CreateWindow(TEXT("static"), NULL, WS_CHILD | WS_VISIBLE,
+			0, 0, LEFT_SUB_WINDOW_WIDTH, 0,
+			mHwnd, (HMENU)IDC_LEFT_SUB_WINDOW, hInst, NULL);
+		mRightSubWindow = CreateWindow(TEXT("static"), NULL, WS_CHILD | WS_VISIBLE,
+			0, 0, RIGHT_SUB_WINDOW_WINDTH, 0,
+			mHwnd, (HMENU)IDC_RIGHT_SUB_WINDOW, hInst, NULL);
+		mCreateMeshNodeWindow.OnCreate(mHwnd, mHwnd);
 		break;
 	case WM_SIZE:
 		cxClient = LOWORD(lParam);
 		cyClient = HIWORD(lParam);
-		device = IDevice::getInstance();
-
-		if (scene)
-		{
-			hBufferHwnd = (HWND)IDevice::getInstance()->getCreationParameters().BackBufferWindowHandle;
-			if (hBufferHwnd)
-			{
-				mBufferWndWidth = cxClient - 400;
-				mBufferWndHeight = cyClient;
-				scene->setRenderRegion(mBufferWndWidth, mBufferWndHeight);
-				MoveWindow(hBufferHwnd, 200, 0, mBufferWndWidth, mBufferWndHeight, true);
-			}
-		}
+		OnSize(cxClient, cyClient);
 		break;
 	case WM_LBUTTONDOWN:
 		xPos = LOWORD(lParam);
@@ -86,10 +70,7 @@ LRESULT CALLBACK EditorWindow::WindowsProcedure(HWND hwnd, UINT msg, WPARAM wPar
 		MouseDoubleClicked(xPos, yPos);
 		break;
 	case WM_COMMAND:
-		if (LOWORD(wParam) == IDC_NEWBTN && HIWORD(wParam) == BN_CLICKED)
-		{
-			OnNewMeshNodeButton((HWND)lParam);
-		}
+		mCreateMeshNodeWindow.OnCommand(LOWORD(wParam), HIWORD(wParam), wParam, lParam);
 		break;
 	}
 
@@ -108,15 +89,8 @@ void EditorWindow::_setInstance(EditorWindow* instance)
 
 void EditorWindow::init()
 {
-	MoveWindow(mHwnd, 200, 100, 1500, 900, TRUE);
-	// fill mesh combo box
-	IResourceGroupManager* rgmr = IResourceGroupManager::getInstance();
-	std::vector<std::string> names;
-	rgmr->listResourceNames(ERFT_MESH, names);
-	for (u32 i = 0; i < names.size(); i++)
-	{
-		SendMessageA(mMeshNamesComboBox, CB_ADDSTRING, (WPARAM)0, (LPARAM)(LPCTSTR)(names[i].c_str()));
-	}
+	MoveWindow(mHwnd, 100, 100, 1500, 900, TRUE);
+	mCreateMeshNodeWindow.Init();
 }
 
 void EditorWindow::MouseLeftButtonDown(int xPos, int yPos)
@@ -129,7 +103,7 @@ void EditorWindow::MouseLeftButtonDown(int xPos, int yPos)
 	{
 		scene->AddObject();
 		mMouseState = EMS_PICKING;
-		EnableWindow(mNewButton, TRUE);
+		mCreateMeshNodeWindow.Enable(IDC_NEW_MODEL_NDOE_BTN, TRUE);
 	}
 	else if (mMouseState == EMS_PICKING)
 	{
@@ -147,7 +121,7 @@ void EditorWindow::MouseRightButtonDown(int xPos, int yPos)
 
 	if (mMouseState == EMS_ADD_OBJECT)
 	{
-		EnableWindow(mNewButton, TRUE);
+		mCreateMeshNodeWindow.Enable(IDC_NEW_MODEL_NDOE_BTN, TRUE);
 		mMouseState = EMS_PICKING;
 		scene->CancelAddingObject();
 	}
@@ -159,7 +133,7 @@ void EditorWindow::MouseMove(int xPos, int yPos)
 	if (!scene)
 		return;
 
-	u32 sx = xPos - 200;
+	u32 sx = xPos - LEFT_SUB_WINDOW_WIDTH;
 	u32 sy = yPos;
 	
 	if (mMouseState == EMS_ADD_OBJECT)
@@ -175,17 +149,7 @@ void EditorWindow::MouseMove(int xPos, int yPos)
 
 void EditorWindow::OnNewMeshNodeButton(HWND hwnd)
 {
-	EditorScene* scene = EditorScene::getInstance();
-	EnableWindow(hwnd, FALSE);
-	mMouseState = EMS_ADD_OBJECT;
-	char szMeshName[128];
-	int selectedIndex = ComboBox_GetCurSel(mMeshNamesComboBox);
-	if (selectedIndex >= 0)
-	{
-		SendMessageA(mMeshNamesComboBox, CB_GETLBTEXT, selectedIndex, (LPARAM)szMeshName);
-		if (scene)
-			scene->PrepareAddingObject(szMeshName);
-	}
+	
 }
 
 void EditorWindow::MouseDoubleClicked(int xPos, int yPos)
@@ -196,9 +160,30 @@ void EditorWindow::MouseDoubleClicked(int xPos, int yPos)
 
 	if (mMouseState == EMS_PICKING)
 	{
-		u32 sx = xPos - 200;
+		u32 sx = xPos - LEFT_SUB_WINDOW_WIDTH;
 		u32 sy = yPos;
 		scene->SelectObject(sx, sy);
 		scene->BeginFocusingObject();
 	}
+}
+
+void EditorWindow::OnSize(int cxClient, int cyClient)
+{
+	IDevice* device = IDevice::getInstance();
+	EditorScene* scene = EditorScene::getInstance();
+	if (scene)
+	{
+		HWND hBufferHwnd = (HWND)IDevice::getInstance()->getCreationParameters().BackBufferWindowHandle;
+		if (hBufferHwnd)
+		{
+			mBufferWndWidth = cxClient - LEFT_SUB_WINDOW_WIDTH - RIGHT_SUB_WINDOW_WINDTH;
+			mBufferWndHeight = cyClient;
+			scene->setRenderRegion(mBufferWndWidth, mBufferWndHeight);
+			MoveWindow(hBufferHwnd, LEFT_SUB_WINDOW_WIDTH, 0, mBufferWndWidth, mBufferWndHeight, true);
+		}
+	}
+
+	MoveWindow(mLeftSubWindow, 0, 0, LEFT_SUB_WINDOW_WIDTH, cyClient, TRUE);
+	MoveWindow(mRightSubWindow, cxClient - RIGHT_SUB_WINDOW_WINDTH, 0, RIGHT_SUB_WINDOW_WINDTH, cyClient, TRUE);
+
 }

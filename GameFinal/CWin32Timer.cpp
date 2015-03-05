@@ -16,6 +16,7 @@ namespace gf
 		__int64 countsPerSec;
 		QueryPerformanceFrequency((LARGE_INTEGER*)&countsPerSec);
 		mSecondsPerCount = 1.0 / (double)countsPerSec;
+		mMillisecondsPerCount = 1000.0f / (double)countsPerSec;
 	}
 
 
@@ -132,6 +133,13 @@ namespace gf
 		QueryPerformanceCounter((LARGE_INTEGER*)&currTime);
 
 		return static_cast<f32>(currTime * mSecondsPerCount);
+	}
+
+	gf::f64 CWin32Timer::getMilliseconds() const
+	{
+		__int64 currTime;
+		QueryPerformanceCounter((LARGE_INTEGER*)&currTime);
+		return static_cast<f64>(currTime * mMillisecondsPerCount);
 	}
 
 }

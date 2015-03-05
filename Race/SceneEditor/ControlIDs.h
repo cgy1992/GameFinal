@@ -1,0 +1,10 @@
+#ifndef __CONTROL_IDS_H__
+#define __CONTROL_IDS_H__
+
+#define IDC_LEFT_SUB_WINDOW 201
+#define IDC_RIGHT_SUB_WINDOW 202
+
+#define IDC_NEW_MODEL_NDOE_BTN 301
+#define IDC_ALL_MESH_COMBO 302
+
+#endif

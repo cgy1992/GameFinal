@@ -115,6 +115,7 @@ void cs_main(int3 dispatchThreadID : SV_DispatchThreadID,
 
 	GroupMemoryBarrierWithGroupSync();
 
+
 	// step 4: calculate the actual lighting.
 	//  compute the coordinates in clip space.
 	float4 posH;
@@ -130,13 +131,14 @@ void cs_main(int3 dispatchThreadID : SV_DispatchThreadID,
 	float4 specularMtrl = gGBuffer2[dispatchThreadID.xy];
 	float4 ambientMtrl = gGBuffer3[dispatchThreadID.xy];
 
+	
 	float4 diffuseSum = float4(0, 0, 0, 0);
 	float4 specularSum = float4(0, 0, 0, 0);
 	float4 diffuse;
 	float4 specular;
 	float3 lightDir;
 	float4 Color = GF_AMBIENT * ambientMtrl;
-
+	
 	for(int i = 0; i < visiblePointLightsNum; i++)
 	{
 		uint lightIndex = visiblePointLights[i];
@@ -154,11 +156,12 @@ void cs_main(int3 dispatchThreadID : SV_DispatchThreadID,
 	Color = Color + diffuseSum * diffuseMtrl + specularSum * specularMtrl;
 	float k = (float)visiblePointLightsNum / 500;
 	float4 testColor = float4(k, 0, 0, 0);
-
+	
 	gOutputTexture[dispatchThreadID.xy] = Color;
 	//gOutputTexture[dispatchThreadID.xy] = testColor;
 	//gOutputTexture[dispatchThreadID.xy] = float4(RegionH.ww, 0,0);
 	//gOutputTexture[dispatchThreadID.xy] = float4(posH.z, 0, 0, 0);
+	//gOutputTexture[dispatchThreadID.xy] = float4(0,0,0,0);
 }
 
 

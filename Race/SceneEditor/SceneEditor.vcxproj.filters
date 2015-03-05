@@ -30,6 +30,12 @@
     <ClInclude Include="EditorScene.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CreateMeshNodeWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlIDs.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -44,5 +50,13 @@
     <ClCompile Include="EditorWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="CreateMeshNodeWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="xp.manifest">
+      <Filter>源文件</Filter>
+    </Manifest>
   </ItemGroup>
 </Project>

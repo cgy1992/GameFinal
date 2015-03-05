@@ -24,7 +24,6 @@ public:
 	void addTreeNode(u32 sx, u32 sy);
 
 
-
 	void setRenderRegion(u32 width, u32 height)
 	{
 		BufferWndWidth = width;

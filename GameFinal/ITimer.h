@@ -18,6 +18,7 @@ namespace gf
 		virtual void reset() = 0;
 
 		virtual f32 getTime() const = 0;
+		virtual f64 getMilliseconds() const = 0;
 	};
 }
 #endif
