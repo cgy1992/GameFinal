@@ -1,6 +1,8 @@
 #ifndef __EDITOR_SCENE_CLASS_H__
 #define __EDITOR_SCENE_CLASS_H__
 
+#include "SNodeInfo.h"
+
 using namespace gf;
 
 class EditorScene
@@ -11,7 +13,6 @@ public:
 
 	void setupInitialScene();
 
-
 	static void _setInstance(EditorScene* scene) { _instance = scene; }
 	static EditorScene* getInstance() { return _instance; }
 
@@ -20,30 +21,34 @@ public:
 	
 	void updateCamera(f32 delta);
 
-	void changeTreePosition();
-	void addTreeNode(u32 sx, u32 sy);
-
-
 	void setRenderRegion(u32 width, u32 height)
 	{
 		BufferWndWidth = width;
 		BufferWndHeight = height;
 	}
 
-	void PrepareAddingObject(const std::string& meshName);
-	void AddObject();
+	bool PrepareAddingObject(const std::string& meshName);
+	u32 AddObject();
 	void CancelAddingObject();
 	void ChangeAddedObjectPosition(u32 sx, u32 sy);
 	void PickingObject(u32 sx, u32 sy);
-	void SelectObject(u32 sx, u32 sy);
 
+	void SelectObject(ISceneNode* node);
+	int SelectObject(u32 sx, u32 sy);
+	bool SelectObject(u32 id);
+	SNodeInfo* GetNodeInfoById(u32 id);
+	SNodeInfo* GetSelectedNodeInfo();
 	void BeginFocusingObject();
+	void UpdateNodeInfo(SNodeInfo* info);
+	static u32 getNextNodeSequence();
+	void MoveSelectedNode();
 
 private:
 
 	math::SRay computePickingRay(u32 sx, u32 sy);
 	void focusOnObject(f32 dt);
 
+	void updateSelectedNodeCube();
 
 	static EditorScene* _instance;
 	IDevice*					mDevice;
@@ -69,6 +74,10 @@ private:
 
 	bool						mCameraFocusingObject;
 
+	static u32					nodeSequenceNumber;
+
+	std::map<u32, SNodeInfo>	mNodeInfos;
+	std::map<ISceneNode*, u32>  mNodeIdMap;
 };
 
 

@@ -526,4 +526,87 @@ namespace gf
 		}
 	}
 
+	void COctreeNode::intersectRayWithTag(FXMVECTOR Origin, FXMVECTOR Direction, f32* pDist,
+		ISceneNode** ppSceneNode,
+		u32 tag, u32 nodeType) const
+	{
+		f32 dist;
+
+		// check if ray intersects with the aabb of octree-node
+		XNA::AxisAlignedBox aabb = mAabb.getXnaAxisAlignedBox();
+		if (!XNA::IntersectRayAxisAlignedBox(Origin, Direction, &aabb, &dist))
+			return;
+
+		if (dist > *pDist)
+			return;
+
+		if (nodeType | ENT_SOLID_NODE)
+		{
+			for (auto it = mStaticMeshNodes.begin(); it != mStaticMeshNodes.end(); it++)
+			{
+				if ((*it)->getTag() & tag)
+				{
+					XNA::OrientedBox obb = (*it)->getOrientedBox().getXnaOrientedBox();
+					if (XNA::IntersectRayOrientedBox(Origin, Direction, &obb, &dist))
+					{
+						if (dist < *pDist)
+						{
+							*pDist = dist;
+							*ppSceneNode = *it;
+						}
+					}
+				}
+			}
+
+			for (auto it = mDynamicMeshNodes.begin(); it != mDynamicMeshNodes.end(); it++)
+			{
+				if ((*it)->getTag() & tag)
+				{
+					XNA::OrientedBox obb = (*it)->getOrientedBox().getXnaOrientedBox();
+					if (XNA::IntersectRayOrientedBox(Origin, Direction, &obb, &dist))
+					{
+						if (dist < *pDist)
+						{
+							*pDist = dist;
+							*ppSceneNode = *it;
+						}
+					}
+				}
+			}
+		}
+
+		if (nodeType | ENT_LIGHT_NODE)
+		{
+			for (auto it = mStaticLightNodes.begin(); it != mStaticLightNodes.end(); it++)
+			{
+				if (((*it)->getTag() & tag) && (*it)->intersectRay(Origin, Direction, &dist))
+				{
+					if (dist < *pDist)
+					{
+						*pDist = dist;
+						*ppSceneNode = *it;
+					}
+				}
+			}
+
+			for (auto it = mDynamicLightNodes.begin(); it != mDynamicLightNodes.end(); it++)
+			{
+				if (((*it)->getTag() & tag) && (*it)->intersectRay(Origin, Direction, &dist))
+				{
+					if (dist < *pDist)
+					{
+						*pDist = dist;
+						*ppSceneNode = *it;
+					}
+				}
+			}
+		}
+
+		for (u32 i = 0; i < 8; i++)
+		{
+			if (mChildrenNodes[i])
+				mChildrenNodes[i]->intersectRayWithTag(Origin, Direction, pDist, ppSceneNode, tag, nodeType);
+		}
+	}
+
 }

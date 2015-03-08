@@ -52,7 +52,10 @@ namespace gf
 		wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
 		wc.hIconSm = wc.hIcon;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH)GetStockObject(LTGRAY_BRUSH);
+		//wc.hbrBackground = (HBRUSH)GetStockObject(LTGRAY_BRUSH);
+		HBRUSH bkBrush = CreateSolidBrush(RGB(240, 240, 240));
+
+		wc.hbrBackground = bkBrush;
 		wc.lpszMenuName = NULL;
 		wc.lpszClassName = className;
 		wc.cbSize = sizeof(WNDCLASSEX);

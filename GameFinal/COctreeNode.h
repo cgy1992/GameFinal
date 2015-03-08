@@ -45,6 +45,11 @@ namespace gf
 			ISceneNode** ppSceneNode,
 			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const;
 
+		virtual void intersectRayWithTag(FXMVECTOR Origin, FXMVECTOR Direction, f32* pDist,
+			ISceneNode** ppSceneNode,
+			u32 tag,
+			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const;
+
 	protected:
 	
 		virtual void iterateChildren(ISceneNode* node, const XNA::OrientedBox& obb, const OctreeIterateCallback& callback);

@@ -33,7 +33,7 @@ IBillboardCollectionMesh* g_BillboardMesh = nullptr;
 IMeshNode* g_BillboardNode;
 std::vector<SPointLightInfo> g_pointLightInfos;
 const u32 g_pointLightCount = 3000;
-const f32 g_pointLightRange = 3.0f;
+const f32 g_pointLightRange = 5.0f;
 
 
 f32 getFps(float dt)

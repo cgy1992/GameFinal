@@ -145,8 +145,8 @@ void cs_main(int3 dispatchThreadID : SV_DispatchThreadID,
 		SPointLight pointLight = gPointLights[lightIndex];
 		if(ComputeIrradianceOfPointLight(PosW.xyz, pointLight, lightDir, diffuse, specular))
 		{
-			BlinnPhoneShading(PosW.xyz, lightDir, normal, diffuse, specular, pointLight.Specular.w);
-			//PhoneShading(PosW, lightDir, normal, diffuse, specular, pointLight.Specular.w);
+			//BlinnPhoneShading(PosW.xyz, lightDir, normal, diffuse, specular, pointLight.Specular.w);
+			PhoneShading(PosW, lightDir, normal, diffuse, specular, pointLight.Specular.w);
 
 			diffuseSum += diffuse;
 			specularSum += specular;

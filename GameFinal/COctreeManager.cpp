@@ -255,8 +255,8 @@ namespace gf
 		mRootNode.iterateChildren(nullptr, frustum, callback);
 	}
 
-	void COctreeManager::addLightToListIfVisible(ILightNode* light, 
-		const math::SFrustum& frustum, 
+	void COctreeManager::addLightToListIfVisible(ILightNode* light,
+		const math::SFrustum& frustum,
 		std::vector<ILightNode*>& pointLights)
 	{
 		switch (light->getType())
@@ -280,6 +280,20 @@ namespace gf
 		ISceneNode* pSceneNode = nullptr;
 
 		mRootNode.intersectRay(origin, direction, pDist, &pSceneNode, nodeType);
+
+		return pSceneNode;
+	}
+
+	ISceneNode* COctreeManager::intersectRayWithTag(const math::SRay& ray, f32 *pDist, u32 tag, u32 nodeType) const
+	{
+		*pDist = FLT_MAX;
+		XMVECTOR origin = XMLoadFloat3(&ray.Origin);
+		origin = XMVectorSetW(origin, 1.0f);
+		XMVECTOR direction = XMLoadFloat3(&ray.Direction);
+		direction = XMVectorSetW(direction, 0);
+		ISceneNode* pSceneNode = nullptr;
+
+		mRootNode.intersectRayWithTag(origin, direction, pDist, &pSceneNode, tag, nodeType);
 
 		return pSceneNode;
 	}

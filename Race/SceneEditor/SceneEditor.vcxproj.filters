@@ -30,10 +30,22 @@
     <ClInclude Include="EditorScene.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CreateMeshNodeWindow.h">
+    <ClInclude Include="ControlIDs.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ControlIDs.h">
+    <ClInclude Include="CCreateMeshNodeWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CSubWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CListNodesWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SNodeInfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CNodeInfoWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,7 +62,16 @@
     <ClCompile Include="EditorWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="CreateMeshNodeWindow.cpp">
+    <ClCompile Include="CCreateMeshNodeWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CSubWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CListNodesWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CNodeInfoWindow.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

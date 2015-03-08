@@ -54,7 +54,7 @@ namespace gf
 
 	enum E_NODE_TAG
 	{
-		EN_TAG_SKYDOME = 0x01,
+		EN_TAG_SKYDOME = 0x1000,
 	};
 
 	class ISceneNode : public IReferenceCounted

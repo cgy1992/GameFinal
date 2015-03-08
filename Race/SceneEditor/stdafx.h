@@ -16,4 +16,7 @@
 #include <GameFinal.h>
 #include <math.h>
 #include <windowsx.h>
+#include <vector>
+#include <map>
 
+using namespace gf;

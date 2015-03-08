@@ -1040,5 +1040,12 @@ namespace gf
 		return mDefaultOctree->intersectRay(ray, pDist, nodeType);
 	}
 
+	ISceneNode* CSceneManager::intersectRayWithTag(const math::SRay& ray,
+		f32* pDist, u32 tag,
+		u32 nodeType) const
+	{
+		return mDefaultOctree->intersectRayWithTag(ray, pDist, tag, nodeType);
+	}
+
 }
 

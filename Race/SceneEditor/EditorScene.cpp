@@ -4,7 +4,12 @@
 using namespace gf;
 
 EditorScene* EditorScene::_instance = nullptr;
+u32 EditorScene::nodeSequenceNumber = 0;
 
+u32 EditorScene::getNextNodeSequence()
+{
+	return ++nodeSequenceNumber;
+}
 
 EditorScene::EditorScene(IDevice* device)
 :mDevice(device)
@@ -45,11 +50,12 @@ void EditorScene::setupInitialScene()
 
 	mCamera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 30.0f, -4.0f),
 		XMFLOAT3(0, 30.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
-	mCamera->setShadowRange(300.0f);
+	mCamera->setShadowRange(150.0f);
 
 	ISimpleMesh* groundMesh = mMeshManager->createPlaneMesh("ground", mGroundSize, mGroundSize, 50, 50, 10.0f, 10.0f);
 	IMeshNode* groundNode = smgr->addMeshNode(groundMesh, nullptr, nullptr, false);
 	groundNode->setMaterialName("ground_material");
+	groundNode->setTag(1);
 
 	ITextureCube* skyTexture = mTextureManager->loadCubeTexture("skybox1.dds");
 	smgr->setSkyDome(skyTexture);
@@ -65,11 +71,7 @@ void EditorScene::setupInitialScene()
 	mPickingCubeNode = smgr->addMeshNode(cubeMesh, nullptr, nullptr, false);
 	mPickingCubeNode->setMaterialName("picking_cube_material");
 	mPickingCubeNode->setVisible(false);
-
-	
-
 	mSceneManager->update(0);
-
 }
 
 void EditorScene::update(f32 dt)
@@ -155,90 +157,37 @@ void EditorScene::updateCamera(f32 delta)
 	}
 }
 
-void EditorScene::changeTreePosition()
-{
-	if (!mAddedNode)
-		return;
-
-	IDevice* device = IDevice::getInstance();
-
-	POINT point;
-	GetCursorPos(&point);
-	u32 sx = point.x;
-	u32 sy = point.y;
-	device->screenToClient(sx, sy);
-
-	sx = (static_cast<f32>(sx - 200)) / BufferWndWidth * device->getClientWidth();
-	sy = (static_cast<f32>(sy)) / BufferWndHeight * device->getClientHeight();
-
-	math::SRay ray = mSceneManager->getPickingRay(sx, sy);
-
-	const f32 EPSILON = 0.0001f;
-
-	if (fabs(ray.Direction.y) < EPSILON)
-		return;
-
-	f32 t = (0 - ray.Origin.y) / ray.Direction.y;
-	if (t < 0)
-		return;
-
-	f32 x = ray.Origin.x + t * ray.Direction.x;
-	f32 z = ray.Origin.z + t * ray.Direction.z;
-
-	if (x < -mGroundSize * 0.5f || x > mGroundSize * 0.5f
-		|| z < -mGroundSize * 0.5f || z > mGroundSize * 0.5f)
-		return;
-
-	mAddedNode->setPosition(x, 0, z);
-}
-
-void EditorScene::addTreeNode(u32 sx, u32 sy)
-{
-	IDevice* device = IDevice::getInstance();
-	IMeshManager* meshManager = IMeshManager::getInstance();
-	IModelMesh* treeMesh = meshManager->getModelMesh("roundtreeA.mesh", true);
-
-	sx = (static_cast<f32>(sx - 200)) / BufferWndWidth * device->getClientWidth();
-	sy = (static_cast<f32>(sy)) / BufferWndHeight * device->getClientHeight();
-
-	math::SRay ray = mSceneManager->getPickingRay(sx, sy);
-
-	const f32 EPSILON = 0.0001f;
-
-	if (fabs(ray.Direction.y) < EPSILON)
-		return;
-
-	f32 t = (0 - ray.Origin.y) / ray.Direction.y;
-	if (t < 0)
-		return;
-
-	f32 x = ray.Origin.x + t * ray.Direction.x;
-	f32 z = ray.Origin.z + t * ray.Direction.z;
-
-	if (x < -mGroundSize * 0.5f || x > mGroundSize * 0.5f
-		|| z < -mGroundSize * 0.5f || z > mGroundSize * 0.5f)
-		return;
-
-	IMeshNode* treeNode = mSceneManager->addModelMeshNode(treeMesh, nullptr, true, XMFLOAT3(x, 0, z));
-	treeNode->addShadow(1);
-}
-
 EditorScene::~EditorScene()
 {
 	mSceneManager->destroy();
 }
 
-void EditorScene::PrepareAddingObject(const std::string& meshName)
+bool EditorScene::PrepareAddingObject(const std::string& meshName)
 {
-	IModelMesh* treeMesh = mMeshManager->getModelMesh(meshName, true);
-	IMeshNode* treeNode = mSceneManager->addModelMeshNode(treeMesh, nullptr, false);
-	treeNode->addShadow(1);
-	mAddedNode = treeNode;
+	IModelMesh* mesh = mMeshManager->getModelMesh(meshName, true);
+	IMeshNode* node = mSceneManager->addModelMeshNode(mesh, nullptr, false);
+	node->addShadow(1);
+	node->setTag(1);
+	mAddedNode = node;
+	return true;
 }
 
-void EditorScene::AddObject()
+u32 EditorScene::AddObject()
 {
+	SNodeInfo nodeInfo;
+	nodeInfo.Id = getNextNodeSequence();
+	nodeInfo.Static = false;
+	nodeInfo.MultipleInstanced = false;
+	nodeInfo.Node = mAddedNode;
+
+	XMFLOAT3 pos = mAddedNode->getPosition();
+	nodeInfo.Position = pos;
+
+	mNodeInfos.insert(std::make_pair(nodeInfo.Id, nodeInfo));
+	mNodeIdMap.insert(std::make_pair(mAddedNode, nodeInfo.Id));
+
 	mAddedNode = nullptr;
+	return nodeInfo.Id;
 }
 
 void EditorScene::CancelAddingObject()
@@ -292,7 +241,7 @@ void EditorScene::PickingObject(u32 sx, u32 sy)
 	math::SRay ray = computePickingRay(sx, sy);
 
 	f32 dist;
-	ISceneNode* node = mSceneManager->intersectRay(ray, &dist, ENT_SOLID_NODE);
+	ISceneNode* node = mSceneManager->intersectRayWithTag(ray, &dist, 1, ENT_SOLID_NODE);
 
 	if (node)
 	{
@@ -317,35 +266,62 @@ void EditorScene::PickingObject(u32 sx, u32 sy)
 	}
 }
 
-void EditorScene::SelectObject(u32 sx, u32 sy)
+int EditorScene::SelectObject(u32 sx, u32 sy)
 {
 	math::SRay ray = computePickingRay(sx, sy);
 
 	f32 dist;
-	ISceneNode* node = mSceneManager->intersectRay(ray, &dist, ENT_SOLID_NODE);
+	ISceneNode* node = mSceneManager->intersectRayWithTag(ray, &dist, 1, ENT_SOLID_NODE);
+	SelectObject(node);
 
+	if (node)
+	{
+		auto it = mNodeIdMap.find(node);
+		if (it != mNodeIdMap.end())
+			return it->second;
+	}
+	return -1;
+}
+
+void EditorScene::updateSelectedNodeCube()
+{
+	math::SOrientedBox obb = mSelectedNode->getOrientedBox();
+	XMMATRIX scaleMatrix = XMMatrixScaling(obb.Extents.x * 2, obb.Extents.y * 2, obb.Extents.z * 2);
+	XMMATRIX rotMatrix = XMMATRIX(
+		obb.Axis[0].x, obb.Axis[0].y, obb.Axis[0].z, 0,
+		obb.Axis[1].x, obb.Axis[1].y, obb.Axis[1].z, 0,
+		obb.Axis[2].x, obb.Axis[2].y, obb.Axis[2].z, 0,
+		0, 0, 0, 1.0f);
+
+	XMMATRIX transMatrix = XMMatrixTranslation(obb.Center.x, obb.Center.y, obb.Center.z);
+	XMMATRIX M = scaleMatrix * rotMatrix * transMatrix;
+	mSelectedCubeNode->setTransform(M);
+}
+
+void EditorScene::SelectObject(ISceneNode* node)
+{
 	if (node)
 	{
 		mSelectedCubeNode->setVisible(true);
 		mSelectedNode = node;
-
-		math::SOrientedBox obb = node->getOrientedBox();
-		XMMATRIX scaleMatrix = XMMatrixScaling(obb.Extents.x * 2, obb.Extents.y * 2, obb.Extents.z * 2);
-		XMMATRIX rotMatrix = XMMATRIX(
-			obb.Axis[0].x, obb.Axis[0].y, obb.Axis[0].z, 0,
-			obb.Axis[1].x, obb.Axis[1].y, obb.Axis[1].z, 0,
-			obb.Axis[2].x, obb.Axis[2].y, obb.Axis[2].z, 0,
-			0, 0, 0, 1.0f);
-
-		XMMATRIX transMatrix = XMMatrixTranslation(obb.Center.x, obb.Center.y, obb.Center.z);
-		XMMATRIX M = scaleMatrix * rotMatrix * transMatrix;
-		mSelectedCubeNode->setTransform(M);
+		updateSelectedNodeCube();
 	}
 	else
 	{
 		mSelectedCubeNode->setVisible(false);
 		mSelectedNode = nullptr;
 	}
+}
+
+bool EditorScene::SelectObject(u32 id)
+{
+	auto it = mNodeInfos.find(id);
+	if (it != mNodeInfos.end())
+	{
+		SelectObject(it->second.Node);
+		return true;
+	}
+	return false;
 }
 
 void EditorScene::focusOnObject(f32 dt)
@@ -391,3 +367,42 @@ void EditorScene::BeginFocusingObject()
 	}
 }
 
+SNodeInfo* EditorScene::GetNodeInfoById(u32 id)
+{
+	auto it = mNodeInfos.find(id);
+	if (it == mNodeInfos.end())
+		return nullptr;
+
+	return &(it->second);
+}
+
+SNodeInfo* EditorScene::GetSelectedNodeInfo()
+{
+	auto it = mNodeIdMap.find(mSelectedNode);
+	if (it == mNodeIdMap.end())
+		return nullptr;
+	
+	u32 id = it->second;
+	return &mNodeInfos[id];
+}
+
+void EditorScene::UpdateNodeInfo(SNodeInfo* info)
+{
+	XMMATRIX S = XMMatrixScaling(info->Scaling.x, info->Scaling.y, info->Scaling.z);
+	XMMATRIX R = XMMatrixRotationRollPitchYaw(info->Rotation.x, info->Rotation.y, info->Rotation.z);
+	XMMATRIX T = XMMatrixTranslation(info->Position.x, info->Position.y, info->Position.z);
+	XMMATRIX M = S * R * T;
+	info->Node->setTransform(M);
+	info->Node->update();
+
+	if (info->Node->getNodeType() & ESNT_MESH)
+	{
+		IMeshNode* meshNode = dynamic_cast<IMeshNode*>(info->Node);
+		if (info->ShadowCasting)
+			meshNode->addShadow(1);
+		else
+			meshNode->removeShadow(1);
+	}
+
+	updateSelectedNodeCube();
+}

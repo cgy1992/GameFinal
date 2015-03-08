@@ -81,15 +81,22 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CListNodesWindow.h" />
+    <ClInclude Include="CNodeInfoWindow.h" />
     <ClInclude Include="ControlIDs.h" />
-    <ClInclude Include="CreateMeshNodeWindow.h" />
+    <ClInclude Include="CCreateMeshNodeWindow.h" />
+    <ClInclude Include="CSubWindow.h" />
     <ClInclude Include="EditorScene.h" />
     <ClInclude Include="EditorWindow.h" />
+    <ClInclude Include="SNodeInfo.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CreateMeshNodeWindow.cpp" />
+    <ClCompile Include="CCreateMeshNodeWindow.cpp" />
+    <ClCompile Include="CListNodesWindow.cpp" />
+    <ClCompile Include="CNodeInfoWindow.cpp" />
+    <ClCompile Include="CSubWindow.cpp" />
     <ClCompile Include="EditorScene.cpp" />
     <ClCompile Include="EditorWindow.cpp" />
     <ClCompile Include="main.cpp" />

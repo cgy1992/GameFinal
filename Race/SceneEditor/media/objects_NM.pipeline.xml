@@ -1,0 +1,77 @@
+<pipelines>
+  
+  <!--no alpha testing, no specular, no shadow -->
+  <pipeline name="object_NM_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="objects_NM.hlsl" main="vs_main">
+      </vertex-shader>
+      <pixel-shader file="objects_NM.hlsl" main="ps_main">
+        <variable name="gLight" value="light" index="1"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+    </render-states>
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="border"
+                 addressV="border"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="0.0f, 0.0f, 0.0f, 0.0f"/>
+    </samplers>
+  </pipeline>
+  
+  
+  <!--for alpha testing, no specular, no shadow -->
+  <pipeline name="alpha_NM_pipeline" prototype="object_NM_pipeline">
+    <shaders>
+      <pixel-shader>
+        <macro name="ALPHA_TEST_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+  <!--for alpha testing, no specular, have shadow -->
+  <pipeline name="alpha_shadow_NM_pipeline" prototype="object_NM_pipeline">
+    <shaders>
+      <pixel-shader>
+        <macro name="ALPHA_TEST_ON"/>
+        <macro name="SHADOW_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+  
+  <!--for no alpha testing, no specular, have shadow -->
+  <pipeline name="shadow_NM_pipeline" prototype="object_NM_pipeline">
+    <shaders>
+      <pixel-shader>
+        <macro name="SHADOW_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+  <!-- for shadow map, no alpha test-->
+  <pipeline name="object_shadow_map_NM_pipeline" prototype="object_NM_pipeline">
+    <shaders>
+      <vertex-shader main="shadow_vs_main">
+      </vertex-shader>
+      <pixel-shader file="null"/>
+    </shaders>
+  </pipeline>
+
+  <!-- for shadow map, have alpha test-->
+  <pipeline name="alpha_shadow_map_NM_pipeline" prototype="object_shadow_map_NM_pipeline">
+    <shaders>
+      <pixel-shader file="objects.hlsl" main="shadow_ps_main">
+        <macro name="ALPHA_TEST_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+  
+</pipelines>

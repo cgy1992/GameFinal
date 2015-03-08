@@ -200,6 +200,9 @@ namespace gf
 		virtual ISceneNode* intersectRay(const math::SRay& ray, f32* pDist,
 			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const;
 
+		virtual ISceneNode* intersectRayWithTag(const math::SRay& ray, f32* pDist, u32 tag,
+			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const;
+
 	private:
 
 		void collectMeshNodeShaders(IMeshNode* node);
