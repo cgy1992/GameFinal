@@ -8,6 +8,7 @@
         </attributes>
         <pipelines>
           <pipeline name="specular_shadow_pipeline"/>
+          <pipeline name="defer_shadow_pipeline" usage="defer"/>
           <pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
         </pipelines>
         <textures>

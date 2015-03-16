@@ -37,8 +37,8 @@ f32 getFps(float dt)
 int _tmain(int argc, _TCHAR* argv[])
 {
 	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 4;
-	settings.MultiSamplingQuality = 32;
+	settings.MultiSamplingCount = 1;
+	settings.MultiSamplingQuality = 0;
 	settings.WindowsProcedure = EditorWindow::WndProc;
 
 	EditorWindow* window = new EditorWindow(SCREEN_WIDTH, SCREEN_HEIGHT);

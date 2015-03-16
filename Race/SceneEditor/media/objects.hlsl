@@ -98,3 +98,30 @@ void shadow_ps_main(
 	clip(texColor.a - 0.2f);
 #endif
 }
+
+SReturnGBuffers defer_ps_main(VertexOut pin)
+{
+	float3 normal = normalize(pin.Normal);
+	float4 texColor = GF_TEXTURE_0.Sample(gSampleState, pin.Tex);
+
+#ifdef ALPHA_TEST_ON
+	clip(texColor.a - 0.2f);
+#endif
+
+#ifdef SHADOW_ON
+	float shadowFactor = CalcShadowFactor(1, 1.0f);
+#else
+	float shadowFactor = 1.0f;
+#endif
+
+	normal = normal * 0.5f + 0.5f;
+	SReturnGBuffers pout;
+	pout.GBuffer0 = float4(normal, GF_MTRL_SPECULAR.w);
+	pout.GBuffer1 = GF_MTRL_DIFFUSE * texColor;
+	pout.GBuffer2.x = GF_MTRL_SPECULAR.x;
+	pout.GBuffer2.y = GF_MTRL_AMBIENT.x;
+	pout.GBuffer2.z = shadowFactor;
+
+	return pout;
+}
+

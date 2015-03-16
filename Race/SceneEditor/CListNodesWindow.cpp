@@ -60,8 +60,18 @@ void CListNodesWindow::OnClickListItem()
 		u32 id = ListBox_GetItemData(mNodesList, itemIndex);
 		EditorScene* scene = EditorScene::getInstance();
 		EditorWindow* window = EditorWindow::getInstance();
-		scene->SelectObject(id);
-		window->ShowNodeInfo(id);
+		SNodeInfo* info = scene->GetNodeInfoById(id);
+		if (info->Category == MESH_CATEGORY)
+		{
+			scene->SelectObject(id);
+			window->ShowNodeInfo(id);
+			window->mMeshNodePanel.mInstanceNodeWindow.SetVisible(false);
+		}
+		else if (info->Category == COLLECTION_CATEGORY)
+		{
+			window->mMeshNodePanel.mInstanceNodeWindow.SetVisible(true);
+			window->mMeshNodePanel.mInstanceNodeWindow.UpdateListBoxItems(id);
+		}
 		SetFocus(mParentHwnd);
 	}
 }
@@ -74,9 +84,13 @@ void CListNodesWindow::OnDoubleClickListItem()
 		u32 id = ListBox_GetItemData(mNodesList, itemIndex);
 		EditorScene* scene = EditorScene::getInstance();
 		EditorWindow* window = EditorWindow::getInstance();
-		scene->SelectObject(id);
-		scene->BeginFocusingObject();
-		window->ShowNodeInfo(id);
+
+		if (scene->SelectObject(id))
+		{
+			scene->BeginFocusingObject();
+			window->ShowNodeInfo(id);
+		}
+		
 		SetFocus(mParentHwnd);
 	}
 }
@@ -95,3 +109,25 @@ void CListNodesWindow::SelectListItem(u32 id)
 	}
 
 }
+
+int CListNodesWindow::GetSelectedItemId()
+{
+	int itemIndex = ListBox_GetCurSel(mNodesList);
+	if (itemIndex != LB_ERR)
+	{
+		u32 id = ListBox_GetItemData(mNodesList, itemIndex);
+		return id;
+	}
+	return -1;
+}
+
+SNodeInfo* CListNodesWindow::GetSelectedItemNodeInfo()
+{
+	int id = GetSelectedItemId();
+	if (id == -1)
+		return nullptr;
+
+	EditorScene* scene = EditorScene::getInstance();
+	return scene->GetNodeInfoById(id);
+}
+

@@ -4,6 +4,11 @@
 #include "CCreateMeshNodeWindow.h"
 #include "CListNodesWindow.h"
 #include "CNodeInfoWindow.h"
+#include "CInstanceInfoWindow.h"
+
+#include "CEditorPanel.h"
+#include "CMeshNodePanel.h"
+#include "CLightPanel.h"
 
 using namespace gf;
 
@@ -11,7 +16,9 @@ enum E_MOUSE_STATE
 {
 	EMS_PICKING,
 	EMS_ADD_OBJECT,
-	EMS_ROTATION
+	EMS_ADD_INSTANCE,
+	EMS_ROTATION,
+	EMS_ADD_LIGHT,
 };
 
 enum E_MOUSE_BUTTON
@@ -36,15 +43,23 @@ public:
 	void MouseRightButtonUp(int xPos, int yPos);
 	void MouseMove(int xPos, int yPos);
 	void MouseDoubleClicked(int xPos, int yPos);
-	void OnNewMeshNodeButton(HWND hwnd);
 	void OnSize(int cxClient, int cyClient);
 	void OnCreate(HINSTANCE hInst, HWND hwnd);
-
+	void OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM lParam);
+	void Update(f32 delta);
 	bool CheckMouseInScene(int xPos, int yPos);
 	void SetMouseState(E_MOUSE_STATE state) { mMouseState = state; }
 	E_MOUSE_STATE GetMouseState() { return mMouseState; }
-
 	void ShowNodeInfo(u32 id);
+	void OnSelectCreatePanel();
+
+public:
+
+	std::vector<CEditorPanel*>	mEditorPanelPtrs;
+	CMeshNodePanel				mMeshNodePanel;
+	CLightPanel					mLightPanel;
+
+	CEditorPanel*				mActivePanel;
 
 private:
 
@@ -54,16 +69,13 @@ private:
 
 	HWND						mHwnd;
 	HWND						mCreatePanelSelector;
-	HWND						mNodeNameTextField;
-
+	
 	E_MOUSE_STATE				mMouseState;
-	CCreateMeshNodeWindow		mCreateMeshNodeWindow;
-	CListNodesWindow			mListNodesWindow;
-	CNodeInfoWindow				mNodeInfoWindow;
+	
 
 	bool						mMousePressed[3];
-	POINT						mRightMousePressPoint;
-	f32							mOrientationBeforeRotate;
+	
+public:
 
 	const static u32 LEFT_SUB_WINDOW_WIDTH;
 	const static u32 RIGHT_SUB_WINDOW_WIDTH;

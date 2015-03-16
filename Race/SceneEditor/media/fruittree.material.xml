@@ -8,6 +8,7 @@
         </attributes>
 		<pipelines>
 			<pipeline name="alpha_shadow_pipeline"/>
+      <pipeline name="defer_alpha_shadow_pipeline" usage="defer"/>
 			<pipeline name="alpha_shadow_map_pipeline" usage="shadow_map"/>
 		</pipelines>
         <textures>
@@ -22,9 +23,10 @@
             <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
         </attributes>
         <pipelines>
-			<pipeline name="shadow_pipeline"/>
-			<pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
-		</pipelines>
+			    <pipeline name="shadow_pipeline"/>
+          <pipeline name="defer_shadow_pipeline" usage="defer"/>
+			    <pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
+		    </pipelines>
         <textures>
             <texture name="ahernbark.bmp"/>
         </textures>

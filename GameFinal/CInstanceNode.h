@@ -46,6 +46,8 @@ namespace gf
 
 		virtual void OnRegisterSceneNode(bool bRecursion = true);
 
+		virtual void OnRegisterSceneNode(u32 tag);
+
 		virtual void registerToCollectionForRendering();
 
 	private:

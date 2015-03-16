@@ -36,6 +36,8 @@ namespace gf
 
 		virtual void drawAll() = 0;
 
+		virtual void draw(u32 tag) = 0;
+
 		virtual void draw(ISceneNode* node) = 0;
 
 		virtual void drawShadowMap(ILightNode* light) = 0;
@@ -174,6 +176,8 @@ namespace gf
 
 		virtual IMeshNode* getQuadNode() = 0;
 
+		virtual IMeshNode* getSkyNode() = 0;
+
 		virtual ICompositor* createCompositor(IPipeline* pipeline) = 0;
 
 		virtual ICompositor* createCompositor(u32, const SCompositorCreateParam& param) = 0;
@@ -231,6 +235,8 @@ namespace gf
 
 
 	};
+
+
 }
 
 #endif

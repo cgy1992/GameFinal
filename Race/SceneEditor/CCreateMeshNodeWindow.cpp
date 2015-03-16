@@ -15,19 +15,39 @@ void CCreateMeshNodeWindow::OnCreate(HWND parentHwnd, int xPos, int yPos, int wi
 
 	HINSTANCE hInst = GetModuleHandle(NULL);
 
-	mMeshNamesComboBox = CreateWindow(TEXT("combobox"), NULL,
+	mNodeNameTextField = CreateControl(TEXT("edit"), NULL, 
+		WS_CHILDWINDOW | WS_VISIBLE | WS_BORDER,
+		10, 10, 180, 24, IDC_NODE_NAME_TEXTFIELD, NULL);
+
+	mMeshNamesComboBox = CreateControl(TEXT("combobox"), NULL,
 		WS_CHILDWINDOW | WS_VISIBLE | LBS_STANDARD,
-		10, yPos + 0, 180, 400, mParentHwnd, (HMENU)IDC_MESH_COMBO, hInst, NULL);
+		10, 40, 180, 400, IDC_MESH_COMBO, NULL);
 
-	mStaticCheckBox = CreateWindow(TEXT("button"), TEXT("Static"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-		10, yPos + 35, 60, 30, mParentHwnd, (HMENU)IDC_CREATE_STATIC_CHECK_BOX, hInst, NULL);
+	mStaticCheckBox = CreateControl(TEXT("button"), TEXT("Static"),
+		WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
+		10, 75, 60, 20, IDC_CREATE_STATIC_CHECK_BOX, NULL);
 
-	mMutipleCheckBox = CreateWindow(TEXT("button"), TEXT("Multiple"), WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-		70, yPos + 35, 70, 30, mParentHwnd, (HMENU)IDC_CREATE_STATIC_CHECK_BOX, hInst, NULL);
+	mMutipleCheckBox = CreateControl(TEXT("button"), TEXT("Multiple"), 
+		WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
+		10, 105, 70, 20, IDC_CREATE_MULTIPLE_CHECKBOX, NULL);
 
-	mNewButton = CreateWindow(TEXT("button"), TEXT("Create"),
-		WS_CHILD | WS_VISIBLE, 160, yPos + 35, 75, 26, mParentHwnd,
-		(HMENU)IDC_NEWBTN, hInst, NULL);
+	mMutipleNumTextField = CreateControl(TEXT("edit"), TEXT("5000"),
+		WS_CHILDWINDOW | WS_VISIBLE | WS_BORDER,
+		90, 105, 60, 20, IDC_CREATE_MULTIPLE_NUM_TEXTFILED, NULL);
+	ShowWindow(mMutipleNumTextField, SW_HIDE);
+
+	mNewButton = CreateControl(TEXT("button"), TEXT("Create"),
+		WS_CHILD | WS_VISIBLE, 
+		160, 105, 75, 26, IDC_NEWBTN,NULL);
+
+	mNodesList = CreateControl(TEXT("listbox"), NULL,
+		WS_CHILD | WS_VISIBLE | LBS_NOTIFY | WS_VSCROLL | WS_BORDER,
+		10, 140, 220, 600,
+		IDC_NODES_LIST, NULL);
+
+	mDeleteButton = CreateControl(TEXT("button"), TEXT("Delete"),
+		WS_CHILD | WS_VISIBLE,
+		10, 750, 75, 25, IDC_DELETE_MESH_NODE_BTN, NULL);
 }
 
 void CCreateMeshNodeWindow::OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM lParam)
@@ -35,7 +55,15 @@ void CCreateMeshNodeWindow::OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM
 	if (id == IDC_NEWBTN && event == BN_CLICKED)
 		OnNewMeshNodeButton();
 	else if (id == IDC_MESH_COMBO && event == CBN_SELCHANGE)
-		OnSelectMesh();
+		UpdateNodeNameTextField();
+	else if (id == IDC_CREATE_MULTIPLE_CHECKBOX && event == BN_CLICKED)
+		OnClickMultipleCheckBox();
+	else if (id == IDC_NODES_LIST && event == LBN_SELCHANGE)
+		OnClickListItem();
+	else if (id == IDC_NODES_LIST && event == LBN_DBLCLK)
+		OnDoubleClickListItem();
+	else if (id == IDC_DELETE_MESH_NODE_BTN && event == BN_CLICKED)
+		OnClickDeleteButton();
 }
 
 void CCreateMeshNodeWindow::OnNewMeshNodeButton()
@@ -47,11 +75,24 @@ void CCreateMeshNodeWindow::OnNewMeshNodeButton()
 	if (selectedIndex >= 0)
 	{
 		SendMessageA(mMeshNamesComboBox, CB_GETLBTEXT, selectedIndex, (LPARAM)szMeshName);
-		EnableWindow(mNewButton, FALSE);
-		window->SetMouseState(EMS_ADD_OBJECT);
 
-		if (scene)
-			scene->PrepareAddingObject(szMeshName);
+		if (IsCheckBoxSelected(mMutipleCheckBox))
+		{
+			int maxNum;
+			if (!GetIntFromTextField(mMutipleNumTextField, maxNum))
+			{
+				MessageBoxA(mParentHwnd, "Cannot convert maxNum into an integer", NULL, 0);
+			}
+			window->mMeshNodePanel.AddCollectionNode(szMeshName, maxNum);
+		}
+		else
+		{
+			EnableWindow(mNewButton, FALSE);
+			window->SetMouseState(EMS_ADD_OBJECT);
+
+			if (scene)
+				scene->PrepareAddingObject(szMeshName);
+		}
 	}
 }
 
@@ -72,16 +113,9 @@ void CCreateMeshNodeWindow::Init()
 		std::string s = *it;
 		SendMessageA(mMeshNamesComboBox, CB_ADDSTRING, (WPARAM)0, (LPARAM)(LPCTSTR)(s.c_str()));
 	}
-
-	/*
-	for (u32 i = 0; i < names.size(); i++)
-	{
-		SendMessageA(mMeshNamesComboBox, CB_ADDSTRING, (WPARAM)0, (LPARAM)(LPCTSTR)(names[i].c_str()));
-	}
-	*/
 }
 
-void CCreateMeshNodeWindow::OnSelectMesh()
+void CCreateMeshNodeWindow::UpdateNodeNameTextField()
 {
 	int selectedIndex = ComboBox_GetCurSel(mMeshNamesComboBox);
 	char szMeshName[128];
@@ -90,8 +124,142 @@ void CCreateMeshNodeWindow::OnSelectMesh()
 		SendMessageA(mMeshNamesComboBox, CB_GETLBTEXT, selectedIndex, (LPARAM)szMeshName);
 		int len = strlen(szMeshName);
 		szMeshName[len - 5] = 0;
-		
+
+		if (IsCheckBoxSelected(mMutipleCheckBox))
+		{
+			strcat_s(szMeshName, "(Multiple)");
+		}
+
 		HWND nameTextField = GetDlgItem(mParentHwnd, IDC_NODE_NAME_TEXTFIELD);
 		SetWindowTextA(nameTextField, szMeshName);
 	}
 }
+
+void CCreateMeshNodeWindow::OnClickMultipleCheckBox()
+{
+	if (IsCheckBoxSelected(mMutipleCheckBox))
+		ShowWindow(mMutipleNumTextField, SW_SHOW);
+	else
+		ShowWindow(mMutipleNumTextField, SW_HIDE);
+	
+	UpdateNodeNameTextField();
+}
+
+
+
+void CCreateMeshNodeWindow::AddListItem(u32 id)
+{
+	TCHAR szNodeName[256];
+	HWND hNodeNameTextField = GetDlgItem(mParentHwnd, IDC_NODE_NAME_TEXTFIELD);
+	GetWindowText(hNodeNameTextField, szNodeName, -1);
+
+	int itemIndex = ListBox_AddString(mNodesList, szNodeName);
+	if (itemIndex != LB_ERR)
+	{
+		ListBox_SetItemData(mNodesList, itemIndex, id);
+	}
+}
+
+void CCreateMeshNodeWindow::OnClickListItem()
+{
+	int itemIndex = ListBox_GetCurSel(mNodesList);
+	if (itemIndex != LB_ERR)
+	{
+		u32 id = ListBox_GetItemData(mNodesList, itemIndex);
+		EditorScene* scene = EditorScene::getInstance();
+		EditorWindow* window = EditorWindow::getInstance();
+		SNodeInfo* info = scene->GetNodeInfoById(id);
+		if (info->Category == MESH_CATEGORY)
+		{
+			scene->SelectObject(id);
+			window->ShowNodeInfo(id);
+			window->mMeshNodePanel.mInstanceNodeWindow.SetVisible(false);
+		}
+		else if (info->Category == COLLECTION_CATEGORY)
+		{
+			window->mMeshNodePanel.mInstanceNodeWindow.SetVisible(true);
+			window->mMeshNodePanel.mInstanceNodeWindow.UpdateListBoxItems(id);
+		}
+		SetFocus(mParentHwnd);
+	}
+}
+
+void CCreateMeshNodeWindow::OnDoubleClickListItem()
+{
+	int itemIndex = ListBox_GetCurSel(mNodesList);
+	if (itemIndex != LB_ERR)
+	{
+		u32 id = ListBox_GetItemData(mNodesList, itemIndex);
+		EditorScene* scene = EditorScene::getInstance();
+		EditorWindow* window = EditorWindow::getInstance();
+
+		if (scene->SelectObject(id))
+		{
+			scene->BeginFocusingObject();
+			window->ShowNodeInfo(id);
+		}
+
+		SetFocus(mParentHwnd);
+	}
+}
+
+void CCreateMeshNodeWindow::SelectListItem(u32 id)
+{
+	u32 count = ListBox_GetCount(mNodesList);
+	for (u32 i = 0; i < count; i++)
+	{
+		u32 data = ListBox_GetItemData(mNodesList, i);
+		if (data == id)
+		{
+			ListBox_SetCurSel(mNodesList, i);
+			return;
+		}
+	}
+
+}
+
+int CCreateMeshNodeWindow::GetSelectedItemId()
+{
+	int itemIndex = ListBox_GetCurSel(mNodesList);
+	if (itemIndex != LB_ERR)
+	{
+		u32 id = ListBox_GetItemData(mNodesList, itemIndex);
+		return id;
+	}
+	return -1;
+}
+
+SNodeInfo* CCreateMeshNodeWindow::GetSelectedItemNodeInfo()
+{
+	int id = GetSelectedItemId();
+	if (id == -1)
+		return nullptr;
+
+	EditorScene* scene = EditorScene::getInstance();
+	return scene->GetNodeInfoById(id);
+}
+
+void CCreateMeshNodeWindow::OnClickDeleteButton()
+{
+	SNodeInfo* info = GetSelectedItemNodeInfo();
+	if (!info)
+		return;
+
+	int ret = MessageBoxA(mParentHwnd, "Are you sure to delete node?", "Delete Confirm", MB_OKCANCEL);
+	if (ret == IDCANCEL)
+		return;
+
+	EditorScene* scene = EditorScene::getInstance();
+	scene->DeleteNode(info->Id);
+	scene->CancelSelectObject();
+
+	int itemIndex = ListBox_GetCurSel(mNodesList);
+	if (itemIndex != LB_ERR)
+	{
+		ListBox_DeleteString(mNodesList, itemIndex);
+	}
+
+	EditorWindow* window = EditorWindow::getInstance();
+	window->mMeshNodePanel.mInstanceNodeWindow.SetVisible(false);
+}
+

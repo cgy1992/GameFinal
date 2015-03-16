@@ -2,10 +2,11 @@
 #define __LIST_NODES_WINDOW_CLASS_H__
 
 #include "CSubWindow.h"
+#include "SNodeInfo.h"
+
 class CListNodesWindow : public CSubWindow
 {
 public:
-
 	void Init();
 	virtual void OnCreate(HWND parent, int xPos, int yPos, int width, int height);
 	void OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM lParam);
@@ -13,6 +14,9 @@ public:
 	void OnClickListItem();
 	void OnDoubleClickListItem();
 	void SelectListItem(u32 id);
+	int GetSelectedItemId();
+	SNodeInfo* GetSelectedItemNodeInfo();
+
 private:
 	HWND				mNodesList;
 

@@ -1055,8 +1055,9 @@ namespace gf
 		//setMultipleRenderTargets()
 	}
 
-	void CD3D11Driver::getGBuffers(IRenderTarget* renderTargets[]) const
+	void CD3D11Driver::getGBuffers(IRenderTarget* renderTargets[])
 	{
+		setupGBuffer();
 		memcpy(renderTargets, mGBuffers, EGT_GBUFFER_COUNT * sizeof(IRenderTarget*));
 	}
 

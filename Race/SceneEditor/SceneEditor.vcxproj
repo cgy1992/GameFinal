@@ -81,25 +81,38 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CCreateLightNodeWindow.h" />
+    <ClInclude Include="CEditorPanel.h" />
+    <ClInclude Include="CInstanceInfoWindow.h" />
+    <ClInclude Include="CLightPanel.h" />
     <ClInclude Include="CListNodesWindow.h" />
+    <ClInclude Include="CMeshNodePanel.h" />
     <ClInclude Include="CNodeInfoWindow.h" />
     <ClInclude Include="ControlIDs.h" />
     <ClInclude Include="CCreateMeshNodeWindow.h" />
     <ClInclude Include="CSubWindow.h" />
     <ClInclude Include="EditorScene.h" />
     <ClInclude Include="EditorWindow.h" />
+    <ClInclude Include="Enums.h" />
+    <ClInclude Include="SCollectionNodeInfo.h" />
     <ClInclude Include="SNodeInfo.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CCreateLightNodeWindow.cpp" />
     <ClCompile Include="CCreateMeshNodeWindow.cpp" />
+    <ClCompile Include="CEditorPanel.cpp" />
+    <ClCompile Include="CInstanceInfoWindow.cpp" />
+    <ClCompile Include="CLightPanel.cpp" />
     <ClCompile Include="CListNodesWindow.cpp" />
+    <ClCompile Include="CMeshNodePanel.cpp" />
     <ClCompile Include="CNodeInfoWindow.cpp" />
     <ClCompile Include="CSubWindow.cpp" />
     <ClCompile Include="EditorScene.cpp" />
     <ClCompile Include="EditorWindow.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SCollectionNodeInfo.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

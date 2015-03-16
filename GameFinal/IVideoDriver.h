@@ -228,7 +228,7 @@ namespace gf
 
 		virtual void setGBuffersAsRenderTargets() = 0;
 
-		virtual void getGBuffers(IRenderTarget* renderTargets[]) const = 0;
+		virtual void getGBuffers(IRenderTarget* renderTargets[]) = 0;
 
 		virtual IRenderTarget* getDefaultRenderTarget() = 0;
 

@@ -46,7 +46,6 @@ namespace gf
 		}
 	}
 
-
 	void COctreeManager::OnRegisterSceneNode(bool bRecursion)
 	{
 		ICameraNode* camera = mSceneManager->getActiveCameraNode();
@@ -56,6 +55,17 @@ namespace gf
 
 		const math::SFrustum& frustum = camera->getFrustum();
 		mRootNode.registerVisibleNodes(frustum);
+	}
+
+	void COctreeManager::OnRegisterSceneNode(u32 tag)
+	{
+		ICameraNode* camera = mSceneManager->getActiveCameraNode();
+
+		if (!camera)
+			return;
+
+		const math::SFrustum& frustum = camera->getFrustum();
+		mRootNode.registerVisibleNodes(frustum, tag);
 	}
 
 	void COctreeManager::update(f32 delta)

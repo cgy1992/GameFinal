@@ -25,11 +25,7 @@ namespace gf
 			AddReferenceCounted(mMaterial);
 		}
 
-		virtual ~CTerrainNode()
-		{
-			ReleaseReferenceCounted(mMesh);
-			ReleaseReferenceCounted(mMaterial);
-		}
+		virtual ~CTerrainNode();
 
 		virtual void render(E_PIPELINE_USAGE usage);
 

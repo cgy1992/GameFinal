@@ -36,6 +36,10 @@ namespace gf
 
 		virtual f32 getHeight(f32 x, f32 z) const;
 
+		virtual bool intersectRay(const math::SRay& ray, XMFLOAT3& intersectPoint, float epsilon = 0.001f);
+
+		virtual bool isInsideTerrainScope(f32 x, f32 z);
+
 		XMFLOAT2 getPatchHeightBounds(u32 patchRow, u32 patchCol) const;
 
 		virtual E_MESH_TYPE getType() const
@@ -43,11 +47,7 @@ namespace gf
 			return EMT_TERRAIN_MESH;
 		}
 		
-		virtual ~CTerrainMesh()
-		{
-			ReleaseReferenceCounted(mMeshBuffer);
-			ReleaseReferenceCounted(mHeightMapTexture);
-		}
+		virtual ~CTerrainMesh();
 
 		virtual void bind();
 

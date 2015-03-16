@@ -273,6 +273,51 @@ namespace gf
 		}
 	}
 
+	void COctreeNode::registerVisibleNodes(const math::SFrustum& frustum, u32 tag) const
+	{
+		for (auto it = mStaticMeshNodes.begin(); it != mStaticMeshNodes.end(); it++)
+		{
+			if ((*it)->getTag() & tag)
+				(*it)->OnRegisterSceneNode(false);
+		}
+
+		for (auto it = mDynamicMeshNodes.begin(); it != mDynamicMeshNodes.end(); it++)
+		{
+			if ((*it)->getTag() & tag)
+				(*it)->OnRegisterSceneNode(false);
+		}
+
+		// register static lights for judging which light is inside frustum.
+		for (auto it = mStaticLightNodes.begin(); it != mStaticLightNodes.end(); it++)
+		{
+			ILightNode* light = (*it);
+			if ((light->getTag() & tag) && (!light->isCulled(frustum)))
+			{
+				light->setInsideFrustum(true);
+				light->OnRegisterSceneNode(false);
+			}
+		}
+
+		// register dynamic lights for judging which light is inside frustum.
+		for (auto it = mDynamicLightNodes.begin(); it != mDynamicLightNodes.end(); it++)
+		{
+			ILightNode* light = (*it);
+			if ((light->getTag() & tag) && (!light->isCulled(frustum)))
+			{
+				light->setInsideFrustum(true);
+				light->OnRegisterSceneNode(false);
+			}
+		}
+
+		// recurse the eight sub-space
+		for (u32 i = 0; i < 8; i++)
+		{
+			if (mChildrenNodes[i])
+				mChildrenNodes[i]->registerVisibleNodes(frustum, tag);
+		}
+	}
+
+
 	/*
 		return a IOctreeNode pointer according to the position of the node
 		but it doesn't mean this node is certainly contained in this octree node.

@@ -37,6 +37,8 @@ namespace gf
 
 		virtual void OnRegisterSceneNode(bool bRecursion = true);
 
+		virtual void OnRegisterSceneNode(u32 tag);
+
 		virtual void update(f32 delta = 0);
 		
 		virtual bool removeSceneNode(ISceneNode* node);

@@ -49,6 +49,8 @@ namespace gf
 
 		virtual void registerVisibleNodes(const math::SFrustum& frustum) const = 0;
 
+		virtual void registerVisibleNodes(const math::SFrustum& frustum, u32 tag) const = 0;
+
 		virtual IOctreeNode* getBelongedOctreeNode(const ISceneNode* node) = 0;
 
 		virtual bool removeSceneNode(ISceneNode* node) = 0;

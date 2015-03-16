@@ -83,6 +83,37 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 #endif
 }
 
+
+SReturnGBuffers defer_ps_main(VertexOut pin)
+{
+	float4 texColor = GF_TEXTURE_0.Sample(gSampleState, pin.Tex);
+
+#ifdef ALPHA_TEST_ON
+	clip(texColor.a - 0.2f);
+#endif
+
+	float3 unitNormalW = normalize(pin.Normal);
+	float3 tangentW = pin.Tangent;
+	float3 normalMapSample = GF_TEXTURE_1.Sample(gSampleState, pin.Tex); 
+	float3 normal = NormalSampleToWorldSpace(normalMapSample, unitNormalW, tangentW);
+
+#ifdef SHADOW_ON
+	float shadowFactor = CalcShadowFactor(1, 1.0f);
+#else
+	float shadowFactor = 1.0f;
+#endif
+
+	normal = normal * 0.5f + 0.5f;
+	SReturnGBuffers pout;
+	pout.GBuffer0 = float4(normal, GF_MTRL_SPECULAR.w);
+	pout.GBuffer1 = GF_MTRL_DIFFUSE * texColor;
+	pout.GBuffer2.x = GF_MTRL_SPECULAR.x;
+	pout.GBuffer2.y = GF_MTRL_AMBIENT.x;
+	pout.GBuffer2.z = shadowFactor;
+
+	return pout;
+}
+
 void shadow_ps_main(
 	in float4 PosH : SV_POSITION,
 	in float2 Tex : TEXCOORD

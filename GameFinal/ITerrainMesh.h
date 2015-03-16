@@ -51,6 +51,8 @@ namespace gf
 
 		virtual f32 getHeight(f32 x, f32 z) const = 0;
 
+		virtual bool intersectRay(const math::SRay& ray, XMFLOAT3& intersectPoint, float epsilon = 0.001f) = 0;
+
 		virtual f32 getHeightByRowAndCol(u32 row, u32 col) const = 0;
 
 		f32 getVertexSpace() const

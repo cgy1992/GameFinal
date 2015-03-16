@@ -38,6 +38,8 @@ namespace gf
 
 		virtual void draw(ISceneNode* node);
 
+		virtual void draw(u32 tag);
+
 		virtual void render(E_PIPELINE_USAGE);
 
 		
@@ -169,6 +171,8 @@ namespace gf
 		bool isCulled(const IMeshNode* node);
 
 		virtual IMeshNode* getQuadNode();
+
+		virtual IMeshNode* getSkyNode();
 
 		virtual ICompositor* createCompositor(IPipeline* pipeline);
 

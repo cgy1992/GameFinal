@@ -412,4 +412,79 @@ namespace gf
 
 	}
 
+	bool CTerrainMesh::intersectRay(const math::SRay& ray, XMFLOAT3& intersectPoint, float epsilon)
+	{
+		if (!isInsideTerrainScope(ray.Origin.x, ray.Origin.z))
+			return false;
+
+		float height = getHeight(ray.Origin.x, ray.Origin.z);
+
+		// if the ray's origin is already below the terrain.
+		if (height > ray.Origin.y)
+			return false;
+
+		float linearSearchMove = mVertexSpace;
+		XMFLOAT3 prevPoint;
+		XMFLOAT3 nextPoint = ray.Origin;
+
+		while (nextPoint.y > height)
+		{
+			prevPoint = nextPoint;
+			nextPoint = math::VectorAdd(nextPoint, math::VectorMultiply(ray.Direction, linearSearchMove));
+			
+			if (!isInsideTerrainScope(nextPoint.x, nextPoint.z))
+				return false;
+			
+			height = getHeight(nextPoint.x, nextPoint.z);
+		}
+
+		// binary search
+		XMFLOAT3 midPoint;
+		u32 count = 0;
+		while (count < 100)
+		{
+			midPoint = math::VectorAdd(math::VectorMultiply(prevPoint, 0.5f), math::VectorMultiply(nextPoint, 0.5f));
+			height = getHeight(midPoint.x, midPoint.z);
+
+			float err = midPoint.y - height;
+			if (fabs(err) < epsilon)
+			{
+				intersectPoint = midPoint;
+				return true;
+			}
+
+			if (err > 0)
+				prevPoint = midPoint;
+			else
+				nextPoint = midPoint;
+
+			count++;
+		}
+
+		intersectPoint = midPoint;
+		return true;
+	}
+
+	bool CTerrainMesh::isInsideTerrainScope(f32 x, f32 z)
+	{
+
+		x = mTotalWidth * 0.5f + x;
+		z = mTotalWidth * 0.5f - z;
+
+		if (x < 0 || x > mTotalWidth || z < 0 || z > mTotalWidth)
+			return false;
+
+		return true;
+	}
+
+	CTerrainMesh::~CTerrainMesh()
+	{
+		ReleaseReferenceCounted(mMeshBuffer);
+		ReleaseReferenceCounted(mHeightMapTexture);
+	}
+
+
+
+
 }
+

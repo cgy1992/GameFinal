@@ -32,6 +32,8 @@ namespace gf
 
 		virtual void registerVisibleNodes(const math::SFrustum& frustum) const;
 
+		virtual void registerVisibleNodes(const math::SFrustum& frustum, u32 tag) const;
+
 		E_OCTREE_QUADRANT getQuadrant(const ISceneNode* node) const;
 
 		IOctreeNode* getBelongedOctreeNode(const ISceneNode* node);

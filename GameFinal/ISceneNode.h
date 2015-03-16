@@ -173,6 +173,20 @@ namespace gf
 			}
 		}
 
+		
+		virtual void OnRegisterSceneNode(u32 tag)
+		{
+			if (mVisible)
+			{
+				auto it = mChildren.begin();
+				for (; it != mChildren.end(); ++it)
+				{
+					if ((*it)->getTag() & tag)
+						(*it)->OnRegisterSceneNode();
+				}
+			}
+		}
+
 		//! Sets the new scene manager for this node and all children.
 		//! Called by addChild when moving nodes between scene managers
 		void setSceneManager(ISceneManager* newManager)

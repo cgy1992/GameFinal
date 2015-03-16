@@ -9,47 +9,47 @@ void CNodeInfoWindow::OnCreate(HWND parent, int xPos, int yPos, int width, int h
 
 	HINSTANCE hInst = GetModuleHandle(NULL);
 
-	HWND label1 = CreateLabel(IDC_NODE_INFO_LABEL, "T:", xPos - 10, 10, 20);
-	HWND label2 = CreateLabel(IDC_NODE_INFO_LABEL + 1, "R:", xPos - 10, 40, 20);
-	HWND label3 = CreateLabel(IDC_NODE_INFO_LABEL + 2, "S:", xPos - 10, 70, 20);
+	HWND label1 = CreateLabel(IDC_NODE_INFO_LABEL, TEXT("T:"), 0, 10, 20);
+	HWND label2 = CreateLabel(IDC_NODE_INFO_LABEL + 1, TEXT("R:"), 0, 40, 20);
+	HWND label3 = CreateLabel(IDC_NODE_INFO_LABEL + 2, TEXT("S:"), 0, 70, 20);
 	
 	const int textFieldWidth = 90;
 	const int intervalBetweenTextFields = 2;
 
 	for (u32 i = 0; i < 3; i++)
 	{
-		mPosTextFields[i] = CreateWindow(TEXT("edit"), NULL, WS_CHILDWINDOW | WS_VISIBLE | WS_BORDER,
-			xPos + 10 + i * (textFieldWidth + intervalBetweenTextFields), yPos + 10, textFieldWidth, 20, 
-			mParentHwnd, (HMENU)(IDC_POS_TEXTFIELD + i), hInst, NULL);
+		mPosTextFields[i] = CreateControl(TEXT("edit"), NULL, WS_CHILDWINDOW | WS_VISIBLE | WS_BORDER,
+			20 + i * (textFieldWidth + intervalBetweenTextFields), 10, textFieldWidth, 20, 
+			(IDC_POS_TEXTFIELD + i), NULL);
 
-		mRotTextFields[i] = CreateWindow(TEXT("edit"), NULL, WS_CHILDWINDOW | WS_VISIBLE | WS_BORDER,
-			xPos + 10 + i * (textFieldWidth + intervalBetweenTextFields), yPos + 40, textFieldWidth, 20,
-			mParentHwnd, (HMENU)(IDC_ROT_TEXTFIELD + i), hInst, NULL);
+		mRotTextFields[i] = CreateControl(TEXT("edit"), NULL, WS_CHILDWINDOW | WS_VISIBLE | WS_BORDER,
+			20 + i * (textFieldWidth + intervalBetweenTextFields), yPos + 40, textFieldWidth, 20,
+			(IDC_ROT_TEXTFIELD + i), NULL);
 
-		mScaleTextFields[i] = CreateWindow(TEXT("edit"), NULL, WS_CHILDWINDOW | WS_VISIBLE | WS_BORDER,
-			xPos + 10 + i * (textFieldWidth + intervalBetweenTextFields), yPos + 70, textFieldWidth, 20,
-			mParentHwnd, (HMENU)(IDC_SCALE_TEXTFIELD + i), hInst, NULL);
+		mScaleTextFields[i] = CreateControl(TEXT("edit"), NULL, WS_CHILDWINDOW | WS_VISIBLE | WS_BORDER,
+			20 + i * (textFieldWidth + intervalBetweenTextFields), yPos + 70, textFieldWidth, 20,
+			(IDC_SCALE_TEXTFIELD + i), NULL);
 	}
 
-	mUpdateTransformBtn = CreateWindow(TEXT("button"), TEXT("Update"),
-		WS_CHILD | WS_VISIBLE, xPos, yPos + 100, 100, 24,
-		mParentHwnd, (HMENU)(IDC_UPDATE_TRANSFORM_BTN), hInst, NULL);
+	mUpdateTransformBtn = CreateControl(TEXT("button"), TEXT("Update"),
+		WS_CHILD | WS_VISIBLE, 10, 100, 100, 24,
+		(IDC_UPDATE_TRANSFORM_BTN), NULL);
 
-	mCancelTransformBtn = CreateWindow(TEXT("button"), TEXT("Cancel"), 
-		WS_CHILD | WS_VISIBLE, xPos + 105, yPos + 100, 100, 24,
-		mParentHwnd, (HMENU)(IDC_CANCEL_TRANSFORM_BTN), hInst, NULL);
+	mCancelTransformBtn = CreateControl(TEXT("button"), TEXT("Cancel"),
+		WS_CHILD | WS_VISIBLE, 115, 100, 100, 24,
+		 (IDC_CANCEL_TRANSFORM_BTN), NULL);
 
-	mStaticCheckBox = CreateWindow(TEXT("button"), TEXT("Static"), 
+	mStaticCheckBox = CreateControl(TEXT("button"), TEXT("Static"),
 		WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-		xPos, yPos + 130, 60, 20, mParentHwnd, (HMENU)IDC_NODE_INFO_STATIC_CHECKBOX, hInst, NULL);
+		10, 130, 60, 20, IDC_NODE_INFO_STATIC_CHECKBOX, NULL);
 
-	mPhysicsCheckBox = CreateWindow(TEXT("button"), TEXT("Bounding Physics"),
+	mPhysicsCheckBox = CreateControl(TEXT("button"), TEXT("Bounding Physics"),
 		WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-		xPos + 70, yPos + 130, 150, 20, mParentHwnd, (HMENU)IDC_NODE_INFO_PHYSICS_CHECKBOX, hInst, NULL);
+		80, 130, 150, 20, IDC_NODE_INFO_PHYSICS_CHECKBOX, NULL);
 
-	mShadowCheckBox = CreateWindow(TEXT("button"), TEXT("Shadow"),
+	mShadowCheckBox = CreateControl(TEXT("button"), TEXT("Shadow"),
 		WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
-		xPos, yPos + 150, 70, 30, mParentHwnd, (HMENU)IDC_NODE_INFO_SHADOW_CHECKBOX, hInst, NULL);
+		10, 150, 70, 30, IDC_NODE_INFO_SHADOW_CHECKBOX, NULL);
 }
 
 void CNodeInfoWindow::UpdateShowing(SNodeInfo* info)

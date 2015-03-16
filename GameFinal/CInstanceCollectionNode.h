@@ -27,6 +27,14 @@ namespace gf
 		/* 这个函数非常重要，如果aabb太小，InstanceCollectionNode会被八叉树裁剪，所有的instance都无法绘制 */
 		virtual math::SAxisAlignedBox getAabb() const;
 
+		virtual void updateAbsoluteTransformation()
+		{
+			ISceneNode::updateAbsoluteTransformation();
+
+			const math::SAxisAlignedBox& aabb = mMesh->getAabb();
+			mOBB = computeOrientedBox(aabb);
+		}
+
 		bool init(IMesh* mesh, u32 maxInstanceNum, u32 eachInstanceDataSize);
 
 		virtual IInstanceNode* addInstance(bool bStatic, 
@@ -55,6 +63,8 @@ namespace gf
 		virtual void renderInstanced(E_PIPELINE_USAGE usage, u32 instanceCount, IMeshBuffer* instanceBuffer){}
 
 		virtual void OnRegisterSceneNode(bool bRecursion = true);
+
+		virtual void OnRegisterSceneNode(u32 tag);
 
 		virtual void addChild(ISceneNode* child);
 

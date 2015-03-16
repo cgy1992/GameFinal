@@ -4,7 +4,6 @@
 #include "ControlIDs.h"
 
 
-
 EditorWindow* EditorWindow::_instance = nullptr;
 const u32 EditorWindow::LEFT_SUB_WINDOW_WIDTH = 240;
 const u32 EditorWindow::RIGHT_SUB_WINDOW_WIDTH = 300;
@@ -15,6 +14,7 @@ EditorWindow::EditorWindow(u32 clientWidth, u32 clientHeight)
 :mBufferWndWidth(clientWidth),
 mBufferWndHeight(clientHeight)
 , mMouseState(EMS_PICKING)
+, mActivePanel(nullptr)
 {
 	for (u32 i = 0; i < 3; i++)
 		mMousePressed[0] = false;
@@ -38,7 +38,6 @@ LRESULT CALLBACK EditorWindow::WindowsProcedure(HWND hwnd, UINT msg, WPARAM wPar
 	switch (msg)
 	{
 	case WM_CREATE:
-		
 		OnCreate(hInst, hwnd);
 		break;
 	case WM_SIZE:
@@ -72,9 +71,7 @@ LRESULT CALLBACK EditorWindow::WindowsProcedure(HWND hwnd, UINT msg, WPARAM wPar
 		MouseDoubleClicked(xPos, yPos);
 		break;
 	case WM_COMMAND:
-		mCreateMeshNodeWindow.OnCommand(LOWORD(wParam), HIWORD(wParam), wParam, lParam);
-		mListNodesWindow.OnCommand(LOWORD(wParam), HIWORD(wParam), wParam, lParam);
-		mNodeInfoWindow.OnCommand(LOWORD(wParam), HIWORD(wParam), wParam, lParam);
+		OnCommand(LOWORD(wParam), HIWORD(wParam), wParam, lParam);
 		break;
 	case WM_CTLCOLORSTATIC:
 		SetTextColor((HDC)wParam, RGB(230,0,0));   // iTextColor is the RGB() color you want for the text
@@ -97,134 +94,46 @@ void EditorWindow::_setInstance(EditorWindow* instance)
 
 void EditorWindow::init()
 {
-	MoveWindow(mHwnd, 100, 100, WINDOW_INITIAL_WIDTH, WINDOW_INITIAL_HEIGHT, TRUE);
-	mCreateMeshNodeWindow.Init();
+	ShowWindow(mHwnd, SW_MAXIMIZE);
+
+	const char* texts[] = {
+		"Model", "Light"
+	};
+
+	for (u32 i = 0; i < 2; i++)
+	{
+		SendMessageA(mCreatePanelSelector, CB_ADDSTRING, (WPARAM)0, (LPARAM)texts[i]);
+	}
+
+	SendMessage(mCreatePanelSelector, CB_SETCURSEL, 0, 0);
+
+	for (u32 i = 0; i < mEditorPanelPtrs.size(); i++)
+		mEditorPanelPtrs[i]->Init();
+
 }
 
 void EditorWindow::MouseLeftButtonDown(int xPos, int yPos)
 {
-	EditorScene* scene = EditorScene::getInstance();
-	if (!scene)
-		return;
-
-	if (!CheckMouseInScene(xPos, yPos))
-		return;
-
-	if (mMouseState == EMS_ADD_OBJECT)
-	{
-		u32 id = scene->AddObject();
-		mMouseState = EMS_PICKING;
-		mCreateMeshNodeWindow.EnableControl(IDC_NEW_MODEL_NDOE_BTN, TRUE);
-		mListNodesWindow.AddListItem(id);
-	}
-	else if (mMouseState == EMS_PICKING)
-	{
-		u32 sx = xPos - LEFT_SUB_WINDOW_WIDTH;
-		u32 sy = yPos;
-		int id = scene->SelectObject(sx, sy);
-		if (id != -1)
-		{
-			ShowNodeInfo(id);
-			mListNodesWindow.SelectListItem(id);
-		}
-	}
+	if (mActivePanel)
+		mActivePanel->MouseLeftButtonDown(xPos, yPos);
 }
 
 void EditorWindow::MouseRightButtonDown(int xPos, int yPos)
 {
-	EditorScene* scene = EditorScene::getInstance();
-	if (!scene)
-		return;
-
-	if (mMouseState == EMS_ADD_OBJECT)
-	{
-		mCreateMeshNodeWindow.EnableControl(IDC_NEW_MODEL_NDOE_BTN, TRUE);
-		mMouseState = EMS_PICKING;
-		scene->CancelAddingObject();
-	}
-	else if (mMouseState == EMS_PICKING)
-	{
-		if (!CheckMouseInScene(xPos, yPos))
-			return;
-
-		EditorScene* scene = EditorScene::getInstance();
-		if (!scene)
-			return;
-		
-		SNodeInfo* info = scene->GetSelectedNodeInfo();
-		if (!info)
-			return;
-
-		mMousePressed[E_RIGHT_MOUSE_BUTTON] = true;
-		mMouseState = EMS_ROTATION;
-		mRightMousePressPoint.x = xPos;
-		mRightMousePressPoint.y = yPos;
-		mOrientationBeforeRotate = info->Rotation.y;
-	}
+	if (mActivePanel)
+		mActivePanel->MouseRightButtonDown(xPos, yPos);
 }
 
 void EditorWindow::MouseMove(int xPos, int yPos)
 {
-	EditorScene* scene = EditorScene::getInstance();
-	if (!scene)
-		return;
-
-	if (!CheckMouseInScene(xPos, yPos))
-		return;
-
-	u32 sx = xPos - LEFT_SUB_WINDOW_WIDTH;
-	u32 sy = yPos;
-	
-	if (mMouseState == EMS_ADD_OBJECT)
-	{
-		scene->ChangeAddedObjectPosition(sx, sy);
-	}
-	else if (mMouseState == EMS_PICKING)
-	{
-		scene->PickingObject(sx, sy);
-	}
-	else if (mMouseState == EMS_ROTATION)
-	{
-		SNodeInfo* info = scene->GetSelectedNodeInfo();
-		if (!info)
-			return;
-		f32 rotation = (mRightMousePressPoint.x - xPos) * 0.02f;
-		f32 rotY = mOrientationBeforeRotate + rotation;
-
-		info->Rotation.y = mOrientationBeforeRotate + rotation;
-
-
-		mNodeInfoWindow.UpdateShowing(info);
-		scene->UpdateNodeInfo(info);
-		scene->PickingObject(sx, sy);
-	}
-}
-
-void EditorWindow::OnNewMeshNodeButton(HWND hwnd)
-{
-	
+	if (mActivePanel)
+		mActivePanel->MouseMove(xPos, yPos);
 }
 
 void EditorWindow::MouseDoubleClicked(int xPos, int yPos)
 {
-	EditorScene* scene = EditorScene::getInstance();
-	if (!scene)
-		return;
-
-	if (!CheckMouseInScene(xPos, yPos))
-		return;
-
-	if (mMouseState == EMS_PICKING)
-	{
-		u32 sx = xPos - LEFT_SUB_WINDOW_WIDTH;
-		u32 sy = yPos;
-		int id = scene->SelectObject(sx, sy);
-		if (id != -1)
-		{
-			scene->BeginFocusingObject();
-			mListNodesWindow.SelectListItem(id);
-		}
-	}
+	if (mActivePanel)
+		mActivePanel->MouseDoubleClicked(xPos, yPos);
 }
 
 bool EditorWindow::CheckMouseInScene(int xPos, int yPos)
@@ -253,6 +162,9 @@ void EditorWindow::OnSize(int cxClient, int cyClient)
 			MoveWindow(hBufferHwnd, LEFT_SUB_WINDOW_WIDTH, 0, mBufferWndWidth, mBufferWndHeight, true);
 		}
 	}
+
+	for (u32 i = 0; i < mEditorPanelPtrs.size(); i++)
+		mEditorPanelPtrs[i]->OnSize(cxClient, cyClient);
 }
 
 void EditorWindow::OnCreate(HINSTANCE hInst, HWND hwnd)
@@ -263,24 +175,53 @@ void EditorWindow::OnCreate(HINSTANCE hInst, HWND hwnd)
 		WS_CHILDWINDOW | WS_VISIBLE | LBS_STANDARD,
 		10, 10, 150, 400, mHwnd, (HMENU)IDC_CREATE_PANEL_SELECTOR, hInst, NULL);
 
-	mNodeNameTextField = CreateWindow(TEXT("edit"), NULL, WS_CHILDWINDOW | WS_VISIBLE | WS_BORDER,
-		10, 40, LEFT_SUB_WINDOW_WIDTH - 30, 20, mHwnd, (HMENU)IDC_NODE_NAME_TEXTFIELD, hInst, NULL);
+	mMeshNodePanel.OnCreate(hwnd);
 
-	mCreateMeshNodeWindow.OnCreate(mHwnd, 0, 70, LEFT_SUB_WINDOW_WIDTH, 130);
-	mListNodesWindow.OnCreate(mHwnd, 0, 200, LEFT_SUB_WINDOW_WIDTH, 300);
-	mNodeInfoWindow.OnCreate(mHwnd, WINDOW_INITIAL_WIDTH - RIGHT_SUB_WINDOW_WIDTH, 0, RIGHT_SUB_WINDOW_WIDTH, 400);
+	mLightPanel.OnCreate(hwnd);
+	mLightPanel.SetActive(false);
+
+	mEditorPanelPtrs.push_back(&mMeshNodePanel);
+	mEditorPanelPtrs.push_back(&mLightPanel);
+
+	mActivePanel = &mMeshNodePanel;
 }
 
 void EditorWindow::ShowNodeInfo(u32 id)
 {
-	EditorScene* scene = EditorScene::getInstance();
-	SNodeInfo* nodeinfo = scene->GetNodeInfoById(id);
-
-	mNodeInfoWindow.UpdateShowing(nodeinfo);
+	mActivePanel->ShowNodeInfo(id);
 }
 
 void EditorWindow::MouseRightButtonUp(int xPos, int yPos)
 {
-	mMouseState = EMS_PICKING;
-	mMousePressed[E_RIGHT_MOUSE_BUTTON] = false;
+	if (mActivePanel)
+		mActivePanel->MouseRightButtonUp(xPos, yPos);
+}
+
+void EditorWindow::OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM lParam)
+{
+	if (id == IDC_CREATE_PANEL_SELECTOR && event == CBN_SELCHANGE)
+		OnSelectCreatePanel();
+
+	if (mActivePanel)
+		mActivePanel->OnCommand(id, event, wParam, lParam);
+}
+
+void EditorWindow::OnSelectCreatePanel()
+{
+	int selectedIndex = ComboBox_GetCurSel(mCreatePanelSelector);
+	if (selectedIndex == -1)
+		return;
+	
+	mActivePanel->SetActive(false);
+	if (selectedIndex == 0)
+	{
+		mActivePanel = &mMeshNodePanel;
+	}
+	else if (selectedIndex == 1)
+	{
+		mActivePanel = &mLightPanel;
+	}
+
+	mActivePanel->SetActive(true);
+	SetFocus(mHwnd);
 }

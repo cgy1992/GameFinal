@@ -18,5 +18,6 @@
 #include <windowsx.h>
 #include <vector>
 #include <map>
+#include <algorithm>
 
 using namespace gf;

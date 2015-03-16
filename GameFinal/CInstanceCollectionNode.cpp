@@ -165,7 +165,15 @@ namespace gf
 	void CInstanceCollectionNode::OnRegisterSceneNode(bool bRecursion /*= true*/)
 	{
 		mSortCode = ((u64)mRenderOrder << 56);
-		mSceneManager->registerNodeForRendering(this);
+		if (mVisible)
+			mSceneManager->registerNodeForRendering(this);
+	}
+
+	void CInstanceCollectionNode::OnRegisterSceneNode(u32 tag)
+	{
+		mSortCode = ((u64)mRenderOrder << 56);
+		if (mVisible && (mTag & tag))
+			mSceneManager->registerNodeForRendering(this);
 	}
 
 	void CInstanceCollectionNode::addChild(ISceneNode* child)

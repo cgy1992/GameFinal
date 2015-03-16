@@ -16,6 +16,8 @@ public:
 	void OnClickPhysicsCheckBox();
 	void OnClickShadowCheckBox();
 
+	
+
 private:
 	HWND	mPosTextFields[3];
 	HWND	mRotTextFields[3];

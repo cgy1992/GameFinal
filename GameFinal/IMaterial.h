@@ -78,6 +78,16 @@ namespace gf
 			setPipeline(EPU_FORWARD, pipeline);
 		}
 
+		void setPipeline(u32 index, IPipeline* pipeline)
+		{
+			if (mPipelines[index] != pipeline)
+			{
+				ReleaseReferenceCounted(mPipelines[index]);
+				mPipelines[index] = pipeline;
+				AddReferenceCounted(mPipelines[index]);
+			}
+		}
+
 		void setPipeline(E_PIPELINE_USAGE usage, IPipeline* pipeline)
 		{
 			if (mPipelines[usage] != pipeline)
@@ -117,6 +127,11 @@ namespace gf
 			}
 
 			return pipeline;
+		}
+
+		IPipeline* getPipeline(u32 index)
+		{
+			return mPipelines[index];
 		}
 
 		bool setTexture(u32 layer, ITexture* texture)
@@ -183,6 +198,11 @@ namespace gf
 				return true;
 			}
 			return false;
+		}
+
+		void setName(const std::string& name)
+		{
+			mName = name;
 		}
 
 	//	const static u32 MAX_TEXTURE_COUNT;

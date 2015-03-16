@@ -8,6 +8,7 @@
         </attributes>
         <pipelines>
           <pipeline name="alpha_shadow_pipeline"/>
+          <pipeline name="defer_alpha_shadow_pipeline" usage="defer"/>
           <pipeline name="alpha_shadow_map_pipeline" usage="shadow_map"/>
         </pipelines>
         <textures>
@@ -24,6 +25,11 @@
         <textures>
             <texture name="roundtreetwig.png"/>
         </textures>
+        <pipelines>
+          <pipeline name="alpha_shadow_pipeline"/>
+          <pipeline name="defer_alpha_shadow_pipeline" usage="defer"/>
+          <pipeline name="alpha_shadow_map_pipeline" usage="shadow_map"/>
+        </pipelines>
     </material>
     <material name="roundtreeA/material_02" prototype="roundtreeA/material_00">
         <attributes>
@@ -37,6 +43,7 @@
         </textures>
       <pipelines>
         <pipeline name="shadow_pipeline"/>
+        <pipeline name="defer_shadow_pipeline" usage="defer"/>
         <pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
       </pipelines>
     </material>

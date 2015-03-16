@@ -313,6 +313,21 @@ namespace gf
 			return mShadowSegments;
 		}
 
+		XMFLOAT3 getLookVector() const
+		{
+			return mLook;
+		}
+
+		XMFLOAT3 getUpVector() const
+		{
+			return mUp;
+		}
+
+		XMFLOAT3 getRightVector() const
+		{
+			return mRight;
+		}
+
 		const static u32 ACTIVE_CAMERA_ID = 128;
 		const static u32 CASCADE_SHADOW_LEVEL = 4; 
 

@@ -400,8 +400,13 @@ namespace gf
 			heightScale, bCreateTessellationMesh, bCreateNormal, fTexcoordScale, cellsPerPatch, usage, mTextureManager);
 
 		if (!mesh)
+		{
+			GF_PRINT_CONSOLE_INFO("ERROR:The terrain mesh named '%s' created failed!\n", name.c_str());
 			mCodeAllocator.release(sortcode);
+			return nullptr;
+		}
 
+		mMeshMap.insert(std::make_pair(name, mesh));
 		return mesh;
 	}
 

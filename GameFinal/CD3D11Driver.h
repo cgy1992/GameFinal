@@ -160,7 +160,7 @@ namespace gf
 
 		virtual void setGBuffersAsRenderTargets();
 
-		virtual void getGBuffers(IRenderTarget* renderTargets[]) const;
+		virtual void getGBuffers(IRenderTarget* renderTargets[]);
 
 		virtual IRenderTarget* getDefaultRenderTarget() { return mDefaultRenderTarget; }
 

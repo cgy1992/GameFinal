@@ -72,6 +72,12 @@ namespace gf
 		}
 	}
 
+	void CInstanceNode::OnRegisterSceneNode(u32 tag)
+	{
+		if (mVisible && (mTag & tag))
+			mSceneManager->registerNodeForRendering(this, ENT_INSTANCE_NODE);
+	}
+
 	void CInstanceNode::registerToCollectionForRendering()
 	{
 		mOwnerCollection->registerInstanceForRendering(this);

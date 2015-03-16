@@ -13,12 +13,15 @@ namespace gf
 		
 		IPipeline* pipeline = mMaterial->getPipeline(usage);
 
-		CShaderVariableInjection::inject(this, pipeline, 0);
+		if (pipeline)
+		{
+			CShaderVariableInjection::inject(this, pipeline, 0);
 
+			pipeline->apply(usage);
 
-		pipeline->apply(usage);
+			mMesh->draw();
+		}
 
-		mMesh->draw();
 	}
 
 	void CTerrainNode::OnRegisterSceneNode(bool bRecursion)
@@ -80,4 +83,11 @@ namespace gf
 
 		return height;
 	}
+
+	CTerrainNode::~CTerrainNode()
+	{
+		ReleaseReferenceCounted(mMesh);
+		ReleaseReferenceCounted(mMaterial);
+	}
+
 }

@@ -342,6 +342,35 @@ namespace gf
 		}
 	}
 
+	void CSceneManager::draw(u32 tag)
+	{
+		mSolidNodes.clear();
+		mActiveShaders.clear();
+
+		mRenderedMeshNum = 0;
+
+		mDefaultOctree->OnRegisterSceneNode(tag);
+
+		/* reset all the active shaders. (for per-frame variables optimizations.) */
+		for (auto it = mActiveShaders.begin(); it != mActiveShaders.end(); it++)
+		{
+			(*it)->reset();
+		}
+
+		/* sort all the solid nodes according to the sort code. */
+		std::sort(mSolidNodes.begin(), mSolidNodes.end(), [](ISceneNode* node1, ISceneNode* node2){
+			return node1->getSortCode() < node2->getSortCode();
+		});
+
+		/* render all the solid nodes */
+		auto it = mSolidNodes.begin();
+		E_PIPELINE_USAGE usage = mVideoDriver->getPipelineUsage();
+		for (; it != mSolidNodes.end(); it++)
+		{
+			(*it)->render(usage);
+		}
+	}
+
 	void CSceneManager::drawShadowMaps()
 	{
 		ICameraNode* activeCamera = getActiveCameraNode();
@@ -600,6 +629,7 @@ namespace gf
 			tileNums.w = 1.0f / RowTileNum;
 			shader->setVector("gTilesNum", tileNums);
 
+			mVideoDriver->resetTextures(EST_PIXEL_SHADER);
 			mVideoDriver->runComputeShader(shader, ColTileNum, RowTileNum, 1, this);
 			mVideoDriver->resetRWTextures();
 			mVideoDriver->resetTextures(EST_COMPUTE_SHADER);
@@ -610,9 +640,6 @@ namespace gf
 			SMaterial material(postProcessPipeline);
 			material.setTexture(0, outputTexture);
 
-			
-
-			
 			quad->setMaterial(&material);
 
 			draw(quad);
@@ -620,7 +647,7 @@ namespace gf
 			mVideoDriver->setDepthStencilSurface(depthStencilSurface);
 
 			f64 end = timer->getMilliseconds();
-			std::cout << end - start << std::endl;
+			//std::cout << end - start << std::endl;
 		}
 
 
@@ -883,6 +910,11 @@ namespace gf
 		}
 	}
 
+	IMeshNode* CSceneManager::getSkyNode()
+	{
+		return mSkyDomeNode;
+	}
+
 	IMeshNode* CSceneManager::getQuadNode()
 	{
 		if (!mQuadMeshNode)
@@ -901,6 +933,8 @@ namespace gf
 
 		return mQuadMeshNode;
 	}
+
+
 
 
 	ICompositor* CSceneManager::createCompositor(IPipeline* pipeline)
