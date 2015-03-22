@@ -86,6 +86,8 @@ namespace gf
 			return ESNT_MESH;
 		}
 
+		virtual IMesh* getMesh() const { return mMesh; }
+
 	private:
 		ISimpleMesh*			mMesh;
 		IMaterial*				mMaterial;

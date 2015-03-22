@@ -14,10 +14,10 @@ SNodeInfo* SCollectionNodeInfo::GetNodeInfo(ISceneNode* node)
 
 int SCollectionNodeInfo::AddNodeInfo(SNodeInfo& info)
 {
-	int id = EditorScene::getNextNodeSequence();
-	info.Id = id;
+	int id = info.Id;
 	info.CollectionId = Id;
 	info.Category = INSTANCE_CATEGORY;
+	info.Name = "";
 	InstanceNodeInfos.insert(std::make_pair(id, info));
 	InstanceIdMap.insert(std::make_pair(info.Node, id));
 	return id;

@@ -48,9 +48,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	IVideoDriver* driver = device->getVideoDriver();
 	EditorScene* scene = new EditorScene(device);
 	EditorScene::_setInstance(scene);
-	window->init();
+	
 
 	scene->setupInitialScene();
+	window->init();
 
 	ITimer* timer = device->getTimer();
 	timer->reset();

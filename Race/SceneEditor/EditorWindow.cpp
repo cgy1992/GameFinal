@@ -6,9 +6,10 @@
 
 EditorWindow* EditorWindow::_instance = nullptr;
 const u32 EditorWindow::LEFT_SUB_WINDOW_WIDTH = 240;
-const u32 EditorWindow::RIGHT_SUB_WINDOW_WIDTH = 300;
+const u32 EditorWindow::RIGHT_SUB_WINDOW_WIDTH = 350;
 const u32 EditorWindow::WINDOW_INITIAL_WIDTH = 1700;
 const u32 EditorWindow::WINDOW_INITIAL_HEIGHT = 900;
+const u32 EditorWindow::TOP_SUB_WINDOW_HEIGHT = 80;
 
 EditorWindow::EditorWindow(u32 clientWidth, u32 clientHeight)
 :mBufferWndWidth(clientWidth),
@@ -110,30 +111,56 @@ void EditorWindow::init()
 	for (u32 i = 0; i < mEditorPanelPtrs.size(); i++)
 		mEditorPanelPtrs[i]->Init();
 
+	mTopSubWindow.Init();
+
 }
 
 void EditorWindow::MouseLeftButtonDown(int xPos, int yPos)
 {
+	if (!CheckMouseInScene(xPos, yPos))
+		return;
+
+	int sx, sy;
+	GetMousePositionInViewport(xPos, yPos, sx, sy);
+
 	if (mActivePanel)
-		mActivePanel->MouseLeftButtonDown(xPos, yPos);
+		mActivePanel->MouseLeftButtonDown(sx, sy);
 }
 
 void EditorWindow::MouseRightButtonDown(int xPos, int yPos)
 {
+	if (!CheckMouseInScene(xPos, yPos))
+		return;
+
+	int sx, sy;
+	GetMousePositionInViewport(xPos, yPos, sx, sy);
+
 	if (mActivePanel)
-		mActivePanel->MouseRightButtonDown(xPos, yPos);
+		mActivePanel->MouseRightButtonDown(sx, sy);
 }
 
 void EditorWindow::MouseMove(int xPos, int yPos)
 {
+	if (!CheckMouseInScene(xPos, yPos))
+		return;
+
+	int sx, sy;
+	GetMousePositionInViewport(xPos, yPos, sx, sy);
+
 	if (mActivePanel)
-		mActivePanel->MouseMove(xPos, yPos);
+		mActivePanel->MouseMove(sx, sy);
 }
 
 void EditorWindow::MouseDoubleClicked(int xPos, int yPos)
 {
+	if (!CheckMouseInScene(xPos, yPos))
+		return;
+
+	int sx, sy;
+	GetMousePositionInViewport(xPos, yPos, sx, sy);
+
 	if (mActivePanel)
-		mActivePanel->MouseDoubleClicked(xPos, yPos);
+		mActivePanel->MouseDoubleClicked(sx, sy);
 }
 
 bool EditorWindow::CheckMouseInScene(int xPos, int yPos)
@@ -141,7 +168,7 @@ bool EditorWindow::CheckMouseInScene(int xPos, int yPos)
 	if (xPos < LEFT_SUB_WINDOW_WIDTH || xPos > LEFT_SUB_WINDOW_WIDTH + mBufferWndWidth)
 		return false;
 
-	if (yPos < 0 || yPos > mBufferWndHeight)
+	if (yPos < TOP_SUB_WINDOW_HEIGHT || yPos > mBufferWndHeight + TOP_SUB_WINDOW_HEIGHT)
 		return false;
 
 	return true;
@@ -157,14 +184,18 @@ void EditorWindow::OnSize(int cxClient, int cyClient)
 		if (hBufferHwnd)
 		{
 			mBufferWndWidth = cxClient - LEFT_SUB_WINDOW_WIDTH - RIGHT_SUB_WINDOW_WIDTH;
-			mBufferWndHeight = cyClient;
+			mBufferWndHeight = cyClient - TOP_SUB_WINDOW_HEIGHT;
 			scene->setRenderRegion(mBufferWndWidth, mBufferWndHeight);
-			MoveWindow(hBufferHwnd, LEFT_SUB_WINDOW_WIDTH, 0, mBufferWndWidth, mBufferWndHeight, true);
+			MoveWindow(hBufferHwnd, LEFT_SUB_WINDOW_WIDTH, TOP_SUB_WINDOW_HEIGHT,
+				mBufferWndWidth, mBufferWndHeight, true);
 		}
 	}
 
 	for (u32 i = 0; i < mEditorPanelPtrs.size(); i++)
 		mEditorPanelPtrs[i]->OnSize(cxClient, cyClient);
+
+	mTopSubWindow.OnSize(LEFT_SUB_WINDOW_WIDTH, 0, 
+		cxClient - LEFT_SUB_WINDOW_WIDTH - RIGHT_SUB_WINDOW_WIDTH, TOP_SUB_WINDOW_HEIGHT);
 }
 
 void EditorWindow::OnCreate(HINSTANCE hInst, HWND hwnd)
@@ -184,6 +215,8 @@ void EditorWindow::OnCreate(HINSTANCE hInst, HWND hwnd)
 	mEditorPanelPtrs.push_back(&mLightPanel);
 
 	mActivePanel = &mMeshNodePanel;
+
+	mTopSubWindow.OnCreate(hwnd, LEFT_SUB_WINDOW_WIDTH, 0, 500, TOP_SUB_WINDOW_HEIGHT);
 }
 
 void EditorWindow::ShowNodeInfo(u32 id)
@@ -193,8 +226,14 @@ void EditorWindow::ShowNodeInfo(u32 id)
 
 void EditorWindow::MouseRightButtonUp(int xPos, int yPos)
 {
+	if (!CheckMouseInScene(xPos, yPos))
+		return;
+
+	int sx, sy;
+	GetMousePositionInViewport(xPos, yPos, sx, sy);
+
 	if (mActivePanel)
-		mActivePanel->MouseRightButtonUp(xPos, yPos);
+		mActivePanel->MouseRightButtonUp(sx, sy);
 }
 
 void EditorWindow::OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM lParam)
@@ -204,6 +243,8 @@ void EditorWindow::OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM lParam)
 
 	if (mActivePanel)
 		mActivePanel->OnCommand(id, event, wParam, lParam);
+
+	mTopSubWindow.OnCommand(id, event, wParam, lParam);
 }
 
 void EditorWindow::OnSelectCreatePanel()
@@ -224,4 +265,16 @@ void EditorWindow::OnSelectCreatePanel()
 
 	mActivePanel->SetActive(true);
 	SetFocus(mHwnd);
+}
+
+void EditorWindow::GetMousePositionInViewport(int xPos, int yPos, int& sx, int& sy)
+{
+	sx = xPos - EditorWindow::LEFT_SUB_WINDOW_WIDTH;
+	sy = yPos - EditorWindow::TOP_SUB_WINDOW_HEIGHT;
+}
+
+void EditorWindow::OnKeyBoard(f32 delta)
+{
+	if (mActivePanel)
+		mActivePanel->OnKeyBoard(delta);
 }

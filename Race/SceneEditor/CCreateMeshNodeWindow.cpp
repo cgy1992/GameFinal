@@ -83,7 +83,9 @@ void CCreateMeshNodeWindow::OnNewMeshNodeButton()
 			{
 				MessageBoxA(mParentHwnd, "Cannot convert maxNum into an integer", NULL, 0);
 			}
-			window->mMeshNodePanel.AddCollectionNode(szMeshName, maxNum);
+			char nodeName[256];
+			GetNodeName(nodeName);
+			window->mMeshNodePanel.AddCollectionNode(nodeName, szMeshName, maxNum);
 		}
 		else
 		{
@@ -112,6 +114,27 @@ void CCreateMeshNodeWindow::Init()
 	{
 		std::string s = *it;
 		SendMessageA(mMeshNamesComboBox, CB_ADDSTRING, (WPARAM)0, (LPARAM)(LPCTSTR)(s.c_str()));
+	}
+
+	EditorScene* scene = EditorScene::getInstance();
+
+	std::vector<SNodeInfo> nodeInfos;
+	for (auto it = scene->mNodeInfos.begin(); it != scene->mNodeInfos.end(); it++)
+	{
+		nodeInfos.push_back(it->second);
+	}
+
+	std::sort(nodeInfos.begin(), nodeInfos.end(), [](SNodeInfo& a, SNodeInfo& b){
+		return a.Id < b.Id;
+	});
+
+	for (u32 i = 0; i < nodeInfos.size(); i++)
+	{
+		int itemIndex = SendMessageA(mNodesList, LB_ADDSTRING, 0, (LPARAM)(nodeInfos[i].Name.c_str()));
+		if (itemIndex != LB_ERR)
+		{
+			ListBox_SetItemData(mNodesList, itemIndex, nodeInfos[i].Id);
+		}
 	}
 }
 
@@ -195,7 +218,8 @@ void CCreateMeshNodeWindow::OnDoubleClickListItem()
 
 		if (scene->SelectObject(id))
 		{
-			scene->BeginFocusingObject();
+			//scene->BeginFocusingObject();
+			scene->FocusSelectedObject();
 			window->ShowNodeInfo(id);
 		}
 
@@ -261,5 +285,10 @@ void CCreateMeshNodeWindow::OnClickDeleteButton()
 
 	EditorWindow* window = EditorWindow::getInstance();
 	window->mMeshNodePanel.mInstanceNodeWindow.SetVisible(false);
+}
+
+void CCreateMeshNodeWindow::GetNodeName(char text[])
+{
+	GetWindowTextA(mNodeNameTextField, text, 256);
 }
 

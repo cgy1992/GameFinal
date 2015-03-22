@@ -142,6 +142,8 @@ namespace gf
 			return mFarCullingDist;
 		}
 
+		virtual IMesh* getMesh() const = 0;
+
 	protected:
 		math::SOrientedBox				mOBB;
 		IOctreeNode*					mOctreeNode; // belong to which node in an octree.

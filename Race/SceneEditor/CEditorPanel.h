@@ -15,6 +15,7 @@ public:
 	virtual void MouseMove(int xPos, int yPos){}
 	virtual void MouseDoubleClicked(int xPos, int yPos){}
 	virtual void ShowNodeInfo(u32 id){};
+	virtual void OnKeyBoard(f32 delta){}
 };
 
 #endif

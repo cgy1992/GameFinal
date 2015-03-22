@@ -2,6 +2,7 @@
 #include "EditorScene.h"
 #include "EditorWindow.h"
 #include "Enums.h"
+#include "CFileParser.h"
 
 using namespace gf;
 
@@ -27,6 +28,8 @@ EditorScene::EditorScene(IDevice* device)
 , mDeferredShading(false)
 , mPointLightCollectionNode(nullptr)
 , mAddedLightNodeInfo(nullptr)
+, mPickingPointLightInstance(nullptr)
+, mSelectedLightNodeInfo(nullptr)
 {
 	mVideoDriver = device->getVideoDriver();
 	mTextureManager = mVideoDriver->getTextureManager();
@@ -49,24 +52,6 @@ void EditorScene::setupInitialScene()
 
 	ISceneManager* smgr = mDevice->createSceneManager(aabb);
 	mSceneManager = smgr;
-
-	ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(3.0f, -2.0f, 1.5f));
-	light->setSpecular(XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f));
-	light->setDiffuse(XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f));
-	light->enableShadow(true);
-
-	
-	//smgr->setAmbient(XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f));
-	//light->setDiffuse(XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
-
-	mCamera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 30.0f, -4.0f),
-		XMFLOAT3(0, 30.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
-	mCamera->setShadowRange(300.0f);
-
-	ISimpleMesh* groundMesh = mMeshManager->createPlaneMesh("ground", mGroundSize, mGroundSize, 50, 50, 10.0f, 10.0f);
-	IMeshNode* groundNode = smgr->addMeshNode(groundMesh, nullptr, nullptr, false);
-	groundNode->setMaterialName("ground_material");
-	groundNode->setTag(MESH_NODE_TAG);
 
 	ITextureCube* skyTexture = mTextureManager->loadCubeTexture("skybox1.dds");
 	smgr->setSkyDome(skyTexture);
@@ -91,12 +76,10 @@ void EditorScene::setupInitialScene()
 		nullptr, 4000, sizeof(XMFLOAT4));
 	mPointLightCollectionNode->setMaterialName("multi_wire_material");
 	mPointLightCollectionNode->setTag(WIRE_NODE_TAG);
-
-	//mPointLightCollectionNode->removeShadow(1);
+	mPointLightCollectionNode->setVisible(false);
 
 	mSceneManager->update(0);
-	setupTerrain();
-
+	
 
 	IVideoDriver* driver = IVideoDriver::getInstance();
 	mVideoDriver->setDeferredShading(true);
@@ -106,15 +89,31 @@ void EditorScene::setupInitialScene()
 	mTileBasedDSShader = shaderManager->load(EST_COMPUTE_SHADER, "defer_shader_cs.hlsl", "cs_main");
 	smgr->setTileBasedDeferredShadingCS(mTileBasedDSShader);
 
+	if (!CFileParser::ReadScene("main.scene"))
+	{
+		setupTerrain();
 
-	SDirectionalLight lightData;
-	light->getLightData(&lightData);
-	mTileBasedDSShader->setRawData("gLight", &lightData, sizeof(SDirectionalLight));
+		ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(3.0f, -2.0f, 1.5f));
+		light->setSpecular(XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f));
+		light->setDiffuse(XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f));
+		light->enableShadow(true);
+		mDirectionalLightNode = light;
 
-	mVideoDriver->setDeferredShading(false);
+		smgr->setAmbient(XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f));
+		light->setDiffuse(XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
 
-	mDeferredShading = true;
+		mCamera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 30.0f, -4.0f),
+			XMFLOAT3(0, 30.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
+		mCamera->setShadowRange(300.0f);
 
+		mVideoDriver->setDeferredShading(false);
+
+		mDeferredShading = true;
+	}
+
+	UpdateGlobalLighting();
+	
+	smgr->update();
 }
 
 void EditorScene::setupTerrain()
@@ -131,7 +130,9 @@ void EditorScene::setupTerrain()
 
 void EditorScene::update(f32 dt)
 {
-	OnKeyBoard(dt);
+	EditorWindow* window = EditorWindow::getInstance();
+	if (window)
+		window->OnKeyBoard(dt);
 	//changeTreePosition();
 	mSceneManager->update(dt);
 }
@@ -158,14 +159,11 @@ void EditorScene::drawAll()
 }
 
 
-void EditorScene::updateCamera(f32 delta)
+void EditorScene::UpdateCamera(f32 delta)
 {
 	ICameraNode* camera = mCamera;
 	const f32 CAMERA_MOVE_UNIT = 30.0f;
 	const f32 CAMERA_ROTATE_UNIT = 1.0f;
-
-	if (mCameraFocusingObject)
-		focusOnObject(delta);
 	
 	if (GetAsyncKeyState('W') & 0x8000)
 	{
@@ -286,7 +284,7 @@ bool EditorScene::PrepareAddingInstance(u32 collectionId)
 	return true;
 }
 
-u32 EditorScene::AddObject()
+u32 EditorScene::AddObject(const char* nodeName)
 {
 	if (!mAddedNode)
 		return -1;
@@ -295,6 +293,7 @@ u32 EditorScene::AddObject()
 	nodeInfo.Id = getNextNodeSequence();
 	nodeInfo.Static = false;
 	nodeInfo.Node = mAddedNode;
+	nodeInfo.Name = nodeName;
 
 	XMFLOAT3 pos = mAddedNode->getPosition();
 	nodeInfo.Position = pos;
@@ -306,12 +305,14 @@ u32 EditorScene::AddObject()
 	return nodeInfo.Id;
 }
 
-u32 EditorScene::AddLightNode()
+u32 EditorScene::AddLightNode(const char* nodeName)
 {
 	if (!mAddedLightNodeInfo)
 		return -1;
 
 	u32 id = mAddedLightNodeInfo->Id;
+	mAddedLightNodeInfo->Name = nodeName;
+
 	mLightNodeInfos.insert(std::make_pair(id, *mAddedLightNodeInfo));
 	mNodeIdMap.insert(std::make_pair(mAddedLightNodeInfo->Node, id));
 
@@ -341,11 +342,13 @@ u32 EditorScene::AddInstanceNode()
 		return -1;
 
 	SNodeInfo nodeInfo;
+	int id = EditorScene::getNextNodeSequence();
+	nodeInfo.Id = id;
 	nodeInfo.Static = true;
 	nodeInfo.Node = mAddedNode;
 	nodeInfo.Position = mAddedNode->getPosition();
 	
-	u32 id = collectionNodeInfo->AddNodeInfo(nodeInfo);
+	collectionNodeInfo->AddNodeInfo(nodeInfo);
 	mAddedNode = nullptr;
 	return id;
 }
@@ -525,49 +528,6 @@ bool EditorScene::SelectObject(u32 id)
 	return false;
 }
 
-void EditorScene::focusOnObject(f32 dt)
-{
-	if (mSelectedNode == nullptr)
-		return;
-
-	XMFLOAT3 camPos = mCamera->getPosition();
-	XMVECTOR camPos_v = XMLoadFloat3(&camPos);
-	
-	math::SOrientedBox obb = mSelectedNode->getOrientedBox();
-	XMVECTOR objPos_v = XMLoadFloat3(&obb.Center);
-
-	XMVECTOR dir_v = objPos_v - camPos_v;
-	XMVECTOR dist_v = XMVector3Length(dir_v);
-	f32 dist = XMVectorGetX(dist_v);
-	mCamera->lookAt(obb.Center);
-
-	if (dist < 30.0f)
-	{
-		mCameraFocusingObject = false;
-	}
-	else
-	{
-		f32 movement = dist * 20.0f * dt;
-		if (dist - movement < 30.0f)
-		{
-			movement = dist - 30.0f + 0.01f;
-		}
-		mCamera->walk(movement);
-	}
-}
-
-void EditorScene::BeginFocusingObject()
-{
-	if (mSelectedNode == nullptr)
-	{
-		mCameraFocusingObject = false;
-	}
-	else
-	{
-		mCameraFocusingObject = true;
-	}
-}
-
 SNodeInfo* EditorScene::GetNodeInfoById(u32 id)
 {
 	auto it = mNodeInfos.find(id);
@@ -581,6 +541,14 @@ SNodeInfo* EditorScene::GetNodeInfoById(u32 id)
 			return info;
 	}
 
+	return NULL;
+}
+
+SLightNodeInfo*	EditorScene::GetLightNodeInfoById(u32 id)
+{
+	auto it = mLightNodeInfos.find(id);
+	if (it != mLightNodeInfos.end())
+		return &(it->second);
 	return NULL;
 }
 
@@ -610,98 +578,32 @@ void EditorScene::UpdateNodeInfo(SNodeInfo* info)
 	updateSelectedNodeCube();
 }
 
-void EditorScene::OnKeyBoard(f32 delta)
-{
-	bool shift = false;
-	if (GetAsyncKeyState(VK_SHIFT) & 0x8000)
-	{
-		updateSelectedObjectTransform(delta);
-	}
-	else
-	{
-		updateCamera(delta);
-	}
-}
-
-void EditorScene::updateSelectedObjectTransform(f32 delta)
-{
-	SNodeInfo* info = GetSelectedNodeInfo();
-	if (!info)
-		return;
-
-	const f32 MOVE_UNIT = 10.0f;
-	const f32 SCALING_UNIT = 5.0f;
-
-	XMFLOAT3 look = mCamera->getLookVector();
-	XMFLOAT3 up(0, 1.0f, 0);
-	XMFLOAT3 right = mCamera->getRightVector();
-
-	XMVECTOR look_v = XMVectorSet(look.x, 0, look.z, 0);
-	look_v = XMVector4Normalize(look_v);
-	
-	XMStoreFloat3(&look, look_v);
-
-	XMFLOAT3 movement(0, 0, 0);
-	XMFLOAT3 scaling(0, 0, 0);
-
-	if (GetAsyncKeyState('W') & 0x8000)
-	{
-		movement = math::VectorMultiply(look, delta * MOVE_UNIT);
-	}
-
-	if (GetAsyncKeyState('S') & 0x8000)
-	{
-		movement = math::VectorMultiply(look, -delta * MOVE_UNIT);
-	}
-
-	if (GetAsyncKeyState('A') & 0x8000)
-	{
-		movement = math::VectorMultiply(right, -delta * MOVE_UNIT);
-	}
-
-	if (GetAsyncKeyState('D') & 0x8000)
-	{
-		movement = math::VectorMultiply(right, delta * MOVE_UNIT);
-	}
-
-	if (GetAsyncKeyState('R') & 0x8000)
-	{
-		movement = math::VectorMultiply(up, delta * MOVE_UNIT);
-	}
-
-	if (GetAsyncKeyState('F') & 0x8000)
-	{
-		movement = math::VectorMultiply(up, -delta * MOVE_UNIT);
-	}
-
-	if (GetAsyncKeyState(VK_ADD) & 0x8000)
-	{
-		scaling = XMFLOAT3(1.0f, 1.0f, 1.0f);
-	}
-	
-	if (GetAsyncKeyState(VK_SUBTRACT) & 0x8000)
-	{
-		scaling = XMFLOAT3(-1.0f, -1.0f, -1.0f);
-	}
-
-	scaling = math::VectorMultiply(scaling, delta * SCALING_UNIT);
-
-	info->Position = math::VectorAdd(info->Position, movement);
-	info->Scaling = math::VectorAdd(info->Scaling, scaling);
-
-	EditorWindow* window = EditorWindow::getInstance();
-
-	UpdateNodeInfo(info);
-	window->mMeshNodePanel.ShowNodeInfo(info);
-
-}
-
-int EditorScene::AddCollectionNode(const std::string& meshName, int maxNum)
+int EditorScene::AddCollectionNode(const char* nodeName, 
+	const std::string& meshName, int maxNum)
 {
 	IModelMesh* mesh = mMeshManager->getModelMesh(meshName, true);
-	IInstanceCollectionNode* collectionNode = mSceneManager->addInstanceCollectionNode(mesh, nullptr, maxNum, 0);
-	//collectionNode->setNeedCulling(false);
+	IInstanceCollectionNode* collectionNode = CreateCollectionNode(mesh, maxNum);
 
+	SNodeInfo nodeInfo;
+	nodeInfo.Id = getNextNodeSequence();
+	nodeInfo.Node = collectionNode;
+	nodeInfo.Name = nodeName;
+	nodeInfo.Category = COLLECTION_CATEGORY;
+	mNodeInfos.insert(std::make_pair(nodeInfo.Id, nodeInfo));
+	mNodeIdMap.insert(std::make_pair(collectionNode, nodeInfo.Id));
+
+	SCollectionNodeInfo collectionNodeInfo;
+	collectionNodeInfo.Id = nodeInfo.Id;
+	collectionNodeInfo.MeshName = mesh->getName();
+	collectionNodeInfo.CollectionNode = collectionNode;
+	mCollectionNodeInfos.push_back(collectionNodeInfo);
+
+	return nodeInfo.Id;
+}
+
+IInstanceCollectionNode* EditorScene::CreateCollectionNode(IModelMesh* mesh, int maxNum)
+{
+	IInstanceCollectionNode* collectionNode = mSceneManager->addInstanceCollectionNode(mesh, nullptr, maxNum, 0);
 	IMaterialManager* materialManager = IMaterialManager::getInstance();
 	IPipelineManager* pipelineManager = IPipelineManager::getInstance();
 
@@ -738,21 +640,7 @@ int EditorScene::AddCollectionNode(const std::string& meshName, int maxNum)
 	}
 
 	collectionNode->addShadow(1);
-
-	SNodeInfo nodeInfo;
-	nodeInfo.Id = getNextNodeSequence();
-	nodeInfo.Node = collectionNode;
-	nodeInfo.Category = COLLECTION_CATEGORY;
-	mNodeInfos.insert(std::make_pair(nodeInfo.Id, nodeInfo));
-	mNodeIdMap.insert(std::make_pair(collectionNode, nodeInfo.Id));
-
-	SCollectionNodeInfo collectionNodeInfo;
-	collectionNodeInfo.Id = nodeInfo.Id;
-	collectionNodeInfo.MeshName = mesh->getName();
-	collectionNodeInfo.CollectionNode = collectionNode;
-	mCollectionNodeInfos.push_back(collectionNodeInfo);
-
-	return nodeInfo.Id;
+	return collectionNode;
 }
 
 int EditorScene::GetIdBySceneNode(ISceneNode* node)
@@ -852,4 +740,201 @@ SCollectionNodeInfo* EditorScene::GetCollectionNodeInfoById(u32 id)
 	}
 	return nodeInfo;
 }
+
+void EditorScene::PickingLight(u32 sx, u32 sy)
+{
+	SLightNodeInfo* lightInfo = getIntersectPointLightInfo(sx, sy);
+	if (!lightInfo)
+		return;
+
+	if (lightInfo == mSelectedLightNodeInfo)
+		return;
+
+	if (mPickingPointLightInstance)
+	{
+		setInstanceNodeColor(mPickingPointLightInstance, XMFLOAT4(0, 0, 1.0f, 1.0f));
+		mPickingPointLightInstance = nullptr;
+	}
+	
+	if (lightInfo)
+	{
+		setInstanceNodeColor(lightInfo->InstanceNode, XMFLOAT4(1.0f, 1.0f, 0, 1.0f));
+		mPickingPointLightInstance = lightInfo->InstanceNode;
+	}
+}
+
+void EditorScene::setInstanceNodeColor(IInstanceNode* node, XMFLOAT4 color)
+{
+	node->setData(&color);
+}
+
+SLightNodeInfo* EditorScene::GetLightNodeInfoBySceneNode(ISceneNode* node)
+{
+	if (node->getNodeType() != ESNT_LIGHT)
+		return nullptr;
+
+	auto it = mNodeIdMap.find(node);
+	if (it == mNodeIdMap.end())
+		return nullptr;
+
+	u32 id = it->second;
+	auto it2 = mLightNodeInfos.find(id);
+	if (it2 == mLightNodeInfos.end())
+		return nullptr;
+
+	return &(it2->second);
+}
+
+SLightNodeInfo* EditorScene::getIntersectPointLightInfo(u32 sx, u32 sy)
+{
+	math::SRay ray = computePickingRay(sx, sy);
+	XMVECTOR Origin = XMLoadFloat3(&ray.Origin);
+	Origin = XMVectorSetW(Origin, 1.0f);
+
+	XMVECTOR Direction = XMLoadFloat3(&ray.Direction);
+	Direction = XMVectorSetW(Direction, 0);
+
+	f32 minDist = FLT_MAX;
+	SLightNodeInfo* intersectInfo = nullptr;
+	XNA::Sphere sphere;
+	sphere.Radius = 1.0f;
+
+	for (auto it = mLightNodeInfos.begin(); it != mLightNodeInfos.end(); it++)
+	{
+		SLightNodeInfo* info = &(it->second);
+		sphere.Center = info->Position;
+		f32 dist;
+		if (XNA::IntersectRaySphere(Origin, Direction, &sphere, &dist))
+		{
+			if (dist < minDist)
+			{
+				minDist = dist;
+				intersectInfo = info;
+			}
+		}
+	}
+
+	return intersectInfo;
+}
+
+
+
+bool EditorScene::SelectLight(u32 id)
+{
+	SLightNodeInfo* info = GetLightNodeInfoById(id);
+	return SelectLight(info);
+}
+
+bool EditorScene::SelectLight(SLightNodeInfo* lightInfo)
+{
+	if (mSelectedLightNodeInfo)
+	{
+		setInstanceNodeColor(mSelectedLightNodeInfo->InstanceNode, XMFLOAT4(0, 0, 1.0f, 1.0f));
+	}
+
+	if (!lightInfo)
+		return false;
+
+	mSelectedLightNodeInfo = lightInfo;
+	setInstanceNodeColor(lightInfo->InstanceNode, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	return true;
+}
+
+int EditorScene::SelectLight(u32 sx, u32 sy)
+{
+	SLightNodeInfo* lightInfo = getIntersectPointLightInfo(sx, sy);
+	if (lightInfo)
+	{
+		SelectLight(lightInfo);
+		return lightInfo->Id;
+	}
+	return -1;
+}
+
+SLightNodeInfo* EditorScene::GetSelectedLightNodeInfo()
+{
+	return mSelectedLightNodeInfo;
+}
+
+void EditorScene::UpdateLightNodeInfo(SLightNodeInfo* info)
+{
+	ILightNode* lightNode = info->Node;
+	lightNode->setPosition(info->Position);
+	lightNode->setRange(info->Range);
+	lightNode->setAttenuation(info->Attenuations.x, info->Attenuations.y, info->Attenuations.z);
+	lightNode->setDiffuse(info->Diffuse);
+	lightNode->setSpecular(info->Specular);
+	lightNode->update();
+
+	info->InstanceNode->setPosition(info->Position);
+	info->InstanceNode->update();
+}
+
+void EditorScene::UpdateGlobalLighting()
+{
+	SDirectionalLight lightData;
+	mDirectionalLightNode->getLightData(&lightData);
+	mTileBasedDSShader->setRawData("gLight", &lightData, sizeof(SDirectionalLight));
+
+}
+
+void EditorScene::FocusOnMeshNode(IMeshNode* node, f32 distance)
+{
+	//XMFLOAT3 vec = math::VectorMinus(mCamera->getPosition(), node->getPosition());
+	XMVECTOR cam_pos = XMLoadFloat3(&mCamera->getPosition());
+	XMVECTOR node_pos = XMLoadFloat3(&node->getPosition());
+	
+	XMVECTOR dir = cam_pos - node_pos;
+
+	dir = XMVectorSetY(dir, 0);
+	f32 len = XMVectorGetX(XMVector3Length(dir));
+	if (len < 0.0001f)
+		return;
+
+	XMVECTOR up = XMVectorSet(0, len, 0, 0);
+	dir = dir + up;
+	dir = XMVector3Normalize(dir);
+
+	math::SAxisAlignedBox aabb = node->getAabb();
+	//f32 maxLength = aabb.Extents.x > aabb.Extents.y ? aabb.Extents.x : aabb.Extents.y;
+	//cam_pos = node_pos + dir * maxLength * 7.0f;
+	
+	cam_pos = node_pos + dir * distance;
+	XMFLOAT3 camPos, lookDir;
+	XMStoreFloat3(&camPos, cam_pos);
+	XMStoreFloat3(&lookDir, -dir);
+
+	mCamera->setPosition(camPos);
+	mCamera->look(lookDir);
+}
+
+void EditorScene::FocusSelectedObject()
+{
+	if (mSelectedNode)
+	{
+		IMeshNode* node = dynamic_cast<IMeshNode*>(mSelectedNode);
+		FocusOnMeshNode(node, 80.0f);
+	}
+}
+
+void EditorScene::FocusSelectedLight()
+{
+	if (mSelectedLightNodeInfo)
+	{
+		IInstanceNode* node = mSelectedLightNodeInfo->InstanceNode;
+		FocusOnMeshNode(node, 30.0f);
+	}
+}
+
+bool EditorScene::DeleteLight(u32 id)
+{
+	SLightNodeInfo* info = GetLightNodeInfoById(id);
+	if (!info)
+		return false;
+
+	info->Node->destroy();
+	
+}
+
+
 

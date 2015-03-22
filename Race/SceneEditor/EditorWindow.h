@@ -5,7 +5,7 @@
 #include "CListNodesWindow.h"
 #include "CNodeInfoWindow.h"
 #include "CInstanceInfoWindow.h"
-
+#include "CGlobalSettingWindow.h"
 #include "CEditorPanel.h"
 #include "CMeshNodePanel.h"
 #include "CLightPanel.h"
@@ -43,6 +43,7 @@ public:
 	void MouseRightButtonUp(int xPos, int yPos);
 	void MouseMove(int xPos, int yPos);
 	void MouseDoubleClicked(int xPos, int yPos);
+	void OnKeyBoard(f32 delta);
 	void OnSize(int cxClient, int cyClient);
 	void OnCreate(HINSTANCE hInst, HWND hwnd);
 	void OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM lParam);
@@ -53,6 +54,8 @@ public:
 	void ShowNodeInfo(u32 id);
 	void OnSelectCreatePanel();
 
+	void GetMousePositionInViewport(int xPos, int yPos, int& sx, int& sy);
+
 public:
 
 	std::vector<CEditorPanel*>	mEditorPanelPtrs;
@@ -61,6 +64,7 @@ public:
 
 	CEditorPanel*				mActivePanel;
 
+	CGlobalSettingWindow		mTopSubWindow;
 private:
 
 	static EditorWindow*		_instance;
@@ -69,7 +73,7 @@ private:
 
 	HWND						mHwnd;
 	HWND						mCreatePanelSelector;
-	
+
 	E_MOUSE_STATE				mMouseState;
 	
 
@@ -81,6 +85,7 @@ public:
 	const static u32 RIGHT_SUB_WINDOW_WIDTH;
 	const static u32 WINDOW_INITIAL_WIDTH;
 	const static u32 WINDOW_INITIAL_HEIGHT;
+	const static u32 TOP_SUB_WINDOW_HEIGHT;
 };
 
 

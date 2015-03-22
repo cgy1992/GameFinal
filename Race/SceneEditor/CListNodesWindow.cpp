@@ -87,7 +87,7 @@ void CListNodesWindow::OnDoubleClickListItem()
 
 		if (scene->SelectObject(id))
 		{
-			scene->BeginFocusingObject();
+			scene->FocusSelectedObject();
 			window->ShowNodeInfo(id);
 		}
 		

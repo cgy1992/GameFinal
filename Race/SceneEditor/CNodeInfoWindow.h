@@ -8,7 +8,7 @@ class CNodeInfoWindow : public CSubWindow
 public:
 	virtual void OnCreate(HWND parent, int xPos, int yPos, int width, int height);
 	void UpdateShowing(SNodeInfo* info);
-	void UpdateNodeInfo(SNodeInfo* info);
+	//void UpdateNodeInfo(SNodeInfo* info);
 	void OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM lParam);
 	void OnClickUpdateTransformButton();
 	void OnClickCancelTransformButton();

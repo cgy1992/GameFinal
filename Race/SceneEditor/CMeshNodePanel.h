@@ -20,8 +20,13 @@ public:
 	virtual void MouseMove(int xPos, int yPos);
 	virtual void MouseDoubleClicked(int xPos, int yPos);
 	virtual void ShowNodeInfo(u32 id);
-	void AddCollectionNode(const char* meshName, int maxNum);
+	void AddCollectionNode(const char* nodeName, const char* meshName, int maxNum);
 	void ShowNodeInfo(SNodeInfo* info);
+
+	virtual void OnKeyBoard(f32 delta);
+
+	void updateSelectedObjectTransform(f32 delta);
+
 public:
 	CNodeInfoWindow				mNodeInfoWindow;
 	CInstanceInfoWindow			mInstanceNodeWindow;

@@ -68,6 +68,8 @@ namespace gf
 
 		virtual void addChild(ISceneNode* child);
 
+		virtual IMesh* getMesh() const { return mMesh; }
+
 		virtual ~CInstanceCollectionNode();
 
 	protected:

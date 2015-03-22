@@ -26,7 +26,7 @@ public:
 	};
 
 public:
-
+	virtual void Init(){}
 	virtual void OnCreate(HWND parent, int xPos, int yPos, int width, int height);
 	virtual void EnableControl(int id, BOOL enabled);
 	HWND CreateLabel(int id, LPCTSTR text, int x, int y, int width);

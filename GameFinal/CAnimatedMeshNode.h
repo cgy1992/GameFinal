@@ -92,6 +92,8 @@ namespace gf
 			mOBB = computeOrientedBox(aabb);
 		}
 
+		virtual IMesh* getMesh() const { return mMesh; }
+
 	private:
 		void updateSubsetBones(const std::vector<SModelSubsetBone>& bones);
 

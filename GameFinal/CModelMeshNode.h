@@ -72,7 +72,7 @@ namespace gf
 			return ESNT_MODEL_MESH;
 		}
 
-
+		virtual IMesh* getMesh() const { return mMesh; }
 
 	private:
 

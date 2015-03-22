@@ -12,6 +12,13 @@ public:
 
 	void OnClickCreateButton();
 	void AddListItem(u32 id);
+	void OnClickListItem();
+	void OnDoubleClickListItem();
+	void SelectListItem(u32 id);
+	void GetNodeName(char text[]);
+	void OnClickDeleteButton();
+	int GetSelectedItemId();
+
 private:
 	HWND				mNameTextField;
 	HWND				mCreateBtn;

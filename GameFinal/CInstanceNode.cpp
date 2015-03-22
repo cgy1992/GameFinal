@@ -83,5 +83,12 @@ namespace gf
 		mOwnerCollection->registerInstanceForRendering(this);
 	}
 
+	IMesh* CInstanceNode::getMesh() const
+	{
+		if (mOwnerCollection)
+			return mOwnerCollection->getMesh();
+		return nullptr;
+	}
+
 }
 

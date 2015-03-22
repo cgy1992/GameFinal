@@ -22,6 +22,10 @@ public:
 	void SelectListItem(u32 id);
 	int GetSelectedItemId();
 	SNodeInfo* GetSelectedItemNodeInfo();
+
+	void GetNodeName(char text[]);
+
+
 private:
 	HWND						mNodeNameTextField;
 	HWND						mNewButton;

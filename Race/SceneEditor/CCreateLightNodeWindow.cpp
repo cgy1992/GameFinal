@@ -30,13 +30,40 @@ void CCreateLightNodeWindow::OnCreate(HWND parent, int xPos, int yPos, int width
 
 void CCreateLightNodeWindow::Init()
 {
+	EditorScene* scene = EditorScene::getInstance();
+	std::vector<SLightNodeInfo> nodeInfos;
 
+	for (auto it = scene->mLightNodeInfos.begin(); it != scene->mLightNodeInfos.end(); it++)
+	{
+		nodeInfos.push_back(it->second);
+	}
+
+	std::sort(nodeInfos.begin(), nodeInfos.end(), [](SLightNodeInfo& a, SLightNodeInfo& b){
+		return a.Id < b.Id;
+	});
+
+	char text[256];
+	for (u32 i = 0; i < nodeInfos.size(); i++)
+	{
+		sprintf_s(text, "%s(%d)", nodeInfos[i].Name.c_str(), nodeInfos[i].Id);
+		int itemIndex = SendMessageA(mLightNodesList, LB_ADDSTRING, 0, (LPARAM)(text));
+		if (itemIndex != LB_ERR)
+		{
+			ListBox_SetItemData(mLightNodesList, itemIndex, nodeInfos[i].Id);
+		}
+	}
 }
 
 void CCreateLightNodeWindow::OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM lParam)
 {
 	if (id == IDC_CREATE_LIGHT_BTN && event == BN_CLICKED)
 		OnClickCreateButton();
+	else if (id == IDC_LIGHT_NODE_LISTBOX && event == LBN_SELCHANGE)
+		OnClickListItem();
+	else if (id == IDC_LIGHT_NODE_LISTBOX && event == LBN_DBLCLK)
+		OnDoubleClickListItem();
+	else if (id == IDC_DELETE_LIGHT_BTN && event == BN_CLICKED)
+		OnClickDeleteButton();
 }
 
 void CCreateLightNodeWindow::OnClickCreateButton()
@@ -64,5 +91,77 @@ void CCreateLightNodeWindow::AddListItem(u32 id)
 	{
 		ListBox_SetItemData(mLightNodesList, itemIndex, id);
 	}
+}
+
+void CCreateLightNodeWindow::SelectListItem(u32 id)
+{
+	u32 count = ListBox_GetCount(mLightNodesList);
+	for (u32 i = 0; i < count; i++)
+	{
+		u32 data = ListBox_GetItemData(mLightNodesList, i);
+		if (data == id)
+		{
+			ListBox_SetCurSel(mLightNodesList, i);
+			return;
+		}
+	}
+}
+
+void CCreateLightNodeWindow::GetNodeName(char text[])
+{
+	GetWindowTextA(mNameTextField, text, 256);
+}
+
+void CCreateLightNodeWindow::OnClickListItem()
+{
+	int itemIndex = ListBox_GetCurSel(mLightNodesList);
+	if (itemIndex != LB_ERR)
+	{
+		u32 id = ListBox_GetItemData(mLightNodesList, itemIndex);
+		EditorScene* scene = EditorScene::getInstance();
+		EditorWindow* window = EditorWindow::getInstance();
+
+		scene->SelectLight(id);
+		window->ShowNodeInfo(id);
+		SetFocus(mParentHwnd);
+	}
+}
+
+void CCreateLightNodeWindow::OnDoubleClickListItem()
+{
+	int itemIndex = ListBox_GetCurSel(mLightNodesList);
+	if (itemIndex != LB_ERR)
+	{
+		u32 id = ListBox_GetItemData(mLightNodesList, itemIndex);
+		EditorScene* scene = EditorScene::getInstance();
+		EditorWindow* window = EditorWindow::getInstance();
+
+		if (scene->SelectLight(id))
+		{
+			scene->FocusSelectedLight();
+			window->ShowNodeInfo(id);
+		}
+
+		SetFocus(mParentHwnd);
+	}
+}
+
+void CCreateLightNodeWindow::OnClickDeleteButton()
+{
+	int id = GetSelectedItemId();
+	
+	
+
+}
+
+int CCreateLightNodeWindow::GetSelectedItemId()
+{
+	int itemIndex = ListBox_GetCurSel(mLightNodesList);
+	if (itemIndex != LB_ERR)
+	{
+		u32 id = ListBox_GetItemData(mLightNodesList, itemIndex);
+		return id;
+	}
+	return -1;
 }
 

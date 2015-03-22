@@ -88,6 +88,8 @@ namespace gf
 			return mMesh;
 		}
 
+		virtual IMesh* getMesh() const { return mMesh; }
+
 		virtual f32 getHeight(f32 x, f32 z, bool localPivot = false) const;
 
 		virtual void renderInstanced(E_PIPELINE_USAGE usage, u32 instanceCount, IMeshBuffer* instanceBuffer){}

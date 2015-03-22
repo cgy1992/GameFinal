@@ -13,6 +13,7 @@ enum E_NODE_CATEGORY
 struct SNodeInfo
 {
 	int					Id;
+	std::string			Name;
 	bool				Static;
 	bool				BoundingPhysics;
 	bool				ShadowCasting;
@@ -43,6 +44,7 @@ struct SNodeInfo
 struct SLightNodeInfo
 {
 	int					Id;
+	std::string			Name;
 	bool				Static;
 	XMFLOAT3			Position;
 	XMFLOAT4			Diffuse;

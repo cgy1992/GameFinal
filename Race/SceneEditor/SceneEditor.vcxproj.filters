@@ -69,6 +69,18 @@
     <ClInclude Include="Enums.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="xnacollision.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CLightInfoWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CGlobalSettingWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CFileParser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -111,6 +123,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CLightPanel.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="xnacollision.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CLightInfoWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CGlobalSettingWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CFileParser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -50,6 +50,8 @@ namespace gf
 
 		virtual void registerToCollectionForRendering();
 
+		virtual IMesh* getMesh() const;
+
 	private:
 		u8*					mInstanceData;
 	};

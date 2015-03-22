@@ -9,6 +9,12 @@ using namespace gf;
 class EditorScene
 {
 public:
+	friend class CGlobalSettingWindow;
+	friend class CFileParser;
+	friend class CCreateMeshNodeWindow;
+	friend class CCreateLightNodeWindow;
+
+public:
 	EditorScene(IDevice* device);
 	~EditorScene();
 
@@ -21,9 +27,9 @@ public:
 	void update(f32 dt);
 	void drawAll();
 	
-	void OnKeyBoard(f32 delta);
-	void updateSelectedObjectTransform(f32 delta);
-	void updateCamera(f32 delta);
+	//void OnKeyBoard(f32 delta);
+	void UpdateSelectedObjectTransform(f32 delta);
+	void UpdateCamera(f32 delta);
 
 	void setRenderRegion(u32 width, u32 height)
 	{
@@ -35,11 +41,13 @@ public:
 	bool PrepareAddingInstance(u32 collectionId);
 	bool PrepareAddingLight();
 
-	int AddCollectionNode(const std::string& meshName, int maxNum);
+	int AddCollectionNode(const char* nodeName, 
+		const std::string& meshName, int maxNum);
+	IInstanceCollectionNode* CreateCollectionNode(IModelMesh* mesh,int maxNum);
 
-	u32 AddObject();
+	u32 AddObject(const char* nodeName);
 	u32 AddInstanceNode();
-	u32 AddLightNode();
+	u32 AddLightNode(const char* nodeName);
 
 	void CancelAddingObject();
 	bool GetPickingPosition(u32 sx, u32 sy, XMFLOAT3& position);
@@ -52,9 +60,9 @@ public:
 	void SelectObject(ISceneNode* node);
 	int SelectObject(u32 sx, u32 sy);
 	bool SelectObject(u32 id);
+
 	SNodeInfo* GetNodeInfoById(u32 id);
 	SNodeInfo* GetSelectedNodeInfo();
-	void BeginFocusingObject();
 	void UpdateNodeInfo(SNodeInfo* info);
 	static u32 getNextNodeSequence();
 	void MoveSelectedNode();
@@ -65,14 +73,32 @@ public:
 	std::vector<int> GetInstanceIdsInOneCollection(int collectionId);
 	
 	bool DeleteNode(u32 id);
-	SCollectionNodeInfo* GetCollectionNodeInfoById(u32 id);
+	bool DeleteLight(u32 id);
 
+	SCollectionNodeInfo* GetCollectionNodeInfoById(u32 id);
+	SLightNodeInfo*	GetLightNodeInfoById(u32 id);
+	void PickingLight(u32 sx, u32 sy);
+	//SLightNodeInfo* GetSelectedLightNodeInfo(u32 id);
+	SLightNodeInfo* GetLightNodeInfoBySceneNode(ISceneNode* node);
+	SLightNodeInfo* GetSelectedLightNodeInfo();
+	bool SelectLight(u32 id);
+	int SelectLight(u32 sx, u32 sy);
+	bool SelectLight(SLightNodeInfo* lightInfo);
+	void UpdateLightNodeInfo(SLightNodeInfo* info);
+	void UpdateGlobalLighting();
+	
+	ICameraNode* GetCamera() { return mCamera; }
+	
+	void FocusOnMeshNode(IMeshNode* node, f32 distance);
+	void FocusSelectedObject();
+	void FocusSelectedLight();
 private:
 
 	math::SRay computePickingRay(u32 sx, u32 sy);
-	void focusOnObject(f32 dt);
 
 	void updateSelectedNodeCube();
+	void setInstanceNodeColor(IInstanceNode* node, XMFLOAT4 color);
+	SLightNodeInfo* getIntersectPointLightInfo(u32 sx, u32 sy);
 
 	static EditorScene* _instance;
 	IDevice*					mDevice;
@@ -88,7 +114,7 @@ private:
 	ITimer*						mTimer;
 	ICameraNode*				mCamera;
 	ITerrainNode*				mTerrainNode;
-
+	ILightNode*					mDirectionalLightNode;
 	
 
 	const f32					mGroundSize;
@@ -100,6 +126,8 @@ private:
 	IMeshNode*					mSelectedCubeNode;
 	ISceneNode*					mSelectedNode;
 
+	IInstanceNode*				mPickingPointLightInstance;
+
 	bool						mCameraFocusingObject;
 
 	static u32					nodeSequenceNumber;
@@ -110,6 +138,7 @@ private:
 	// for lighting panel
 	
 	SLightNodeInfo*				mAddedLightNodeInfo;
+	SLightNodeInfo*				mSelectedLightNodeInfo;
 
 	std::map<u32, SLightNodeInfo>		mLightNodeInfos;
 

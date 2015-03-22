@@ -100,6 +100,11 @@ namespace gf
 			return mTessellated;
 		}
 
+		std::string getHeightMapName() const
+		{
+			return mHeightMapFileName;
+		}
+
 	protected:
 
 		f32							mVertexSpace;
@@ -115,6 +120,8 @@ namespace gf
 		u32							mPatchNumPerRow;
 
 		ITexture*					mHeightMapTexture;
+
+		std::string					mHeightMapFileName;
 	};
 
 }

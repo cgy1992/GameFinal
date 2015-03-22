@@ -75,6 +75,7 @@ namespace gf
 		mPatchWidth = cellsPerPatch * mVertexSpace;
 		mPatchNumPerRow = u32(static_cast<f32>(mRowVertexNum - 1) / mCellsPerPatch);
 		mTexcoordScale = fTexcoordScale;
+		mHeightMapFileName = heightmapFileName;
 
 		u8* vertices = nullptr;
 		u8* indices = nullptr;
