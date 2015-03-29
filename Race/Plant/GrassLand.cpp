@@ -70,8 +70,8 @@ void GrassLand::update(f32 dt)
 	mMaterial->setAttribute("GrassHeight", mGrassSize.y);
 
 	ITimer* timer = IDevice::getInstance()->getTimer();
-	u32 milliseconds = timer->getElapseTime();
-	f32 sec = milliseconds * 0.001f;
+	//u32 milliseconds = timer->getElapseTime();
+	f32 sec = timer->getElapseTime();
 
 	f32 fluctuation = mBladeAmplitude * sinf(sec * 1.0f);
 

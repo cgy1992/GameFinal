@@ -97,6 +97,7 @@
     <ClInclude Include="EditorScene.h" />
     <ClInclude Include="EditorWindow.h" />
     <ClInclude Include="Enums.h" />
+    <ClInclude Include="SceneFileStructs.h" />
     <ClInclude Include="SCollectionNodeInfo.h" />
     <ClInclude Include="SNodeInfo.h" />
     <ClInclude Include="stdafx.h" />

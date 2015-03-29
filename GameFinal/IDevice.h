@@ -59,7 +59,7 @@ namespace gf
 		u32				ClientHeight;
 		u32				BackBufferWidth;
 		u32				BackBufferHeight;
-		E_WINDOW_STYLE  WindowStyle;
+		u32				WindowStyle;
 		bool			VsyncEnabled;
 		u32				FrameWindowHandle;
 		u32				BackBufferWindowHandle;

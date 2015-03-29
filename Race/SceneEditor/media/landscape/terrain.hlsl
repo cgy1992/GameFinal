@@ -45,10 +45,14 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 	float3 Normal = normalize(pin.Normal);
 	float NdotL = saturate(dot(Normal, -gLight.Direction));
 
+	float4 texColor;
+	float4 ratio = GF_TEXTURE_3.Sample(gSampleState, pin.Tex);
 	float4 c1 = GF_TEXTURE_0.Sample(gSampleState, pin.Tex * 100.0f);
-	float4 c2 = GF_TEXTURE_1.Sample(gSampleState, pin.Tex * 372.0f);
-	float4 texColor = c1 * 0.5f + c2 * 0.5f;
+	float4 c2 = GF_TEXTURE_1.Sample(gSampleState, pin.Tex * 100.0f);
+	float4 c3 = GF_TEXTURE_2.Sample(gSampleState, pin.Tex * 120.0f);
 
+	texColor = c1 * ratio.r + c2 * ratio.g + c3 * ratio.b;
+	
 #ifdef SHADOW_ON
 
 	float shadowFactor = CalcShadowFactor(1, 1.0f);
@@ -63,10 +67,13 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 SReturnGBuffers defer_ps_main(VertexOut pin)
 {
 	float3 normal = normalize(pin.Normal);
+	float4 texColor;
+	float4 ratio = GF_TEXTURE_3.Sample(gSampleState, pin.Tex);
 	float4 c1 = GF_TEXTURE_0.Sample(gSampleState, pin.Tex * 100.0f);
-	float4 c2 = GF_TEXTURE_1.Sample(gSampleState, pin.Tex * 372.0f);
-	float4 texColor = c1 * 0.5f + c2 * 0.5f;
+	float4 c2 = GF_TEXTURE_1.Sample(gSampleState, pin.Tex * 100.0f);
+	float4 c3 = GF_TEXTURE_2.Sample(gSampleState, pin.Tex * 120.0f);
 
+	texColor = c1 * ratio.r + c2 * ratio.g + c3 * ratio.b;
 #ifdef SHADOW_ON
 	float shadowFactor = CalcShadowFactor(1, 1.0f);
 #else

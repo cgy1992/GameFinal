@@ -189,10 +189,12 @@ namespace gf
 
 			for (u32 row = 0; row < mPatchNumPerRow + 1; row++, z -= mPatchWidth, tv += texSpace)
 			{
-				x = startX;
+				z = startZ - row * mPatchWidth;
+				//x = startX;
 				tu = 0.0f;
 				for (u32 col = 0; col < mPatchNumPerRow + 1; col++, x += mPatchWidth, tu += texSpace)
 				{
+					x = startX + col * mPatchWidth;
 					XMFLOAT3 pos = XMFLOAT3(x, 0, z);
 					XMFLOAT2 tex = XMFLOAT2(tu, tv);
 					XMFLOAT2 boundsY = getPatchHeightBounds(row, col);

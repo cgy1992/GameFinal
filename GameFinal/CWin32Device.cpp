@@ -68,6 +68,8 @@ namespace gf
 		{
 			m_CreationParams.ClientWidth = GetSystemMetrics(SM_CXSCREEN);
 			m_CreationParams.ClientHeight = GetSystemMetrics(SM_CYSCREEN);
+			m_CreationParams.BackBufferWidth = m_CreationParams.ClientWidth;
+			m_CreationParams.BackBufferHeight = m_CreationParams.ClientHeight;
 		}
 
 		// Setup the screen settings depending on whether it is running in full screen or in windowed mode.
@@ -109,17 +111,16 @@ namespace gf
 		SetFocus(mHwnd);
 
 		m_CreationParams.FrameWindowHandle = (u32)mHwnd;
-		//std::cout << sizeof(mHwnd) << std::endl;
+		m_CreationParams.BackBufferWindowHandle = (u32)mHwnd;
 
-		// Hide the mouse cursor.
-		// ShowCursor(false);
+		if (!(m_CreationParams.WindowStyle & EWS_FULLSCREEN))
+		{
+			HWND hBufferWnd = CreateWindow(TEXT("static"), NULL, WS_CHILD | WS_VISIBLE | SS_WHITERECT,
+				0, 0, m_CreationParams.BackBufferWidth, m_CreationParams.BackBufferHeight,
+				mHwnd, (HMENU)9, m_hInstance, NULL);
 
-		// if backbuffersize is not equal with screen size
-		HWND hBufferWnd = CreateWindow(TEXT("static"), NULL, WS_CHILD | WS_VISIBLE | SS_WHITERECT,
-			0, 0, m_CreationParams.BackBufferWidth, m_CreationParams.BackBufferHeight,
-			mHwnd, (HMENU)9, m_hInstance, NULL);
-
-		m_CreationParams.BackBufferWindowHandle = (u32)hBufferWnd;
+			m_CreationParams.BackBufferWindowHandle = (u32)hBufferWnd;
+		}
 
 		if (m_CreationParams.DriverType == EDT_DIRECT3D11)
 		{

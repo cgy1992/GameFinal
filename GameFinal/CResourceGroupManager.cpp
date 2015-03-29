@@ -404,7 +404,7 @@ namespace gf
 		return false;
 	}
 
-	bool CResourceGroupManager::getFullPath(const std::string& resourceFileName, 
+	bool CResourceGroupManager::getResourceFullPath(const std::string& resourceFileName, 
 		std::string& fullpath,
 		E_RESOURCE_FILE_TYPE filetype) const
 	{
@@ -414,6 +414,31 @@ namespace gf
 		
 		fullpath = dirPath + resourceFileName;
 		return true;
+	}
+
+	bool CResourceGroupManager::getFileFullPath(const std::string& filename,
+		std::string& fullpath) const
+	{
+		for (u32 i = 0; i < mResourceGroups.size(); i++)
+		{
+			for (u32 j = 0; j < mResourceGroups[i].Directories.size(); j++)
+			{
+				const SResourceDirectory& directory = mResourceGroups[i].Directories[j];
+				if (directory.StoreMethod == ERSM_FILESYSTEM)
+				{
+					fullpath = directory.Path + filename;
+					WIN32_FIND_DATAA FindFileData;
+					HANDLE hFind;
+					hFind = FindFirstFileA(fullpath.c_str(), &FindFileData);
+					if (hFind != INVALID_HANDLE_VALUE)
+					{
+						FindClose(hFind);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	bool CResourceGroupManager::getDirectoryPath(const std::string& resourceFileName,
@@ -482,7 +507,7 @@ namespace gf
 		{
 			u32 index = it->second;
 			const std::string& filename = mPipelineFileNames[index];
-			if (getFullPath(filename, filepath, ERFT_PIPELINE_XML))
+			if (getResourceFullPath(filename, filepath, ERFT_PIPELINE_XML))
 				return true;
 		}
 		return false;
@@ -504,7 +529,7 @@ namespace gf
 		{
 			u32 index = it->second;
 			const std::string& filename = mMaterialFileNames[index];
-			if (getFullPath(filename, filepath, ERFT_MATERIAL_XML))
+			if (getResourceFullPath(filename, filepath, ERFT_MATERIAL_XML))
 				return true;
 		}
 		return false;

@@ -1,0 +1,30 @@
+<materials>
+  <material name="carA_material">
+    <attributes>
+      <attribute name="ambient" value="0.500000, 0.500000, 0.500000, 1.000000"/>
+      <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+      <attribute name="specular" value="0.800000, 0.800000, 0.800000, 32.000000"/>
+      <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+    </attributes>
+    <pipelines>
+      <pipeline name="specular_shadow_pipeline"/>
+      <pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
+	    <pipeline name="defer_object_pipeline" usage="defer"/>
+    </pipelines>
+    <textures>
+      <texture name="car_tex.bmp"/>
+    </textures>
+  </material>
+
+  <material name="carA_wheel_material" prototype="carA_material">
+    <attributes>
+      <attribute name="ambient" value="0.270000, 0.270000, 0.270000, 1.000000"/>
+      <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+      <attribute name="specular" value="0.100000, 0.100000, 0.100000, 32.000000"/>
+      <attribute name="emissive" value="0.100000, 0.100000, 0.100000, 1.000000"/>
+    </attributes>
+    <textures>
+      <texture name="wheel_tex.bmp"/>
+    </textures>
+  </material>
+</materials>

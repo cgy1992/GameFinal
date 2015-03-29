@@ -67,7 +67,7 @@ SSceneFileHeader CFileParser::ReadFileHeader(FILE* fp)
 	// set terrain.
 	IMeshManager* meshManager = IMeshManager::getInstance();
 	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", header.TerrainHeightFile,
-		header.TerrainVertexSpace, header.TerrainHeightScale, false, true, 1.0f);
+		header.TerrainVertexSpace, header.TerrainHeightScale, true, false, 1.0f);
 
 	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh);
 	terrainNode->setMaterialName(header.TerrainMaterial);

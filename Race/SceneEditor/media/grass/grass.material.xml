@@ -1,0 +1,23 @@
+<materials>
+  <material name="grassland_material">
+    <attributes>
+      <attribute name="ambient" value="0.4f, 0.4f, 0.4f, 1.0f"/>
+      <attribute name="diffuse" value="0.4f, 0.8f, 0.4f, 1.0f"/>
+      <attribute name="specular" value="0.0f, 0.0f, 0.0f, 32.0f"/>
+      <attribute name="emissive" value="0.0f, 0.0f, 0.0f, 1.0f"/>
+    </attributes>
+
+    <textures>
+      <texture name="grass02.png" index="0"/>
+      <texture name="terrain_height_ratio2.png" index="3"/>
+      <!--<texture name="billboardgrass0002.png" index="0"/>-->
+    </textures>
+
+    <pipelines>
+      <pipeline name="grassland_pipeline"/>
+      <pipeline name="grassland_shadow_pipeline" usage="shadow_map"/>
+      <pipeline name="defer_grassland_pipeline" usage="defer"/>
+    </pipelines>
+
+  </material>
+</materials>

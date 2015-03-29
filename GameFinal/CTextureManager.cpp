@@ -22,7 +22,7 @@ namespace gf
 		}
 		
 		std::string filepath;
-		if (!IResourceGroupManager::getInstance()->getFullPath(name, filepath, ERFT_TEXTURE))
+		if (!IResourceGroupManager::getInstance()->getResourceFullPath(name, filepath, ERFT_TEXTURE))
 		{
 			GF_PRINT_CONSOLE_INFO("Texture file named '%s' has not been found.\n", name.c_str());
 			return nullptr;
@@ -59,7 +59,7 @@ namespace gf
 		}
 
 		std::string filepath;
-		if (!IResourceGroupManager::getInstance()->getFullPath(name, filepath, ERFT_TEXTURE))
+		if (!IResourceGroupManager::getInstance()->getResourceFullPath(name, filepath, ERFT_TEXTURE))
 		{
 			GF_PRINT_CONSOLE_INFO("Texture file named '%s' has not been found.\n", name.c_str());
 			return nullptr;

@@ -148,10 +148,21 @@ void CCreateLightNodeWindow::OnDoubleClickListItem()
 
 void CCreateLightNodeWindow::OnClickDeleteButton()
 {
-	int id = GetSelectedItemId();
-	
-	
+	int ret = MessageBoxA(mParentHwnd, "Are you sure to delete node?", "Delete Confirm", MB_OKCANCEL);
+	if (ret == IDCANCEL)
+		return;
 
+	int id = GetSelectedItemId();
+
+	EditorScene* scene = EditorScene::getInstance();
+	if (scene->DeleteLight(id))
+	{
+		int itemIndex = ListBox_GetCurSel(mLightNodesList);
+		if (itemIndex != LB_ERR)
+		{
+			ListBox_DeleteString(mLightNodesList, itemIndex);
+		}
+	}
 }
 
 int CCreateLightNodeWindow::GetSelectedItemId()

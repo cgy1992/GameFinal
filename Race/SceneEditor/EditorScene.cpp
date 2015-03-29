@@ -95,12 +95,11 @@ void EditorScene::setupInitialScene()
 
 		ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(3.0f, -2.0f, 1.5f));
 		light->setSpecular(XMFLOAT4(1.0f, 1.0f, 1.0f, 32.0f));
-		light->setDiffuse(XMFLOAT4(0.6f, 0.6f, 0.6f, 1.0f));
+		light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 		light->enableShadow(true);
 		mDirectionalLightNode = light;
 
-		smgr->setAmbient(XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f));
-		light->setDiffuse(XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f));
+		smgr->setAmbient(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
 
 		mCamera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 30.0f, -4.0f),
 			XMFLOAT3(0, 30.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
@@ -119,13 +118,20 @@ void EditorScene::setupInitialScene()
 void EditorScene::setupTerrain()
 {
 	IMeshManager* meshManager = IMeshManager::getInstance();
-
 	std::string rawFileName("terrain-heightmap4.raw");
+	
+	/*
 	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", rawFileName,
 		10.0f, 1.0f, false, true, 1.0f);
-
 	mTerrainNode = mSceneManager->addTerrainNode(terrainMesh);
 	mTerrainNode->setMaterialName("terrain/terrain_material");
+	*/
+	
+	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", 
+		rawFileName, 5.0f, 0.3f, true, false, 1.0f);
+	mTerrainNode = mSceneManager->addTerrainNode(terrainMesh);
+	mTerrainNode->setMaterialName("terrain/grass_tessellation_material");
+
 }
 
 void EditorScene::update(f32 dt)
@@ -162,7 +168,7 @@ void EditorScene::drawAll()
 void EditorScene::UpdateCamera(f32 delta)
 {
 	ICameraNode* camera = mCamera;
-	const f32 CAMERA_MOVE_UNIT = 30.0f;
+	const f32 CAMERA_MOVE_UNIT = 60.0f;
 	const f32 CAMERA_ROTATE_UNIT = 1.0f;
 	
 	if (GetAsyncKeyState('W') & 0x8000)
@@ -432,7 +438,7 @@ void EditorScene::ChangeAddedObjectPosition(u32 sx, u32 sy)
 	XMFLOAT3 position;
 	if (GetPickingPosition(sx, sy, position))
 	{
-		mAddedNode->setPosition(position);
+		mAddedNode->setPosition(XMFLOAT3(position.x, position.y, position.z));
 	}
 }
 
@@ -932,8 +938,23 @@ bool EditorScene::DeleteLight(u32 id)
 	if (!info)
 		return false;
 
+	ILightNode* lightNode = info->Node;
+	auto it = mNodeIdMap.find(lightNode);
+	if (it == mNodeIdMap.end())
+		return false;
+	mNodeIdMap.erase(it);
+
 	info->Node->destroy();
+	info->InstanceNode->destroy();
+
+	auto it2 = mLightNodeInfos.find(id);
+	if (it2 == mLightNodeInfos.end())
+		return false;
+	mLightNodeInfos.erase(it2);
 	
+
+	mSelectedLightNodeInfo = nullptr;
+	return true;
 }
 
 

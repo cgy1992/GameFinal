@@ -32,7 +32,7 @@ namespace gf
 		
 
 		std::string filepath;
-		if (!rmgr->getFullPath(filename, filepath, ERFT_SHADER))
+		if (!rmgr->getResourceFullPath(filename, filepath, ERFT_SHADER))
 		{
 			GF_PRINT_CONSOLE_INFO("The shader file named '%s' has not been found.\n", szFileName);
 			return false;
@@ -116,7 +116,7 @@ namespace gf
 			std::string fullPath;
 			char szIncludeCode[256] = { 0 };
 
-			if (rgmr->getFullPath(shaderName, fullPath, ERFT_SHADER))
+			if (rgmr->getResourceFullPath(shaderName, fullPath, ERFT_SHADER))
 			{
 				strcpy_s(szIncludeCode, "#include\"");
 				strcat_s(szIncludeCode, szProcessPath);

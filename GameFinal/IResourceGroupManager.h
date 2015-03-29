@@ -59,9 +59,12 @@ namespace gf
 
 		virtual IMesh* loadMesh(const std::string& name) = 0;
 
-		virtual bool getFullPath(const std::string& resourceFileName, 
+		virtual bool getResourceFullPath(const std::string& resourceFileName, 
 			std::string& fullpath, 
 			E_RESOURCE_FILE_TYPE filetype = ERFT_UNKNOWN) const = 0;
+
+		virtual bool getFileFullPath(const std::string& filename,
+			std::string& fullpath) const = 0;
 
 		virtual bool getDirectoryPath(const std::string& resourceFileName,
 			std::string& dirPath,

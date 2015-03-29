@@ -29,6 +29,7 @@ namespace gf
 		creationParams.WindowsProcedure = settings.WindowsProcedure;
 		creationParams.BackBufferWidth = settings.BackBufferWidth;
 		creationParams.BackBufferHeight = settings.BackBufferHeight;
+		creationParams.WindowStyle = style;
 
 		if (settings.BackBufferWidth == 0)
 			creationParams.BackBufferWidth = width;

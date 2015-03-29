@@ -183,7 +183,7 @@ namespace gf
 	{
 
 		std::string fullpath;
-		if (!mResourceGroupManager->getFullPath(name, fullpath))
+		if (!mResourceGroupManager->getResourceFullPath(name, fullpath))
 		{
 			GF_PRINT_CONSOLE_INFO("The pipeline named %s doesn't exist.\n", name);
 			return false;
@@ -204,7 +204,7 @@ namespace gf
 	bool CResourceLoader::loadMaterialsFromFile(const std::string& name)
 	{
 		std::string fullpath;
-		if (!mResourceGroupManager->getFullPath(name, fullpath))
+		if (!mResourceGroupManager->getResourceFullPath(name, fullpath))
 		{
 			GF_PRINT_CONSOLE_INFO("The material file named %s doesn't exist.\n", name.c_str());
 			return false;
@@ -225,7 +225,7 @@ namespace gf
 	bool CResourceLoader::loadTexturesFromXml(const std::string& name)
 	{
 		std::string fullpath;
-		if (!mResourceGroupManager->getFullPath(name, fullpath))
+		if (!mResourceGroupManager->getResourceFullPath(name, fullpath))
 		{
 			GF_PRINT_CONSOLE_INFO("The texture xml file named %s doesn't exist.\n", name.c_str());
 			return false;
@@ -332,7 +332,7 @@ namespace gf
 	bool CResourceLoader::loadMeshFromFile(const std::string& name)
 	{
 		std::string fullpath;
-		if (!mResourceGroupManager->getFullPath(name, fullpath, ERFT_MESH))
+		if (!mResourceGroupManager->getResourceFullPath(name, fullpath, ERFT_MESH))
 		{
 			GF_PRINT_CONSOLE_INFO("The mesh named %s doesn't exist.\n", name.c_str());
 			return false;

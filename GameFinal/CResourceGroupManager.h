@@ -65,9 +65,12 @@ namespace gf
 
 		virtual bool loadResourceGroup(const std::string& groupname);
 
-		virtual bool getFullPath(const std::string& resourceFileName, 
+		virtual bool getResourceFullPath(const std::string& resourceFileName, 
 			std::string& fullpath,
 			E_RESOURCE_FILE_TYPE filetype = ERFT_UNKNOWN) const;
+
+		virtual bool getFileFullPath(const std::string& filename,
+			std::string& fullpath) const;
 
 		virtual bool getDirectoryPath(const std::string& resourceFileName,
 			std::string& dirPath,

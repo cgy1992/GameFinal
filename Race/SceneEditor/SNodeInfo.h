@@ -2,13 +2,7 @@
 #define __NODE_INFO_STRUCT_H__
 
 using namespace gf;
-
-enum E_NODE_CATEGORY
-{
-	MESH_CATEGORY,
-	COLLECTION_CATEGORY,
-	INSTANCE_CATEGORY
-};
+#include "SceneFileStructs.h"
 
 struct SNodeInfo
 {
