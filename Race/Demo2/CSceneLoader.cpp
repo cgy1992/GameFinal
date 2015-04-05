@@ -4,8 +4,9 @@
 #include "RaceScene.h"
 #include "TerrainHeightFieldShape.h"
 #include "PhysicsEngine.h"
+#include "PhysicsLoader.h"
 
-bool CSceneLoader::load(const char* filename, RaceScene* scene)
+bool CSceneLoader::load(const char* filename, RaceScene* scene, SPhysicalLoadingInfo& physicalInfo)
 {
 	IResourceGroupManager* rgmr = IResourceGroupManager::getInstance();
 	std::string fullpath;
@@ -29,7 +30,7 @@ bool CSceneLoader::load(const char* filename, RaceScene* scene)
 	scene->mSceneManager = smgr;
 
 	// set deferred shading
-	driver->setDeferredShading(true);
+	//driver->setDeferredShading(true);
 	driver->setDeferredShadingAlgorithm(EDSA_CS_TILE_BASED_DEFERRED_SHADING);
 	IShader* cs_shader = shaderManager->load(EST_COMPUTE_SHADER, "defer_shader_cs.hlsl", "cs_main");
 	smgr->setTileBasedDeferredShadingCS(cs_shader);
@@ -59,11 +60,10 @@ bool CSceneLoader::load(const char* filename, RaceScene* scene)
 	camera->setShadowRange(300.0f);
 	scene->mFreeCamera = camera;
 
-	BuildLandscape(scene, header);
-
+	BuildLandscape(scene, header, physicalInfo);
 	
-	ReadMeshNodes(smgr, fp, header.MeshNodeCount);
-	ReadCollectionNodes(smgr, fp, header.CollectionNodeCount);
+	ReadMeshNodes(smgr, fp, header.MeshNodeCount, physicalInfo);
+	ReadCollectionNodes(smgr, fp, header.CollectionNodeCount, physicalInfo);
 	ReadLightNodes(smgr, fp, header.LightNodeCount);
 
 	fclose(fp);
@@ -71,7 +71,8 @@ bool CSceneLoader::load(const char* filename, RaceScene* scene)
 	return true;
 }
 
-void CSceneLoader::ReadMeshNodes(ISceneManager* smgr, FILE* fp, u32 meshCount)
+void CSceneLoader::ReadMeshNodes(ISceneManager* smgr, FILE* fp, u32 meshCount,
+	SPhysicalLoadingInfo& physicalInfo)
 {
 	IMeshManager* meshManager = IMeshManager::getInstance();
 
@@ -82,7 +83,8 @@ void CSceneLoader::ReadMeshNodes(ISceneManager* smgr, FILE* fp, u32 meshCount)
 		if (info.Category != MESH_CATEGORY)
 			continue;
 
-		IModelMesh* mesh = meshManager->getModelMesh(info.MeshName, true);
+		std::string meshName = info.MeshName;
+		IModelMesh* mesh = meshManager->getModelMesh(meshName, true);
 		if (!mesh)
 			continue;
 
@@ -92,6 +94,10 @@ void CSceneLoader::ReadMeshNodes(ISceneManager* smgr, FILE* fp, u32 meshCount)
 		node->setTag(info.Tag);
 		if (info.ShadowCasting)
 			node->addShadow(1);
+
+		if (info.BoundingPhysics)
+			AddPhysicalBoundings(meshName, info.Static, info.Position, 
+				info.Rotation, info.Scaling, physicalInfo, smgr);
 	}
 }
 
@@ -137,15 +143,15 @@ IInstanceCollectionNode* CSceneLoader::CreateCollectionNode(ISceneManager* smgr,
 	return collectionNode;
 }
 
-void CSceneLoader::ReadCollectionNodes(ISceneManager* smgr, FILE* fp, u32 count)
+void CSceneLoader::ReadCollectionNodes(ISceneManager* smgr, FILE* fp, u32 count,SPhysicalLoadingInfo& physicalInfo)
 {
 	for (u32 i = 0; i < count; i++)
 	{
-		ReadCollectionNode(smgr, fp);
+		ReadCollectionNode(smgr, fp, physicalInfo);
 	}
 }
 
-void CSceneLoader::ReadCollectionNode(ISceneManager* smgr, FILE* fp)
+void CSceneLoader::ReadCollectionNode(ISceneManager* smgr, FILE* fp, SPhysicalLoadingInfo& physicalInfo)
 {
 	IMeshManager* meshManager = IMeshManager::getInstance();
 
@@ -154,7 +160,8 @@ void CSceneLoader::ReadCollectionNode(ISceneManager* smgr, FILE* fp)
 	u32 instanceCount;
 	fread(&instanceCount, sizeof(u32), 1, fp);
 
-	IModelMesh* mesh = meshManager->getModelMesh(fileinfo.MeshName, true);
+	std::string meshName = fileinfo.MeshName;
+	IModelMesh* mesh = meshManager->getModelMesh(meshName, true);
 	IInstanceCollectionNode* collectionNode = CreateCollectionNode(smgr, mesh, instanceCount);
 	collectionNode->setTag(fileinfo.Tag);
 
@@ -168,6 +175,12 @@ void CSceneLoader::ReadCollectionNode(ISceneManager* smgr, FILE* fp)
 		instanceNode->setTag(instanceInfo.Tag);
 		if (instanceInfo.ShadowCasting)
 			instanceNode->addShadow(1);
+
+		
+		if (instanceInfo.BoundingPhysics)
+			AddPhysicalBoundings(meshName, instanceInfo.Static, instanceInfo.Position,
+			instanceInfo.Rotation, instanceInfo.Scaling, physicalInfo, smgr);
+		
 	}
 }
 
@@ -211,7 +224,7 @@ GrassLand* CSceneLoader::buildGrassLand(ISceneManager* smgr, ITerrainNode* terra
 	return land;
 }
 
-bool CSceneLoader::BuildLandscape(RaceScene* scene, const SSceneFileHeader& header)
+bool CSceneLoader::BuildLandscape(RaceScene* scene, const SSceneFileHeader& header, SPhysicalLoadingInfo& physicalInfo)
 {
 	// set terrain.
 	ISceneManager* smgr = scene->mSceneManager;
@@ -232,18 +245,110 @@ bool CSceneLoader::BuildLandscape(RaceScene* scene, const SSceneFileHeader& head
 	terrainNode->setMaterialName(header.TerrainMaterial);
 	*/
 	scene->mTerrainNode = terrainNode;
+	physicalInfo.TerrainMesh = terrainMesh;
 
 	// set grass land
 	scene->mGrassLand = buildGrassLand(smgr, terrainNode);
+	
 
-	hkpRigidBodyCinfo groundInfo;
+	return true;
+}
+
+void CSceneLoader::AddPhysicalBoundings(const std::string& meshName, bool bStatic,
+	const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scaling,
+	SPhysicalLoadingInfo& physicalInfo,
+	ISceneManager* smgr)
+{
+	SPhysicalBoundingCollection* collection = PhysicsLoader::GetBoundings(meshName);
+
+	for (u32 i = 0; i < collection->Boundings.size(); i++)
+	{
+		const SPhysicalBounding* bounding = &collection->Boundings[i];
+		if (bounding->Category == BOX_BOUNDING)
+			AddBoxPhysicalBounding(bounding, bStatic, position, rotation, scaling, physicalInfo,smgr);
+	}
+}
+
+void CSceneLoader::AddBoxPhysicalBounding(const SPhysicalBounding* bounding, bool bStatic,
+	const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scaling,
+	SPhysicalLoadingInfo& physicalInfo,
+	ISceneManager* smgr)
+{
+	XMMATRIX rot1 = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
+	XMMATRIX rot2 = XMMatrixRotationRollPitchYaw(bounding->Rotation.x, bounding->Rotation.y, bounding->Rotation.z);
+	XMMATRIX R = rot2 * rot1;
+	
+	XMMATRIX tran1 = XMMatrixTranslation(position.x, position.y, position.z);
+	XMMATRIX tran2 = XMMatrixTranslation(bounding->Center.x, bounding->Center.y, bounding->Center.z);
+	
+	XMMATRIX M = tran2 * rot1 * tran1;
+	XMFLOAT4X4 T;
+	XMStoreFloat4x4(&T, M);
+
+	XMFLOAT3 pos = XMFLOAT3(T._41, T._42, T._43);
+	XMVECTOR quat_v = XMQuaternionRotationMatrix(R);
+	XMFLOAT4 quat;
+	XMStoreFloat4(&quat, quat_v);
+
+	XMFLOAT3 boxSize(bounding->Box.Size[0] * scaling.x * 0.5f, 
+		bounding->Box.Size[1] * scaling.y * 0.5f, 
+		bounding->Box.Size[2] * scaling.z * 0.5f);
+	/*
+	hkpBoxShape* boxShape = new hkpBoxShape(boxSize, 0);
+	hkpRigidBodyCinfo bodyInfo;
+	bodyInfo.m_shape = boxShape;
+	bodyInfo.m_motionType = (bStatic) ? hkpMotion::MOTION_FIXED : hkpMotion::MOTION_DYNAMIC;
+	bodyInfo.m_position.set(pos.x, pos.y, pos.z);
+	bodyInfo.m_mass = bounding->Mass;
+	bodyInfo.m_friction = bounding->Friction;
+	bodyInfo.m_rotation.set(quat.x, quat.y, quat.z, quat.w);
+	hkpRigidBody* boxBody = new hkpRigidBody(bodyInfo);
+	PhysicsEngine* engine = PhysicsEngine::getInstance();
+	engine->getWorld()->markForWrite();
+	PhysicsEngine::getInstance()->addRigidBody(boxBody);
+	engine->getWorld()->unmarkForWrite();
+	boxShape->removeReference();
+	boxBody->removeReference();
+	*/
+	SPhysicalBoxLoadingInfo boxInfo;
+	boxInfo.HalfSize = boxSize;
+	boxInfo.Static = bStatic;
+	boxInfo.Position = pos;
+	boxInfo.Rotation = quat;
+	boxInfo.Mass = bounding->Mass;
+	boxInfo.Friction = bounding->Friction;
+	physicalInfo.Boxes.push_back(boxInfo);
+
+	/*
+	IMeshManager* meshManager = IMeshManager::getInstance();
+	ISimpleMesh* mesh = meshManager->getSimpleMesh("debug_box");
+	if (!mesh)
+	{
+		mesh = meshManager->createCubeMesh("debug_box");
+	}
+
+	IMeshNode* node = smgr->addMeshNode(mesh, nullptr);
+	node->scale(bounding->Box.Size[0] * scaling.x, bounding->Box.Size[1] * scaling.y,
+		bounding->Box.Size[2] * scaling.z);
+
+	node->transform(R);
+	node->translate(pos.x, pos.y, pos.z);
+	node->setMaterialName("picking_cube_material");
+	node->setTag(4);
+	*/
+}
+
+void CSceneLoader::LoadPhysics(SPhysicalLoadingInfo& physicalInfo)
+{
+	PhysicsEngine* engine = PhysicsEngine::getInstance();
 
 	hkpSampledHeightFieldBaseCinfo ci;
+
+	ITerrainMesh* terrainMesh = physicalInfo.TerrainMesh;
 
 	// 这里的xRes,zRes应该不是指cellNum，而是地形每边的顶点数
 	ci.m_xRes = terrainMesh->getRowCellNum() + 1;
 	ci.m_zRes = terrainMesh->getRowCellNum() + 1;
-
 
 	f32 heightScale = terrainMesh->getHeightScale();
 	f32 widthScale = terrainMesh->getVertexSpace();
@@ -252,7 +357,9 @@ bool CSceneLoader::BuildLandscape(RaceScene* scene, const SSceneFileHeader& head
 	ci.m_scale.set(widthScale, 1.0f, widthScale);
 	ci.m_maxHeight = heightScale * 255.0f + 1.0f;
 
-	TerrainHeightFieldShape* heightFieldShape = new TerrainHeightFieldShape(ci, terrainMesh);
+	hkpRigidBodyCinfo groundInfo;
+	TerrainHeightFieldShape* heightFieldShape = new TerrainHeightFieldShape(ci,
+		terrainMesh);
 
 	// Wrap the heightfield in a hkpTriSampledHeightFieldCollection:
 	hkpTriSampledHeightFieldCollection* collection = new hkpTriSampledHeightFieldCollection(heightFieldShape);
@@ -272,13 +379,34 @@ bool CSceneLoader::BuildLandscape(RaceScene* scene, const SSceneFileHeader& head
 	heightFieldShape->removeReference();
 	bvTree->removeReference();
 	collection->removeReference();
-
-	PhysicsEngine* engine = PhysicsEngine::getInstance();
+	
 	engine->getWorld()->markForWrite();
 	engine->addRigidBody(groundbody);
-
 	groundbody->removeReference();
-
 	engine->getWorld()->unmarkForWrite();
-	return true;
+
+
+	for (u32 i = 0; i < physicalInfo.Boxes.size(); i++)
+	{
+		SPhysicalBoxLoadingInfo& info = physicalInfo.Boxes[i];
+		hkVector4 halfSize(info.HalfSize.x, info.HalfSize.y, info.HalfSize.z);
+		hkpBoxShape* boxShape = new hkpBoxShape(halfSize, 0);
+
+		hkpRigidBodyCinfo ci;
+		ci.m_shape = boxShape;
+		ci.m_motionType = (info.Static) ? hkpMotion::MOTION_FIXED : hkpMotion::MOTION_DYNAMIC;
+		ci.m_position.set(info.Position.x, info.Position.y, info.Position.z);
+		ci.m_mass = info.Mass;
+		ci.m_friction = info.Friction;
+		ci.m_rotation.set(info.Rotation.x, info.Rotation.y, info.Rotation.z, info.Rotation.w);
+
+		hkpRigidBody* boxBody = new hkpRigidBody(ci);
+		PhysicsEngine* engine = PhysicsEngine::getInstance();
+		engine->getWorld()->markForWrite();
+		engine->addRigidBody(boxBody);
+		engine->getWorld()->unmarkForWrite();
+		boxShape->removeReference();
+		boxBody->removeReference();
+	}
+
 }

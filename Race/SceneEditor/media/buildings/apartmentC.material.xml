@@ -1,0 +1,31 @@
+<materials>
+    <material name="apartmentC/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="apartmentC/pipeline_01"/>
+        </pipelines>
+        <textures/>
+    </material>
+    <material name="apartmentC/material_01">
+        <attributes>
+            <attribute name="ambient" value="0.410000, 0.410000, 0.410000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.100000, 0.100000, 0.100000, 1.000000"/>
+            <attribute name="emissive" value="0.100000, 0.100000, 0.100000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="shadow_NM_pipeline"/>
+            <pipeline name="defer_shadow_NM_pipeline" usage="defer"/>
+			<pipeline name="object_shadow_map_NM_pipeline" usage="shadow_map"/>
+        </pipelines>
+        <textures>
+            <texture name="apartmentC_tex.bmp"/>
+			<texture name="apartmentC_NM.bmp" index="1"/>
+        </textures>
+    </material>
+</materials>

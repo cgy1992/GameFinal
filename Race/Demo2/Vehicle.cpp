@@ -263,9 +263,9 @@ void Vehicle::setupPhysics(const math::SAxisAlignedBox& aabb, f32 heightAboveGro
 	// NB: The inertia value is reset by the vehicle SDK.  However we give it a
 	// reasonable value so that the hkpRigidBody does not assert on construction. See
 	// VehicleSetup for the yaw, pitch and roll values used by hkVehicle.
-	chassisInfo.m_mass = 750.0f * 4;
+	chassisInfo.m_mass = 750.0f * 2;
 	chassisInfo.m_shape = chassisShape;
-	chassisInfo.m_friction = 0.4f;
+	chassisInfo.m_friction = 0.2f;
 
 	// The chassis MUST have m_motionType hkpMotion::MOTION_BOX_INERTIA to correctly simulate
 	// vehicle roll, pitch and yaw.

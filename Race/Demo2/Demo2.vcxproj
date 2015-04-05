@@ -55,6 +55,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_WINDOWS;_WIN32;HK_DEBUG;HK_DEBUG_SLOW;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;HKG_LEGACY_DIRECTX;HK_CONFIG_SIMD=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -81,6 +82,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dependencies\tinyxml\tinyxml2.h" />
+    <ClInclude Include="PhysicsLoader.h" />
     <ClInclude Include="Vehicle.h" />
     <ClInclude Include="CSceneLoader.h" />
     <ClInclude Include="dependencies\VehicleApi\FrictionMapVehicleRaycastWheelCollide.h" />
@@ -98,6 +101,11 @@
     <ClInclude Include="TerrainHeightFieldShape.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dependencies\tinyxml\tinyxml2.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="PhysicsLoader.cpp" />
     <ClCompile Include="Vehicle.cpp" />
     <ClCompile Include="CSceneLoader.cpp" />
     <ClCompile Include="dependencies\VehicleApi\VehicleApiUtils.cpp" />

@@ -1,0 +1,113 @@
+<pipelines>
+  
+  <!--no alpha testing, no specular, no shadow -->
+  <pipeline name="multi_object_NM_pipeline" prototype="object_NM_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+      <element semantic="WORLD" index="0" format="float4" slot="1" instance="true" instance-rate="1"></element>
+      <element semantic="WORLD" index="1" format="float4" slot="1" instance="true" instance-rate="1"></element>
+      <element semantic="WORLD" index="2" format="float4" slot="1" instance="true" instance-rate="1"></element>
+      <element semantic="WORLD" index="3" format="float4" slot="1" instance="true" instance-rate="1"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="objects_NM.hlsl" main="vs_main">
+        <macro name="INSTANCES_ON" value="1"/>
+      </vertex-shader>
+      <pixel-shader file="objects_NM.hlsl" main="ps_main">
+        <macro name="INSTANCES_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+  
+  
+  <!--for alpha testing, no specular, no shadow -->
+  <pipeline name="multi_alpha_NM_pipeline" prototype="multi_object_NM_pipeline">
+    <shaders>
+      <pixel-shader>
+        <macro name="ALPHA_TEST_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+  <!--for alpha testing, no specular, have shadow -->
+  <pipeline name="multi_alpha_shadow_NM_pipeline" prototype="multi_object_NM_pipeline">
+    <shaders>
+      <pixel-shader>
+        <macro name="ALPHA_TEST_ON"/>
+        <macro name="SHADOW_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+  
+  <!--for no alpha testing, no specular, have shadow -->
+  <pipeline name="multi_shadow_NM_pipeline" prototype="multi_object_NM_pipeline">
+    <shaders>
+      <pixel-shader>
+        <macro name="SHADOW_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+  <!-- for shadow map, no alpha test-->
+  <pipeline name="multi_object_shadow_map_NM_pipeline" prototype="multi_object_NM_pipeline">
+    <shaders>
+      <vertex-shader main="shadow_vs_main">
+      </vertex-shader>
+      <pixel-shader file="null"/>
+    </shaders>
+  </pipeline>
+
+  <!-- for shadow map, have alpha test-->
+  <pipeline name="multi_alpha_shadow_map_NM_pipeline" prototype="multi_object_NM_pipeline">
+    <shaders>
+      <pixel-shader file="objects.hlsl" main="shadow_ps_main">
+        <macro name="ALPHA_TEST_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+
+  <!--/////////////////////////////////////////////////////////////////////////////////////////////-->
+  <!--no alpha testing, no specular, no shadow -->
+  <pipeline name="multi_defer_object_NM_pipeline" prototype="multi_object_NM_pipeline">
+    <shaders>
+      <pixel-shader file="objects_NM.hlsl" main="defer_ps_main">
+        <macro name="INSTANCES_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+
+  <!--for alpha testing, no specular, no shadow -->
+  <pipeline name="multi_defer_alpha_NM_pipeline" prototype="multi_defer_object_NM_pipeline">
+    <shaders>
+      <pixel-shader>
+        <macro name="ALPHA_TEST_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+  <!--for alpha testing, no specular, have shadow -->
+  <pipeline name="multi_defer_alpha_shadow_NM_pipeline" prototype="multi_defer_object_NM_pipeline">
+    <shaders>
+      <pixel-shader>
+        <macro name="ALPHA_TEST_ON"/>
+        <macro name="SHADOW_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+  <!--for no alpha testing, no specular, have shadow -->
+  <pipeline name="multi_defer_shadow_NM_pipeline" prototype="multi_defer_object_NM_pipeline">
+    <shaders>
+      <pixel-shader>
+        <macro name="SHADOW_ON"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+</pipelines>
+

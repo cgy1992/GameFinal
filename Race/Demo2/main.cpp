@@ -7,6 +7,7 @@
 #include "InputHandler.h"
 #include "PhysicsEngine.h"
 #include "GameController.h"
+#include "PhysicsLoader.h"
 
 #pragma comment(lib, "GameFinal.lib")
 #pragma comment(lib, "winmm.lib")

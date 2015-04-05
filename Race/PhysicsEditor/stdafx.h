@@ -17,6 +17,8 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <string>
+#include <set>
 
 using namespace gf;
 

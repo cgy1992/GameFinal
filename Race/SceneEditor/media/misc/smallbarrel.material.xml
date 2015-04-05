@@ -1,0 +1,17 @@
+<materials>
+    <material name="smallbarrel/material_01">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+          <pipeline name="specular_shadow_pipeline"/>
+          <pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
+        </pipelines>
+        <textures>
+            <texture name="smallbarrel_tex.bmp"/>
+        </textures>
+    </material>
+</materials>

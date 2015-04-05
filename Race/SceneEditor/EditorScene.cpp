@@ -105,8 +105,7 @@ void EditorScene::setupInitialScene()
 			XMFLOAT3(0, 30.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
 		mCamera->setShadowRange(300.0f);
 
-		mVideoDriver->setDeferredShading(false);
-
+		mVideoDriver->setDeferredShading(true);
 		mDeferredShading = true;
 	}
 
@@ -297,7 +296,7 @@ u32 EditorScene::AddObject(const char* nodeName)
 
 	SNodeInfo nodeInfo;
 	nodeInfo.Id = getNextNodeSequence();
-	nodeInfo.Static = false;
+	nodeInfo.Static = true;
 	nodeInfo.Node = mAddedNode;
 	nodeInfo.Name = nodeName;
 

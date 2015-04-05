@@ -37,11 +37,16 @@ f32 getFps(float dt)
 int _tmain(int argc, _TCHAR* argv[])
 {
 	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 1;
-	settings.MultiSamplingQuality = 0;
+	settings.MultiSamplingCount = 4;
+	settings.MultiSamplingQuality = 32;
 	settings.WindowsProcedure = CEditorWindow::WndProc;
+	settings.BackBufferWidth = 1000;
+	settings.BackBufferHeight = 1000;
 
-	CEditorWindow* window = new CEditorWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
+	CEditorWindow* window = new CEditorWindow(
+		settings.BackBufferWidth,
+		settings.BackBufferHeight);
+
 	CEditorWindow::_setInstance(window);
 
 	IDevice* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
@@ -58,7 +63,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	char caption[200];
 	while (device->run())
 	{
-		const float clearColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
+		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
 		f32 dt = timer->tick();

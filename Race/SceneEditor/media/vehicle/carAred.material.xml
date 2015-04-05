@@ -9,7 +9,7 @@
     <pipelines>
       <pipeline name="specular_shadow_pipeline"/>
       <pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
-	    <pipeline name="defer_object_pipeline" usage="defer"/>
+	    <pipeline name="defer_shadow_pipeline" usage="defer"/>
     </pipelines>
     <textures>
       <texture name="car_tex.bmp"/>

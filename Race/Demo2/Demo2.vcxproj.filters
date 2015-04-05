@@ -19,6 +19,9 @@
     <Filter Include="dependencies\VehicleApi">
       <UniqueIdentifier>{0c502e0b-b88c-494e-9a6e-025607a59965}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dependencies\tinyxml2">
+      <UniqueIdentifier>{2fca3056-6629-4f13-80b5-d19735de07f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -69,6 +72,12 @@
     <ClInclude Include="Vehicle.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="PhysicsLoader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\tinyxml\tinyxml2.h">
+      <Filter>dependencies\tinyxml2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -112,6 +121,12 @@
     </ClCompile>
     <ClCompile Include="Vehicle.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsLoader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dependencies\tinyxml\tinyxml2.cpp">
+      <Filter>dependencies\tinyxml2</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

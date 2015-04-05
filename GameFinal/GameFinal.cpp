@@ -30,6 +30,7 @@ namespace gf
 		creationParams.BackBufferWidth = settings.BackBufferWidth;
 		creationParams.BackBufferHeight = settings.BackBufferHeight;
 		creationParams.WindowStyle = style;
+		creationParams.VsyncEnabled = vsync;
 
 		if (settings.BackBufferWidth == 0)
 			creationParams.BackBufferWidth = width;

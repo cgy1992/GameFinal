@@ -105,6 +105,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Demo2", "Race\Demo2\Demo2.v
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhysicsEditor", "Race\PhysicsEditor\PhysicsEditor.vcxproj", "{1140B992-3897-4BA0-B038-D1ECB4460D43}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F764B441-35DB-4ADD-859F-D5DE5B6727F2} = {F764B441-35DB-4ADD-859F-D5DE5B6727F2}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

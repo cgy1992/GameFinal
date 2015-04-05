@@ -4,6 +4,7 @@
 #include "PhysicsEngine.h"
 #include "RaceScene.h"
 #include "LoadingScene.h"
+#include "PhysicsLoader.h"
 
 using namespace gf;
 
@@ -40,7 +41,7 @@ bool GameController::Init()
 	settings.MultiSamplingQuality = 0;
 
 	mDevice = gf::createDevice(EDT_DIRECT3D11, mScreenWidth, mScreenHeight, 
-		EWS_FULLSCREEN | EWS_FULLRESOLUTION, false, settings);
+		EWS_NONE, true, settings);
 	mVideoDriver = mDevice->getVideoDriver();
 
 	math::SAxisAlignedBox aabb;
@@ -63,7 +64,8 @@ bool GameController::Init()
 	InputHandler::setKeyMapping(E_LOOK_DOWN, VK_DOWN);
 	InputHandler::setKeyMapping(E_SWITCH_CAMERA, VK_LSHIFT);
 
-	PhysicsEngine::initInstance();
+	PhysicsLoader::Load("main.physics.xml");
+	PhysicsEngine::initInstance();	
 
 	mTimer = mDevice->getTimer();
 	mTimer->reset();
@@ -83,6 +85,9 @@ void GameController::Run()
 		mVideoDriver->beginScene(true, true, clearColor);
 
 		f32 dt = mTimer->tick();
+		if (dt > 0.03f)
+			dt = 0.03f;
+
 		InputHandler::update();
 
 		if (mCurrentScene)

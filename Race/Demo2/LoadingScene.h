@@ -2,6 +2,7 @@
 #define __LOADING_SCENE_H__
 
 #include "Scene.h"
+#include "CSceneLoader.h"
 
 class RaceScene;
 
@@ -9,6 +10,7 @@ class LoadingScene : public Scene
 {
 public:
 	LoadingScene(IDevice* device, IVideoDriver* driver);
+	
 	virtual void Enter();
 	virtual void Update(float dt);
 	virtual void Render();
@@ -16,8 +18,12 @@ public:
 	~LoadingScene();
 
 protected:
-	bool			mFinishLoading;
-	RaceScene*			mRaceScene;
+	void setupScene();
+
+	bool						mFinishLoading;
+	ISceneManager*				mSceneManager;
+	RaceScene*					mRaceScene;
+	SPhysicalLoadingInfo		mPhysicalInfo;
 };
 
 #endif

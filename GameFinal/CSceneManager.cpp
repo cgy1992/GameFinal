@@ -789,8 +789,8 @@ namespace gf
 		/* if the aspectRatio is the default param. */
 		if (aspectRatio < 0)
 		{
-			f32 width = static_cast<f32>(mDevice->getClientWidth());
-			f32 height = static_cast<f32>(mDevice->getClientHeight());
+			f32 width = static_cast<f32>(mVideoDriver->getBackBufferWidth());
+			f32 height = static_cast<f32>(mVideoDriver->getBackBufferHeight());
 			aspectRatio = width / height;
 		}
 

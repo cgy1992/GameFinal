@@ -1,0 +1,34 @@
+<materials>
+    <material name="roundtreeAlow/material_01">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.737255, 0.737255, 0.737255, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+			<pipeline name="alpha_shadow_pipeline"/>
+			<pipeline name="alpha_shadow_map_pipeline" usage="shadow_map"/>
+			<pipeline name="defer_alpha_shadow_pipeline" usage="defer"/>
+		</pipelines>
+        <textures>
+            <texture name="roundtreetwig.png"/>
+        </textures>
+    </material>
+    <material name="roundtreeAlow/material_02">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.737255, 0.737255, 0.737255, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+			<pipeline name="shadow_pipeline"/>
+			<pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
+			<pipeline name="defer_alpha_shadow_pipeline" usage="defer"/>
+		</pipelines>
+        <textures>
+            <texture name="roundtreebark.bmp"/>
+        </textures>
+    </material>
+</materials>

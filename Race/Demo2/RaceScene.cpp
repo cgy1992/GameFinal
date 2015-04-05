@@ -75,6 +75,7 @@ void RaceScene::Render()
 		mSceneManager->drawAll();
 		mVideoDriver->setDeferredShading(false);
 		mSceneManager->draw(mSceneManager->getSkyNode());
+		mSceneManager->draw(4);
 	}
 	else
 	{
@@ -143,6 +144,6 @@ void RaceScene::updateCamera(ICameraNode* camera, f32 delta)
 
 void RaceScene::Exit()
 {
-
+	mSceneManager->destroy();
 }
 

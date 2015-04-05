@@ -1,0 +1,34 @@
+<materials>
+    <material name="fruittree/material_01">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.737255, 0.737255, 0.737255, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+		<pipelines>
+			<pipeline name="alpha_shadow_pipeline"/>
+      <pipeline name="defer_alpha_shadow_pipeline" usage="defer"/>
+			<pipeline name="alpha_shadow_map_pipeline" usage="shadow_map"/>
+		</pipelines>
+        <textures>
+            <texture name="fruittreetex.png"/>
+        </textures>
+    </material>
+    <material name="fruittree/material_02">
+        <attributes>
+            <attribute name="ambient" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.737255, 0.737255, 0.737255, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+			    <pipeline name="shadow_pipeline"/>
+          <pipeline name="defer_shadow_pipeline" usage="defer"/>
+			    <pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
+		    </pipelines>
+        <textures>
+            <texture name="ahernbark.bmp"/>
+        </textures>
+    </material>
+</materials>
