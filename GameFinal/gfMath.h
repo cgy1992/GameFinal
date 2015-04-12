@@ -156,6 +156,20 @@ namespace gf
 			return XMFLOAT4(-a.x, -a.y, -a.z, -a.w);
 		}
 
+		inline f32 VectorDistance(const XMFLOAT3& a, const XMFLOAT3& b) 
+		{
+			return sqrtf((a.x - b.x) * (a.x - b.x)
+				+ (a.y - b.y) * (a.y - b.y)
+				+ (a.z - b.z) * (a.z - b.z));
+		}
+
+		inline f32 VectorSqrDistance(const XMFLOAT3& a, const XMFLOAT3& b)
+		{
+			return (a.x - b.x) * (a.x - b.x)
+				+ (a.y - b.y) * (a.y - b.y)
+				+ (a.z - b.z) * (a.z - b.z);
+		}
+
 		inline XMFLOAT3 GetNormalizedVector(f32 x, f32 y, f32 z)
 		{
 			XMVECTOR v = XMVectorSet(x, y, z, 0);

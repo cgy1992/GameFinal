@@ -13,6 +13,7 @@ public:
 	void UpdateShowing();
 	void OnClickUpdateButton();
 	void OnClickDeferredShadingCheckBox();
+	void OnClickAntiAliasingCheckBox();
 	void OnClickSaveButton();
 
 private:
@@ -24,7 +25,7 @@ private:
 	HWND		mUpdateBtn;
 
 	HWND		mDeferShadingCheckBox;
-
+	HWND		mAntiAliasingCheckBox;
 };
 
 #endif

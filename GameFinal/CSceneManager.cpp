@@ -563,7 +563,6 @@ namespace gf
 			ITextureManager* textureManager = ITextureManager::getInstance();
 
 			std::string outputTextureName("cs_tile_based_deferred_shading_output");
-			std::string postProcessPipelineName("gf/default_cs_tile_based_ds_post_process");
 			std::string pointLightsBufferName("cs_ds_point_lights_buffer");
 
 			ITexture* outputTexture = textureManager->get(outputTextureName, false);
@@ -583,7 +582,7 @@ namespace gf
 			}
 			
 
-			IPipeline* postProcessPipeline = IPipelineManager::getInstance()->get(postProcessPipelineName, true);
+			
 			IShader* shader = getTileBasedDeferredShadingCS();
 
 			
@@ -636,13 +635,25 @@ namespace gf
 			
 			IRenderTarget* targets[] = { target };
 			mVideoDriver->setMultipleRenderTargets(targets, 1, nullptr);
-
-			SMaterial material(postProcessPipeline);
-			material.setTexture(0, outputTexture);
-
-			quad->setMaterial(&material);
-
-			draw(quad);
+			
+			if (!mVideoDriver->isDeferredAntiAliasing()) {
+				std::string postProcessPipelineName = "gf/default_cs_tile_based_ds_post_process";
+				IPipeline* postProcessPipeline = IPipelineManager::getInstance()->get(postProcessPipelineName, true);
+				SMaterial material(postProcessPipeline);
+				material.setTexture(0, outputTexture);
+				quad->setMaterial(&material);
+				draw(quad);
+			}
+			else {
+				std::string postProcessPipelineName = "gf/deferred_anti_aliasing_post_process";
+				IPipeline* postProcessPipeline = IPipelineManager::getInstance()->get(postProcessPipelineName, true);
+				SMaterial material(postProcessPipeline);
+				material.setTexture(0, outputTexture);
+				material.setTexture(1, depthStencilSurface->getTexture());
+				material.setTexture(2, gbuffers[0]->getTexture());
+				quad->setMaterial(&material);
+				draw(quad);
+			}
 
 			mVideoDriver->setDepthStencilSurface(depthStencilSurface);
 

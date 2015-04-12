@@ -70,15 +70,22 @@ namespace gf
 			D3D11_BUFFER_DESC ibDesc;
 			ibDesc.ByteWidth = indiceStride * indicesCount;
 			ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-			ibDesc.CPUAccessFlags = 0;
 			ibDesc.MiscFlags = 0;
 			ibDesc.StructureByteStride = 0;
-			ibDesc.Usage = D3D11_USAGE_IMMUTABLE;
+			ibDesc.Usage = getD3d11Usage(mMemoryUsage);
 
-			D3D11_SUBRESOURCE_DATA ibData;
-			ibData.pSysMem = indices;
-
-			hr = md3dDevice->CreateBuffer(&ibDesc, &ibData, &md3dIndexBuffer);
+			if (mMemoryUsage == EMU_STATIC || mMemoryUsage == EMU_DEFAULT)
+			{
+				ibDesc.CPUAccessFlags = 0;
+				D3D11_SUBRESOURCE_DATA ibData;
+				ibData.pSysMem = indices;
+				hr = md3dDevice->CreateBuffer(&ibDesc, &ibData, &md3dIndexBuffer);
+			}
+			else if(mMemoryUsage == EMU_DYNAMIC)
+			{
+				ibDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+				hr = md3dDevice->CreateBuffer(&ibDesc, 0, &md3dIndexBuffer);
+			}
 
 			if (FAILED(hr))
 				return false;
@@ -244,9 +251,23 @@ namespace gf
 		return true;
 	}
 
+	bool CD3D11MeshBuffer::setIndiceData(void* data, u32 count)
+	{
+		if (!md3dIndexBuffer)
+			return false;
 
+		if (mMemoryUsage != EMU_DYNAMIC)
+			return false;
 
+		u32 indiceStride = (mIndexFormat == DXGI_FORMAT_R32_UINT) ? 4 : 2;
 
+		D3D11_MAPPED_SUBRESOURCE mappedData;
+		md3dDeviceContext->Map(md3dIndexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+		memcpy(mappedData.pData, data, count * indiceStride);
+		md3dDeviceContext->Unmap(md3dIndexBuffer, 0);
 
+		mIndiceCount = count;
+		return true;
+	}
 }
 

@@ -25,6 +25,8 @@ namespace gf
 
 		virtual bool setVertexData(void* data, u32 count) = 0;
 
+		virtual bool setIndiceData(void* data, u32 count) = 0;
+
 		virtual void bind() = 0;
 
 		virtual void bind(IMeshBuffer* pInstanceBuffer) = 0;

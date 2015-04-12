@@ -98,7 +98,7 @@ SReturnGBuffers defer_ps_main(VertexOut pin)
 	float3 normal = NormalSampleToWorldSpace(normalMapSample, unitNormalW, tangentW);
 
 #ifdef SHADOW_ON
-	float shadowFactor = CalcShadowFactor(1, 1.0f);
+	float shadowFactor = CalcShadowFactor(1, 5.0f);
 #else
 	float shadowFactor = 1.0f;
 #endif

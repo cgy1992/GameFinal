@@ -55,7 +55,7 @@ GrassLand::GrassLand(ISceneManager* smgr,
 	}
 
 	mMeshNode->setRenderOrder(ERO_SKYDOME + 1);
-	mMeshNode->addShadow(1);
+	//mMeshNode->addShadow(1);
 
 	mWindDirection = math::GetNormalizedVector(-1.0f, 0, 1.0f);
 	mBladeAmplitude = 0.5f;
@@ -78,7 +78,10 @@ void GrassLand::update(f32 dt)
 	mMaterial->setAttribute("BladeFluctuation", fluctuation);
 	mMaterial->setAttribute("WindDirection", mWindDirection);
 
-	f32 width = mTerrainNode->getTerrainMesh()->getTotalWidth();
+	f32 vertexSpace = mTerrainNode->getTerrainMesh()->getVertexSpace();
+	u32 vertexNumPerRow = mTerrainNode->getTerrainMesh()->getRowVertexNum();
+	f32 width = vertexSpace * vertexNumPerRow;
+
 	mMaterial->setAttribute("TerrainWidth", width);
 	mMaterial->setAttribute("InvTerrainWidth", 1.0f / width);
 }

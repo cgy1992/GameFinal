@@ -55,6 +55,9 @@ void EditorScene::setupInitialScene()
 
 	ITextureCube* skyTexture = mTextureManager->loadCubeTexture("skybox1.dds");
 	smgr->setSkyDome(skyTexture);
+	IMeshNode* skyNode = mSceneManager->getSkyNode();
+	if (skyNode)
+		skyNode->setMaterialName("skydome_material");
 
 	mTimer = mDevice->getTimer();
 

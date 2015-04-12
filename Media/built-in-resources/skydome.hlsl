@@ -1,10 +1,3 @@
-#include "GameFinal.hlsl"
-
-cbuffer cbPerFrame
-{
-	float4x4 gWorldViewProj;
-};
-
 TextureCube gCubeTexture;
 SamplerState gCubeTextureState;
 
@@ -36,3 +29,4 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 {
 	return gCubeTexture.Sample(gCubeTextureState, pin.PosL);
 }
+

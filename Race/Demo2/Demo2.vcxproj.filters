@@ -78,6 +78,12 @@
     <ClInclude Include="dependencies\tinyxml\tinyxml2.h">
       <Filter>dependencies\tinyxml2</Filter>
     </ClInclude>
+    <ClInclude Include="TireTrail.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -127,6 +133,12 @@
     </ClCompile>
     <ClCompile Include="dependencies\tinyxml\tinyxml2.cpp">
       <Filter>dependencies\tinyxml2</Filter>
+    </ClCompile>
+    <ClCompile Include="TireTrail.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector3.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

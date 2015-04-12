@@ -41,7 +41,7 @@ bool GameController::Init()
 	settings.MultiSamplingQuality = 0;
 
 	mDevice = gf::createDevice(EDT_DIRECT3D11, mScreenWidth, mScreenHeight, 
-		EWS_NONE, true, settings);
+		EWS_NONE, false, settings);
 	mVideoDriver = mDevice->getVideoDriver();
 
 	math::SAxisAlignedBox aabb;
@@ -79,6 +79,8 @@ bool GameController::Init()
 
 void GameController::Run()
 {
+	static char caption[256];
+
 	while (mDevice->run())
 	{
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -106,6 +108,9 @@ void GameController::Run()
 			mCurrentScene->Enter();
 			mSwitchedScene = nullptr;
 		}
+
+		sprintf_s(caption, "FPS:%f", GetFps(dt));
+		mDevice->setWindowCaption(caption);
 	}
 }
 
@@ -117,6 +122,22 @@ GameController* GameController::getInstance()
 void GameController::SwitchScene(Scene* scene)
 {
 	mSwitchedScene = scene;
+}
+
+gf::f32 GameController::GetFps(f32 dt)
+{
+	static u32 frameCount = 0;
+	static f32 elapseTime = 0.0f;
+	static f32 fps = 1.0f;
+	elapseTime += dt;
+	frameCount++;
+	if (elapseTime > 0.1f)
+	{
+		fps = static_cast<f32>(frameCount) / elapseTime;
+		frameCount = 0;
+		elapseTime = 0.0f;
+	}
+	return fps;
 }
 
 

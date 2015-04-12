@@ -51,14 +51,39 @@ void RaceScene::Enter()
 	XMStoreFloat4(&quat, quat_v);
 	mPlayerVehicle->setRotation(quat);
 
+	mVideoDriver->setDeferredAntiAliasing(true);
+
+	IMeshNode* skyNode = mSceneManager->getSkyNode();
+	if (skyNode)
+		skyNode->setMaterialName("skydome_material");
 }
 
 void RaceScene::Update(float dt)
-{
-	ICameraNode* camera = mSceneManager->getCameraNode(1);
-	updateCamera(camera, dt);
+{	
+	if (mSceneManager->getActiveCameraNode() == mFreeCamera)
+		updateCamera(mFreeCamera, dt);
+
+	if (InputHandler::keyPressed(E_SWITCH_CAMERA))
+	{
+		if (mSceneManager->getActiveCameraNode() == mFreeCamera)
+			mSceneManager->setActiveCamera(mFollowCamera);
+		else {
+			mFreeCamera->setPosition(mFollowCamera->getPosition());
+			mSceneManager->setActiveCamera(mFreeCamera);
+		}
+	}
+
+	if (mSceneManager->getActiveCameraNode() == mFreeCamera)
+	{
+		updateCamera(mFreeCamera, dt);
+	}
+	else
+	{
+		mPlayerVehicle->update(dt);
+	}
+
 	mGrassLand->update(dt);
-	mPlayerVehicle->update(dt);
+	//mPlayerVehicle->update(dt);
 
 	PhysicsEngine* engine = PhysicsEngine::getInstance();
 	engine->update(dt);
@@ -74,7 +99,7 @@ void RaceScene::Render()
 		mVideoDriver->setDeferredShading(true);
 		mSceneManager->drawAll();
 		mVideoDriver->setDeferredShading(false);
-		mSceneManager->draw(mSceneManager->getSkyNode());
+		//mSceneManager->draw(mSceneManager->getSkyNode());
 		mSceneManager->draw(4);
 	}
 	else

@@ -153,6 +153,13 @@ SReturnGBuffers pout;
 	float shadowFactor = c2.z;
 	float specularPower = c0.w;
 
+	// draw skydome
+	if(posH.z > 0.9999f)
+	{
+		gOutputTexture[dispatchThreadID.xy] = c1;
+		return;
+	}
+
 	/*
 	float3 normal = gGBuffer0[dispatchThreadID.xy].xyz * 2.0f - 1.0f;
 	float shadowFactor = gGBuffer0[dispatchThreadID.xy].w;

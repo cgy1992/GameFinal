@@ -253,6 +253,17 @@ float3 ComputeWorldPosFromDepthBuffer(Texture2D zbuffer, SamplerState samplerSta
 	return posW.xyz;
 }
 
+float3 ComputeViewPosFromDepthBuffer(Texture2D zbuffer, SamplerState samplerState, float2 Tex)
+{
+	float4 posH;
+	posH.xy = Tex * float2(2.0f, -2.0f) + float2(-1.0f, 1.0f);
+	posH.z = zbuffer.Sample(samplerState, Tex).r; 
+	posH.w = 1.0f;
+
+	float4 posW = mul(posH, GF_INV_PROJ);
+	posW = posW / posW.w;
+	return posW.xyz;
+}
 
 
 #endif

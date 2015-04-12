@@ -17,12 +17,12 @@ VertexOut vs_main(VertexIn vin)
 {
 	VertexOut vout;
 	vout.PosH = float4(vin.PosL.xy, 0.0f, 1.0f);
-	//vout.Tex.x = vin.PosL.x * 0.5f + 0.5f;
-	//vout.Tex.y = 0.5f - vin.PosL.y * 0.5f;
+	vout.Tex.x = vin.PosL.x * 0.5f + 0.5f;
+	vout.Tex.y = 0.5f - vin.PosL.y * 0.5f;
 
 
-	vout.Tex.x = 0.5 * (1 + vin.PosL.x - GF_SCREEN_SIZE.z);
-	vout.Tex.y = 0.5 * (1 - vin.PosL.y - GF_SCREEN_SIZE.w);
+	//vout.Tex.x = 0.5 * (1 + vin.PosL.x - GF_SCREEN_SIZE.z);
+	//vout.Tex.y = 0.5 * (1 - vin.PosL.y - GF_SCREEN_SIZE.w);
 
 	return vout;
 }

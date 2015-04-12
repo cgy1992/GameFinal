@@ -78,6 +78,7 @@ namespace gf
 			, mRenderStateManager(nullptr)
 			, mMeshManager(nullptr)
 			, mDeferredShading(false)
+			, mDeferredAntiAliasing(false)
 			, mDeferredShadingAlgorithm(EDSA_NORMAL_DEFERRED_SHADING)
 			, mBackBufferWidth(0)
 			, mBackBufferHeight(0)
@@ -223,6 +224,9 @@ namespace gf
 
 		bool isDeferredShading() const { return mDeferredShading; }
 		void setDeferredShading(bool deferredShading) { mDeferredShading = deferredShading; }
+		bool isDeferredAntiAliasing() { return mDeferredAntiAliasing; }
+		void setDeferredAntiAliasing(bool aa) { mDeferredAntiAliasing = aa; }
+
 		E_DEFERRED_SHADING_ALGORITHM getDeferredShadingAlgorithm() { return mDeferredShadingAlgorithm; }
 		void setDeferredShadingAlgorithm(E_DEFERRED_SHADING_ALGORITHM method) { mDeferredShadingAlgorithm = method; }
 
@@ -263,6 +267,7 @@ namespace gf
 		//bool							mRenderingShadowMap;
 		E_PIPELINE_USAGE				mCurrentPipelineUsage;
 		bool							mDeferredShading;
+		bool							mDeferredAntiAliasing;
 		E_DEFERRED_SHADING_ALGORITHM	mDeferredShadingAlgorithm;
 		f32								mDeferredShadingTileSize;
 		IRenderTarget*					mGBuffers[EGT_GBUFFER_COUNT];

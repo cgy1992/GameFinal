@@ -35,31 +35,10 @@ const f32 CAMERA_MOVE_UNIT = 30.0f;
 const f32 CAMERA_ROTATE_UNIT = 1.0f;
 const f32 GROUND_SIZE = 300.0f;
 
-GrassLand* gGrassLand = nullptr;
-
-void updateCamera(ICameraNode* camera, f32 delta);
-f32 getFps(float dt);
-
 int _tmain(int argc, _TCHAR* argv[])
 {
 	GameController game(SCREEN_WIDTH, SCREEN_HEIGHT);
 	game.Init();
 	game.Run();
 	return 0;
-}
-
-f32 getFps(float dt)
-{
-	static u32 frameCount = 0;
-	static f32 elapseTime = 0.0f;
-	static f32 fps = 1.0f;
-	elapseTime += dt;
-	frameCount++;
-	if (elapseTime > 0.1f)
-	{
-		fps = static_cast<f32>(frameCount) / elapseTime;
-		frameCount = 0;
-		elapseTime = 0.0f;
-	}
-	return fps;
 }

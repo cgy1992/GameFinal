@@ -40,6 +40,10 @@ void CGlobalSettingWindow::OnCreate(HWND parent, int xPos, int yPos, int width, 
 	mDeferShadingCheckBox = CreateControl(TEXT("button"), TEXT("Deferred Shading"),
 		WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
 		5, 30, 150, 20, IDC_DEFER_SHADING_CHECKBOX, NULL);
+
+	mAntiAliasingCheckBox = CreateControl(TEXT("button"), TEXT("Anti-Aliasing"),
+		WS_CHILD | WS_VISIBLE | BS_AUTOCHECKBOX,
+		160, 30, 150, 20, IDC_ANTI_ALIASING_CHECKBOX, NULL);
 }
 
 void CGlobalSettingWindow::OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM lParam)
@@ -60,6 +64,10 @@ void CGlobalSettingWindow::OnCommand(WORD id, WORD event, WPARAM wParam, LPARAM 
 	else if (id == IDC_SAVE_SCENE_BTN && event == BN_CLICKED)
 	{
 		OnClickSaveButton();
+	}
+	else if (id == IDC_ANTI_ALIASING_CHECKBOX && event == BN_CLICKED)
+	{
+		OnClickAntiAliasingCheckBox();
 	}
 }
 
@@ -131,6 +139,18 @@ void CGlobalSettingWindow::OnClickDeferredShadingCheckBox()
 		scene->mDeferredShading = true;
 	else
 		scene->mDeferredShading = false;
+}
+
+void CGlobalSettingWindow::OnClickAntiAliasingCheckBox()
+{
+	EditorScene* scene = EditorScene::getInstance();
+	if (!scene)
+		return;
+
+	if (IsCheckBoxSelected(mAntiAliasingCheckBox))
+		scene->mVideoDriver->setDeferredAntiAliasing(true);
+	else
+		scene->mVideoDriver->setDeferredAntiAliasing(false);
 }
 
 void CGlobalSettingWindow::OnClickSaveButton()

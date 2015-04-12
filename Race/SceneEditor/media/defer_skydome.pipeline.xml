@@ -1,0 +1,11 @@
+<pipelines>
+
+  <pipeline name="skydome_defer_pipeline" prototype="gf/skydome">
+    <shaders>
+      <pixel-shader  file="defer_skydome.hlsl" main="defer_ps_main">
+        <variable name="gCubeTexture" value="texture" index="0"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+</pipelines>

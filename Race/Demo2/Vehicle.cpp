@@ -66,11 +66,13 @@ Vehicle::Vehicle(ISceneManager* sceneManager,
 //	mCarNode->yaw(XM_PIDIV2);
 
 	setupPhysics(mCarMesh->getAabb(), mAboveGroundHeight);
+
+	mTireTrail = new TireTrail(mCarNode->getSceneManager());
 }
 
 Vehicle::~Vehicle()
 {
-
+	delete mTireTrail;
 }
 
 void Vehicle::update(f32 deltaTime)
@@ -125,6 +127,9 @@ void Vehicle::update(f32 deltaTime)
 	f32 distBetweenCameraAndCar = 10.0f;
 	f32 angleBetweenCameraAndCar = XM_PI / 18;
 
+	//f32 distBetweenCameraAndCar = 30.0f;
+	//f32 angleBetweenCameraAndCar = XM_PI / 20;
+
 	XMFLOAT3 carPos = mCarNode->getPosition();
 	XMVECTOR cameraPos = XMLoadFloat3(&followCamera->getPosition());
 	XMVECTOR pos = XMLoadFloat3(&carPos);
@@ -165,7 +170,7 @@ void Vehicle::update(f32 deltaTime)
 	sideCamera1->lookAt(lookTarget);
 	sideCamera1->translate(trans.x, trans.y, trans.z);
 
-
+	//sceneManager->setActiveCamera(sideCamera1);
 }
 
 void Vehicle::turn(f32 angle, XMFLOAT3 yAxis)
@@ -248,6 +253,29 @@ void Vehicle::rotateWheel(f32 deltaTime)
 
 		mWheelNodes[i]->setTransform(M);
 	}
+
+	// update tires.
+	updateTires(deltaTime);
+}
+
+void Vehicle::updateTires(f32 deltaTime)
+{
+	Vector3 positions[4];
+	Vector3 tireDirs[4];
+	for (u32 i = 0; i < 4; i++)
+	{
+		XMFLOAT3 axis[3];
+		mWheelNodes[i]->getLocalAxis(axis);
+		
+		SAxisAlignedBox aabb = mWheelMeshes[i]->getAabb();
+		XMFLOAT3 wheelPos = aabb.Center;
+		wheelPos.y -= mAboveGroundHeight;
+
+		positions[i] = Vector3(wheelPos.x, wheelPos.y, wheelPos.z);
+		tireDirs[i] = Vector3(axis[0].x, axis[0].y, axis[0].z);
+	}
+
+	mTireTrail->update(positions, tireDirs, deltaTime);
 }
 
 void Vehicle::setupPhysics(const math::SAxisAlignedBox& aabb, f32 heightAboveGround)

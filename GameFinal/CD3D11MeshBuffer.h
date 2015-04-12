@@ -39,6 +39,8 @@ namespace gf
 
 		virtual bool setVertexData(void* data, u32 size);
 
+		virtual bool setIndiceData(void* data, u32 count);
+
 		virtual void bind();
 
 		virtual void bind(IMeshBuffer* pInstanceBuffer);

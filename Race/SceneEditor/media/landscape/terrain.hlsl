@@ -75,7 +75,7 @@ SReturnGBuffers defer_ps_main(VertexOut pin)
 
 	texColor = c1 * ratio.r + c2 * ratio.g + c3 * ratio.b;
 #ifdef SHADOW_ON
-	float shadowFactor = CalcShadowFactor(1, 1.0f);
+	float shadowFactor = CalcShadowFactor(1, 5.0f);
 #else
 	float shadowFactor = 1.0f;
 #endif

@@ -84,6 +84,8 @@
   <ItemGroup>
     <ClInclude Include="dependencies\tinyxml\tinyxml2.h" />
     <ClInclude Include="PhysicsLoader.h" />
+    <ClInclude Include="TireTrail.h" />
+    <ClInclude Include="Vector3.h" />
     <ClInclude Include="Vehicle.h" />
     <ClInclude Include="CSceneLoader.h" />
     <ClInclude Include="dependencies\VehicleApi\FrictionMapVehicleRaycastWheelCollide.h" />
@@ -106,6 +108,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="PhysicsLoader.cpp" />
+    <ClCompile Include="TireTrail.cpp" />
+    <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="Vehicle.cpp" />
     <ClCompile Include="CSceneLoader.cpp" />
     <ClCompile Include="dependencies\VehicleApi\VehicleApiUtils.cpp" />

@@ -5,6 +5,7 @@
 #include "GameFinal.h"
 #include <math.h>
 #include <Physics2012\Vehicle\hkpVehicleInstance.h>
+#include "TireTrail.h"
 
 using namespace gf;
 
@@ -35,6 +36,8 @@ public:
 
 	void setRotation(const XMFLOAT4& rot);
 	void setPosition(const XMFLOAT3& pos);
+
+	void updateTires(f32 deltaTime);
 
 protected:
 	void rotateWheel(f32 deltaTime);
@@ -68,6 +71,8 @@ private:
 
 	hkReal				m_inputXPosition;
 	hkReal				m_inputYPosition;
+
+	TireTrail*			mTireTrail;
 };
 
 #endif

@@ -178,3 +178,4 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 {
 	return GF_TEXTURE.Sample(gSamplerState, pin.Tex);
 }
+

@@ -160,6 +160,9 @@ void CSceneLoader::ReadCollectionNode(ISceneManager* smgr, FILE* fp, SPhysicalLo
 	u32 instanceCount;
 	fread(&instanceCount, sizeof(u32), 1, fp);
 
+	if (instanceCount == 0)
+		return;
+
 	std::string meshName = fileinfo.MeshName;
 	IModelMesh* mesh = meshManager->getModelMesh(meshName, true);
 	IInstanceCollectionNode* collectionNode = CreateCollectionNode(smgr, mesh, instanceCount);
@@ -206,7 +209,7 @@ GrassLand* CSceneLoader::buildGrassLand(ISceneManager* smgr, ITerrainNode* terra
 	f32 grassWidth = 5.0f;
 	f32 grassHeight =3.0f;
 
-	const u32 grassCount = 10000;
+	const u32 grassCount = 3000;
 	const f32 grassY = 0;
 	std::vector<XMFLOAT3> v(grassCount);
 	for (u32 i = 0; i < grassCount; i++)
@@ -230,13 +233,20 @@ bool CSceneLoader::BuildLandscape(RaceScene* scene, const SSceneFileHeader& head
 	ISceneManager* smgr = scene->mSceneManager;
 	IMeshManager* meshManager = IMeshManager::getInstance();
 
-	
 	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", header.TerrainHeightFile,
 	header.TerrainVertexSpace, 0.15f, false, true, 1.0f);
 
 	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh);
 	terrainNode->setMaterialName("terrain/grass_terrain_material");
-	
+
+	/*
+	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", header.TerrainHeightFile,
+		header.TerrainVertexSpace, 0.15f, true, false, 1.0f);
+
+	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh);
+	terrainNode->setMaterialName("terrain/grass_tessellation_material");
+	*/
+
 	/*
 	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", header.TerrainHeightFile,
 		header.TerrainVertexSpace, header.TerrainHeightScale, true, false, 1.0f);
@@ -281,7 +291,9 @@ void CSceneLoader::AddBoxPhysicalBounding(const SPhysicalBounding* bounding, boo
 	XMMATRIX tran1 = XMMatrixTranslation(position.x, position.y, position.z);
 	XMMATRIX tran2 = XMMatrixTranslation(bounding->Center.x, bounding->Center.y, bounding->Center.z);
 	
-	XMMATRIX M = tran2 * rot1 * tran1;
+	XMMATRIX scale1 = XMMatrixScaling(scaling.x, scaling.y, scaling.z);
+
+	XMMATRIX M = tran2 * scale1 * rot1 * tran1;
 	XMFLOAT4X4 T;
 	XMStoreFloat4x4(&T, M);
 
@@ -336,6 +348,7 @@ void CSceneLoader::AddBoxPhysicalBounding(const SPhysicalBounding* bounding, boo
 	node->setMaterialName("picking_cube_material");
 	node->setTag(4);
 	*/
+	
 }
 
 void CSceneLoader::LoadPhysics(SPhysicalLoadingInfo& physicalInfo)

@@ -14,8 +14,10 @@ public:
 	~GameController();
 	static GameController* getInstance();
 	void SwitchScene(Scene* scene);
+	f32 GetFps(f32 dt);
 
 private:
+
 	u32				mScreenWidth;
 	u32				mScreenHeight;
 	IDevice*		mDevice;
