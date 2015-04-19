@@ -17,6 +17,7 @@
         <variable name="gLight" value="light" index="1"/>
         <variable name="gEyePos" value="camera_position"/>
         <variable name="gFrustumPlanes" value="frustum"/>
+        <variable name="gTireTrailTexture" value="texture" index="4" update-frequency="object"/>
       </pixel-shader>
     </shaders>
     <render-states>
@@ -56,6 +57,7 @@
         <variable name="gTexelCellSpaceU" value="inverse_terrain_row_cell"/>
         <variable name="gTexelCellSpaceV" value="inverse_terrain_row_cell"/>
         <variable name="gWorldCellSpace" value="terrain_vertex_space"/>
+        
       </domain-shader>
       
       <pixel-shader file="lod_terrain.hlsl" main="ps_main">
@@ -63,6 +65,7 @@
         <variable name="gLight" value="light" index="1"/>
         <variable name="gMaterial" value="material_color"/>
         <variable name="gEyePos" value="camera_position"/>
+        <variable name="gTireTrailTexture" value="texture" index="4" update-frequency="object"/>
       </pixel-shader>
     </shaders>
     <render-states>

@@ -551,6 +551,9 @@
     <ClInclude Include="CD3D11SimpleMesh.h">
       <Filter>src\ResourceObject\Direct3D11\mesh</Filter>
     </ClInclude>
+    <ClInclude Include="gfRect.h">
+      <Filter>src\Util\Class</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">

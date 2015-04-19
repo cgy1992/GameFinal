@@ -32,7 +32,7 @@ void RaceScene::Enter()
 	mSideCamera->setFarZ(1000.0f);
 	mSideCamera->setShadowRange(300.0f);
 
-	mPlayerVehicle = new Vehicle(mSceneManager, "carA");
+	mPlayerVehicle = new Vehicle(mSceneManager, mTerrainNode, "carA");
 
 	mSceneManager->setActiveCamera(2);
 	
@@ -56,6 +56,21 @@ void RaceScene::Enter()
 	IMeshNode* skyNode = mSceneManager->getSkyNode();
 	if (skyNode)
 		skyNode->setMaterialName("skydome_material");
+
+	u32 textureWidth = mVideoDriver->getBackBufferWidth() / 2;
+	u32 textureHeight = mVideoDriver->getBackBufferHeight() / 2;
+
+	ITextureManager* textureManager = ITextureManager::getInstance();
+	mTireTrailTexture = textureManager->createTexture2D("tire_trail", 
+		textureWidth,
+		textureHeight, 
+		ETBT_SHADER_RESOURCE | ETBT_RENDER_TARGET,
+		nullptr, 1, EGF_R16_FLOAT);
+
+	mTireTrailDepthSurface = textureManager->createDepthStencilSurface("tire_trail_depth",
+		textureWidth,
+		textureHeight,
+		16, 0, false, 1, 0, false, false);
 }
 
 void RaceScene::Update(float dt)
@@ -96,11 +111,25 @@ void RaceScene::Render()
 {
 	if (mDeferredShading)
 	{
+		mVideoDriver->setDeferredShading(false);
+		//mVideoDriver->setRenderTarget(mTireTrailTexture->getRenderTarget());
+		mVideoDriver->setRenderTargetAndDepthStencil(mTireTrailTexture->getRenderTarget(), mTireTrailDepthSurface);
+		static const f32 color[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		mVideoDriver->clearRenderTarget(color);
+		mVideoDriver->clearDepth(1.0f);
+
+		mPlayerVehicle->renderTireTrail();
+		mVideoDriver->setDefaultRenderTargetAndDepthStencil();
+
+		IMaterial* terrainMaterial = mTerrainNode->getMaterial();
+		terrainMaterial->setTexture(4, mTireTrailTexture);
+
 		mVideoDriver->setDeferredShading(true);
 		mSceneManager->drawAll();
 		mVideoDriver->setDeferredShading(false);
 		//mSceneManager->draw(mSceneManager->getSkyNode());
 		mSceneManager->draw(4);
+		
 	}
 	else
 	{
@@ -113,7 +142,7 @@ void RaceScene::updateCamera(ICameraNode* camera, f32 delta)
 {
 	const u32 SCREEN_WIDTH = 1280;
 	const u32 SCREEN_HEIGHT = 960;
-	const f32 CAMERA_MOVE_UNIT = 30.0f;
+	const f32 CAMERA_MOVE_UNIT = 5.0f;
 	const f32 CAMERA_ROTATE_UNIT = 1.0f;
 
 	if (InputHandler::keyPressed(E_MOVE_FORWARD))
@@ -170,5 +199,8 @@ void RaceScene::updateCamera(ICameraNode* camera, f32 delta)
 void RaceScene::Exit()
 {
 	mSceneManager->destroy();
+	ITextureManager* textureManager = ITextureManager::getInstance();
+	textureManager->destroy(mTireTrailDepthSurface->getTexture());
+	textureManager->destroy(mTireTrailTexture);
 }
 

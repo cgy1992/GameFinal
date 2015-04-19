@@ -1,0 +1,7 @@
+<materials>
+  <material name="gf/2d_image_material">
+    <pipelines>
+      <pipeline name="gf/2d_image_pipeline"/>
+    </pipelines>
+  </material>
+</materials>

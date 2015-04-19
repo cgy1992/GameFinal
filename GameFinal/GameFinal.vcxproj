@@ -162,6 +162,7 @@
     <ClInclude Include="gfGIFormat.h" />
     <ClInclude Include="GameFinal.h" />
     <ClInclude Include="gfCompileConfig.h" />
+    <ClInclude Include="gfRect.h" />
     <ClInclude Include="gfStructs.h" />
     <ClInclude Include="gfTypes.h" />
     <ClInclude Include="gfUtil.h" />
@@ -344,6 +345,7 @@
     </Xml>
     <Xml Include="..\Media\built-in-resources\billboard.pipeline.xml">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <SubType>Designer</SubType>
     </Xml>
     <Xml Include="..\Media\built-in-resources\deferred_shading.pipeline.xml">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

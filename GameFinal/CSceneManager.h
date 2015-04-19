@@ -207,6 +207,18 @@ namespace gf
 		virtual ISceneNode* intersectRayWithTag(const math::SRay& ray, f32* pDist, u32 tag,
 			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const;
 
+		virtual void draw2DImage(ITexture* texture,
+			const math::Rect<s32>& sourceRect,
+			const math::Rect<s32>& clipRect,
+			XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			bool 	useAlphaChannelOfTexture = false);
+
+		virtual void draw2DImage(ITexture* texture,
+			const math::Rect<f32>& sourceRect,
+			const math::Rect<f32>& clipRect,
+			XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			bool 	useAlphaChannelOfTexture = false);
+
 	private:
 
 		void collectMeshNodeShaders(IMeshNode* node);

@@ -24,6 +24,7 @@ protected:
 	ISceneManager*				mSceneManager;
 	RaceScene*					mRaceScene;
 	SPhysicalLoadingInfo		mPhysicalInfo;
+	ITexture*					mLoadingImage;
 };
 
 #endif

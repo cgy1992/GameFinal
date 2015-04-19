@@ -2,10 +2,11 @@
 #include "TireTrail.h"
 
 
-TireTrail::TireTrail(ISceneManager* sceneManager)
+TireTrail::TireTrail(ISceneManager* sceneManager, ITerrainNode* terrainNode)
 :mSceneManager(sceneManager)
+, mTerrainNode(terrainNode)
 {
-	mMaxMarkNumPerTire = 100;
+	mMaxMarkNumPerTire = 300;
 	u32 vertexNum = mMaxMarkNumPerTire * 2 * 4;
 	u32 indiceNum = (mMaxMarkNumPerTire - 1) * 6 * 4;
 
@@ -15,6 +16,9 @@ TireTrail::TireTrail(ISceneManager* sceneManager)
 	IMeshManager* meshManager = IMeshManager::getInstance();
 	mTireMesh = meshManager->createSimpleMesh("trail", 0, 0, 0, vertexNum,
 		sizeof(Vertex), indiceNum, sceneManager->getAabb(), false, EMU_DYNAMIC);
+
+	mTireMeshNode = mSceneManager->addMeshNode(mTireMesh, nullptr, nullptr, false);
+	mTireMeshNode->setMaterialName("tiretrail_material");
 }
 
 
@@ -24,7 +28,8 @@ TireTrail::~TireTrail()
 	free(mIndices);
 }
 
-void TireTrail::update(const Vector3 positions[], const Vector3 tireDirs[], f32 dt)
+void TireTrail::update(const Vector3 positions[], 
+	const Vector3 tireDirs[], f32 dt, bool forward)
 {
 	bool bNeedUpdate = false;
 	for (u32 i = 0; i < 4; i++)
@@ -34,23 +39,28 @@ void TireTrail::update(const Vector3 positions[], const Vector3 tireDirs[], f32 
 
 		if (mTireVertexQueues[i].empty())
 		{
-			pushTireVertices(mTireVertexQueues[i], positions[i], tireDirs[i]);
+			pushTireVertices(mTireVertexQueues[i], positions[i], tireDirs[i], forward);
 			bNeedUpdate = true;
+			continue;
 		}
 
 		u32 size = mTireVertexQueues[i].size();
 		Vector3 lastPosition = (mTireVertexQueues[i][size - 1].Position + mTireVertexQueues[i][size - 2].Position) * 0.5f;
 		f32 sqrDist = positions[i].distanceSquared(lastPosition);
-		if (sqrDist < 0.5f)
+		if (sqrDist > 0.5f && checkTireOnGround(positions[i]))
 		{
-			pushTireVertices(mTireVertexQueues[i], positions[i], tireDirs[i]);
+			pushTireVertices(mTireVertexQueues[i], positions[i], tireDirs[i], forward);
 			bNeedUpdate = true;
 		}
 	}
+
+	fillMeshBuffer();
 }
 
+
+
 void TireTrail::pushTireVertices(std::deque<Vertex>& Q,
-	const Vector3& pos, const Vector3& dir)
+	const Vector3& pos, const Vector3& dir, bool forward)
 {
 	/*
 	v1 - v2
@@ -60,10 +70,10 @@ void TireTrail::pushTireVertices(std::deque<Vertex>& Q,
 	
 	// vector from v1 to v2
 	Vector3 up(0, 1.0f, 0);
-	Vector3 d1 = up.cross(dir);
+	Vector3 d1 = (forward)?up.cross(dir) : dir.cross(up);
 	d1.normalize();
 
-	const f32 tireWidth = 0.2f;
+	const f32 tireWidth = 0.12f;
 	Vector3 v1 = pos - d1 * tireWidth;
 	Vector3 v2 = pos + d1 * tireWidth;
 
@@ -79,8 +89,48 @@ void TireTrail::pushTireVertices(std::deque<Vertex>& Q,
 
 void TireTrail::fillMeshBuffer()
 {
+	u32 indiceCount = 0;
+	u32 vertexCount = 0;
 	for (u32 i = 0; i < 4; i++)
 	{
+		u32 firstVertexIndex = vertexCount;
+		for (u32 j = 0; j < mTireVertexQueues[i].size(); j++)
+		{
+			mVertices[vertexCount++] = mTireVertexQueues[i][j];
+		}
 
+		if (mTireVertexQueues[i].size() > 2)
+		{
+			for (int j = 0; j < (mTireVertexQueues[i].size() / 2 - 1); j++)
+			{
+				mIndices[indiceCount++] = firstVertexIndex + 2 * j;
+				mIndices[indiceCount++] = firstVertexIndex + 2 * (j + 1) + 1;
+				mIndices[indiceCount++] = firstVertexIndex + 2 * j + 1;
+
+				mIndices[indiceCount++] = firstVertexIndex + 2 * j;
+				mIndices[indiceCount++] = firstVertexIndex + 2 * (j + 1);
+				mIndices[indiceCount++] = firstVertexIndex + 2 * (j + 1) + 1;
+			}
+		}
 	}
+
+	IMeshBuffer* buffer = dynamic_cast<IMeshBuffer*>(mTireMesh->getRenderableBuffer());
+	buffer->setVertexData(mVertices, vertexCount);
+	buffer->setIndiceData(mIndices, indiceCount);
 }
+
+void TireTrail::render()
+{
+	mSceneManager->draw(mTireMeshNode);
+}
+
+bool TireTrail::checkTireOnGround(Vector3 pos)
+{
+	f32 height = mTerrainNode->getHeight(pos.x, pos.z);
+	if (fabs(pos.y - height) < 0.1f)
+		return true;
+	
+	return false;
+}
+
+

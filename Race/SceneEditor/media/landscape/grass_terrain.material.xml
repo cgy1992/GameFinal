@@ -21,6 +21,8 @@
       <texture name="grass.png" index="1"/>
       <texture name="rock.png" index="2"/>
       <texture name="terrain_height_ratio3.png" index="3"/>
+	  <texture name="white.png" index="4"/>
+      <texture name="ground0008.jpg" index="5"/>
     </textures>
   </material>
 
@@ -45,6 +47,8 @@
       <texture name="grass.png" index="1"/>
       <texture name="rock.png" index="2"/>
       <texture name="terrain_height_ratio3.png" index="3"/>
+	  <texture name="white.png" index="4"/>
+      <texture name="ground0008.jpg" index="5"/>
     </textures>
   </material>
 

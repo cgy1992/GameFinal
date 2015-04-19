@@ -50,7 +50,12 @@ void LoadingScene::Update(float dt)
 
 void LoadingScene::Render()
 {
-	mSceneManager->drawAll();
+	//mSceneManager->drawAll();
+	mSceneManager->draw2DImage(mLoadingImage,
+		math::Rect<s32>(0, 0, mLoadingImage->getWidth(), mLoadingImage->getHeight()),
+		math::Rect<s32>(0, 0, mVideoDriver->getBackBufferWidth(), mVideoDriver->getBackBufferHeight()),
+		XMFLOAT4(0, 0, 0, 0),
+		false);
 }
 
 void LoadingScene::Exit()
@@ -78,6 +83,8 @@ void LoadingScene::setupScene()
 
 	mVideoDriver->setDeferredShading(false);
 
+	ITextureManager* textureManager = ITextureManager::getInstance();
+	mLoadingImage = textureManager->get("loading_image.jpg");
 }
 
 

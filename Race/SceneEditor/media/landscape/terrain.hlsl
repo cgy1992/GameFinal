@@ -14,6 +14,8 @@ cbuffer cbPerFrame
 Texture2D gTexture;
 SamplerState gSampleState;
 
+Texture2D gTireTrailTexture;
+
 struct VertexIn
 {
 	float3 PosL : POSITION;
@@ -72,8 +74,18 @@ SReturnGBuffers defer_ps_main(VertexOut pin)
 	float4 c1 = GF_TEXTURE_0.Sample(gSampleState, pin.Tex * 100.0f);
 	float4 c2 = GF_TEXTURE_1.Sample(gSampleState, pin.Tex * 100.0f);
 	float4 c3 = GF_TEXTURE_2.Sample(gSampleState, pin.Tex * 120.0f);
+	float4 c5 = GF_TEXTURE_5.Sample(gSampleState, pin.Tex * 1000.0f);
 
 	texColor = c1 * ratio.r + c2 * ratio.g + c3 * ratio.b;
+	float4 texColor2 = c5 * ratio.g;
+
+	float4 posH = mul(float4(pin.PosW, 1.0f), GF_VIEW_PROJ);
+	posH /= posH.w;
+
+	float2 screenTex = posH.xy * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+	float tireBlend = gTireTrailTexture.Sample(gSampleState, screenTex).r;
+	texColor = lerp(texColor2, texColor, tireBlend);
+
 #ifdef SHADOW_ON
 	float shadowFactor = CalcShadowFactor(1, 5.0f);
 #else

@@ -1092,5 +1092,66 @@ namespace gf
 		return mDefaultOctree->intersectRayWithTag(ray, pDist, tag, nodeType);
 	}
 
+	void CSceneManager::draw2DImage(ITexture* texture,
+		const math::Rect<f32>& sourceRect,
+		const math::Rect<f32>& destRect,
+		XMFLOAT4 color,
+		bool useAlphaChannelOfTexture)
+	{
+		IMaterialManager* materialManager = IMaterialManager::getInstance();
+		IMaterial* material = materialManager->get("gf/2d_image_material");
+		material->setTexture(0, texture);
+
+		XMFLOAT4 fSourceRect, fDestRect;
+		fSourceRect.x = sourceRect.x1;
+		fSourceRect.y = sourceRect.y1;
+		fSourceRect.z = sourceRect.x2;
+		fSourceRect.w = sourceRect.y2;
+
+		fDestRect.x = destRect.x1;
+		fDestRect.y = destRect.y1;
+		fDestRect.z = destRect.x2;
+		fDestRect.w = destRect.y2;
+
+		material->setAttribute("SourceRect", fSourceRect);
+		material->setAttribute("DestRect", fDestRect);
+
+		IMeshNode* quadNode = getQuadNode();
+		quadNode->setMaterial(material);
+		draw(quadNode);
+	}
+
+	void CSceneManager::draw2DImage(ITexture* texture,
+		const math::Rect<s32>& sourceRect,
+		const math::Rect<s32>& destRect,
+		XMFLOAT4 color,
+		bool useAlphaChannelOfTexture)
+	{
+		IMaterialManager* materialManager = IMaterialManager::getInstance();
+		IMaterial* material = materialManager->get("gf/2d_image_material");
+		material->setTexture(0, texture);
+		
+		f32 w = mVideoDriver->getViewport().Width;
+		f32 h = mVideoDriver->getViewport().Height;
+
+		XMFLOAT4 fSourceRect, fDestRect;
+		fSourceRect.x = sourceRect.x1 / texture->getWidth();
+		fSourceRect.y = sourceRect.y1 / texture->getHeight();
+		fSourceRect.z = sourceRect.x2 / texture->getWidth();
+		fSourceRect.w = sourceRect.y2 / texture->getHeight();
+
+		fDestRect.x = destRect.x1 / w;
+		fDestRect.y = destRect.y1 / h;
+		fDestRect.z = destRect.x2 / w;
+		fDestRect.w = destRect.y2 / h;
+
+		material->setAttribute("SourceRect", fSourceRect);
+		material->setAttribute("DestRect", fDestRect);
+
+		IMeshNode* quadNode = getQuadNode();
+		quadNode->setMaterial(material);
+		draw(quadNode);
+	}
+
 }
 

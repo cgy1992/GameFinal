@@ -10,6 +10,7 @@
 using namespace gf::math;
 
 Vehicle::Vehicle(ISceneManager* sceneManager,
+	ITerrainNode* terrainNode,
 	const std::string& meshName)
 	:mWheelRollRotation(0)
 	, mWheelTurnRotation(0)
@@ -17,6 +18,7 @@ Vehicle::Vehicle(ISceneManager* sceneManager,
 	, mFrictionAcceleration(10.0f)
 	, mVelocity(0)
 	, mMaxVelocity(40.0f)
+	, mTerrainNode(terrainNode)
 {
 	const char* wheelnames[] = 
 	{
@@ -67,7 +69,7 @@ Vehicle::Vehicle(ISceneManager* sceneManager,
 
 	setupPhysics(mCarMesh->getAabb(), mAboveGroundHeight);
 
-	mTireTrail = new TireTrail(mCarNode->getSceneManager());
+	mTireTrail = new TireTrail(mCarNode->getSceneManager(), mTerrainNode);
 }
 
 Vehicle::~Vehicle()
@@ -186,6 +188,21 @@ void Vehicle::turn(f32 angle, XMFLOAT3 yAxis)
 	mCarNode->translate(pos);
 }
 
+void Vehicle::getWheelPositions(Vector3 positions[])
+{
+	XMMATRIX carTransform = mCarNode->getAbsoluteTransformation();
+	for (u32 i = 0; i < 4; i++)
+	{
+		SAxisAlignedBox aabb = mWheelMeshes[i]->getAabb();
+		XMFLOAT3 wheelPos = aabb.Center;
+		XMMATRIX T = XMMatrixTranslation(wheelPos.x, wheelPos.y - aabb.Extents.y + 0.1f, wheelPos.z);
+
+		XMMATRIX M = T * carTransform;
+		XMFLOAT4X4 wheelTransform;
+		XMStoreFloat4x4(&wheelTransform, M);
+		positions[i] = Vector3(wheelTransform._41, wheelTransform._42, wheelTransform._43);
+	}
+}
 
 void Vehicle::rotateWheel(f32 deltaTime)
 {
@@ -202,7 +219,6 @@ void Vehicle::rotateWheel(f32 deltaTime)
 	XMMATRIX carRotM = XMMatrixRotationQuaternion(carRotation);
 	XMVECTOR det = XMMatrixDeterminant(carRotM);
 	XMMATRIX invCarRot = XMMatrixInverse(&det, carRotM);
-	
 
 	for (u32 i = 0; i < 4; i++)
 	{
@@ -262,20 +278,25 @@ void Vehicle::updateTires(f32 deltaTime)
 {
 	Vector3 positions[4];
 	Vector3 tireDirs[4];
+
+	getWheelPositions(positions);
+
+	hkQuaternion wheelRotations[4];
+	VehicleApiUtils::calcWheelsRotation(*m_vehicle, wheelRotations);
+	XMFLOAT3 axises[3];
+	mCarNode->getLocalAxis(axises);
 	for (u32 i = 0; i < 4; i++)
 	{
-		XMFLOAT3 axis[3];
-		mWheelNodes[i]->getLocalAxis(axis);
-		
-		SAxisAlignedBox aabb = mWheelMeshes[i]->getAabb();
-		XMFLOAT3 wheelPos = aabb.Center;
-		wheelPos.y -= mAboveGroundHeight;
-
-		positions[i] = Vector3(wheelPos.x, wheelPos.y, wheelPos.z);
-		tireDirs[i] = Vector3(axis[0].x, axis[0].y, axis[0].z);
+		tireDirs[i] = Vector3(axises[0].x, axises[0].y, axises[0].z);
 	}
 
-	mTireTrail->update(positions, tireDirs, deltaTime);
+	hkVector4 velocity = m_vehicle->getChassis()->getLinearVelocity();
+	f32 dotValue = velocity(0) * axises[0].x +
+		velocity(1) * axises[0].y +
+		velocity(2) * axises[0].z;
+
+	bool forward = (dotValue > 0) ? true : false;
+	mTireTrail->update(positions, tireDirs, deltaTime, forward);
 }
 
 void Vehicle::setupPhysics(const math::SAxisAlignedBox& aabb, f32 heightAboveGround)
@@ -370,4 +391,9 @@ void Vehicle::setPosition(const XMFLOAT3& pos)
 	chassisRigidBody->setPosition(hkPos);
 
 	mPhysicsWorld->unmarkForWrite();
+}
+
+void Vehicle::renderTireTrail()
+{
+	mTireTrail->render();
 }

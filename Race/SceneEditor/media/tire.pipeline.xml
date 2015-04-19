@@ -1,0 +1,22 @@
+<pipelines>
+
+  <pipeline name="tiretrail_pipeline">
+    <primitive-type value="triangle_list"/>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="tire.hlsl" main="vs_main">
+      </vertex-shader>
+      <pixel-shader file="tire.hlsl" main="ps_main">
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+       <!--<render-state name="fill_mode" value="wireframe"/>-->
+      <!--<render-state name="cull_mode" value="cw"/>-->
+    </render-states>
+  </pipeline>
+
+</pipelines>
+

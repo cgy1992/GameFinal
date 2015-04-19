@@ -1,0 +1,7 @@
+<materials>
+  <material name="tiretrail_material">
+    <pipelines>
+      <pipeline name="tiretrail_pipeline"/>
+    </pipelines>
+  </material>
+</materials>

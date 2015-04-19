@@ -17,7 +17,7 @@ namespace gf
 		mIndiceCount = indicesCount;
 		mVertexStride = vertexStride;
 
-		if (indices == nullptr || indicesCount == 0)
+		if (indicesCount == 0)
 		{
 			mUseIndexBuffer = false;
 		}

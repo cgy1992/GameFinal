@@ -27,6 +27,8 @@ private:
 	ICameraNode*	mSideCamera;
 	Vehicle*		mPlayerVehicle;
 	
+	ITexture*					mTireTrailTexture;
+	IDepthStencilSurface*		mTireTrailDepthSurface;
 };
 
 

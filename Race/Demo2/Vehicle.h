@@ -22,6 +22,7 @@ public:
 
 public:
 	Vehicle(ISceneManager* sceneManager,
+		ITerrainNode* terrainNode,
 		const std::string& meshName);
 	~Vehicle();
 
@@ -38,6 +39,9 @@ public:
 	void setPosition(const XMFLOAT3& pos);
 
 	void updateTires(f32 deltaTime);
+	void renderTireTrail();
+
+	void getWheelPositions(Vector3 positions[]);
 
 protected:
 	void rotateWheel(f32 deltaTime);
@@ -73,6 +77,8 @@ private:
 	hkReal				m_inputYPosition;
 
 	TireTrail*			mTireTrail;
+	ITerrainNode*		mTerrainNode;
+
 };
 
 #endif

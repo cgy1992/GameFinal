@@ -1,0 +1,32 @@
+<pipelines>
+
+  <pipeline name="gf/2d_image_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+    </input-layout>
+
+    <shaders>
+      <vertex-shader file="2d_image.hlsl" main="vs_main">
+        <variable name="gSourceRect" value="m_SourceRect"/>
+        <variable name="gDestRect" value="m_DestRect"/>
+      </vertex-shader>
+      <pixel-shader  file="2d_image.hlsl" main="ps_main"/>
+    </shaders>
+
+    <render-states>
+      <render-state name="blend_enable" value="true"/>
+      <render-state name="src_blend" value="SRC_ALPHA"/>
+      <render-state name="dest_blend" value="ONE"/>
+      <render-state name="blend_op" value="ADD"/>
+      <render-state name="DEPTH_WRITE_ENABLE" value="false"/>
+      <render-state name="depth_enable" value="false"/>
+    </render-states>
+
+    <samplers>
+      <sampler name="gSampleState" addressU="clamp" addressV="clamp"
+               filter="MIN_MAG_MIP_LINEAR"/>
+    </samplers>
+
+  </pipeline>
+
+</pipelines>

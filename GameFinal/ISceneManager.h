@@ -3,6 +3,7 @@
 
 #include "gfTypes.h"
 #include "gfUtil.h"
+#include "gfRect.h"
 #include "IReferenceCounted.h"
 #include "IDevice.h"
 #include "IModelMeshNode.h"
@@ -18,6 +19,7 @@
 #include "ILightNode.h"
 #include "IInstanceNode.h"
 #include "IInstanceCollectionNode.h"
+
 
 namespace gf
 {
@@ -221,6 +223,18 @@ namespace gf
 
 		virtual ISceneNode* intersectRayWithTag(const math::SRay& ray, f32* pDist, u32 tag,
 			u32 nodeType = ENT_SOLID_NODE | ENT_LIGHT_NODE) const = 0;
+
+		virtual void draw2DImage(ITexture* texture,
+			const math::Rect<s32>& sourceRect,
+			const math::Rect<s32>& clipRect,
+			XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			bool 	useAlphaChannelOfTexture = false) = 0;
+
+		virtual void draw2DImage(ITexture* texture,
+			const math::Rect<f32>& sourceRect,
+			const math::Rect<f32>& clipRect,
+			XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+			bool 	useAlphaChannelOfTexture = false) = 0;
 
 	public:
 		const static int MAX_LIGHT_COUNT = 1024;
