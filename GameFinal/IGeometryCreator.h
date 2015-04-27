@@ -67,6 +67,13 @@ namespace gf
 
 		virtual void createQuadData(XMFLOAT3 vertices[], math::SAxisAlignedBox& aabb) = 0;
 
+		virtual void createCylinderData(f32 bottomRadius,
+			f32 topRadius,
+			f32 height, 
+			u32 sliceCount,
+			u32 stackCount,
+			SGeometryData& meshData) = 0;
+
 		_DECLARE_SINGLETON_INSTANCE(IGeometryCreator);
 	};
 }

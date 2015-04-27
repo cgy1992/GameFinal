@@ -275,7 +275,10 @@ void CSceneLoader::AddPhysicalBoundings(const std::string& meshName, bool bStati
 	{
 		const SPhysicalBounding* bounding = &collection->Boundings[i];
 		if (bounding->Category == BOX_BOUNDING)
-			AddBoxPhysicalBounding(bounding, bStatic, position, rotation, scaling, physicalInfo,smgr);
+			AddBoxPhysicalBounding(bounding, bStatic, position, rotation, scaling, physicalInfo, smgr);
+		else if (bounding->Category == CYLINDER_BOUNDING)
+			AddCylinderPhysicalBounding(bounding, bStatic, position, rotation,
+				scaling, physicalInfo, smgr);
 	}
 }
 
@@ -305,23 +308,7 @@ void CSceneLoader::AddBoxPhysicalBounding(const SPhysicalBounding* bounding, boo
 	XMFLOAT3 boxSize(bounding->Box.Size[0] * scaling.x * 0.5f, 
 		bounding->Box.Size[1] * scaling.y * 0.5f, 
 		bounding->Box.Size[2] * scaling.z * 0.5f);
-	/*
-	hkpBoxShape* boxShape = new hkpBoxShape(boxSize, 0);
-	hkpRigidBodyCinfo bodyInfo;
-	bodyInfo.m_shape = boxShape;
-	bodyInfo.m_motionType = (bStatic) ? hkpMotion::MOTION_FIXED : hkpMotion::MOTION_DYNAMIC;
-	bodyInfo.m_position.set(pos.x, pos.y, pos.z);
-	bodyInfo.m_mass = bounding->Mass;
-	bodyInfo.m_friction = bounding->Friction;
-	bodyInfo.m_rotation.set(quat.x, quat.y, quat.z, quat.w);
-	hkpRigidBody* boxBody = new hkpRigidBody(bodyInfo);
-	PhysicsEngine* engine = PhysicsEngine::getInstance();
-	engine->getWorld()->markForWrite();
-	PhysicsEngine::getInstance()->addRigidBody(boxBody);
-	engine->getWorld()->unmarkForWrite();
-	boxShape->removeReference();
-	boxBody->removeReference();
-	*/
+
 	SPhysicalBoxLoadingInfo boxInfo;
 	boxInfo.HalfSize = boxSize;
 	boxInfo.Static = bStatic;
@@ -330,25 +317,61 @@ void CSceneLoader::AddBoxPhysicalBounding(const SPhysicalBounding* bounding, boo
 	boxInfo.Mass = bounding->Mass;
 	boxInfo.Friction = bounding->Friction;
 	physicalInfo.Boxes.push_back(boxInfo);
+}
+
+void CSceneLoader::AddCylinderPhysicalBounding(
+	const SPhysicalBounding* bounding, bool bStatic,
+	const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scaling,
+	SPhysicalLoadingInfo& physicalInfo,
+	ISceneManager* smgr)
+{
+	XMMATRIX rot1 = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
+	XMMATRIX rot2 = XMMatrixRotationRollPitchYaw(bounding->Rotation.x, bounding->Rotation.y, bounding->Rotation.z);
+	XMMATRIX R = rot2 * rot1;
+
+	XMMATRIX tran1 = XMMatrixTranslation(position.x, position.y, position.z);
+	XMMATRIX tran2 = XMMatrixTranslation(bounding->Center.x, bounding->Center.y, bounding->Center.z);
+
+	XMMATRIX scale1 = XMMatrixScaling(scaling.x, scaling.y, scaling.z);
+
+	XMMATRIX M = tran2 * scale1 * rot1 * tran1;
+	XMFLOAT4X4 T;
+	XMStoreFloat4x4(&T, M);
+
+	XMFLOAT3 pos = XMFLOAT3(T._41, T._42, T._43);
+	XMVECTOR quat_v = XMQuaternionRotationMatrix(R);
+	XMFLOAT4 quat;
+	XMStoreFloat4(&quat, quat_v);
+
+	SPhysicalCylinderLoadingInfo cylinderInfo;
+	cylinderInfo.Static = bStatic;
+	cylinderInfo.Position = pos;
+	cylinderInfo.Rotation = quat;
+	cylinderInfo.Mass = bounding->Mass;
+	cylinderInfo.Friction = bounding->Friction;
+	cylinderInfo.Height = bounding->Cylinder.Height * scaling.y;
+	cylinderInfo.Radius = bounding->Cylinder.Radius * scaling.x;
+
+	physicalInfo.Cylinders.push_back(cylinderInfo);
 
 	/*
 	IMeshManager* meshManager = IMeshManager::getInstance();
-	ISimpleMesh* mesh = meshManager->getSimpleMesh("debug_box");
+	ISimpleMesh* mesh = meshManager->getSimpleMesh("debug_cylinder");
 	if (!mesh)
 	{
-		mesh = meshManager->createCubeMesh("debug_box");
+		mesh = meshManager->createCylinderMesh("debug_cylinder");
 	}
-
+	
 	IMeshNode* node = smgr->addMeshNode(mesh, nullptr);
-	node->scale(bounding->Box.Size[0] * scaling.x, bounding->Box.Size[1] * scaling.y,
-		bounding->Box.Size[2] * scaling.z);
+	node->scale(bounding->Cylinder.Radius * scaling.x, 
+		bounding->Cylinder.Height * scaling.y,
+		bounding->Cylinder.Radius * scaling.z);
 
 	node->transform(R);
 	node->translate(pos.x, pos.y, pos.z);
 	node->setMaterialName("picking_cube_material");
 	node->setTag(4);
 	*/
-	
 }
 
 void CSceneLoader::LoadPhysics(SPhysicalLoadingInfo& physicalInfo)
@@ -422,4 +445,27 @@ void CSceneLoader::LoadPhysics(SPhysicalLoadingInfo& physicalInfo)
 		boxBody->removeReference();
 	}
 
+	for (u32 i = 0; i < physicalInfo.Cylinders.size(); i++)
+	{
+		SPhysicalCylinderLoadingInfo& info = physicalInfo.Cylinders[i];
+		hkVector4 start(0.0f, -info.Height * 0.5f, 0.0f);
+		hkVector4 end(0.0f, info.Height * 0.5f, 0.0f);
+		hkpCylinderShape* cylinderShape = new hkpCylinderShape(start, end, info.Radius);
+
+		hkpRigidBodyCinfo ci;
+		ci.m_shape = cylinderShape;
+		ci.m_motionType = (info.Static) ? hkpMotion::MOTION_FIXED : hkpMotion::MOTION_DYNAMIC;
+		ci.m_position.set(info.Position.x, info.Position.y, info.Position.z);
+		ci.m_mass = info.Mass;
+		ci.m_friction = info.Friction;
+		ci.m_rotation.set(info.Rotation.x, info.Rotation.y, info.Rotation.z, info.Rotation.w);
+
+		hkpRigidBody* body = new hkpRigidBody(ci);
+		PhysicsEngine* engine = PhysicsEngine::getInstance();
+		engine->getWorld()->markForWrite();
+		engine->addRigidBody(body);
+		engine->getWorld()->unmarkForWrite();
+		cylinderShape->removeReference();
+		body->removeReference();
+	}
 }

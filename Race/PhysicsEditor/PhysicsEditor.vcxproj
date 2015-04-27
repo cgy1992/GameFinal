@@ -84,6 +84,7 @@
     <ClInclude Include="CBoundingWindow.h" />
     <ClInclude Include="CBoxBoundingWindow.h" />
     <ClInclude Include="CCreateBoundingWindow.h" />
+    <ClInclude Include="CCylinderBoundingWindow.h" />
     <ClInclude Include="CEditorScene.h" />
     <ClInclude Include="CEditorWindow.h" />
     <ClInclude Include="CMeshInfoWindow.h" />
@@ -98,6 +99,7 @@
   <ItemGroup>
     <ClCompile Include="CBoxBoundingWindow.cpp" />
     <ClCompile Include="CCreateBoundingWindow.cpp" />
+    <ClCompile Include="CCylinderBoundingWindow.cpp" />
     <ClCompile Include="CEditorScene.cpp" />
     <ClCompile Include="CEditorWindow.cpp" />
     <ClCompile Include="CMeshInfoWindow.cpp" />

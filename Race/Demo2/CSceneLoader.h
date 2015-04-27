@@ -13,9 +13,8 @@ struct SPhysicalTerrainLoadingInfo
 	ITerrainMesh*							TerrainMesh;
 };
 
-struct SPhysicalBoxLoadingInfo
+struct SPhysicalVolumeLoadingInfo
 {
-	XMFLOAT3				HalfSize;
 	XMFLOAT3				Position;
 	XMFLOAT4				Rotation;
 	bool					Static;
@@ -23,10 +22,22 @@ struct SPhysicalBoxLoadingInfo
 	f32						Friction;
 };
 
+struct SPhysicalBoxLoadingInfo : public SPhysicalVolumeLoadingInfo
+{
+	XMFLOAT3				HalfSize;
+};
+
+struct SPhysicalCylinderLoadingInfo : public SPhysicalVolumeLoadingInfo
+{
+	f32						Height;
+	f32						Radius;
+};
+
 struct SPhysicalLoadingInfo
 {
 	ITerrainMesh*								TerrainMesh;
 	std::vector<SPhysicalBoxLoadingInfo>		Boxes;
+	std::vector<SPhysicalCylinderLoadingInfo>	Cylinders;
 };
 
 class CSceneLoader
@@ -47,6 +58,11 @@ public:
 		ISceneManager* smgr);
 	
 	static void AddBoxPhysicalBounding(const SPhysicalBounding* bounding, bool bStatic,
+		const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scaling,
+		SPhysicalLoadingInfo& physicalInfo,
+		ISceneManager* smgr);
+
+	static void AddCylinderPhysicalBounding(const SPhysicalBounding* bounding, bool bStatic, 
 		const XMFLOAT3& position, const XMFLOAT3& rotation, const XMFLOAT3& scaling,
 		SPhysicalLoadingInfo& physicalInfo,
 		ISceneManager* smgr);

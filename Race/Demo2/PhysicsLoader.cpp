@@ -61,7 +61,7 @@ void PhysicsLoader::ReadBoundingNode(SPhysicalBoundingCollection* collection, ti
 {
 	const char* category_str = bounding_node->Value();
 	SPhysicalBounding shape;
-	
+
 	// read center.
 	const char* center_str = bounding_node->Attribute("center");
 	if (center_str)
@@ -98,9 +98,20 @@ void PhysicsLoader::ReadBoundingNode(SPhysicalBoundingCollection* collection, ti
 		const char* size_str = bounding_node->Attribute("size");
 		if (size_str)
 		{
-			sscanf_s(size_str, "%f,%f,%f", &shape.Box.Size[0], 
+			sscanf_s(size_str, "%f,%f,%f", &shape.Box.Size[0],
 				&shape.Box.Size[1], &shape.Box.Size[2]);
 		}
+	}
+	else if (_stricmp(category_str, "Cylinder") == 0)
+	{
+		shape.Category = CYLINDER_BOUNDING;
+		const char* s = bounding_node->Attribute("height");
+		if (s)
+			sscanf_s(s, "%f", &shape.Cylinder.Height);
+
+		s = bounding_node->Attribute("radius");
+		if (s)
+			sscanf_s(s, "%f", &shape.Cylinder.Radius);
 	}
 
 	collection->Boundings.push_back(shape);

@@ -56,6 +56,7 @@ void CEditorScene::setupInitialScene()
 
 	mCubeMesh = mMeshManager->createCubeMesh("cube_bounding");
 	mSphereMesh = mMeshManager->createSphereMesh("sphere_bounding");
+	mCylinderMesh = mMeshManager->createCylinderMesh("cylinder_bounding");
 
 	mTimer = mDevice->getTimer();
 	smgr->update(0);
@@ -215,6 +216,30 @@ SBoxBounding* CEditorScene::AddBoxBounding()
 	return box;
 }
 
+SCylinderBounding* CEditorScene::AddCylinderBounding()
+{
+	if (!mCurrentMeshNodeInfo)
+		return nullptr;
+
+	IMesh* mesh = mCurrentMeshNodeInfo->Node->getMesh();
+	math::SAxisAlignedBox aabb = mesh->getAabb();
+
+	SCylinderBounding* cylinder = new SCylinderBounding;
+	cylinder->Center = aabb.Center;
+	cylinder->Height = aabb.Extents.y * 2.0f;
+	cylinder->Radius = max(aabb.Extents.x, aabb.Extents.z);
+
+	IMeshNode* node = mSceneManager->addMeshNode(mCylinderMesh,
+		nullptr, nullptr, false, aabb.Center, XMFLOAT3(0, 0, 0),
+		XMFLOAT3(cylinder->Radius, cylinder->Height, cylinder->Radius));
+
+	node->setMaterialName("bounding_wire_material");
+	cylinder->WireFrameNode = node;
+	mCurrentMeshNodeInfo->BoundingShapes.push_back(cylinder);
+
+	return cylinder;
+}
+
 SBoundingShape* CEditorScene::GetBoundingShapeByIndex(u32 index)
 {
 	if (!mCurrentMeshNodeInfo)
@@ -227,15 +252,8 @@ void CEditorScene::UpdateWireFrameNode(SBoundingShape* shape)
 {
 	E_BOUNDING_CATEGORY category = shape->getCategory();
 	IMeshNode* node = shape->WireFrameNode;
-	XMMATRIX M;
-	if (category == BOX_BOUNDING)
-	{
-		SBoxBounding* box = dynamic_cast<SBoxBounding*>(shape);
-		XMMATRIX S = XMMatrixScaling(box->Size.x, box->Size.y, box->Size.z);
-		XMMATRIX R = XMMatrixRotationRollPitchYaw(box->Rotation.x, box->Rotation.y, box->Rotation.z);
-		XMMATRIX T = XMMatrixTranslation(box->Center.x, box->Center.y, box->Center.z);
-		M = S * R * T;
-	}
+	XMFLOAT4X4 mat = shape->getTransform();
+	XMMATRIX M = XMLoadFloat4x4(&mat);
 
 	node->setTransform(M);
 	node->update();
@@ -258,7 +276,7 @@ SBoundingShape* CEditorScene::SelectBoundingShape(u32 index)
 	SBoundingShape* shape = GetBoundingShapeByIndex(index);
 	if (mCurrentBoundingShape)
 	{
-		IMeshNode* node = shape->WireFrameNode;
+		IMeshNode* node = mCurrentBoundingShape->WireFrameNode;
 		node->setMaterialName("bounding_wire_material");
 	}
 

@@ -82,6 +82,14 @@ void CXmlFileManager::InsertMeshNodeInfo(
 			sprintf_s(text, "%f,%f,%f", box->Size.x, box->Size.y, box->Size.z);
 			bounding_node->SetAttribute("size", text);
 		}
+		else if (shape->getCategory() == CYLINDER_BOUNDING)
+		{
+			SCylinderBounding* cylinder = dynamic_cast<SCylinderBounding*>(shape);
+			sprintf_s(text, "%f", cylinder->Height);
+			bounding_node->SetAttribute("height", text);
+			sprintf_s(text, "%f", cylinder->Radius);
+			bounding_node->SetAttribute("radius", text);
+		}
 	}
 }
 
@@ -160,6 +168,23 @@ void CXmlFileManager::ReadBoundingNode(SMeshNodeInfo* info,
 		node->setMaterialName("bounding_wire_material");
 		box->WireFrameNode = node;
 	}
+	else if (shape->getCategory() == CYLINDER_BOUNDING)
+	{
+		SCylinderBounding* cylinder = dynamic_cast<SCylinderBounding*>(shape);
+		const char* s = bounding_node->Attribute("height");
+		if (s)
+			sscanf_s(s, "%f", &cylinder->Height);
+		
+		s = bounding_node->Attribute("radius");
+		if (s)
+			sscanf_s(s, "%f", &cylinder->Radius);
+
+		IMeshNode* node = scene->mSceneManager->addMeshNode(scene->mCylinderMesh,
+			nullptr, nullptr, false, shape->Center, shape->Rotation,
+			XMFLOAT3(cylinder->Radius, cylinder->Height, cylinder->Radius));
+		node->setMaterialName("bounding_wire_material");
+		cylinder->WireFrameNode = node;
+	}
 
 	info->BoundingShapes.push_back(shape);
 }
@@ -168,6 +193,9 @@ SBoundingShape* CXmlFileManager::CreateBoundingShape(const char* category)
 {
 	if (_stricmp(category, "Box") == 0)
 		return new SBoxBounding;
+	
+	if (_stricmp(category, "Cylinder") == 0)
+		return new SCylinderBounding;
 
 	return nullptr;
 }

@@ -3,13 +3,14 @@
 #include "ControlIDs.h"
 #include "CEditorScene.h"
 #include "CBoxBoundingWindow.h"
+#include "CCylinderBoundingWindow.h"
 
 void CCreateBoundingWindow::Init()
 {
 	ComboBox_AddString(mBoundingCategoryComboBox, TEXT("Box"));
-	ComboBox_SetItemData(mBoundingCategoryComboBox, 0, BOX_BOUNDING);
 	ComboBox_AddString(mBoundingCategoryComboBox, TEXT("Sphere"));
-	ComboBox_SetItemData(mBoundingCategoryComboBox, 1, SPHERE_BOUNDING);
+	ComboBox_AddString(mBoundingCategoryComboBox, TEXT("Cylinder"));
+
 	ComboBox_SetCurSel(mBoundingCategoryComboBox, 0);
 }
 
@@ -66,8 +67,9 @@ void CCreateBoundingWindow::OnCreate(HWND parent, int xPos, int yPos, int width,
 		labelWidth + 180, 
 		240, textFieldWidth, 20, (IDC_BOUNDING_FRICTION_TEXTFIELD), NULL);
 
-	mBoundingWindows[0] = new CBoxBoundingWindow();
-	mBoundingWindows[1] = nullptr;
+	mBoundingWindows[BOX_BOUNDING] = new CBoxBoundingWindow();
+	mBoundingWindows[SPHERE_BOUNDING] = nullptr;
+	mBoundingWindows[CYLINDER_BOUNDING] = new CCylinderBoundingWindow();
 
 	for (u32 i = 0; i < BOUNDING_CATEGORY_COUNT; i++)
 	{
@@ -102,9 +104,19 @@ void CCreateBoundingWindow::OnClickCreateButton()
 	SendMessage(mBoundingCategoryComboBox, CB_GETLBTEXT, selectedIndex, (LPARAM)boundingName);
 
 	CEditorScene* scene = CEditorScene::getInstance();
-	SBoxBounding* box = scene->AddBoxBounding();
+	
 
 	int boundingCategory = selectedIndex;
+	if (selectedIndex == BOX_BOUNDING)
+	{
+		scene->AddBoxBounding();
+	}
+	else if (selectedIndex == CYLINDER_BOUNDING)
+	{
+		scene->AddCylinderBounding();
+	}
+
+
 	int index = ListBox_AddString(mBoundingsList, boundingName);
 	ListBox_SetItemData(mBoundingsList, index, boundingCategory);
 }

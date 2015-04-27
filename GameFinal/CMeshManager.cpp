@@ -301,6 +301,28 @@ namespace gf
 		return mesh;
 	}
 
+	ISimpleMesh* CMeshManager::createCylinderMesh(
+		const std::string& name,
+		f32 bottomRadius,
+		f32 topRadius,
+		f32 height,
+		u32 sliceCount,
+		u32 stackCount,
+		E_MEMORY_USAGE usage)
+	{
+		SGeometryData geoData;
+		mGeometryCreator->createCylinderData(bottomRadius, topRadius, height,
+			sliceCount, stackCount, geoData);
+
+		u32 vertexFormat = EVF_POSITION | EVF_NORMAL | EVF_TANGENT | EVF_TEXCOORD0;
+		ISimpleMesh* mesh = createSimpleMesh(name, vertexFormat,
+			&geoData.Vertices[0], &geoData.Indices[0],
+			geoData.Vertices.size(), mGeometryCreator->getVertexStride(), geoData.Indices.size(),
+			geoData.Aabb, false, usage);
+
+		return mesh;
+	}
+
 	ISimpleMesh* CMeshManager::createQuad(const std::string& name, E_MEMORY_USAGE usage)
 	{
 		XMFLOAT3 vertices[6];

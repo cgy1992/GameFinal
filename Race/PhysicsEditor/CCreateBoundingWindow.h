@@ -12,8 +12,10 @@ public:
 	void OnClickCreateButton();
 	void OnClickDeleteButton();
 	void OnClickBoundingListItem();
+
 	void ShowMeshInfo(SMeshNodeInfo* info);
 	E_BOUNDING_CATEGORY GetSelectedBoundingCategory();
+
 	void ShowBoundingShapeInfo(SBoundingShape* shape);
 	void OnSize(int xPos, int yPos, int cxClient, int cyClient);
 	void OnClickUpdateButton();

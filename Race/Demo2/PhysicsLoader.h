@@ -6,7 +6,8 @@ enum E_BOUNDING_CATEGORY
 {
 	BOX_BOUNDING = 0,
 	SPHERE_BOUNDING = 1,
-	BOUNDING_CATEGORY_COUNT = 2,
+	CYLINDER_BOUNDING = 2,
+	BOUNDING_CATEGORY_COUNT = 3,
 };
 
 struct SPhysicalBounding
@@ -29,6 +30,12 @@ struct SPhysicalBounding
 			f32 Radius;
 
 		} Sphere;
+
+		struct _tagCylinder
+		{
+			f32 Height;
+			f32	Radius;
+		} Cylinder;
 	};
 };
 

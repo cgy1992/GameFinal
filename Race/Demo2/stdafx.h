@@ -32,8 +32,8 @@
 #include <Physics2012/Collide/Agent/ConvexAgent/SphereBox/hkpSphereBoxAgent.h>
 #include <Physics2012/Collide/Shape/Convex/Box/hkpBoxShape.h>
 #include <Physics2012/Collide/Shape/Convex/Sphere/hkpSphereShape.h>
+#include <Physics2012/Collide/Shape/Convex/Cylinder/hkpCylinderShape.h>
 #include <Physics2012/Collide/Dispatch/hkpAgentRegisterUtil.h>
-
 
 #include <Physics2012/Dynamics/World/hkpWorld.h>
 #include <Physics2012/Dynamics/Entity/hkpRigidBody.h>

@@ -18,6 +18,7 @@ public:
 
 	SMeshNodeInfo* SelectMesh(const std::string meshName);
 	SBoxBounding* AddBoxBounding();
+	SCylinderBounding* AddCylinderBounding();
 	SBoundingShape* SelectBoundingShape(u32 index);
 	SBoundingShape* GetBoundingShapeByIndex(u32 index);
 	void UpdateWireFrameNode(SBoundingShape* shape);
@@ -47,6 +48,7 @@ private:
 
 	ISimpleMesh*				mCubeMesh;
 	ISimpleMesh*				mSphereMesh;
+	ISimpleMesh*				mCylinderMesh;
 
 	std::vector<std::string>	mMeshNames;
 

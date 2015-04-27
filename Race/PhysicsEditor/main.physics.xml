@@ -19,6 +19,9 @@
     <mesh name="apartmenthouseF.mesh">
         <Box center="0.000000,6.199516,0.000001" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="8.200000,12.600942,9.000076"/>
     </mesh>
+    <mesh name="barn.mesh">
+        <Box center="0.000000,2.050002,0.000000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="4.200000,4.299992,3.000000"/>
+    </mesh>
     <mesh name="carA.mesh"/>
     <mesh name="carA_wheelfrontleft.mesh"/>
     <mesh name="carA_wheelfrontright.mesh"/>
@@ -28,9 +31,18 @@
     <mesh name="cherrylow.mesh">
         <Box center="0.000000,5.000000,0.000000" mass="5.000000" friction="2.000000" rotation="0.000000,0.785398,0.000000" size="0.800000,10.000000,0.800000"/>
     </mesh>
+    <mesh name="church.mesh"/>
     <mesh name="column.mesh"/>
+    <mesh name="cornershop.mesh">
+        <Box center="1.500000,0.000000,0.000000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="5.200000,8.199994,8.000000"/>
+        <Box center="-2.500000,0.000000,1.500000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="2.900000,8.199994,5.200000"/>
+    </mesh>
     <mesh name="fruittree.mesh">
         <Box center="0.000000,3.500000,0.000000" mass="5.000000" friction="2.000000" rotation="0.000000,0.000000,0.000000" size="0.800000,7.000000,0.800000"/>
+    </mesh>
+    <mesh name="houseF.mesh">
+        <Box center="0.200000,5.499997,0.000000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="8.000000,10.999990,12.000000"/>
+        <Box center="-4.300000,0.500000,0.000000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="1.000000,1.000000,3.000000"/>
     </mesh>
     <mesh name="lighthouse.mesh"/>
     <mesh name="oldhut.mesh">
@@ -44,6 +56,9 @@
         <Box center="0.000000,5.000000,0.000000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="0.800000,10.000000,0.800000"/>
     </mesh>
     <mesh name="roundtreeB.mesh"/>
+    <mesh name="shop.mesh">
+        <Box center="0.000000,4.500000,-0.100000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="4.300000,9.000001,6.400000"/>
+    </mesh>
     <mesh name="smallbarrel.mesh"/>
     <mesh name="station.mesh">
         <Box center="-4.100000,0.400000,-1.768660" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="3.100000,1.200000,16.906994"/>
@@ -55,4 +70,10 @@
     </mesh>
     <mesh name="stonebowpart.mesh"/>
     <mesh name="table.mesh"/>
+    <mesh name="tower.mesh">
+        <Box center="-0.500000,3.000000,-6.100000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="5.000000,6.000000,5.300000"/>
+        <Box center="0.600000,5.000000,0.400000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" size="7.800000,10.000000,8.200000"/>
+        <Cylinder center="-3.500000,5.000000,1.400000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" height="10.000000" radius="3.200000"/>
+        <Cylinder center="-0.500000,13.149994,4.500000" mass="5.000000" friction="0.500000" rotation="0.000000,0.000000,0.000000" height="26.499977" radius="3.000000"/>
+    </mesh>
 </meshes>

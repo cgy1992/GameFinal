@@ -63,6 +63,9 @@
     <ClInclude Include="tinyxml2.h">
       <Filter>dependencies\tinyxml</Filter>
     </ClInclude>
+    <ClInclude Include="CCylinderBoundingWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -94,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="tinyxml2.cpp">
       <Filter>dependencies\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="CCylinderBoundingWindow.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

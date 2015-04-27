@@ -84,6 +84,15 @@ namespace gf
 			u32 stackCount = 20,
 			E_MEMORY_USAGE usage = EMU_STATIC);
 
+		virtual ISimpleMesh* createCylinderMesh(
+			const std::string& name,
+			f32 bottomRadius = 1.0f,
+			f32 topRadius = 1.0f,
+			f32 height = 1.0f,
+			u32 sliceCount = 20,
+			u32 stackCount = 20,
+			E_MEMORY_USAGE usage = EMU_STATIC);
+
 		virtual ITerrainMesh* createTerrainMesh(
 			const std::string& name,
 			const std::string& szRawFileName,

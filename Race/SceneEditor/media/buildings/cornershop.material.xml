@@ -1,0 +1,30 @@
+<materials>
+    <material name="cornershop/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.600000, 0.600000, 0.600000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="cornershop/pipeline_01"/>
+        </pipelines>
+        <textures/>
+    </material>
+    <material name="cornershop/material_01">
+        <attributes>
+            <attribute name="ambient" value="0.350000, 0.350000, 0.350000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.100000, 0.100000, 0.100000, 1.000000"/>
+            <attribute name="emissive" value="0.100000, 0.100000, 0.100000, 1.000000"/>
+        </attributes>
+        <pipelines>
+			<pipeline name="specular_pipeline"/>
+			<pipeline name="defer_shadow_pipeline" usage="defer"/>
+			<pipeline name="object_shadow_map_pipeline" usage="shadow_map"/>
+		</pipelines>
+        <textures>
+            <texture name="cornershop_texture.bmp"/>
+        </textures>
+    </material>
+</materials>

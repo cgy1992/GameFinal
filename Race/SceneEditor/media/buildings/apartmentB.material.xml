@@ -9,7 +9,7 @@
         <pipelines>
             <pipeline name="shadow_NM_pipeline"/>
             <pipeline name="defer_shadow_NM_pipeline" usage="defer"/>
-			      <pipeline name="object_shadow_map_NM_pipeline" usage="shadow_map"/>
+			<pipeline name="object_shadow_map_NM_pipeline" usage="shadow_map"/>
         </pipelines>
         <textures>
             <texture name="apartmentB_tex.bmp"/>
