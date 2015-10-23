@@ -59,5 +59,42 @@ namespace gf
 		mMouseDevice->update();
 	}
 
+	void CDInput8Driver::setCurrentMousePos(int x, int y)
+	{
+		CDI8MouseDevice* mouse = dynamic_cast<CDI8MouseDevice*>(mMouseDevice);
+		mouse->setCurrentPos(x, y);
+	}
+
+	bool CDInput8Driver::keyUp(u32 nID) const
+	{
+		if (nID >= GVK_LBUTTON)
+			return mMouseDevice->keyUp(nID);
+		return mKeyboardDevice->keyUp(nID);
+	}
+
+	bool CDInput8Driver::keyDown(u32 nID) const
+	{
+		if (nID >= GVK_LBUTTON)
+			return mMouseDevice->keyDown(nID);
+		return mKeyboardDevice->keyDown(nID);
+	}
+
+	bool CDInput8Driver::isPressed(u32 nID) const
+	{
+		if (nID >= GVK_LBUTTON)
+			return mMouseDevice->isPressed(nID);
+		return mKeyboardDevice->isPressed(nID);
+	}
+
+	void CDInput8Driver::getMouseMovement(int& x, int& y, int& z) const
+	{
+		mMouseDevice->getMovement(x, y, z);
+	}
+
+	void CDInput8Driver::getMousePos(int& x, int& y, int& z) const
+	{
+		mMouseDevice->getPosition(x, y, z);
+	}
+
 }
 

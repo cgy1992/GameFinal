@@ -11,7 +11,7 @@ namespace gf
 	CDI8MouseDevice::CDI8MouseDevice()
 		:mdiDevice(nullptr)
 	{
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 4; i++) {
 			mKeys[i] = false;
 			mPrevKeys[i] = false;
 		}
@@ -157,6 +157,7 @@ namespace gf
 			case DIMOFS_BUTTON0:
 			case DIMOFS_BUTTON1:
 			case DIMOFS_BUTTON2:
+			case DIMOFS_BUTTON3:
 				nBtn = data[i].dwOfs - DIMOFS_BUTTON0;
 				if (data[i].dwData & 0x80) {
 					mKeys[nBtn] = true;
@@ -201,4 +202,11 @@ namespace gf
 		y = mDeltaY;
 		z = mDeltaZ;
 	}
+
+	void CDI8MouseDevice::setCurrentPos(int x, int y)
+	{
+		mMouseX = x;
+		mMouseY = y;
+	}
+
 }

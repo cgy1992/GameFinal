@@ -21,6 +21,18 @@ namespace gf
 
 		virtual ~CDInput8Driver();
 
+		void setCurrentMousePos(int x, int y);
+
+		virtual bool keyUp(u32 nID) const;
+
+		virtual bool keyDown(u32 nID) const;
+
+		virtual bool isPressed(u32 nID) const;
+
+		virtual void getMouseMovement(int& x, int& y, int& z) const;
+
+		virtual void getMousePos(int& x, int& y, int& z) const;
+
 	private:
 
 		HWND					mHwnd;

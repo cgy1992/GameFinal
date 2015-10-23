@@ -18,6 +18,7 @@ namespace gf
 		virtual bool keyDown(u32 nID) const;
 		virtual void getPosition(int& x, int& y, int& z) const;
 		virtual void getMovement(int& x, int& y, int& z) const;
+		void setCurrentPos(int x, int y);
 
 		virtual ~CDI8MouseDevice();
 
@@ -25,8 +26,8 @@ namespace gf
 		IDirectInputDevice8*		mdiDevice;
 		HANDLE						mEvent;
 		RECT						mCageRect;
-		bool						mKeys[3];
-		bool						mPrevKeys[3];
+		bool						mKeys[4];
+		bool						mPrevKeys[4];
 		long						mMouseX;
 		long						mMouseY;
 		long						mMouseZ;

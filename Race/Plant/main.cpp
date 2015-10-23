@@ -23,7 +23,7 @@ void buildGrassLand(ISceneManager* smgr);
 
 GrassLand* g_grassLand = nullptr;
 
-void setCaption(IDevice* device, float dt);
+void setCaption(IDevice* device, ISceneManager* sceneManager, float dt);
 
 f32 getFps(float dt)
 {
@@ -97,10 +97,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		driver->endScene();
 
-		u32 num = smgr->getRenderedMeshNum();
-
-		sprintf(caption, "FPS:%f num:%d", getFps(dt), num);
-		device->setWindowCaption(caption);
+		setCaption(device, smgr, dt);
 	}
 
 	smgr->destroy();
@@ -209,8 +206,21 @@ void buildGrassLand(ISceneManager* smgr)
 	g_grassLand = new GrassLand(smgr, terrainNode, v, range * 2, XMFLOAT2(grassWidth, grassHeight));
 }
 
-void setCaption(IDevice* device, float dt)
+void setCaption(IDevice* device, ISceneManager* sceneManager, float dt)
 {
+	IInputDriver* inputDriver = IInputDriver::getInstance();
+	IKeyboardDevice* keyboard = inputDriver->getKeyboard();
+	IMouseDevice* mouse = inputDriver->getMouse();
 
+	char caption[200];
+	int num = sceneManager->getRenderedMeshNum();
+
+	const char* midButtonPressed = (mouse->isPressed(GVK_MBUTTON)) ? "Middle Button Pressed!" : "Middle Button Not Pressed!";
+
+	int x, y, z;
+	mouse->getPosition(x, y, z);
+
+	sprintf(caption, "FPS:%f num:%d %s (%d,%d,%d)", getFps(dt), num, midButtonPressed, x, y, z);
+	device->setWindowCaption(caption);
 }
 

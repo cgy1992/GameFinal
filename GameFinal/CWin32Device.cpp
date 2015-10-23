@@ -5,6 +5,7 @@
 #include "CWin32Timer.h"
 #include "CDInput8Driver.h"
 #include <iostream>
+
 namespace gf
 {
 
@@ -145,11 +146,16 @@ namespace gf
 
 			if (m_CreationParams.InputDriverType == EIDT_DIRECTINPUT8)
 			{
-				mInputDriver = new CDInput8Driver(mHwnd);
+				CDInput8Driver* dinput = new CDInput8Driver(mHwnd);
+				mInputDriver = dinput;
 				mInputDriver->_setInstance(mInputDriver);
 				if (!mInputDriver->init()) {
 					throw std::runtime_error("Input Driver init failed!");
 				}
+
+				POINT p;
+				GetCursorPos(&p);
+				dinput->setCurrentMousePos(p.x, p.y);
 			}
 			else
 			{
@@ -197,6 +203,16 @@ namespace gf
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			break;
+		case WM_ACTIVATE:
+			if (mInputDriver && m_CreationParams.InputDriverType == EIDT_DIRECTINPUT8)
+			{
+				CDInput8Driver* input = dynamic_cast<CDInput8Driver*>(mInputDriver);				
+				POINT p;
+				GetCursorPos(&p);
+				input->setCurrentMousePos(p.x, p.y);
+			}
+			break;
+
 		default:
 			return DefWindowProc(hwnd, msg, wParam, lParam);
 		}

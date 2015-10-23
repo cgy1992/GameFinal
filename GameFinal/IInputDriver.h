@@ -25,6 +25,16 @@ namespace gf
 
 		IMouseDevice*		getMouse() { return mMouseDevice; }
 
+		virtual bool keyUp(u32 nID) const = 0;
+
+		virtual bool keyDown(u32 nID) const = 0;
+
+		virtual bool isPressed(u32 nID) const = 0;
+
+		virtual void getMouseMovement(int& x, int& y, int& z) const = 0;
+
+		virtual void getMousePos(int& x, int& y, int& z) const = 0;
+
 		_DECLARE_SINGLETON_INSTANCE(IInputDriver);
 	
 	protected:
