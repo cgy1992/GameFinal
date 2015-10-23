@@ -3,6 +3,7 @@
 #include "CD3D11Driver.h"
 #include "CSceneManager.h"
 #include "CWin32Timer.h"
+#include "CDInput8Driver.h"
 #include <iostream>
 namespace gf
 {
@@ -27,6 +28,7 @@ namespace gf
 	{
 		//ReleaseReferenceCounted(mSceneManager);
 		ReleaseReferenceCounted(mVideoDriver);
+		ReleaseReferenceCounted(mInputDriver);
 	}
 
 	HRESULT CWin32Device::init()
@@ -122,7 +124,7 @@ namespace gf
 			m_CreationParams.BackBufferWindowHandle = (u32)hBufferWnd;
 		}
 
-		if (m_CreationParams.DriverType == EDT_DIRECT3D11)
+		if (m_CreationParams.VideoDriverType == EDT_DIRECT3D11)
 		{
 			mVideoDriver = new CD3D11Driver(this);
 			IVideoDriver::_setInstance(mVideoDriver);
@@ -135,6 +137,27 @@ namespace gf
 		{
 			throw std::runtime_error("The Driver is not supported so far!");
 		}
+
+		if (m_CreationParams.CreateInputDriver)
+		{
+			if (m_CreationParams.InputDriverType == EIDT_AUTO)
+				m_CreationParams.InputDriverType = EIDT_DIRECTINPUT8;
+
+			if (m_CreationParams.InputDriverType == EIDT_DIRECTINPUT8)
+			{
+				mInputDriver = new CDInput8Driver(mHwnd);
+				mInputDriver->_setInstance(mInputDriver);
+				if (!mInputDriver->init()) {
+					throw std::runtime_error("Input Driver init failed!");
+				}
+			}
+			else
+			{
+				throw std::runtime_error("The Input Driver is not supported so far!");
+			}
+
+		}
+		
 
 		// create timer
 		mTimer = new CWin32Timer;
@@ -191,6 +214,9 @@ namespace gf
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+
+		if (mInputDriver)
+			mInputDriver->update();
 
 		return true;
 	}

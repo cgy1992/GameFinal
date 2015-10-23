@@ -11,6 +11,7 @@
 #include "IGeometryCreator.h"
 #include "IDevice.h"
 #include "IVideoDriver.h"
+#include "IInputDriver.h"
 
 namespace gf
 {
@@ -31,6 +32,7 @@ namespace gf
 	_DEFINE_SINGLETON_INSTANCE(IGeometryCreator);
 	_DEFINE_SINGLETON_INSTANCE(IDevice);
 	_DEFINE_SINGLETON_INSTANCE(IVideoDriver);
+	_DEFINE_SINGLETON_INSTANCE(IInputDriver);
 
 	const std::string ISamplerManager::WRAP_POINT_SAMPLER = std::string("gf_point_sampler");
 	const std::string ISamplerManager::SHADOW_MAP_SAMPLER = std::string("gf_shadow_map_sampler");

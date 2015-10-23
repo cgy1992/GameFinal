@@ -111,6 +111,15 @@
     <Filter Include="src\ResourceObject\Direct3D11\mesh">
       <UniqueIdentifier>{af06bf02-976f-4861-baa3-fddce2ad35ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\input">
+      <UniqueIdentifier>{7bcbdf95-748d-4b1d-b5ff-bbfddbc43dc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\input\Interface">
+      <UniqueIdentifier>{fc43bb4a-f066-47c5-b80e-a9b8d3bb2439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\input\DirectInput">
+      <UniqueIdentifier>{1b47e600-a4ac-420e-ac71-38975bfc814a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -554,6 +563,24 @@
     <ClInclude Include="gfRect.h">
       <Filter>src\Util\Class</Filter>
     </ClInclude>
+    <ClInclude Include="IInputDriver.h">
+      <Filter>src\input\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CDInput8Driver.h">
+      <Filter>src\input\DirectInput</Filter>
+    </ClInclude>
+    <ClInclude Include="IKeyboardDevice.h">
+      <Filter>src\input\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CDI8KeyboardDevice.h">
+      <Filter>src\input\DirectInput</Filter>
+    </ClInclude>
+    <ClInclude Include="IMouseDevice.h">
+      <Filter>src\input\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CDI8MouseDevice.h">
+      <Filter>src\input\DirectInput</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -792,6 +819,15 @@
     </ClCompile>
     <ClCompile Include="CD3D11Buffer.cpp">
       <Filter>src\ResourceObject\Direct3D11\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="CDInput8Driver.cpp">
+      <Filter>src\input\DirectInput</Filter>
+    </ClCompile>
+    <ClCompile Include="CDI8KeyboardDevice.cpp">
+      <Filter>src\input\DirectInput</Filter>
+    </ClCompile>
+    <ClCompile Include="CDI8MouseDevice.cpp">
+      <Filter>src\input\DirectInput</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

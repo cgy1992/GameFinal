@@ -16,12 +16,12 @@ namespace gf
 		return 42;
 	}
 
-	GAMEFINAL_API IDevice* createDevice(E_DRIVER_TYPE driverType, u32 width, u32 height, u32 style, bool vsync, const SDeviceContextSettings& settings)
+	GAMEFINAL_API IDevice* createDevice(E_VIDEO_DRIVER_TYPE driverType, u32 width, u32 height, u32 style, bool vsync, const SDeviceContextSettings& settings)
 	{
 		SCreationParameters creationParams;
 		creationParams.ClientWidth = width;
 		creationParams.ClientHeight = height;
-		creationParams.DriverType = driverType;
+		creationParams.VideoDriverType = driverType;
 		creationParams.DepthBits = settings.DepthBits;
 		creationParams.StencilBits = settings.StencilBits;
 		creationParams.MultiSamplingCount = settings.MultiSamplingCount;
@@ -31,6 +31,9 @@ namespace gf
 		creationParams.BackBufferHeight = settings.BackBufferHeight;
 		creationParams.WindowStyle = style;
 		creationParams.VsyncEnabled = vsync;
+		
+		creationParams.InputDriverType = settings.InputDriverType;
+		creationParams.CreateInputDriver = settings.CreateInputDriver;
 
 		if (settings.BackBufferWidth == 0)
 			creationParams.BackBufferWidth = width;

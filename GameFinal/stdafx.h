@@ -39,6 +39,9 @@
 #include <regex>
 #include <functional>
 #include <mmsystem.h>
+
+#define DIRECTINPUT_VERSION 0x0800 // avoid the warning
+#include <dinput.h>
 #include "xnacollision/xnacollision.h"
 
 #include "gfTypes.h"

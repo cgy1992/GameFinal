@@ -129,14 +129,14 @@ int _tmain(int argc, _TCHAR* argv[])
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		u32 ms = timer->tick();
-		float dt = ms * 0.001f;
+		float dt = timer->tick();
+		//float dt = ms * 0.001f;
 
 		updatePhysics(dt);
 		updateCamera(camera, dt);
 		//updateLightDirection(dt, light);
 
-		smgr->update(ms);
+		smgr->update(dt);
 
 		smgr->drawAll();
 

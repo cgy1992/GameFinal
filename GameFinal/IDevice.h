@@ -11,6 +11,7 @@ namespace gf
 
 	class IVideoDriver;
 	class ISceneManager;
+	class IInputDriver;
 
 	enum E_WINDOW_STYLE
 	{
@@ -19,7 +20,7 @@ namespace gf
 		EWS_FULLRESOLUTION = 1 << 1
 	};
 
-	enum E_DRIVER_TYPE
+	enum E_VIDEO_DRIVER_TYPE
 	{
 		EDT_DIRECT3D11,
 		EDT_DIRECT3D10,
@@ -27,18 +28,29 @@ namespace gf
 		EDT_OPENGL
 	};
 
+	enum E_INPUT_DRIVER_TYPE
+	{
+		EIDT_AUTO,
+		EIDT_WINSDK,
+		EIDT_DIRECTINPUT8,
+	};
+
+	
+
 	// This is used as the parameters of the createDevice function by the user 
 	//typedef LRESULT(CALLBACK* WNDPROC) (HWND, UINT, WPARAM, LPARAM);
 	//typedef u32 (CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
 	struct SDeviceContextSettings
 	{
-		u32				DepthBits;
-		u32				StencilBits;
-		u32				MultiSamplingCount;
-		u32				MultiSamplingQuality;
-		u32				BackBufferWidth;
-		u32				BackBufferHeight;
-		void*			WindowsProcedure;
+		u32						DepthBits;
+		u32						StencilBits;
+		u32						MultiSamplingCount;
+		u32						MultiSamplingQuality;
+		u32						BackBufferWidth;
+		u32						BackBufferHeight;
+		void*					WindowsProcedure;
+		bool					CreateInputDriver; // create the input driver. If user wants to use his own input IO library, set this to false.
+		E_INPUT_DRIVER_TYPE		InputDriverType; // input-driver type, default is DirectInput8 Driver
 
 		SDeviceContextSettings()
 		{
@@ -49,12 +61,16 @@ namespace gf
 			WindowsProcedure = nullptr;
 			BackBufferHeight = 0;
 			BackBufferWidth = 0;
+
+			CreateInputDriver = true;
+			InputDriverType = EIDT_AUTO;
 		}
 	};
 
 	struct SCreationParameters
 	{
-		E_DRIVER_TYPE	DriverType;
+		E_VIDEO_DRIVER_TYPE	VideoDriverType;
+		E_INPUT_DRIVER_TYPE InputDriverType;
 		u32				ClientWidth;
 		u32				ClientHeight;
 		u32				BackBufferWidth;
@@ -71,9 +87,11 @@ namespace gf
 		u32				MultiSamplingQuality;
 		void*			WindowsProcedure;
 
+		bool			CreateInputDriver;
+
 		SCreationParameters()
 		{
-			DriverType = EDT_DIRECT3D11;
+			VideoDriverType = EDT_DIRECT3D11;
 			ClientHeight = 0;
 			ClientWidth = 0;
 			
@@ -101,6 +119,7 @@ namespace gf
 		IDevice(SCreationParameters& params) 
 			:m_CreationParams(params)
 			, mVideoDriver(nullptr)
+			, mInputDriver(nullptr)
 			, mTimer(nullptr)
 		{
 
@@ -116,6 +135,11 @@ namespace gf
 		IVideoDriver*	getVideoDriver()
 		{
 			return mVideoDriver;
+		}
+
+		IInputDriver*	getInputDriver() 
+		{
+			return mInputDriver;
 		}
 
 		virtual ISceneManager* createSceneManager() = 0;
@@ -167,6 +191,8 @@ namespace gf
 	protected:
 		SCreationParameters		m_CreationParams;
 		IVideoDriver*			mVideoDriver;
+		IInputDriver*			mInputDriver;
+
 		//ISceneManager*			mSceneManager;
 		ITimer*					mTimer;
 		char					mProcessPath[MAX_PATH + 1];

@@ -23,6 +23,8 @@ void buildGrassLand(ISceneManager* smgr);
 
 GrassLand* g_grassLand = nullptr;
 
+void setCaption(IDevice* device, float dt);
+
 f32 getFps(float dt)
 {
 	static u32 frameCount = 0;
@@ -127,65 +129,52 @@ void testCreateTexture1D()
 
 void updateCamera(ICameraNode* camera, f32 delta)
 {
-	if (GetAsyncKeyState('W') & 0x8000)
-	{
+	IInputDriver* inputDriver = IInputDriver::getInstance();
+	IKeyboardDevice* keyboard = inputDriver->getKeyboard();
+	IMouseDevice* mouse = inputDriver->getMouse();
+
+	if (keyboard->isPressed(GVK_W))
 		camera->walk(CAMERA_MOVE_UNIT * delta);
-	}
 
-	if (GetAsyncKeyState('S') & 0x8000)
-	{
+	if (keyboard->isPressed(GVK_S))
 		camera->walk(-CAMERA_MOVE_UNIT * delta);
-	}
 
-	if (GetAsyncKeyState('A') & 0x8000)
-	{
+	if (keyboard->isPressed(GVK_A))
 		camera->strafe(-CAMERA_MOVE_UNIT * delta);
-	}
 
-	if (GetAsyncKeyState('D') & 0x8000)
-	{
+	if (keyboard->isPressed(GVK_D))
 		camera->strafe(CAMERA_MOVE_UNIT * delta);
-	}
 
-	if (GetAsyncKeyState('R') & 0x8000)
-	{
+	if (keyboard->isPressed(GVK_R))
 		camera->fly(CAMERA_MOVE_UNIT * delta);
-	}
 
-	if (GetAsyncKeyState('F') & 0x8000)
-	{
+	if (keyboard->isPressed(GVK_F))
 		camera->fly(-CAMERA_MOVE_UNIT * delta);
-	}
 
-	if (GetAsyncKeyState(VK_UP) & 0x8000)
-	{
+	if (keyboard->isPressed(GVK_UP))
 		camera->pitch(-CAMERA_ROTATE_UNIT * delta);
-	}
 
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
-	{
+	if (keyboard->isPressed(GVK_DOWN))
 		camera->pitch(CAMERA_ROTATE_UNIT * delta);
-	}
-
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-	{
+	
+	if (keyboard->isPressed(GVK_LEFT))
 		camera->yaw(-CAMERA_ROTATE_UNIT * delta);
-	}
 
-	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-	{
+	if (keyboard->isPressed(GVK_RIGHT))
 		camera->yaw(CAMERA_ROTATE_UNIT * delta);
-	}
 
-	if (GetAsyncKeyState('N') & 0x8000)
-	{
-		camera->roll(CAMERA_ROTATE_UNIT * delta);
-	}
+	if (keyboard->keyDown(GVK_ESCAPE))
+		std::cout << "Key Down K!!!!!!!!!!!!!!!!!" << std::endl;
 
-	if (GetAsyncKeyState('M') & 0x8000)
-	{
-		camera->roll(-CAMERA_ROTATE_UNIT * delta);
-	}
+	if (keyboard->keyUp(GVK_ESCAPE))
+		std::cout << "Key Up K!!!!!!!!!!!!!!!!!" << std::endl;
+
+	if (mouse->keyDown(GVK_LBUTTON))
+		std::cout << "Left Button Down K!!!!!!!!!!!!!!!!!" << std::endl;
+
+	if (mouse->keyUp(GVK_LBUTTON))
+		std::cout << "Left Button Up K!!!!!!!!!!!!!!!!!" << std::endl;
+
 }
 
 void buildGrassLand(ISceneManager* smgr)
@@ -220,5 +209,8 @@ void buildGrassLand(ISceneManager* smgr)
 	g_grassLand = new GrassLand(smgr, terrainNode, v, range * 2, XMFLOAT2(grassWidth, grassHeight));
 }
 
+void setCaption(IDevice* device, float dt)
+{
 
+}
 
