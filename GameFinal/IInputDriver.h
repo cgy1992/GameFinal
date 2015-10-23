@@ -44,7 +44,8 @@ namespace gf
 	};
 }
 
-#define GVK_ESCAPE          0x01
+#define GVK_UNDEFINED		0x00
+#define GVK_ESCAPE          0x01 // DIK_ESCAPE
 #define GVK_TAB             0x0F
 #define GVK_SPACE           0x39
 #define GVK_RETURN          0x1C

@@ -286,8 +286,9 @@ namespace gf
 		//mSecondsDelta = static_cast<f32>(delta)* 0.001f;
 
 		ITextureManager::getInstance()->updateTemporaryTextures(delta);
-
+		
 		// update skydome position
+		/*
 		if (mSkyDomeNode)
 		{
 			ICameraNode* camera = getActiveCameraNode();
@@ -297,6 +298,7 @@ namespace gf
 				mSkyDomeNode->setPosition(pos.x, pos.y, pos.z);
 			}
 		}
+		*/
 
 		// remove all dynamic nodes from octree.
 		mDefaultOctree->update(delta);

@@ -130,6 +130,7 @@ void updateCamera(ICameraNode* camera, f32 delta)
 	IKeyboardDevice* keyboard = inputDriver->getKeyboard();
 	IMouseDevice* mouse = inputDriver->getMouse();
 
+	/*
 	if (keyboard->isPressed(GVK_W))
 		camera->walk(CAMERA_MOVE_UNIT * delta);
 
@@ -147,6 +148,8 @@ void updateCamera(ICameraNode* camera, f32 delta)
 
 	if (keyboard->isPressed(GVK_F))
 		camera->fly(-CAMERA_MOVE_UNIT * delta);
+		*/
+
 
 	if (keyboard->isPressed(GVK_UP))
 		camera->pitch(-CAMERA_ROTATE_UNIT * delta);
@@ -159,6 +162,7 @@ void updateCamera(ICameraNode* camera, f32 delta)
 
 	if (keyboard->isPressed(GVK_RIGHT))
 		camera->yaw(CAMERA_ROTATE_UNIT * delta);
+		
 
 	if (keyboard->keyDown(GVK_ESCAPE))
 		std::cout << "Key Down K!!!!!!!!!!!!!!!!!" << std::endl;
