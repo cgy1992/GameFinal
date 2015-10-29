@@ -300,7 +300,7 @@ namespace gf
 	void CFpsCameraNode::update(f32 delta /*= 0*/)
 	{
 		// if this is active camera
-		bool bActive = mSceneManager->getActiveCameraNode();
+		bool bActive = (mSceneManager->getActiveCameraNode() == this);
 
 		if (bActive && mInputDriver) {
 
@@ -331,6 +331,13 @@ namespace gf
 			if (key != GVK_UNDEFINED && mKeyboard->keyDown(key)) {
 				GF_PRINT_CONSOLE_INFO("jump!!!!!!!!!!!!!!!!!!!");
 			}
+
+			int x, y, z;
+			mMouse->getMovement(x, y, z);
+
+			pitch(mRotateSpeed * y * delta);
+			yaw(mRotateSpeed * x * delta);
+
 		}
 
 		ISceneNode::update(delta);
@@ -344,6 +351,5 @@ namespace gf
 			}
 		}
 	}
-
 }
 

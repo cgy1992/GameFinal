@@ -71,6 +71,8 @@ namespace gf
 
 		bool setActionMapping(E_FPS_CAMERA_ACTION action, u32 key);
 
+		
+
 	private:
 
 		void adjustPitchAngle()

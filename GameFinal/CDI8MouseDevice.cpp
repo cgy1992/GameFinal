@@ -209,4 +209,8 @@ namespace gf
 		mMouseY = y;
 	}
 
+	void CDI8MouseDevice::showCursor(bool bDisplay)
+	{
+		ShowCursor(bDisplay);
+	}
 }

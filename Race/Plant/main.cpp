@@ -80,6 +80,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	ITextureCube* skyTexture = textureManager->loadCubeTexture("skybox1.dds");
 	smgr->setSkyDome(skyTexture);
 
+	IInputDriver* inputDriver = IInputDriver::getInstance();
+	inputDriver->showCursor(false);
+
 	ITimer* timer = device->getTimer();
 	timer->reset();
 	char caption[200];

@@ -35,6 +35,8 @@ namespace gf
 
 		virtual void getMousePos(int& x, int& y, int& z) const = 0;
 
+		virtual void showCursor(bool bDisplay) { mMouseDevice->showCursor(bDisplay); }
+
 		_DECLARE_SINGLETON_INSTANCE(IInputDriver);
 	
 	protected:

@@ -14,6 +14,9 @@ namespace gf
 		virtual bool keyDown(u32 nID) const = 0;
 		virtual void getPosition(int& x, int& y, int& z) const = 0;
 		virtual void getMovement(int& x, int& y, int& z) const = 0;
+
+		virtual void showCursor(bool bDisplay) = 0;
+
 		/*
 		virtual int getMovementX() const = 0;
 		virtual int getMovementY() const = 0;

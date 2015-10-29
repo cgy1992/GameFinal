@@ -19,7 +19,7 @@ namespace gf
 		virtual void getPosition(int& x, int& y, int& z) const;
 		virtual void getMovement(int& x, int& y, int& z) const;
 		void setCurrentPos(int x, int y);
-
+		virtual void showCursor(bool bDisplay);
 		virtual ~CDI8MouseDevice();
 
 	private:
