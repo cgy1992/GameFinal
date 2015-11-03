@@ -162,6 +162,8 @@ namespace gf
 			return mVideoDriver;
 		}
 
+		
+
 		virtual IOctreeManager*	getDefaultOctreeManager() = 0;
 
 		virtual ICameraNode* getActiveCameraNode() const = 0;
@@ -236,6 +238,8 @@ namespace gf
 			XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 			bool 	useAlphaChannelOfTexture = false) = 0;
 
+		virtual bool getHeightOnTerrain(f32 x, f32 z, f32& height) const = 0;
+
 	public:
 		const static int MAX_LIGHT_COUNT = 1024;
 		const static int MAX_CAMERA_COUNT = 64;
@@ -249,7 +253,6 @@ namespace gf
 
 
 	};
-
 
 }
 

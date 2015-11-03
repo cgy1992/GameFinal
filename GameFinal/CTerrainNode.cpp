@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CTerrainNode.h"
 #include "CShaderVariableInjection.h"
+#include "CSceneManager.h"
 
 namespace gf
 {
@@ -86,8 +87,29 @@ namespace gf
 
 	CTerrainNode::~CTerrainNode()
 	{
+		CSceneManager* smgr = dynamic_cast<CSceneManager*>(mSceneManager);
+		std::list<ITerrainNode*>& terrainList = smgr->mTerrainNodes;
+		for (auto it = terrainList.begin(); it != terrainList.end(); it++) {
+			ITerrainNode* node = *it;
+			if (node == this) {
+				terrainList.erase(it);
+				break;
+			}
+		}
+
 		ReleaseReferenceCounted(mMesh);
 		ReleaseReferenceCounted(mMaterial);
+	}
+
+	bool CTerrainNode::isInsideTerrainScope(f32 x, f32 z, bool localPivot /*= false*/) const
+	{
+		if (!localPivot)
+		{
+			x -= mPosition.x;
+			z -= mPosition.z;
+		}
+		
+		return mMesh->isInsideTerrainScope(x, z);
 	}
 
 }

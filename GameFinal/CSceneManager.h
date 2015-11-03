@@ -9,6 +9,7 @@ namespace gf
 	{
 		friend class CDirectionalLightNode;
 		friend class CPointLightNode;
+		friend class CTerrainNode;
 
 	public:
 
@@ -219,6 +220,8 @@ namespace gf
 			XMFLOAT4 color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 			bool 	useAlphaChannelOfTexture = false);
 
+		virtual bool getHeightOnTerrain(f32 x, f32 z, f32& height) const;
+
 	private:
 
 		void collectMeshNodeShaders(IMeshNode* node);
@@ -231,8 +234,11 @@ namespace gf
 
 		std::vector<ISceneNode*>		mSolidNodes;
 		std::map<u32, ILightNode*>		mLightNodes;
-		std::array<ICameraNode*, 65>	mCameraNodes;
+		
 		std::set<IShader*>				mActiveShaders;
+
+		std::list<ITerrainNode*>		mTerrainNodes;
+		std::array<ICameraNode*, 65>	mCameraNodes;
 
 		ICameraNode*					mActiveCamera;
 		u32								mActiveCameraId;
@@ -262,7 +268,6 @@ namespace gf
 		bool							mRenderingDeferredQuad;
 
 		SLightsInDeferredShading		mDeferredShadingLights;
-		
 	};
 }
 

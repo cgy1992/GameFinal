@@ -12,6 +12,7 @@ namespace gf
 		EFCA_MOVE_LEFT,
 		EFCA_MOVE_RIGHT,
 		EFCA_JUMP,
+		EFCA_CREEP,
 		EFCA_COUNT,
 	};
 	
@@ -30,6 +31,9 @@ namespace gf
 			:ICameraNode(parent, smgr, position, aspectRatio, fov, nearZ, farZ, bPerspectiveProj)
 			, mMaxUpAngle(maxUpAngle)
 			, mMaxDownAngle(maxDownAngle)
+			, mStandHeight(1.8f)
+			, mCreepHeight(0.9f)
+			, mCreeping(false)
 		{
 			
 		}
@@ -51,13 +55,33 @@ namespace gf
 
 		f32 getRotateSpeed() const { return mRotateSpeed; }
 
+		void setStandHeight(f32 height) { mStandHeight = height; }
+
+		f32 getStandHeight() const { return mStandHeight; }
+
+		void setCreepHeight(f32 height) { mCreepHeight = height; }
+
+		f32 getCreepHeight() const { return mCreepHeight; }
+
 		virtual bool setActionMapping(E_FPS_CAMERA_ACTION action, u32 key) = 0;
 		
 		u32 getActionMapping(E_FPS_CAMERA_ACTION action) const
 		{
 			return mActionMappings[action];
 		}
-		
+
+		void setJumpSpeed(f32 speed) { mJumpSpeed = speed; }
+
+		f32 getJumpSpeed() const { return mJumpSpeed; }
+
+		bool isCreeping() const { return mCreeping; }
+
+		virtual void creep() = 0;
+
+		virtual void stand() = 0;
+
+		virtual void jump() = 0;
+
 	protected:
 		f32								mMaxUpAngle;			/* 最大抬头角度 */
 		f32								mMaxDownAngle;			/* 最大低头角度 */
@@ -65,8 +89,18 @@ namespace gf
 		f32								mWalkSpeed;
 		f32								mStrafeSpeed;
 		f32								mRotateSpeed; // radians per second
-	
+		
+
+		f32								mStandHeight;
+		f32								mCreepHeight;
+		f32								mCrouchSpeed;
+		f32								mJumpSpeed;
+		
+		f32								mHeight;
 		u32								mActionMappings[EFCA_COUNT];
+
+		bool							mCreeping;
+		f32								mVerticalVelocity;
 	};
 
 }

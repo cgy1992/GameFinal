@@ -18,6 +18,9 @@ namespace gf
 		:IFpsCameraNode(parent, smgr, position, aspectRatio, 
 		fov, nearZ, farZ, maxUpAngle, maxDownAngle, bPerspectiveProj)
 	{
+		mPosition.y = mStandHeight;
+		mHeight = mStandHeight;
+
 		XMVECTOR worldup = XMLoadFloat3(&up);
 		worldup = XMVector3Normalize(worldup);
 		XMStoreFloat3(&mWorldUp, worldup);
@@ -29,9 +32,12 @@ namespace gf
 		mKeyboard = mInputDriver->getKeyboard();
 
 		// set the default values 
-		mWalkSpeed = 20.0f;
-		mStrafeSpeed = 10.0f;
-		mRotateSpeed = 1.0f;
+		mWalkSpeed = 4.0f;
+		mStrafeSpeed = 2.0f;
+		mRotateSpeed = 0.5f;
+		mCrouchSpeed = 4.0f;
+		mVerticalVelocity = 0.0f;
+		mJumpSpeed = 4.0f;
 
 		// set default action mappings.
 		mActionMappings[EFCA_MOVE_FORWARD] = GVK_W;
@@ -39,6 +45,7 @@ namespace gf
 		mActionMappings[EFCA_MOVE_LEFT] = GVK_A;
 		mActionMappings[EFCA_MOVE_RIGHT] = GVK_D;
 		mActionMappings[EFCA_JUMP] = GVK_SPACE;
+		mActionMappings[EFCA_CREEP] = GVK_LCTRL;
 	}
 
 
@@ -305,7 +312,7 @@ namespace gf
 		if (bActive && mInputDriver) {
 
 			u32 key;
-			
+
 			// move front
 			key = mActionMappings[EFCA_MOVE_FORWARD];
 			if (key != GVK_UNDEFINED && mKeyboard->isPressed(key))
@@ -315,12 +322,12 @@ namespace gf
 			key = mActionMappings[EFCA_MOVE_BACK];
 			if (key != GVK_UNDEFINED && mKeyboard->isPressed(key))
 				walk(-mWalkSpeed * delta);
-			
+
 			// move left
 			key = mActionMappings[EFCA_MOVE_LEFT];
 			if (key != GVK_UNDEFINED && mKeyboard->isPressed(key))
 				strafe(-mStrafeSpeed * delta);
-			
+
 			// move right
 			key = mActionMappings[EFCA_MOVE_RIGHT];
 			if (key != GVK_UNDEFINED && mKeyboard->isPressed(key))
@@ -330,6 +337,16 @@ namespace gf
 			key = mActionMappings[EFCA_JUMP];
 			if (key != GVK_UNDEFINED && mKeyboard->keyDown(key)) {
 				GF_PRINT_CONSOLE_INFO("jump!!!!!!!!!!!!!!!!!!!");
+				jump();
+			}
+
+			// creep
+			key = mActionMappings[EFCA_CREEP];
+			if (key != GVK_UNDEFINED && mKeyboard->keyDown(key)) {
+				if (mCreeping)
+					stand();
+				else
+					creep();
 			}
 
 			int x, y, z;
@@ -338,6 +355,47 @@ namespace gf
 			pitch(mRotateSpeed * y * delta);
 			yaw(mRotateSpeed * x * delta);
 
+			if (mVerticalVelocity != 0) 
+			{
+				mVerticalVelocity -= 9.8f * delta;
+				mHeight += mVerticalVelocity * delta;
+
+				if (mHeight < mStandHeight)
+				{
+					mHeight = mStandHeight;
+					mVerticalVelocity = 0;
+				}
+			}
+			else
+			{
+				if (mCreeping) {
+					// decrease the height
+					if (mHeight - mCreepHeight > 0.001f) {
+						mHeight = mHeight - mCrouchSpeed * delta;
+					}
+					else
+					{
+						mHeight = mCreepHeight;
+					}
+				}
+				else
+				{
+					if (mHeight < mStandHeight - 0.001f) {
+						mHeight = mHeight + mCrouchSpeed * delta;
+					}
+					else
+					{
+						mHeight = mStandHeight;
+					}
+				}
+			}
+		}
+
+		mPosition.y = mHeight;
+
+		f32 terrainHeight = 0;
+		if (mSceneManager->getHeightOnTerrain(mPosition.x, mPosition.z, terrainHeight)) {
+			mPosition.y += terrainHeight;
 		}
 
 		ISceneNode::update(delta);
@@ -351,5 +409,29 @@ namespace gf
 			}
 		}
 	}
+
+	void CFpsCameraNode::creep()
+	{
+		if (mVerticalVelocity == 0) {
+			mCreeping = true;
+		}
+	}
+
+	void CFpsCameraNode::stand()
+	{
+		mCreeping = false;
+	}
+
+	void CFpsCameraNode::jump()
+	{
+		// if creeping now, standing up 'suddenly'
+		if (mCreeping) {
+			mCreeping = false;
+			mHeight = mStandHeight;
+		}
+
+		mVerticalVelocity = mJumpSpeed;
+	}
+
 }
 

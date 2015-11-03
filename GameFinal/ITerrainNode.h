@@ -23,6 +23,8 @@ namespace gf
 
 		virtual ITerrainMesh* getTerrainMesh() = 0;
 
+		virtual bool isInsideTerrainScope(f32 x, f32 z, bool localPivot = false) const = 0;
+
 		virtual f32 getHeight(f32 x, f32 z, bool localPivot = false) const = 0;
 	};
 }

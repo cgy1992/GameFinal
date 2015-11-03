@@ -190,6 +190,8 @@ namespace gf
 
 		ITerrainNode* node = new CTerrainNode(parent, this, mesh, material, position);
 
+		mTerrainNodes.push_back(node);
+
 		return node;
 	}
 
@@ -1153,6 +1155,26 @@ namespace gf
 		IMeshNode* quadNode = getQuadNode();
 		quadNode->setMaterial(material);
 		draw(quadNode);
+	}
+
+	bool CSceneManager::getHeightOnTerrain(f32 x, f32 z, f32& height) const
+	{
+		bool found = false;
+		for (auto it = mTerrainNodes.begin(); it != mTerrainNodes.end(); it++) {
+			ITerrainNode* terrain = *it;
+			if (terrain->isInsideTerrainScope(x, z)) {
+				if (!found)
+				{
+					found = true;
+					height = terrain->getHeight(x, z);
+				}
+				else
+				{
+					height = max(height, terrain->getHeight(x, z));
+				}
+			}
+		}
+		return found;
 	}
 
 }

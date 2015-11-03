@@ -468,7 +468,7 @@ namespace gf
 		return true;
 	}
 
-	bool CTerrainMesh::isInsideTerrainScope(f32 x, f32 z)
+	bool CTerrainMesh::isInsideTerrainScope(f32 x, f32 z) const
 	{
 
 		x = mTotalWidth * 0.5f + x;

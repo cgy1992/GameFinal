@@ -38,7 +38,7 @@ namespace gf
 
 		virtual bool intersectRay(const math::SRay& ray, XMFLOAT3& intersectPoint, float epsilon = 0.001f);
 
-		virtual bool isInsideTerrainScope(f32 x, f32 z);
+		virtual bool isInsideTerrainScope(f32 x, f32 z) const;
 
 		XMFLOAT2 getPatchHeightBounds(u32 patchRow, u32 patchCol) const;
 

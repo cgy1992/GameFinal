@@ -49,6 +49,8 @@ namespace gf
 			return mHeightMapTexture;
 		}
 
+		virtual bool isInsideTerrainScope(f32 x, f32 z) const = 0;
+
 		virtual f32 getHeight(f32 x, f32 z) const = 0;
 
 		virtual bool intersectRay(const math::SRay& ray, XMFLOAT3& intersectPoint, float epsilon = 0.001f) = 0;

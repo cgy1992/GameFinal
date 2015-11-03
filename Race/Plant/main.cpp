@@ -187,7 +187,7 @@ void buildGrassLand(ISceneManager* smgr)
 
 	std::string rawFileName("terrain-heightmap4.raw");
 	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", rawFileName,
-		10.0f, 0.3f, false, true, 1.0f);
+		3.0f, 0.1f, false, true, 1.0f);
 
 	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh);
 	terrainNode->setMaterialName("terrain/terrain_material");
