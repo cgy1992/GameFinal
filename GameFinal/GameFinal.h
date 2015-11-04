@@ -10,6 +10,7 @@
 #define GAMEFINAL_API __declspec(dllimport)
 #endif
 
+#include <Windows.h>
 #include "xnamath.h"
 #include "gfCompileConfig.h"
 #include "gfTypes.h"

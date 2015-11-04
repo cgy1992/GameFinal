@@ -61,6 +61,15 @@ namespace gf
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f));
 
+		virtual IMeshNode* addMeshNode(
+			ISimpleMesh* mesh,
+			const std::string& materialName,
+			ISceneNode* parent = nullptr,
+			bool bStatic = false,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f));
+
 		virtual IMeshNode* addModelMeshNode(
 			IModelMesh* mesh,
 			ISceneNode* parent = nullptr,
@@ -146,9 +155,17 @@ namespace gf
 			ISceneNode* parent = nullptr,
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0));
 
+		virtual ITerrainNode* addTerrainNode(
+			ITerrainMesh* mesh,
+			const std::string& materialName,
+			ISceneNode* parent = nullptr,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0));
+
 		virtual IOctreeManager*	getDefaultOctreeManager() { return mDefaultOctree; }
 
 		virtual void setSkyDome(ITextureCube* cubeTexture);
+
+		virtual void setSkyDome(const std::string& textureName);
 
 		virtual ILightNode* getLightNode(u32 id);
 

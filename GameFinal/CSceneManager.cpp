@@ -35,6 +35,9 @@ namespace gf
 		//get Video Driver object
 		mVideoDriver = device->getVideoDriver();
 
+		// get material manager
+		mMaterialManager = mVideoDriver->getMaterialManager();
+
 		//get Resource Factory
 		IResourceFactory* pResourceFactory = mVideoDriver->getResourceFactory();
 
@@ -110,6 +113,20 @@ namespace gf
 		parent->addChild(node);
 
 		return node;
+	}
+
+	IMeshNode* CSceneManager::addMeshNode(
+		ISimpleMesh* mesh,
+		const std::string& materialName,
+		ISceneNode* parent,
+		bool bStatic,
+		const XMFLOAT3& position,
+		const XMFLOAT3& rotation,
+		const XMFLOAT3& scale)
+	{
+		IMaterial* material = mMaterialManager->get(materialName);
+		return this->addMeshNode(mesh, materialName, parent, bStatic, 
+			position, rotation, scale);
 	}
 
 	IMeshNode* CSceneManager::addModelMeshNode(
@@ -193,6 +210,17 @@ namespace gf
 		mTerrainNodes.push_back(node);
 
 		return node;
+	}
+
+	
+	ITerrainNode* CSceneManager::addTerrainNode(
+		ITerrainMesh* mesh,
+		const std::string& materialName,
+		ISceneNode* parent,
+		const XMFLOAT3& position)
+	{
+		IMaterial* material = mMaterialManager->get(materialName);
+		return this->addTerrainNode(mesh, materialName, parent, position);
 	}
 
 	void CSceneManager::collectMeshNodeShaders(IMeshNode* node)
@@ -878,6 +906,14 @@ namespace gf
 		IOctreeManager* node = new COctreeManager(parent, this, width, height, depth, center, maxTreeHeight);
 
 		return node;
+	}
+
+	void CSceneManager::setSkyDome(const std::string& textureName)
+	{
+		ITextureManager* textureManager = mVideoDriver->getTextureManager();
+		ITextureCube* skyTexture = textureManager->getTextureCube(textureName);
+
+		setSkyDome(skyTexture);
 	}
 
 	void CSceneManager::setSkyDome(ITextureCube* cubeTexture)

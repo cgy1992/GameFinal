@@ -77,8 +77,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	IMeshNode* groundNode = smgr->addMeshNode(groundMesh, nullptr, nullptr, false);
 	groundNode->setMaterialName("ground_material");
 
-	ITextureCube* skyTexture = textureManager->loadCubeTexture("skybox1.dds");
-	smgr->setSkyDome(skyTexture);
+//	ITextureCube* skyTexture = textureManager->loadCubeTexture("skybox1.dds");
+	smgr->setSkyDome("skybox1.dds");
 
 	IInputDriver* inputDriver = IInputDriver::getInstance();
 	inputDriver->showCursor(false);

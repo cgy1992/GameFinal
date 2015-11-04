@@ -4,6 +4,7 @@
 #include "ITexture.h"
 #include "IPipeline.h"
 #include "SReferenceCounted.h"
+#include "IPipelineManager.h"
 
 #define MAX_TEXTURE_COUNT 8
 #define MAX_PIPELINE_COUNT 8
@@ -96,6 +97,30 @@ namespace gf
 				mPipelines[usage] = pipeline;
 				AddReferenceCounted(mPipelines[usage]);
 			}
+		}
+
+		void setPipeline(const std::string& name) 
+		{
+			IPipelineManager* mgr = IPipelineManager::getInstance();
+			IPipeline* pipeline = mgr->get(name);
+			if (pipeline)
+				setPipeline(pipeline);
+		}
+
+		void setPipeline(u32 index, const std::string& name)
+		{
+			IPipelineManager* mgr = IPipelineManager::getInstance();
+			IPipeline* pipeline = mgr->get(name);
+			if (pipeline)
+				setPipeline(index, pipeline);
+		}
+
+		void setPipeline(E_PIPELINE_USAGE usage, const std::string& name)
+		{
+			IPipelineManager* mgr = IPipelineManager::getInstance();
+			IPipeline* pipeline = mgr->get(name);
+			if (pipeline)
+				setPipeline(usage, pipeline);
 		}
 
 		~SMaterial()

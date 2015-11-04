@@ -1,0 +1,18 @@
+<pipelines>
+  <pipeline name="gf/geometry_dirlight">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="geometry_rendering.hlsl" main="vs_main">
+      </vertex-shader>
+      <pixel-shader file="geometry_rendering.hlsl" main="dir_light_ps_main">
+        <variable name="gDirLight" value="light" index="1"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+</pipelines>
+

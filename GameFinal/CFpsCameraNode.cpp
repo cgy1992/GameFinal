@@ -46,6 +46,9 @@ namespace gf
 		mActionMappings[EFCA_MOVE_RIGHT] = GVK_D;
 		mActionMappings[EFCA_JUMP] = GVK_SPACE;
 		mActionMappings[EFCA_CREEP] = GVK_LCTRL;
+
+		if (mMouse)
+			mMouse->showCursor(false);
 	}
 
 
@@ -351,6 +354,8 @@ namespace gf
 
 			int x, y, z;
 			mMouse->getMovement(x, y, z);
+
+			::SetCursorPos(0, 0);
 
 			pitch(mRotateSpeed * y * delta);
 			yaw(mRotateSpeed * x * delta);

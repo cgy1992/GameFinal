@@ -28,6 +28,8 @@ namespace gf
 	public:
 		ISceneManager(IDevice* device, const math::SAxisAlignedBox& aabb)
 			:ISceneNode(nullptr, this, false)
+			, mVideoDriver(nullptr)
+			, mMaterialManager(nullptr)
 			, mDevice(device)
 			, mAabb(aabb)
 		{
@@ -64,6 +66,15 @@ namespace gf
 		virtual IMeshNode* addMeshNode(
 			ISimpleMesh* mesh,
 			IMaterial* material,
+			ISceneNode* parent = nullptr,
+			bool bStatic = false,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
+			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f)) = 0;
+
+		virtual IMeshNode* addMeshNode(
+			ISimpleMesh* mesh,
+			const std::string& materialName,
 			ISceneNode* parent = nullptr,
 			bool bStatic = false,
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
@@ -109,7 +120,14 @@ namespace gf
 			ISceneNode* parent = nullptr,
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0)) = 0;
 
+
+		virtual ITerrainNode* addTerrainNode(
+			ITerrainMesh* mesh,
+			const std::string& materialName,
+			ISceneNode* parent = nullptr,
+			const XMFLOAT3& position = XMFLOAT3(0, 0, 0)) = 0;
 		
+
 		virtual ILightNode* addDirectionalLight(u32 id,
 			ISceneNode* parent,
 			const XMFLOAT3& direction) = 0;
@@ -154,6 +172,8 @@ namespace gf
 			f32 aspectRatio = -1.0f) = 0;
 
 		virtual void setSkyDome(ITextureCube* cubeTexture) = 0;
+
+		virtual void setSkyDome(const std::string& textureName) = 0;
 
 		virtual ILightNode* getLightNode(u32 id) = 0;
 
@@ -249,6 +269,7 @@ namespace gf
 	protected:
 		IDevice*				mDevice;
 		IVideoDriver*			mVideoDriver;
+		IMaterialManager*		mMaterialManager;
 		math::SAxisAlignedBox	mAabb;
 
 
