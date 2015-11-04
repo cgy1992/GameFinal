@@ -339,7 +339,7 @@ namespace gf
 			// jump
 			key = mActionMappings[EFCA_JUMP];
 			if (key != GVK_UNDEFINED && mKeyboard->keyDown(key)) {
-				GF_PRINT_CONSOLE_INFO("jump!!!!!!!!!!!!!!!!!!!");
+				//GF_PRINT_CONSOLE_INFO("jump!!!!!!!!!!!!!!!!!!!");
 				jump();
 			}
 
