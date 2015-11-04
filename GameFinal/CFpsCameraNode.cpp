@@ -355,8 +355,15 @@ namespace gf
 			int x, y, z;
 			mMouse->getMovement(x, y, z);
 
-			::SetCursorPos(0, 0);
 
+			// keep the cursor in a stationary position.
+			// get the midpoint inside the game window
+			IDevice* device = IDevice::getInstance();
+			u32 curorPosX = device->getClientWidth() / 2;
+			u32 curorPosY = device->getClientHeight() / 2;
+			device->clientToScreen(curorPosX, curorPosY);
+			::SetCursorPos(curorPosX, curorPosY);
+			
 			pitch(mRotateSpeed * y * delta);
 			yaw(mRotateSpeed * x * delta);
 

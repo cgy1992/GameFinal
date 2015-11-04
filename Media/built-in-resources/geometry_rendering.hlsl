@@ -52,7 +52,7 @@ float4 dir_light_ps_main(VertexOut pin) : SV_TARGET
 	float4 diffuse = gDirLight.Diffuse;
 	float4 specular = gDirLight.Specular;
 
-	PhoneShading(pin.PosW, -gDirLight.Direction.xyz, normal,
+	BlinnPhoneShading(pin.PosW, -gDirLight.Direction.xyz, normal,
 		diffuse, specular, GF_MTRL_SPECULAR.w);
 
 
