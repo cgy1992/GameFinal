@@ -125,7 +125,10 @@ namespace gf
 		const XMFLOAT3& scale)
 	{
 		IMaterial* material = mMaterialManager->get(materialName);
-		return this->addMeshNode(mesh, materialName, parent, bStatic, 
+		if (!material) {
+			GF_PRINT_CONSOLE_INFO("Material '%s' cound not be found.\n", materialName.c_str());
+		}
+		return this->addMeshNode(mesh, material, parent, bStatic, 
 			position, rotation, scale);
 	}
 
@@ -220,7 +223,11 @@ namespace gf
 		const XMFLOAT3& position)
 	{
 		IMaterial* material = mMaterialManager->get(materialName);
-		return this->addTerrainNode(mesh, materialName, parent, position);
+		if (!material) {
+			GF_PRINT_CONSOLE_INFO("Material '%s' cound not be found.\n", materialName.c_str());
+		}
+
+		return this->addTerrainNode(mesh, material, parent, position);
 	}
 
 	void CSceneManager::collectMeshNodeShaders(IMeshNode* node)

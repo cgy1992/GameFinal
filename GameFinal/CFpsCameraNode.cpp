@@ -436,6 +436,9 @@ namespace gf
 
 	void CFpsCameraNode::jump()
 	{
+		if (mVerticalVelocity != 0.0)
+			return;
+
 		// if creeping now, standing up 'suddenly'
 		if (mCreeping) {
 			mCreeping = false;

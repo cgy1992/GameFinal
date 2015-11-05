@@ -40,14 +40,15 @@ int main()
 	sphereMaterial.setPipeline("gf/geometry_dirlight");
 
 	ISimpleMesh* sphereMesh = meshManager->createSphereMesh("sphere", 1.0f, 100, 100);
-	IMeshNode* sphereNode = smgr->addMeshNode(sphereMesh, &sphereMaterial, nullptr, true, XMFLOAT3(-1.2f, 1.0f, 0));
+	IMeshNode* sphereNode = smgr->addMeshNode(sphereMesh, &sphereMaterial, nullptr, true, XMFLOAT3(0, 1.0f, 0));
 
 	// add directional light
-	ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(1.0f, -3.0f, -1.0f));
+	ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(1.0f, -1.0f, 1.0f));
 	light->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 
-	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
+	//ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
+	ICameraNode* camera = smgr->addCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
 
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 
@@ -57,14 +58,10 @@ int main()
 	const f32 color[] = { 0, 0, 0, 1.0f };
 	while (device->run()) {
 		
-		driver->beginScene(true, true, color);
-
 		float dt = timer->tick();
-
 		smgr->update(dt);
-
+		driver->beginScene(true, true, color);
 		smgr->drawAll();
-
 		driver->endScene();
 	}
 
