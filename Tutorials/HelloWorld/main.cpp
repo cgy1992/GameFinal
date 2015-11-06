@@ -55,13 +55,13 @@ int main()
 	ITimer* timer = device->getTimer();
 	timer->reset();
 
-	const f32 color[] = { 0, 0, 0, 1.0f };
+	const f32 color[] = { 1.0, 0, 0, 1.0f };
 	while (device->run()) {
 		
 		float dt = timer->tick();
 		smgr->update(dt);
 		driver->beginScene(true, true, color);
-		smgr->drawAll();
+		//smgr->drawAll();
 		driver->endScene();
 	}
 
