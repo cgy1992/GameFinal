@@ -69,6 +69,5 @@ int main()
 	device->drop();
 
 	return 0;
-
 }
 

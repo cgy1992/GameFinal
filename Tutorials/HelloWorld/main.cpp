@@ -5,7 +5,6 @@
 
 using namespace gf;
 
-
 int main()
 {
 	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600);
@@ -73,6 +72,5 @@ int main()
 	device->drop();
 
 	return 0;
-
 }
 

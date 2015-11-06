@@ -35,5 +35,4 @@
       <attribute name="specular" value="0.5f, 0.5f, 0.5f, 32.0f"/>
     </attributes>
   </material>
-
 </materials>
