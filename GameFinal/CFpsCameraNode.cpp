@@ -33,7 +33,7 @@ namespace gf
 
 		// set the default values 
 		mWalkSpeed = 4.0f;
-		mStrafeSpeed = 2.0f;
+		mStrafeSpeed = 4.0f;
 		mRotateSpeed = 0.5f;
 		mCrouchSpeed = 4.0f;
 		mVerticalVelocity = 0.0f;

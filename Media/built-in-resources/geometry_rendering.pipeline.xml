@@ -32,6 +32,28 @@
                  border-color="0.0f, 0.0f, 0.0f, 0.0f"/>
     </samplers>
   </pipeline>
-  
+
+  <pipeline name="gf/geometry_shadow_dirlight" prototype="gf/geometry_dirlight">
+    <shaders>
+      <vertex-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </vertex-shader>
+      <pixel-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+  <pipeline name="gf/geometry_texture_shadow_dirlight" prototype="gf/geometry_texture_dirlight">
+    <shaders>
+      <vertex-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </vertex-shader>
+      <pixel-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
 </pipelines>
 
