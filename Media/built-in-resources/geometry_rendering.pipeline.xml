@@ -14,5 +14,24 @@
       </pixel-shader>
     </shaders>
   </pipeline>
+
+  <pipeline name="gf/geometry_texture_dirlight" prototype="gf/geometry_dirlight">
+    <shaders>
+      <vertex-shader>
+        <macro name="TEXTURE_ON" value="1"/>
+      </vertex-shader>
+      <pixel-shader>
+        <macro name="TEXTURE_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="0.0f, 0.0f, 0.0f, 0.0f"/>
+    </samplers>
+  </pipeline>
+  
 </pipelines>
 

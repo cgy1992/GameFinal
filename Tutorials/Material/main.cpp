@@ -14,7 +14,7 @@ ISceneManager* setupScene(IDevice* device) {
 	IMeshManager* meshManager = IMeshManager::getInstance();
 
 	// set up ground.
-	ISimpleMesh* groundMesh = meshManager->createPlaneMesh("ground", 100.0f, 100.0f, 10, 10);
+	ISimpleMesh* groundMesh = meshManager->createPlaneMesh("ground", 100.0f, 100.0f, 10, 10, 50, 50);
 	IMeshNode* groundNode = smgr->addMeshNode(groundMesh, "ground_material", nullptr, true);
 
 	// create a sphere
