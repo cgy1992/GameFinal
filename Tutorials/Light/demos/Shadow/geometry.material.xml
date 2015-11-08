@@ -8,9 +8,8 @@
       <attribute name="shadow_softness" value="8.0f"/>
     </attributes>
     <pipelines>
-      <pipeline name="gf/geometry_shadow_pointlight"/>
+      <pipeline name="gf/geometry_shadow_dirlight"/>
       <pipeline name="gf/geometry_shadow_map" usage="shadow_map"/>
-      <pipeline name="gf/geometry_point_shadow_map" usage="point_shadow_map"/>
     </pipelines>
   </material>
     
@@ -24,7 +23,7 @@
       <texture name="floor.dds" index="0"></texture>
     </textures>
     <pipelines>
-      <pipeline name="gf/geometry_texture_shadow_pointlight"/>
+      <pipeline name="gf/geometry_texture_shadow_dirlight"/>
     </pipelines>
   </material>
 

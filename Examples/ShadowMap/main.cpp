@@ -74,9 +74,9 @@ int main()
 	sphereNode1->setMaterialName("sphere_material");
 	boxNode->setMaterialName("box_material");
 	teapot->setMaterialName("teapot_material");
-	sphereNode1->addShadow(1);
-	boxNode->addShadow(1);
-	teapot->addShadow(1);
+//	sphereNode1->addShadow(1);
+//	boxNode->addShadow(1);
+//	teapot->addShadow(1);
 	
 	sphereNode1->addShadow(2);
 	boxNode->addShadow(2);
@@ -129,14 +129,13 @@ int main()
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		u32 ms = timer->tick();
-		float dt = ms * 0.001f;
+		f32 dt = timer->tick();
 
 		updateCamera(camera, dt);
 		updateLightDirection(dt, light);
 		//updateCarPosition(dt, carNode, camera);
 
-		smgr->update(ms);
+		smgr->update(dt);
 
 		smgr->drawAll();
 

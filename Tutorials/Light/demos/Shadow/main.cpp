@@ -28,13 +28,13 @@ ISceneManager* setupScene(IDevice* device) {
 	IMeshNode* teapot = smgr->addModelMeshNode(teapotMesh, nullptr, true, XMFLOAT3(1.2f, 0, -1.0f));
 	teapot->setMaterialName("teapot_material");
 
-	// add point light
-	ILightNode* light = smgr->addPointLight(1, nullptr, false, XMFLOAT3(0, 4.0f, 0), 100);
+	// add directional light
+	ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(5.0f, -5.0f, 2.0f));
 	light->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	light->setAttenuation(1.0f, 0.05f, 0);
 	light->enableShadow(true);
 
+	//groundNode->addShadow(1);
 	sphereNode->addShadow(1);
 	boxNode->addShadow(1);
 	teapot->addShadow(1);
@@ -44,6 +44,7 @@ ISceneManager* setupScene(IDevice* device) {
 		XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
 	camera->setNearZ(1.0f);
 	camera->setFarZ(1000.0f);
+	camera->setShadowRange(100.0f);
 
 	// set ambient in the environment.
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
@@ -62,8 +63,6 @@ int main()
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
 
-	IInputDriver* input = device->getInputDriver();
-
 	ISceneManager* smgr = setupScene(device);
 
 	ITimer* timer = device->getTimer();
@@ -72,9 +71,6 @@ int main()
 	const f32 color[] = { 0, 0, 0, 1.0f };
 	while (device->run()) {
 		float dt = timer->tick();
-		if (input->keyDown(GVK_ESCAPE))
-			break;
-
 		smgr->update(dt);
 		driver->beginScene(true, true, color);
 		smgr->drawAll();

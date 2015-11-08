@@ -10,6 +10,10 @@
       <vertex-shader file="geometry_rendering.hlsl" main="shadow_vs_main">
       </vertex-shader>
     </shaders>
+    <render-states>
+        <render-state name="depth_bias" value="100000"/>
+        <render-state name="slope_scaled_depth_bias" value="1.0"/>
+    </render-states>
   </pipeline>
   
   <pipeline name="gf/geometry_dirlight">
@@ -67,6 +71,78 @@
       </pixel-shader>
     </shaders>
   </pipeline>
+  
+  <pipeline name="gf/geometry_pointlight">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="geometry_rendering.hlsl" main="vs_main">
+      </vertex-shader>
+      <pixel-shader file="geometry_rendering.hlsl" main="point_light_ps_main">
+        <variable name="gPointLight" value="light" index="1"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+  
+    <pipeline name="gf/geometry_texture_pointlight" prototype="gf/geometry_pointlight">
+    <shaders>
+      <vertex-shader>
+        <macro name="TEXTURE_ON" value="1"/>
+      </vertex-shader>
+      <pixel-shader>
+        <macro name="TEXTURE_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="0.0f, 0.0f, 0.0f, 0.0f"/>
+    </samplers>
+  </pipeline>
+
+  <pipeline name="gf/geometry_shadow_pointlight" prototype="gf/geometry_pointlight">
+    <shaders>
+      <vertex-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </vertex-shader>
+      <pixel-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+  <pipeline name="gf/geometry_texture_shadow_pointlight" prototype="gf/geometry_texture_pointlight">
+    <shaders>
+      <vertex-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </vertex-shader>
+      <pixel-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
+  <pipeline name="gf/geometry_point_shadow_map">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="geometry_rendering.hlsl" main="point_shadow_vs_main">
+      </vertex-shader>
+      <pixel-shader file="geometry_rendering.hlsl" main="point_shadow_ps_main">
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+
 
 </pipelines>
 
