@@ -8,6 +8,7 @@ RWTexture2D<float4> gOutputTexture;
 cbuffer gf_ds_buffer
 {
 	uint   gPointLightsNum;
+	uint   gDirLightsNum;
 	float4 gTilesNum;
 };
 
@@ -139,6 +140,8 @@ void cs_main(int3 dispatchThreadID : SV_DispatchThreadID,
 	float3 lightDir;
 	float4 Color = GF_AMBIENT * ambientMtrl;
 	
+
+	// point lights
 	for(int i = 0; i < visiblePointLightsNum; i++)
 	{
 		uint lightIndex = visiblePointLights[i];
@@ -146,7 +149,7 @@ void cs_main(int3 dispatchThreadID : SV_DispatchThreadID,
 		if(ComputeIrradianceOfPointLight(PosW.xyz, pointLight, lightDir, diffuse, specular))
 		{
 			//BlinnPhoneShading(PosW.xyz, lightDir, normal, diffuse, specular, pointLight.Specular.w);
-			PhoneShading(PosW, lightDir, normal, diffuse, specular, pointLight.Specular.w);
+			PhoneShading(PosW, lightDir, normal, diffuse, specular, specularMtrl.w * 255.0f);
 
 			diffuseSum += diffuse;
 			specularSum += specular;
@@ -154,14 +157,10 @@ void cs_main(int3 dispatchThreadID : SV_DispatchThreadID,
 	}
 
 	Color = Color + diffuseSum * diffuseMtrl + specularSum * specularMtrl;
-	float k = (float)visiblePointLightsNum / 500;
+	float k = (float)visiblePointLightsNum / 1;
 	float4 testColor = float4(k, 0, 0, 0);
 	
 	gOutputTexture[dispatchThreadID.xy] = Color;
-	//gOutputTexture[dispatchThreadID.xy] = testColor;
-	//gOutputTexture[dispatchThreadID.xy] = float4(RegionH.ww, 0,0);
-	//gOutputTexture[dispatchThreadID.xy] = float4(posH.z, 0, 0, 0);
-	//gOutputTexture[dispatchThreadID.xy] = float4(0,0,0,0);
 }
 
 
@@ -178,4 +177,3 @@ float4 ps_main(VertexOut pin) : SV_TARGET
 {
 	return GF_TEXTURE.Sample(gSamplerState, pin.Tex);
 }
-

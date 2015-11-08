@@ -143,6 +143,38 @@
     </shaders>
   </pipeline>
 
+  <pipeline name="gf/geometry_defer">
+      <input-layout>
+        <element semantic="POSITION" format="float3"></element>
+        <element semantic="NORMAL" format="float3"></element>
+        <element semantic="TANGENT" format="float3"></element>
+        <element semantic="TEXCOORD" format="float2"></element>
+      </input-layout>
+      <shaders>
+        <vertex-shader file="geometry_rendering.hlsl" main="vs_main">
+        </vertex-shader>
+        <pixel-shader file="geometry_rendering.hlsl" main="defer_ps_main">
+        </pixel-shader>
+      </shaders>
+   </pipeline>
+   
+  <pipeline name="gf/geometry_texture_defer" prototype="gf/geometry_defer">
+    <shaders>
+      <vertex-shader>
+        <macro name="TEXTURE_ON" value="1"/>
+      </vertex-shader>
+      <pixel-shader>
+        <macro name="TEXTURE_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="0.0f, 0.0f, 0.0f, 0.0f"/>
+    </samplers>
+   </pipeline>
 
 </pipelines>
 

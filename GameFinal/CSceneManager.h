@@ -17,10 +17,12 @@ namespace gf
 		{
 			std::vector<ILightNode*>	PointLights;
 			std::vector<ILightNode*>	SpotLights;
+			std::vector<ILightNode*>	DirLights;
 			void clear()
 			{
 				PointLights.clear();
 				SpotLights.clear();
+				DirLights.clear();
 			}
 		};
 

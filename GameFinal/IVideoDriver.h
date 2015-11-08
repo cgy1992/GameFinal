@@ -79,7 +79,7 @@ namespace gf
 			, mMeshManager(nullptr)
 			, mDeferredShading(false)
 			, mDeferredAntiAliasing(false)
-			, mDeferredShadingAlgorithm(EDSA_NORMAL_DEFERRED_SHADING)
+			, mDeferredShadingAlgorithm(EDSA_CS_TILE_BASED_DEFERRED_SHADING)
 			, mBackBufferWidth(0)
 			, mBackBufferHeight(0)
 		{

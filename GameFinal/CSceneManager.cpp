@@ -592,17 +592,20 @@ namespace gf
 		else if (deferredShadingAlgorithm == EDSA_CS_TILE_BASED_DEFERRED_SHADING)
 		{
 			const u32 maxPointsLightNum = 3000;
+			const u32 maxDirLightNum = 100;
 			static SPointLight pointLightsData[maxPointsLightNum];
+			static SDirectionalLight dirLightsData[maxDirLightNum];
 
 			u32 screenWidth = IDevice::getInstance()->getClientWidth();
 			u32 screenHeight = IDevice::getInstance()->getClientHeight();
-			const u32 ColTileNum = screenWidth / 16;
-			const u32 RowTileNum = screenHeight / 16;
+			const u32 ColTileNum = ceil(((float)screenWidth / 16));
+			const u32 RowTileNum = ceil(((float)screenHeight / 16));
 
 			ITextureManager* textureManager = ITextureManager::getInstance();
 
 			std::string outputTextureName("cs_tile_based_deferred_shading_output");
 			std::string pointLightsBufferName("cs_ds_point_lights_buffer");
+			std::string dirLightsBufferName("cs_ds_dir_lights_buffer");
 
 			ITexture* outputTexture = textureManager->get(outputTextureName, false);
 			if (!outputTexture)
@@ -620,7 +623,13 @@ namespace gf
 					ETBT_SHADER_RESOURCE | ETBT_CPU_ACCESS_WRITE, EGF_UNKNOWN, sizeof(SPointLight), nullptr);
 			}
 			
-
+			// create dir lights buffer in Compute Shader.
+			IBuffer* dirLightsBuffer = textureManager->getBuffer(dirLightsBufferName);
+			if (!dirLightsBuffer)
+			{
+				dirLightsBuffer = textureManager->createBuffer(dirLightsBufferName, maxDirLightNum,
+					ETBT_SHADER_RESOURCE | ETBT_CPU_ACCESS_WRITE, EGF_UNKNOWN, sizeof(SDirectionalLight), nullptr);
+			}
 			
 			IShader* shader = getTileBasedDeferredShadingCS();
 
@@ -643,23 +652,45 @@ namespace gf
 			f64 start = timer->getMilliseconds();
 			mDefaultOctree->getLightsInFrustum(frustum, mDeferredShadingLights.PointLights);
 			
+			/*
+			for (auto it = mDirectionalLights.begin(); it != mDirectionalLights.end(); it++) {
+				ILightNode* light = *it;
+				if (light->isVisible())
+					mDeferredShadingLights.DirLights.push_back(light);
+			}
+			*/
 
-			u32 lightCount = mDeferredShadingLights.PointLights.size();
+			u32 pointLightCount = mDeferredShadingLights.PointLights.size();
+			//u32 dirLightCount = mDeferredShadingLights.DirLights.size();
 
-			if (lightCount > 0)
+			if (pointLightCount > 0)
 			{
-				for (u32 i = 0; i < lightCount; i++)
+				for (u32 i = 0; i < pointLightCount; i++)
 					mDeferredShadingLights.PointLights[i]->getLightData(&pointLightsData[i]);
 
 				STextureData texData;
 				pointLightsBuffer->lock(ETLT_WRITE_DISCARD, &texData);
-				memcpy(texData.Data, pointLightsData, lightCount * sizeof(SPointLight));
+				memcpy(texData.Data, pointLightsData, pointLightCount * sizeof(SPointLight));
 				pointLightsBuffer->unlock();
 			}
-			
+
+			/*
+			if (dirLightCount > 0)
+			{
+				for (u32 i = 0; i < dirLightCount; i++)
+					mDeferredShadingLights.DirLights[i]->getLightData(&dirLightsData[i]);
+
+				STextureData texData;
+				dirLightsBuffer->lock(ETLT_WRITE_DISCARD, &texData);
+				memcpy(texData.Data, dirLightsData, dirLightCount * sizeof(SDirectionalLight));
+				dirLightsBuffer->unlock();
+			}
+			*/
 
 			shader->setTexture("gPointLights", pointLightsBuffer);
-			shader->setUint("gPointLightsNum", lightCount);
+			shader->setUint("gPointLightsNum", pointLightCount);
+			//shader->setTexture("gDirLights", dirLightsBuffer);
+			//shader->setUint("gDirLightsNum", dirLightCount);
 			XMFLOAT4 tileNums;
 			tileNums.x = ColTileNum;
 			tileNums.y = RowTileNum;

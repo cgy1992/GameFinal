@@ -68,7 +68,7 @@ float4 dir_light_ps_main(VertexOut pin) : SV_TARGET
 	float4 texColor = float4(1.0, 1.0, 1.0, 1.0);
 #endif
 
-	BlinnPhoneShading(pin.PosW, -gDirLight.Direction.xyz, normal,
+	PhoneShading(pin.PosW, -gDirLight.Direction.xyz, normal,
 		diffuse, specular, GF_MTRL_SPECULAR.w);
 
 
@@ -134,3 +134,26 @@ float4 point_shadow_ps_main(PointVertexOut pin) : SV_TARGET
 
 	return float4(distSqrt * 1.2f, 0, 0, 1.0f);
 }
+
+// FOR deferred shading
+SReturnGBuffers defer_ps_main(VertexOut pin)
+{
+	float3 normal = normalize(pin.Normal);
+
+#ifdef TEXTURE_ON
+	float4 texColor = GF_TEXTURE.Sample(gSampleState, pin.Tex);
+#else
+	float4 texColor = float4(1.0, 1.0, 1.0, 1.0);
+#endif
+
+	normal = normal * 0.5f + 0.5f;
+	SReturnGBuffers pout;
+	pout.GBuffer0 = float4(normal, 0);
+	pout.GBuffer1 = GF_MTRL_DIFFUSE * texColor;
+	pout.GBuffer2 = GF_MTRL_SPECULAR;
+	pout.GBuffer2.w = GF_MTRL_SPECULAR.w / 255.0f;
+	pout.GBuffer3 = GF_MTRL_AMBIENT;
+
+	return pout;
+}
+

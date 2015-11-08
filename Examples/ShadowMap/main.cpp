@@ -105,9 +105,9 @@ int main()
 	light2->enableShadow(true);
 	light2->setShadowMapSize(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
-	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
+	IFpsCameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
 	camera->setFarZ(3000.0f);
-	
+	camera->enableAutoUpdate(false);
 	/*
 	camera->setPosition(XMFLOAT3(unit_dir.x * lightDistance, unit_dir.y * lightDistance, unit_dir.z * lightDistance));
 	camera->look(XMFLOAT3(unit_dir.x, unit_dir.y, unit_dir.z));

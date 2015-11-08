@@ -41,7 +41,7 @@ bool GameController::Init()
 	settings.MultiSamplingQuality = 0;
 
 	mDevice = gf::createDevice(EDT_DIRECT3D11, mScreenWidth, mScreenHeight, 
-		EWS_FULLRESOLUTION | EWS_FULLSCREEN, false, settings);
+		EWS_NONE, false, settings);
 	mVideoDriver = mDevice->getVideoDriver();
 
 	math::SAxisAlignedBox aabb;
