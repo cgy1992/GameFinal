@@ -361,6 +361,14 @@ namespace gf
 										emissive = material->getAttribute("emissive");
 										shader->setAttribute(var.VariableName, emissive, ignoreIfAlreadyUpdate);
 		}
+		case ESAVT_MATERIAL_SHADOW_SOFTNESS:
+		{
+											   f32 softness = 1.0f;
+											   if (material->hasAttribute("shadow_softness")) {
+												   softness = material->getFloat("shadow_softness");
+											   }
+											   shader->setFloat(var.VariableName, softness, ignoreIfAlreadyUpdate);
+		}
 			break;
 		case ESAVT_MATERIAL_ATTRIBUTE:
 		{

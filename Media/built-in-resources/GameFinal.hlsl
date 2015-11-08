@@ -130,6 +130,7 @@ cbuffer gf_cb_material
 	float4 GF_MTRL_DIFFUSE;
 	float4 GF_MTRL_SPECULAR;
 	float4 GF_MTRL_EMISSIVE;
+	float  GF_SHADOW_SOFTNESS;
 };
 
 cbuffer gf_cb_screen_size

@@ -7,6 +7,11 @@
 
 namespace gf
 {
+	enum E_CAMERA_TYPE
+	{
+		ECAT_COMMON_CAMERA,
+		ECAT_FPS_CAMERA,
+	};
 
 	class ICameraNode : public ISceneNode
 	{
@@ -244,6 +249,9 @@ namespace gf
 		{
 			return ESNT_CAMERA;
 		}
+
+		virtual E_CAMERA_TYPE getCameraType() const = 0;
+
 
 		XMFLOAT4X4 getRotationMatrix()
 		{

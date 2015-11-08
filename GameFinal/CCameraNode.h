@@ -37,6 +37,11 @@ namespace gf
 			XMStoreFloat3(&mRight, right);
 		}
 
+		virtual E_CAMERA_TYPE getCameraType() const
+		{
+			return ECAT_COMMON_CAMERA;
+		}
+
 		virtual void render(E_PIPELINE_USAGE usage)
 		{
 			

@@ -214,6 +214,20 @@ namespace gf
 			return XMFLOAT4(0, 0, 0, 0);
 		}
 
+		f32 getFloat(const std::string& name) const 
+		{
+			auto it = mAttributes.find(name);
+			if (it != mAttributes.end())
+				return it->second.x;
+
+			return 0.f;
+		}
+
+		bool hasAttribute(const std::string& name) const
+		{
+			return mAttributes.find(name) != mAttributes.end();
+		}
+
 		bool getAttribute(const std::string& name, XMFLOAT4& val) const
 		{
 			auto it = mAttributes.find(name);

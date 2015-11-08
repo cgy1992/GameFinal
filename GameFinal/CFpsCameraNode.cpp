@@ -18,7 +18,7 @@ namespace gf
 		:IFpsCameraNode(parent, smgr, position, aspectRatio, 
 		fov, nearZ, farZ, maxUpAngle, maxDownAngle, bPerspectiveProj)
 	{
-		mPosition.y = mStandHeight;
+		//mPosition.y = mStandHeight;
 		mHeight = mStandHeight;
 
 		XMVECTOR worldup = XMLoadFloat3(&up);
@@ -309,6 +309,15 @@ namespace gf
 
 	void CFpsCameraNode::update(f32 delta /*= 0*/)
 	{
+		ISceneNode::update(delta);
+	}
+
+	// beforeUpdate is called before all other nodes' update.
+	void CFpsCameraNode::beforeUpdate(f32 delta)
+	{
+		if (!mAutoUpdate)
+			return;
+
 		// if this is active camera
 		bool bActive = (mSceneManager->getActiveCameraNode() == this);
 
@@ -362,12 +371,12 @@ namespace gf
 			u32 curorPosX = device->getClientWidth() / 2;
 			u32 curorPosY = device->getClientHeight() / 2;
 			device->clientToScreen(curorPosX, curorPosY);
-			::SetCursorPos(curorPosX, curorPosY);
-			
+			//::SetCursorPos(curorPosX, curorPosY);
+
 			pitch(mRotateSpeed * y * delta);
 			yaw(mRotateSpeed * x * delta);
 
-			if (mVerticalVelocity != 0) 
+			if (mVerticalVelocity != 0)
 			{
 				mVerticalVelocity -= 9.8f * delta;
 				mHeight += mVerticalVelocity * delta;
@@ -410,16 +419,7 @@ namespace gf
 			mPosition.y += terrainHeight;
 		}
 
-		ISceneNode::update(delta);
-
-		if (bActive) {
-			// the sky dome should be moved with camera.
-			IMeshNode* skydome = mSceneManager->getSkyNode();
-			if (skydome) {
-				XMFLOAT3 pos = getPosition();
-				skydome->setPosition(pos.x, pos.y, pos.z);
-			}
-		}
+		//updateAbsoluteTransformation();
 	}
 
 	void CFpsCameraNode::creep()

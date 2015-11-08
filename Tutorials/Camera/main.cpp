@@ -37,13 +37,20 @@ ISceneManager* setupScene(IDevice* device) {
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 
 	// create a fps camera node
-	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
+	IFpsCameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
 		XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
 
 	camera->setFovAngle(3.1415f / 3);  // set field-of-view to PI/3 (60 degrees) 
 	camera->setNearZ(1.0f);  // set the distance to the near clipping plane
 	camera->setFarZ(300.0f); // set the distance to the far clipping plane
 
+	/*
+	// you can change the key-action mapping in this way:
+	camera->setActionMapping(EFCA_MOVE_LEFT, GVK_LEFT);
+	camera->setActionMapping(EFCA_MOVE_RIGHT, GVK_RIGHT);
+	camera->setActionMapping(EFCA_MOVE_FORWARD, GVK_UP);
+	camera->setActionMapping(EFCA_MOVE_BACK, GVK_DOWN);
+	*/
 	// set ambient in the environment.
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 

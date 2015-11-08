@@ -34,6 +34,7 @@ namespace gf
 			, mStandHeight(1.8f)
 			, mCreepHeight(0.9f)
 			, mCreeping(false)
+			, mAutoUpdate(true)
 		{
 			
 		}
@@ -42,6 +43,8 @@ namespace gf
 		{
 			return ESNT_FPS_CAMERA;
 		}
+
+		void enableAutoUpdate(bool autoUpdate) { mAutoUpdate = autoUpdate; }
 
 		void setWalkSpeed(f32 speed) { mWalkSpeed = speed; }
 
@@ -99,8 +102,11 @@ namespace gf
 		f32								mHeight;
 		u32								mActionMappings[EFCA_COUNT];
 
+		bool							mAutoUpdate;
 		bool							mCreeping;
+		
 		f32								mVerticalVelocity;
+		
 	};
 
 }

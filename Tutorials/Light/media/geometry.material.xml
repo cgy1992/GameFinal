@@ -5,9 +5,11 @@
       <attribute name="diffuse" value="1.0f, 0.9f, 0.17f, 1.0f"/>
       <attribute name="specular" value="0.5f, 0.5f, 0.5f, 32.0f"/>
       <attribute name="emissive" value="0.0f, 0.0f, 0.0f, 1.0f"/>
+      <attribute name="shadow_softness" value="8.0f"/>
     </attributes>
     <pipelines>
       <pipeline name="gf/geometry_shadow_dirlight"/>
+      <pipeline name="gf/geometry_shadow_map" usage="shadow_map"/>
     </pipelines>
   </material>
     

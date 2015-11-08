@@ -38,7 +38,7 @@ VertexOut vs_main(VertexIn vin)
 {
 	VertexOut vout;
 	float4 PosW = mul(float4(vin.PosL, 1.0f), WORLD_TRANSROM);
-	vout.Normal = mul(float4(vin.Normal, 0), GF_INV_TRAN_WORLD).xyz;
+	vout.Normal = mul(float4(vin.Normal, 0), WORLD_TRANSROM).xyz;
 	vout.PosH = mul(PosW, GF_VIEW_PROJ);
 	vout.PosW = PosW.xyz;
 #ifdef TEXTURE_ON
@@ -72,7 +72,7 @@ float4 dir_light_ps_main(VertexOut pin) : SV_TARGET
 
 
 #ifdef SHADOW_ON
-	float shadowFactor = CalcShadowFactor(1, 1.0f);
+	float shadowFactor = CalcShadowFactor(1, GF_SHADOW_SOFTNESS);
 	
 	return GF_AMBIENT * GF_MTRL_AMBIENT + GF_MTRL_EMISSIVE + 
 		diffuse * GF_MTRL_DIFFUSE * texColor * shadowFactor + specular * GF_MTRL_SPECULAR * shadowFactor;

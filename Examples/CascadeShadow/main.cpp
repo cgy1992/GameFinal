@@ -144,14 +144,14 @@ int main()
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
 
-		u32 ms = timer->tick();
-		float dt = ms * 0.001f;
+		f32 dt = timer->tick();
+		//float dt = ms * 0.001f;
 
 		updateCamera(camera, dt);
 		//updateLightDirection(dt, light);
 		//updateCarPosition(dt, carNode, camera);
 
-		smgr->update(ms);
+		smgr->update(dt);
 
 		smgr->drawAll();
 

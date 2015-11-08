@@ -127,6 +127,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Light", "Tutorials\Light\Li
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Camera", "Tutorials\Camera\Camera.vcxproj", "{9EC569BD-39FE-432B-B55D-098153404608}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F764B441-35DB-4ADD-859F-D5DE5B6727F2} = {F764B441-35DB-4ADD-859F-D5DE5B6727F2}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

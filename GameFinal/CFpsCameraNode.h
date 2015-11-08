@@ -22,6 +22,11 @@ namespace gf
 			f32 maxDownAngle,
 			bool bPerspectiveProj);
 
+		virtual E_CAMERA_TYPE getCameraType() const
+		{
+			return ECAT_FPS_CAMERA;
+		}
+
 		virtual void lookAt(const XMFLOAT3& lookat);
 
 		virtual void lookAt(const XMFLOAT3& lookat, const XMFLOAT3& up);
@@ -64,6 +69,9 @@ namespace gf
 		{
 			return XMLoadFloat4x4(&mAbsoluteTransformation);
 		}
+
+		// beforeUpdate is called before all other nodes' update.
+		void beforeUpdate(f32 delta);
 
 		virtual void updateAbsoluteTransformation();
 

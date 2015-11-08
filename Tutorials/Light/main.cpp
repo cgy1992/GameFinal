@@ -34,14 +34,17 @@ ISceneManager* setupScene(IDevice* device) {
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 	light->enableShadow(true);
 
-	groundNode->addShadow(1);
+	//groundNode->addShadow(1);
 	sphereNode->addShadow(1);
 	boxNode->addShadow(1);
 	teapot->addShadow(1);
 
-	// create a camera node
-	ICameraNode* camera = smgr->addCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
-	camera->setShadowRange(300.0f);
+	// create a fps camera node
+	IFpsCameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
+		XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
+	camera->setNearZ(1.0f);
+	camera->setFarZ(1000.0f);
+	camera->setShadowRange(100.0f);
 
 	// set ambient in the environment.
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
@@ -51,7 +54,11 @@ ISceneManager* setupScene(IDevice* device) {
 
 int main()
 {
-	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600);
+	SDeviceContextSettings settings;
+	settings.MultiSamplingCount = 4;
+	settings.MultiSamplingQuality = 32;
+
+	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");

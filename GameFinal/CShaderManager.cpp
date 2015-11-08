@@ -44,6 +44,7 @@ namespace gf
 		mBuiltInVariables["GF_MTRL_DIFFUSE"] = SShaderVariableAttribute(ESAVT_MATERIAL_DIFFUSE, EUF_PER_OBJECT);
 		mBuiltInVariables["GF_MTRL_SPECULAR"] = SShaderVariableAttribute(ESAVT_MATERIAL_SPECULAR, EUF_PER_OBJECT);
 		mBuiltInVariables["GF_MTRL_EMISSIVE"] = SShaderVariableAttribute(ESAVT_MATERIAL_EMISSIVE, EUF_PER_OBJECT);
+		mBuiltInVariables["GF_SHADOW_SOFTNESS"] = SShaderVariableAttribute(ESAVT_MATERIAL_SHADOW_SOFTNESS, EUF_PER_OBJECT);
 
 		mBuiltInVariables["GF_SCREEN_SIZE"] = SShaderVariableAttribute(ESAVT_SCREEN_SIZE, EUF_PER_OBJECT);
 

@@ -324,18 +324,18 @@ namespace gf
 
 		ITextureManager::getInstance()->updateTemporaryTextures(delta);
 		
-		// update skydome position
-		/*
-		if (mSkyDomeNode)
-		{
-			ICameraNode* camera = getActiveCameraNode();
-			if (camera)
-			{
-				XMFLOAT3 pos = camera->getPosition();
-				mSkyDomeNode->setPosition(pos.x, pos.y, pos.z);
-			}
+		ICameraNode* camera = getActiveCameraNode();
+		if (camera && camera->getCameraType() == ECAT_FPS_CAMERA) {
+			CFpsCameraNode* fpsCamera = dynamic_cast<CFpsCameraNode*>(camera);
+			fpsCamera->beforeUpdate(delta);
 		}
-		*/
+
+		// update skydome position
+		if (mSkyDomeNode && camera)
+		{
+			XMFLOAT3 pos = camera->getPosition();
+			mSkyDomeNode->setPosition(pos.x, pos.y, pos.z);
+		}
 
 		// remove all dynamic nodes from octree.
 		mDefaultOctree->update(delta);
