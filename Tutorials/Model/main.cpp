@@ -4,6 +4,7 @@
 #pragma comment(lib, "winmm.lib")
 
 using namespace gf;
+IAnimatedMeshNode* animNode;
 
 ISceneManager* setupScene(IDevice* device) {
 
@@ -20,6 +21,10 @@ ISceneManager* setupScene(IDevice* device) {
 	IModelMesh* apartmentMesh = meshManager->getModelMesh("apartmentB.mesh");
 	IMeshNode* apartmentNode = smgr->addModelMeshNode(apartmentMesh, nullptr, true, XMFLOAT3(0, 0, 0));
 
+	IAnimatedMesh* animMesh = meshManager->getAnimatedMesh("lxq.mesh");
+	animNode = smgr->addAnimatedMeshNode(animMesh, nullptr, false, XMFLOAT3(0, 0, -10.0f),
+		XMFLOAT3(0, 0, 0), XMFLOAT3(0.1f, 0.1f, 0.1f));
+
 	// add directional light
 	ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(5.0f, -5.0f, 2.0f));
 	light->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
@@ -29,7 +34,7 @@ ISceneManager* setupScene(IDevice* device) {
 	apartmentNode->addShadow(1);
 
 	// create a camera node
-	ICameraNode* camera = smgr->addCameraNode(1, nullptr, XMFLOAT3(15.0f, 20.0f, -25.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
+	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -25.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
 	camera->setShadowRange(100.0f);
 
 	// set ambient in the environment.
@@ -60,6 +65,8 @@ int main()
 		float dt = timer->tick();
 		if (input->keyDown(GVK_ESCAPE))
 			break;
+		
+		animNode->addTime(dt * 3000.0f);
 		smgr->update(dt);
 		driver->beginScene(true, true, color);
 		smgr->drawAll();

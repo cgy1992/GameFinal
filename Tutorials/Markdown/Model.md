@@ -9,7 +9,7 @@ Open your command window and go to this folder, then press the following command
 	
 	MeshConverter.exe "apartmentB.obj" -f "p|n|tex"
 
-The string "apartmentB.obj" is the name of the model file. The string "p|n|tex" following "-f" specifies the vertex's format. "p|n|tex" indicates that each vertex includes position(p), normal vector(n) and texture coordinates(tex). If you want to add another tangent vector to each vertex, you could set the format as "p|n|t|tex".
+The string "apartmentB.obj" is the name of the model file. The string "p|n|tex" following "-f" specifies the vertex's format. "p|n|tex" indicates that each vertex includes position(p), normal vector(n) and texture coordinates(tex). If you want to add another tangent vector to each vertex, you could set the format as "p|n|t|tex".Except for "obj" file, MeshGenerate also supports 3ds, dae, md2, md3, ms3d, X file and so on.
 
 If the program doesn't show any error message, it means you converted the file successfully:
 
@@ -88,6 +88,28 @@ Open the "apartmentB.material.xml", then change the pipelines of "apartmentB/mat
 Both `gf/model_shadow_dirlight` and `gf/model_shadow_map` are built in pipelines that render a model under a directional light with shadow. Besides, we could change the `attributes` here: in this demo, we change the "ambient" to (0.3, 0.3, 0.3, 1), and set its emissive value to all zeros.
  
 Then run the program, we have found that the building is lighted by the directional light now:
+
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/05-03.png)
+
+## Skeleton Animation ##
+
+We can create meshes that contain skeleton animation in the same way as static mesh. When the mesh generator detects the original model has skeleton, it will put all the skeletons and animations into the ".mesh" file. 
+
+However, in order to get a mesh with skeletons, you have to call `IMeshManager::getAnimatedMesh` method instead of `getModelMesh` method. To create animated mesh node, you need to `ISceneManager::addAnimatedMeshNode` method, just like this:
+
+	IAnimatedMesh* animMesh = meshManager->getAnimatedMesh("lxq.mesh");
+	IAnimatedMeshNode* animNode = smgr->addAnimatedMeshNode(animMesh, nullptr, false, XMFLOAT3(0, 0, -10.0f),
+		XMFLOAT3(0, 0, 0), XMFLOAT3(0.1f, 0.1f, 0.1f));
+
+In addition, we have to animate this object manually by calling `IAnimatedMeshNode::addTime` method every frame. You pass in a time value as its parameter; in this way, we can control the speed of the animation:
+
+	animNode->addTime(dt * 3000.0f);
+
+The final effect:
+
+
+
+
 
 
 

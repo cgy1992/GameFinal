@@ -1,0 +1,19 @@
+<materials>
+
+  <material name="ground_material">
+    <attributes>
+      <attribute name="ambient" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="diffuse" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="specular" value="0.05f, 0.05f, 0.05f, 32.0f"/>
+      <attribute name="emissive" value="0.0f, 0.0f, 0.0f, 1.0f"/>
+    </attributes>
+    <textures>
+      <texture name="floor.dds" index="0"></texture>
+    </textures>
+    <pipelines>
+      <pipeline name="gf/geometry_texture_shadow_dirlight"/>
+      <pipeline name="gf/geometry_shadow_map" usage="shadow_map"/>
+    </pipelines>
+  </material>
+  
+</materials>
