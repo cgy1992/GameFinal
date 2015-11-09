@@ -24,13 +24,9 @@ ISceneManager* setupScene(IDevice* device) {
 	ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(5.0f, -5.0f, 2.0f));
 	light->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	light->enableShadow(true);
-
-	apartmentNode->addShadow(1);
 
 	// create a camera node
 	ICameraNode* camera = smgr->addCameraNode(1, nullptr, XMFLOAT3(15.0f, 20.0f, -25.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
-	camera->setShadowRange(100.0f);
 
 	// set ambient in the environment.
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));

@@ -20,6 +20,7 @@ You might have found that except for the mesh file "apartmentB.mesh", several ot
 The C++ code that sets up the scene is shown here:
 
 	ISceneManager* setupScene(IDevice* device) {
+	
 		// create scene manager
 		ISceneManager* smgr = device->createSceneManager();
 	
@@ -37,16 +38,21 @@ The C++ code that sets up the scene is shown here:
 		ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(5.0f, -5.0f, 2.0f));
 		light->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
 		light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+		light->enableShadow(true);
+	
+		apartmentNode->addShadow(1);
 	
 		// create a camera node
 		ICameraNode* camera = smgr->addCameraNode(1, nullptr, XMFLOAT3(15.0f, 20.0f, -25.0f), 
-			XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
+				XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
+		camera->setShadowRange(100.0f);
 	
 		// set ambient in the environment.
 		smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 	
 		return smgr;
 	}
+
 
 In C++ code, we can get a model mesh by calling `IMeshManager::getModelMesh`, then we call the `ISceneManager::addModelMeshNode` to add a model node into the scene at the position (0, 0, 0):
 
@@ -55,6 +61,34 @@ In C++ code, we can get a model mesh by calling `IMeshManager::getModelMesh`, th
 
 We run the program, then we have already drawn the model on the screen successfully:
 
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/05-02.png)
+
+## Lighting the Model ##
+
+Now the model is not affected by the light; so we have to change the material file that created by the "MeshConverter.exe". 
+
+Open the "apartmentB.material.xml", then change the pipelines of "apartmentB/material_01" like this:
+
+    <material name="apartmentB/material_01">
+        <attributes>
+            <attribute name="ambient" value="0.200000, 0.200000, 0.200000, 1.000000"/>
+            <attribute name="diffuse" value="1.000000, 1.000000, 1.000000, 1.000000"/>
+            <attribute name="specular" value="0.200000, 0.200000, 0.200000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+            <pipeline name="gf/model_shadow_dirlight"/>
+            <pipeline name="gf/model_shadow_map" usage="shadow_map"/>
+        </pipelines>
+        <textures>
+            <texture name="apartmentB_tex.bmp"/>
+        </textures>
+    </material>
+
+Both `gf/model_shadow_dirlight` and `gf/model_shadow_map` are built in pipelines that render a model under a directional light with shadow. Besides, we could change the `attributes` here: in this demo, we change the "ambient" to (0.3, 0.3, 0.3, 1), and set its emissive value to all zeros.
  
+Then run the program, we have found that the building is lighted by the directional light now:
+
+
 
 
