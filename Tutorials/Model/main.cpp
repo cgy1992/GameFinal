@@ -18,7 +18,7 @@ ISceneManager* setupScene(IDevice* device) {
 	IMeshNode* groundNode = smgr->addMeshNode(groundMesh, "ground_material", nullptr, true);
 
 	IModelMesh* apartmentMesh = meshManager->getModelMesh("apartmentB.mesh");
-	IMeshNode* apartmentNode = smgr->addModelMeshNode(apartmentMesh, nullptr, true);
+	IMeshNode* apartmentNode = smgr->addModelMeshNode(apartmentMesh, nullptr, true, XMFLOAT3(0, 0, 0));
 
 	// add directional light
 	ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(5.0f, -5.0f, 2.0f));
@@ -26,9 +26,7 @@ ISceneManager* setupScene(IDevice* device) {
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 
 	// create a camera node
-	// IFpsCameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -25.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
 	ICameraNode* camera = smgr->addCameraNode(1, nullptr, XMFLOAT3(15.0f, 20.0f, -25.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
-
 
 	// set ambient in the environment.
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
