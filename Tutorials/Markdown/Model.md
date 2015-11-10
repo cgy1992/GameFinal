@@ -107,7 +107,7 @@ In addition, we have to animate this object manually by calling `IAnimatedMeshNo
 
 The final effect:
 
-
+![](https://github.com/woyaofacai/GameFinal/blob/master/Tutorials/img/05-04.png?raw=true)
 
 
 

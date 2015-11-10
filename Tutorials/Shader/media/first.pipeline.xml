@@ -1,0 +1,25 @@
+<pipelines>
+  <pipeline name="ground_pipeline">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TANGENT" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="first_shader.hlsl" main="vs_main"/>
+      <pixel-shader file="first_shader.hlsl" main="ground_ps_main">
+        <variable name="gPointLight" value="light" index="1"/>
+        <variable name="gTexture" value="texture" index="0"/>
+        <variable name="gNormalMap" value="texture" index="1"/>
+      </pixel-shader>
+    </shaders>
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="0.0f, 0.0f, 0.0f, 0.0f"/>
+    </samplers>
+  </pipeline>
+</pipelines>

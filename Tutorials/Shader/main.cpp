@@ -1,10 +1,7 @@
 #include <GameFinal.h>
-
 #pragma comment(lib, "GameFinal.lib")
-#pragma comment(lib, "winmm.lib")
 
 using namespace gf;
-IAnimatedMeshNode* animNode;
 
 ISceneManager* setupScene(IDevice* device) {
 
@@ -18,25 +15,35 @@ ISceneManager* setupScene(IDevice* device) {
 	ISimpleMesh* groundMesh = meshManager->createPlaneMesh("ground", 100.0f, 100.0f, 10, 10, 50, 50);
 	IMeshNode* groundNode = smgr->addMeshNode(groundMesh, "ground_material", nullptr, true);
 
-	IModelMesh* apartmentMesh = meshManager->getModelMesh("apartmentB.mesh");
-	IMeshNode* apartmentNode = smgr->addModelMeshNode(apartmentMesh, nullptr, true, XMFLOAT3(0, 0, 0));
+	// create a sphere
+	ISimpleMesh* sphereMesh = meshManager->createSphereMesh("sphere", 1.0f, 100, 100);
+	IMeshNode* sphereNode = smgr->addMeshNode(sphereMesh, "sphere_material", nullptr, true, XMFLOAT3(-1.2f, 1.0f, 0));
 
-	IAnimatedMesh* animMesh = meshManager->getAnimatedMesh("lxq.mesh");
-	animNode = smgr->addAnimatedMeshNode(animMesh, nullptr, false, XMFLOAT3(0, 0, -10.0f),
-		XMFLOAT3(0, 0, 0), XMFLOAT3(0.1f, 0.1f, 0.1f));
+	// create a box
+	ISimpleMesh* boxMesh = meshManager->createCubeMesh("box", 1.2f, 3.0f, 1.2f);
+	IMeshNode* boxNode = smgr->addMeshNode(boxMesh, "box_material", nullptr, true, XMFLOAT3(1.0f, 1.5f, 1.0f));
 
-	// add directional light
-	ILightNode* light = smgr->addDirectionalLight(1, nullptr, XMFLOAT3(5.0f, -5.0f, 2.0f));
+	// create a teapot
+	IModelMesh* teapotMesh = meshManager->getModelMesh("teapot.mesh");
+	IMeshNode* teapot = smgr->addModelMeshNode(teapotMesh, nullptr, true, XMFLOAT3(1.2f, 0, -1.0f));
+	teapot->setMaterialName("teapot_material");
+
+	// add point light
+	ILightNode* light = smgr->addPointLight(1, nullptr, false, XMFLOAT3(0, 4.0f, 0), 100);
 	light->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
 	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+	light->setAttenuation(1.0f, 0.05f, 0);
 	light->enableShadow(true);
 
-	apartmentNode->addShadow(1);
-	animNode->addShadow(1);
+	sphereNode->addShadow(1);
+	boxNode->addShadow(1);
+	teapot->addShadow(1);
 
-	// create a camera node
-	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -25.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
-	camera->setShadowRange(100.0f);
+	// create a fps camera node
+	IFpsCameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
+		XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
+	camera->setNearZ(1.0f);
+	camera->setFarZ(1000.0f);
 
 	// set ambient in the environment.
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
@@ -52,9 +59,10 @@ int main()
 
 	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
-	IInputDriver* input = device->getInputDriver();
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
+
+	IInputDriver* input = device->getInputDriver();
 
 	ISceneManager* smgr = setupScene(device);
 
@@ -66,8 +74,7 @@ int main()
 		float dt = timer->tick();
 		if (input->keyDown(GVK_ESCAPE))
 			break;
-		
-		animNode->addTime(dt * 3000.0f);
+
 		smgr->update(dt);
 		driver->beginScene(true, true, color);
 		smgr->drawAll();
