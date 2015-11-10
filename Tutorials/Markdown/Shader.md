@@ -215,7 +215,7 @@ Remember to change the material file:
 
 Here we change the pipeline from a built-in one to `static_object_pipeline`, which has been defined in the previous step. Now, start running the program:
 
-
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/06-02.png)
 
 
 
