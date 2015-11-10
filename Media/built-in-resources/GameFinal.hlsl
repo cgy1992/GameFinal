@@ -168,6 +168,7 @@ Texture2D GF_TEXTURE_5;
 Texture2D GF_TEXTURE_6;
 Texture2D GF_TEXTURE_7;
 
+TextureCube GF_SKY_TEXTURE;
 
 // This structure is for pixel shader's return value
 // when using deferred-shading.

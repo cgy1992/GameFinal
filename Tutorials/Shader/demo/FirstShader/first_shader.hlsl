@@ -59,24 +59,3 @@ float4 ground_ps_main(VertexOut pin) : SV_TARGET
 		specular * GF_MTRL_SPECULAR * shadowFactor;
 }
 
-float4 object_ps_main(VertexOut pin) : SV_TARGET
-{
-	float3 normal = normalize(pin.Normal);
-	float4 diffuse;
-	float4 specular;
-
-	float3 viewDir = normalize(pin.PosW - GF_CAMERA_POS);
-	float3 reflectDir = normalize(reflect(viewDir, normal));
-	float4 texColor = GF_SKY_TEXTURE.Sample(gSampleState, reflectDir);
-
-	float3 lightDir;
-	ComputeIrradianceOfPointLight(pin.PosW, gPointLight, lightDir, diffuse, specular);
-
-	PhoneShading(pin.PosW, lightDir, normal, diffuse, specular, GF_MTRL_SPECULAR.w);
-
-	float shadowFactor = CalcPointLightShadowFactor(1, gPointLight.Position, GF_SHADOW_SOFTNESS);
-	return GF_AMBIENT * GF_MTRL_AMBIENT * texColor + GF_MTRL_EMISSIVE + 
-		diffuse * GF_MTRL_DIFFUSE * texColor * shadowFactor + 
-		specular * GF_MTRL_SPECULAR * shadowFactor;
-}
-

@@ -63,6 +63,7 @@ namespace gf
 		mBuiltInVariables["GF_TEXTURE_5"] = SShaderVariableAttribute(ESAVT_TEXTURE, EUF_PER_OBJECT, 5);
 		mBuiltInVariables["GF_TEXTURE_6"] = SShaderVariableAttribute(ESAVT_TEXTURE, EUF_PER_OBJECT, 6);
 		mBuiltInVariables["GF_TEXTURE_7"] = SShaderVariableAttribute(ESAVT_TEXTURE, EUF_PER_OBJECT, 7);
+		mBuiltInVariables["GF_SKY_TEXTURE"] = SShaderVariableAttribute(ESAVT_SKY_TEXTURE, EUF_PER_OBJECT);
 
 		mBuiltInVariables["GF_SHADOW_MAP_0"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 0);
 		mBuiltInVariables["GF_SHADOW_MAP_1"] = SShaderVariableAttribute(ESAVT_SHADOW_MAP, EUF_PER_FRAME, 1);

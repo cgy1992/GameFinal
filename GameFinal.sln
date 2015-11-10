@@ -137,6 +137,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Model", "Tutorials\Model\Mo
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shader", "Tutorials\Shader\Shader.vcxproj", "{34FABC97-195D-42EA-9077-D24FFBBA553A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F764B441-35DB-4ADD-859F-D5DE5B6727F2} = {F764B441-35DB-4ADD-859F-D5DE5B6727F2}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -8,8 +8,7 @@
       <attribute name="shadow_softness" value="8.0f"/>
     </attributes>
     <pipelines>
-      <!--<pipeline name="gf/geometry_shadow_pointlight"/> -->
-      <pipeline name="static_object_pipeline"/>
+      <pipeline name="gf/geometry_shadow_pointlight"/>
       <pipeline name="gf/geometry_shadow_map" usage="shadow_map"/>
       <pipeline name="gf/geometry_point_shadow_map" usage="point_shadow_map"/>
     </pipelines>

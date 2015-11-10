@@ -154,12 +154,66 @@ Next, we open the material file and modify the ground's material:
  
 We change pipeline to "ground_pipeline" which is defined by ourselves previously. We put the texture "floor.dds" at index 0 and "floor_NRM.png" at index 1, which keep consistent with the corresponding variables declared in pipeline. At last, don't forget copy the normal map image to "./media" directory. Run this program, we can see the ground looks more realistic under specular lighting now:
 
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/06-01.png)
 
+## Environment Mapping ##
 
+The second example is about environment mapping. GameFinal allows us to set a sky dome by calling `ISceneManager::setSkyDome` method. Usually, it receives a cube map's file name as its parameter:
 
- 
+	smgr->setSkyDome("Snow.dds");
 
+"Snow.dds" is a cube map that we have prepared and is put into "./media" folder.
 
+Let's add another function in the `first_shader.hlsl` as the three objects' pixel shader. They can share the same vertex shader with the ground. So we don't need to write a separate one for them:
+
+	float4 object_ps_main(VertexOut pin) : SV_TARGET
+	{
+		float3 normal = normalize(pin.Normal);
+		float4 diffuse;
+		float4 specular;
+	
+		float3 viewDir = normalize(pin.PosW - GF_CAMERA_POS);
+		float3 reflectDir = normalize(reflect(viewDir, normal));
+		float4 texColor = GF_SKY_TEXTURE.Sample(gSampleState, reflectDir);
+	
+		float3 lightDir;
+		ComputeIrradianceOfPointLight(pin.PosW, gPointLight, lightDir, diffuse, specular);
+	
+		PhoneShading(pin.PosW, lightDir, normal, diffuse, specular, GF_MTRL_SPECULAR.w);
+	
+		float shadowFactor = CalcPointLightShadowFactor(1, gPointLight.Position, GF_SHADOW_SOFTNESS);
+		return GF_AMBIENT * GF_MTRL_AMBIENT * texColor + GF_MTRL_EMISSIVE + 
+			diffuse * GF_MTRL_DIFFUSE * texColor * shadowFactor + 
+			specular * GF_MTRL_SPECULAR * shadowFactor;
+	}
+
+In this pixel shader code, we sample the sky dome's texture, which is represented by `GF_SKY_TEXTURE`. It is also a built-in variable and will be set automatically during the game running. 
+
+Then we add another pipeline in `first.pipeline.xml`:
+
+	<pipeline name="static_object_pipeline" prototype="ground_pipeline">
+		<shaders>
+			<pixel-shader main="object_ps_main"/>
+		</shaders>
+	</pipeline>
+
+Notice that we specify a `prototype` attribute here, which has the similar meaning in material definition. In this example, it will inherit nearly all the attributes from `ground_pipeline`, which we have defined previously. The only thing we need to change is the pixel shader's entry point.
+
+Remember to change the material file:
+	
+	<material name="sphere_material">
+		<attributes>
+		  ...
+		</attributes>
+		<pipelines>
+			<!--<pipeline name="gf/geometry_shadow_pointlight"/> -->
+			<pipeline name="static_object_pipeline"/>
+			<pipeline name="gf/geometry_shadow_map" usage="shadow_map"/>
+			<pipeline name="gf/geometry_point_shadow_map" usage="point_shadow_map"/>
+		</pipelines>
+	</material>
+
+Here we change the pipeline from a built-in one to `static_object_pipeline`, which has been defined in the previous step. Now, start running the program:
 
 
 

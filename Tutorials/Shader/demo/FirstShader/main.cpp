@@ -47,9 +47,6 @@ ISceneManager* setupScene(IDevice* device) {
 
 	// set ambient in the environment.
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	
-	// set the sky dome
-	smgr->setSkyDome("Snow.dds");
 
 	return smgr;
 }

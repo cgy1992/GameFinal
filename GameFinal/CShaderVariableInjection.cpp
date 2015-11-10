@@ -605,7 +605,12 @@ namespace gf
 				shader->setTexture(var.VariableName, texture);
 			}
 		}
-
+		else if (var.Type == ESAVT_SKY_TEXTURE)
+		{
+			IMeshNode* skyNode = sceneManager->getSkyNode();
+			ITexture* skyTexture = skyNode->getMaterial()->getTexture(0);
+			shader->setTexture(var.VariableName, skyTexture);
+		}
 	}
 
 	void CShaderVariableInjection::injectLightSourceNum(IPipeline* pipeline,
