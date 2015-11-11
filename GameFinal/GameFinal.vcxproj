@@ -125,6 +125,7 @@
     <ClInclude Include="CEmptyNode.h" />
     <ClInclude Include="CFpsCameraNode.h" />
     <ClInclude Include="CGeometryCreator.h" />
+    <ClInclude Include="CGrassLand.h" />
     <ClInclude Include="CInputLayoutManager.h" />
     <ClInclude Include="CInstanceCollectionNode.h" />
     <ClInclude Include="CInstanceNode.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="ICameraNode.h" />
     <ClInclude Include="ICompositor.h" />
     <ClInclude Include="ICompositorFactory.h" />
+    <ClInclude Include="IGrasslandNode.h" />
     <ClInclude Include="IInputDriver.h" />
     <ClInclude Include="IInstanceMeshBuffer.h" />
     <ClInclude Include="IInstanceCollectionNode.h" />
@@ -274,6 +276,7 @@
     <ClCompile Include="CDInput8Driver.cpp" />
     <ClCompile Include="CDirectionalLightNode.cpp" />
     <ClCompile Include="CFpsCameraNode.cpp" />
+    <ClCompile Include="CGrassLand.cpp" />
     <ClCompile Include="CInputLayoutManager.cpp" />
     <ClCompile Include="CInstanceCollectionNode.cpp" />
     <ClCompile Include="CInstanceNode.cpp" />

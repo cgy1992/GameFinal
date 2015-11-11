@@ -7,6 +7,8 @@
 
 namespace gf
 {
+	class CGrassLand;
+
 	class CTerrainNode : public ITerrainNode
 	{
 	public:
@@ -20,6 +22,7 @@ namespace gf
 			:ITerrainNode(parent, smgr, position, rotation, scale)
 			, mMesh(mesh)
 			, mMaterial(material)
+			, mGrassLand(nullptr)
 		{
 			AddReferenceCounted(mesh);
 			AddReferenceCounted(mMaterial);
@@ -96,9 +99,21 @@ namespace gf
 
 		virtual void renderInstanced(E_PIPELINE_USAGE usage, u32 instanceCount, IMeshBuffer* instanceBuffer){}
 
+		virtual bool addGrassLand(u32 grassNum, f32 grassWidth, f32 grassHeight,
+			const std::string& materialName,
+			u32 pitchPerRow = 8,
+			f32 amplitude = 0.5f,
+			XMFLOAT3 windDirection = XMFLOAT3(-1.0f, 0, 1.0f));
+
+		virtual void removeGrassLand();
+
+		virtual void update(f32 dt);
+
 	private:
 		ITerrainMesh*			mMesh;
 		IMaterial*				mMaterial;
+
+		CGrassLand*				mGrassLand;
 
 	};
 }

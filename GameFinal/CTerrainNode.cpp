@@ -2,6 +2,7 @@
 #include "CTerrainNode.h"
 #include "CShaderVariableInjection.h"
 #include "CSceneManager.h"
+#include "CGrassLand.h"
 
 namespace gf
 {
@@ -110,6 +111,40 @@ namespace gf
 		}
 		
 		return mMesh->isInsideTerrainScope(x, z);
+	}
+
+	bool CTerrainNode::addGrassLand(u32 grassNum, f32 grassWidth, f32 grassHeight,
+		const std::string& materialName,
+		u32 pitchPerRow,
+		f32 amplitude,
+		XMFLOAT3 windDirection)
+	{
+		removeGrassLand();
+		mGrassLand = new CGrassLand(this, XMFLOAT2(grassWidth, grassHeight));
+		u32 grassCountPerPitch = grassNum / (pitchPerRow * pitchPerRow);
+		if (!mGrassLand->init(grassCountPerPitch, pitchPerRow, materialName,
+			amplitude, windDirection))
+		{
+			delete mGrassLand;
+			return false;
+		}
+		return true;
+	}
+
+	void CTerrainNode::removeGrassLand()
+	{
+		if (mGrassLand)
+		{
+			delete mGrassLand;
+			mGrassLand = nullptr;
+		}
+	}
+
+	void CTerrainNode::update(f32 dt)
+	{
+		if (mGrassLand)
+			mGrassLand->update(dt);
+		ITerrainNode::update(dt);
 	}
 
 }

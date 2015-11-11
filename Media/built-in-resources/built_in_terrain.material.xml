@@ -1,0 +1,30 @@
+<materials>
+  <material name="gf/terrain_material">
+    <attributes>
+      <attribute name="ambient" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="diffuse" value="0.8f, 0.8f, 0.8f, 1.0f"/>
+      <attribute name="shadow_softness" value="2.0"/>
+    </attributes>
+    <pipelines>
+      <pipeline name="gf/terrain_shadow_dirlight"/>
+    </pipelines>
+    <textures>
+      <texture name="terrain.jpg" index="0"/>
+    </textures>
+  </material>
+
+  <material name="gf/tess_terrain_material">
+    <attributes>
+      <attribute name="ambient" value="0.5f, 0.5f, 0.5f, 1.0f"/>
+      <attribute name="diffuse" value="0.8f, 0.8f, 0.8f, 1.0f"/>
+      <attribute name="shadow_softness" value="2.0"/>
+    </attributes>
+    <pipelines>
+      <pipeline name="gf/tess_terrain_shadow_dirlight"/>
+    </pipelines>
+    <textures>
+      <texture name="terrain.jpg" index="0"/>
+    </textures>
+  </material>
+  
+</materials>

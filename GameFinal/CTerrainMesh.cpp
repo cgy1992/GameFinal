@@ -97,7 +97,7 @@ namespace gf
 			z = startZ;
 			tv = 0.0f;
 			u8* pCurVertex = vertices;
-			f32 texSpace = 1.0f / (mRowVertexNum - 1) * fTexcoordScale;
+			f32 texSpace = 1.0f / (mRowVertexNum - 1);
 
 			// fill the vertices buffer
 			for (u32 row = 0; row < mRowVertexNum; row++, z -= mVertexSpace, tv += texSpace)
@@ -185,7 +185,7 @@ namespace gf
 			z = startZ;
 			tv = 0.0f;
 			u8* pCurVertex = vertices;
-			f32 texSpace = 1.0f / mPatchNumPerRow * fTexcoordScale;
+			f32 texSpace = 1.0f / mPatchNumPerRow;
 
 			for (u32 row = 0; row < mPatchNumPerRow + 1; row++, z -= mPatchWidth, tv += texSpace)
 			{

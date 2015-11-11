@@ -1,0 +1,87 @@
+<pipelines>
+  <pipeline name="gf/terrain_dirlight">
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="NORMAL" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="built_in_terrain.hlsl" main="vs_main"/>
+      <pixel-shader file="built_in_terrain.hlsl" main="ps_main">
+        <variable name="gLight" value="light" index="1"/>
+      </pixel-shader>
+    </shaders>
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="mirror"
+                 addressV="mirror"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    </samplers>
+  </pipeline>
+
+  <pipeline name="gf/terrain_shadow_dirlight" prototype="gf/terrain_dirlight">
+    <shaders>
+      <vertex-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </vertex-shader>
+      <pixel-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+  
+
+  <pipeline name="gf/tess_terrain_dirlight">
+    <primitive-type value="4_CONTROL_POINT_PATCHLIST"/>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="TEXCOORD" format="float2"></element>
+      <element semantic="BOUNDS" format="float2"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="built_in_tess_terrain.hlsl" main="vs_main">
+      </vertex-shader>
+      <hull-shader file="built_in_tess_terrain.hlsl" main="hs_main">
+        <variable name="gFrustumPlanes" value="frustum"/>
+      </hull-shader>
+      <domain-shader file="built_in_tess_terrain.hlsl" main="ds_main">
+        <variable name="gHeightScale" value="terrain_height_scale"/> 
+        <variable name="gHeightTexture" value="terrain_heightmap"/>
+        <variable name="gViewProj" value="viewproj_matrix"/>
+        <variable name="gTexelCellSpaceU" value="inverse_terrain_row_cell"/>
+        <variable name="gTexelCellSpaceV" value="inverse_terrain_row_cell"/>
+        <variable name="gWorldCellSpace" value="terrain_vertex_space"/>
+      </domain-shader>
+      
+      <pixel-shader file="built_in_tess_terrain.hlsl" main="ps_main">
+        <variable name="gTexture" value="texture" index="0"/>
+        <variable name="gLight" value="light" index="1"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <!--<render-state name="FILL_MODE" value="WIREFRAME"/> -->
+    </render-states>
+    <samplers>
+      <sampler name="gHeightTextureSampleState"
+                 addressU="clamp"
+                 addressV="clamp"
+                 filter="MIN_MAG_LINEAR_MIP_POINT"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    
+      <sampler name="gSampleState"
+                 addressU="wrap"
+                 addressV="wrap"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="1.0f, 1.0f, 0.0f, 1.0f"/>
+    </samplers>
+  </pipeline>
+
+  <pipeline name="gf/tess_terrain_shadow_dirlight" prototype="gf/tess_terrain_dirlight">
+    <shaders>
+      <pixel-shader>
+        <macro name="SHADOW_ON" value="1"/>
+      </pixel-shader>
+    </shaders>
+  </pipeline>
+</pipelines>

@@ -138,6 +138,11 @@ cbuffer gf_cb_screen_size
 	float4  GF_SCREEN_SIZE;
 };
 
+cbuffer gf_cb_terrain
+{
+	float GF_TERRAIN_TEX_SCALE;
+};
+
 cbuffer gf_cb_scene_info
 {
 	float4 GF_AMBIENT;

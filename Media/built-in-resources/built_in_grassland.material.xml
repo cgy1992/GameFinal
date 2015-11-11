@@ -1,0 +1,20 @@
+<materials>
+  <material name="gf/grassland_material">
+    <attributes>
+      <attribute name="ambient" value="0.8f, 0.8f, 0.8f, 1.0f"/>
+      <attribute name="diffuse" value="0.8f, 0.8f, 0.8f, 1.0f"/>
+      <attribute name="specular" value="0.1f, 0.1f, 0.1f, 32.0f"/>
+      <attribute name="emissive" value="0.0f, 0.0f, 0.0f, 1.0f"/>
+    </attributes>
+
+    <textures>
+      <texture name="grass_blade.png" index="0"/>
+    </textures>
+
+    <pipelines>
+      <pipeline name="gf/grassland_dirlight"/>
+      <pipeline name="gf/grassland_shadow_map" usage="shadow_map"/>
+    </pipelines>
+
+  </material>
+</materials>

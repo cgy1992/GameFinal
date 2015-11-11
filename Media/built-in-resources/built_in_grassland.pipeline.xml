@@ -1,0 +1,72 @@
+<pipelines>
+  <pipeline name="gf/grassland_dirlight">
+    <primitive-type value="POINTLIST"></primitive-type>
+    <input-layout>
+      <element semantic="POSITION" format="float3"></element>
+      <element semantic="WORLD" index="0" format="float4" slot="1" instance="true" instance-rate="1"></element>
+      <element semantic="WORLD" index="1" format="float4" slot="1" instance="true" instance-rate="1"></element>
+      <element semantic="WORLD" index="2" format="float4" slot="1" instance="true" instance-rate="1"></element>
+      <element semantic="WORLD" index="3" format="float4" slot="1" instance="true" instance-rate="1"></element>
+    </input-layout>
+    <shaders>
+      <vertex-shader file="built_in_grassland.hlsl" main="vs_main">
+      </vertex-shader>
+      <geometry-shader file="built_in_grassland.hlsl" main="gs_main">
+        <variable name="gGrassWidth" value="m_GrassWidth"/>
+        <variable name="gGrassHeight" value="m_GrassHeight"/>
+        <variable name="gRadiansTexture" value="texture" index="1"/>
+        <variable name="gHeightMapTexture" value="texture" index="2"/>
+        <variable name="gBladeFluctuation" value="m_BladeFluctuation"/>
+        <variable name="gWindDirection" value="m_WindDirection"/>
+        <variable name="gTerrainWidth" value="m_TerrainWidth"/>
+        <variable name="gInvTerrainWidth" value="m_InvTerrainWidth"/>
+      </geometry-shader>
+      <pixel-shader file="built_in_grassland.hlsl" main="ps_main">
+        <macro name="SHADOW_ON"/>
+        <variable name="gLight" value="light" index="1"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="stencil_read_mask" value="0x0000ffff"/>
+      <render-state name="cull_mode" value="none"/>
+      <render-state name="blend_enable" value="true"/>
+      <render-state name="SRC_BLEND" value="SRC_ALPHA"/>
+      <render-state name="dest_blend" value="INV_SRC_ALPHA"/>
+      <render-state name="blend_op" value="ADD"/>
+    </render-states>
+
+    <samplers>
+      <sampler name="gSampleState"
+                 addressU="border"
+                 addressV="border"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="1.0f, 1.0f, 0.0f, 0.0f"/>
+
+      <sampler name="gRandomValueSampler" addressU="wrap" addressV="wrap"/>
+
+      <sampler name="gHeightMapSampler" 
+               addressU="clamp" addressV="clamp" filter="MIN_MAG_MIP_LINEAR"/>
+      
+      
+    </samplers>
+  </pipeline>
+
+  <pipeline name="gf/grassland_shadow_map" prototype="gf/grassland_dirlight">
+    <shaders>
+      <vertex-shader>
+        <macro name="SHADOW_MAP_PASS" value="1"/>
+      </vertex-shader>
+      <geometry-shader>
+        <macro name="SHADOW_MAP_PASS" value="1"/>
+      </geometry-shader>
+      <pixel-shader main="shadow_ps_main">
+        <macro name="SHADOW_MAP_PASS" value="1"/>
+      </pixel-shader>
+    </shaders>
+    <render-states>
+      <render-state name="cull_mode" value="none"/>
+      <render-state name="blend_enable" value="false"/>
+    </render-states>
+  </pipeline>
+</pipelines>
+

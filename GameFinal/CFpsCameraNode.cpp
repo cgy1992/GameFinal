@@ -17,6 +17,8 @@ namespace gf
 		bool bPerspectiveProj)
 		:IFpsCameraNode(parent, smgr, position, aspectRatio, 
 		fov, nearZ, farZ, maxUpAngle, maxDownAngle, bPerspectiveProj)
+		, mKeyboard(nullptr)
+		, mMouse(nullptr)
 	{
 		//mPosition.y = mStandHeight;
 		mHeight = mStandHeight;
@@ -28,8 +30,11 @@ namespace gf
 		lookAt(lookat);
 
 		mInputDriver = smgr->getDevice()->getInputDriver();
-		mMouse = mInputDriver->getMouse();
-		mKeyboard = mInputDriver->getKeyboard();
+		if (mInputDriver)
+		{
+			mMouse = mInputDriver->getMouse();
+			mKeyboard = mInputDriver->getKeyboard();
+		}
 
 		// set the default values 
 		mWalkSpeed = 4.0f;

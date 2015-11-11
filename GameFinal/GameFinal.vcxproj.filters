@@ -120,6 +120,9 @@
     <Filter Include="src\input\DirectInput">
       <UniqueIdentifier>{1b47e600-a4ac-420e-ac71-38975bfc814a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\effect\scenery">
+      <UniqueIdentifier>{0b0258c1-d170-4929-a366-1eeddfc86b65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -581,6 +584,12 @@
     <ClInclude Include="CDI8MouseDevice.h">
       <Filter>src\input\DirectInput</Filter>
     </ClInclude>
+    <ClInclude Include="IGrasslandNode.h">
+      <Filter>src\effect\scenery</Filter>
+    </ClInclude>
+    <ClInclude Include="CGrassLand.h">
+      <Filter>src\effect\scenery</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -828,6 +837,9 @@
     </ClCompile>
     <ClCompile Include="CDI8MouseDevice.cpp">
       <Filter>src\input\DirectInput</Filter>
+    </ClCompile>
+    <ClCompile Include="CGrassLand.cpp">
+      <Filter>src\effect\scenery</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

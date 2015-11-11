@@ -48,6 +48,8 @@ namespace gf
 
 		mBuiltInVariables["GF_SCREEN_SIZE"] = SShaderVariableAttribute(ESAVT_SCREEN_SIZE, EUF_PER_OBJECT);
 
+		mBuiltInVariables["GF_TERRAIN_TEX_SCALE"] = SShaderVariableAttribute(ESAVT_TERRAIN_TEXCOORD_SCALE, EUF_PER_FRAME);
+
 		mBuiltInVariables["GF_POINT_LIGHTS"] = SShaderVariableAttribute(ESAVT_NEAR_POINT_LIGHTS, EUF_PER_OBJECT);
 		mBuiltInVariables["GF_POINT_LIGHTS_NUM"] = SShaderVariableAttribute(ESAVT_NEAR_POINT_LIGHTS_NUM, EUF_PER_OBJECT);
 		mBuiltInVariables["GF_DIR_LIGHTS"] = SShaderVariableAttribute(ESAVT_DIRECTIONAL_LIGHTS, EUF_PER_FRAME);
