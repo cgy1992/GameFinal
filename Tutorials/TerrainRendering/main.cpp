@@ -28,7 +28,7 @@ ISceneManager* setupScene(IDevice* device) {
 	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", "terrain-heightmap.raw",
 		3.0f, 0.2f, false, true, 50.0f);
 
-	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh, "sand_terrain_material");
+	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh, "gf/terrain_material");
 
 	/*
 	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", "terrain-heightmap.raw",
@@ -37,7 +37,7 @@ ISceneManager* setupScene(IDevice* device) {
 	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh, "gf/tess_terrain_material");
 	*/
 
-	//terrainNode->addGrassLand(5000 * 64, 10.0f, 10.0f, "gf/grassland_material");
+	terrainNode->addGrassLand(5000 * 64, 10.0f, 10.0f, "gf/grassland_material");
 
 	// create a fps camera node
 	IFpsCameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
