@@ -37,7 +37,7 @@ ISceneManager* setupScene(IDevice* device) {
 	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh, "gf/tess_terrain_material");
 	*/
 
-	terrainNode->addGrassLand(5000 * 64, 10.0f, 10.0f, "gf/grassland_material");
+	//terrainNode->addGrassLand(5000 * 64, 10.0f, 10.0f, "gf/grassland_material");
 
 	// create a fps camera node
 	IFpsCameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
