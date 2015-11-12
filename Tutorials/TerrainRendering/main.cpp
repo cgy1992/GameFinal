@@ -45,6 +45,7 @@ ISceneManager* setupScene(IDevice* device) {
 	camera->setShadowRange(200.0f);
 	camera->setStandHeight(5.0f);
 
+
 	// set ambient in the environment.
 	smgr->setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
 
