@@ -16,6 +16,31 @@ After we create the terrain mesh, in order to show the terrain in the scene, we 
 
 The first parameter specifies the terrain mesh that we have created previously. The second parameter is the material that we will use to render the terrain; here we set it to `gf/terrain_material`, which is a built-in material.
 
-	
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/07-01.png)
 
+If you have added a FPS camera in the scene, you'll realize that you can walk on the terrain very smoothly without writing any other controlling code.
+
+## Define Terrain Material ##
+
+The built-in terrain material `gf/terrain_material`. If you want to define your own terrain material, you can inherit the built-in material every easily and modify some attributes in it.
+
+Now, we add create a new material called "sand_terrain_material" like this:
+
+	<materials>
+	  <material name="sand_terrain_material" prototype="gf/terrain_material">
+	    <attributes>
+	      <attribute name="ambient" value="0.3f, 0.3f, 0.3f, 1.0f"/>
+	      <attribute name="diffuse" value="1.0f, 1.0f, 0.8f, 1.0f"/>
+	    </attributes>
+	    <textures>
+	      <texture name="ground.jpg" index="0"/>
+	    </textures>
+	  </material>
+	</materials>
+
+Here we set its prototype to "gf/terrain_material", which means we will inherit all attributes from the built-in material. Then we modify the ambient and diffuse color as well as the texture. Then remember to change the material in our program:
+
+	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh, "sand_terrain_material");
+
+Then run the program, we could find the change:
 

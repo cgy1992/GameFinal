@@ -9,7 +9,7 @@
       <pipeline name="gf/terrain_shadow_dirlight"/>
     </pipelines>
     <textures>
-      <texture name="terrain.jpg" index="0"/>
+      <texture name="built_in_terrain.jpg" index="0"/>
     </textures>
   </material>
 
@@ -23,7 +23,7 @@
       <pipeline name="gf/tess_terrain_shadow_dirlight"/>
     </pipelines>
     <textures>
-      <texture name="terrain.jpg" index="0"/>
+      <texture name="built_in_terrain.jpg" index="0"/>
     </textures>
   </material>
   

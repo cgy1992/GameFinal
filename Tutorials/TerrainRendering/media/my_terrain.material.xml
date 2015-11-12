@@ -1,0 +1,11 @@
+<materials>
+  <material name="sand_terrain_material" prototype="gf/terrain_material">
+    <attributes>
+      <attribute name="ambient" value="0.3f, 0.3f, 0.3f, 1.0f"/>
+      <attribute name="diffuse" value="1.0f, 1.0f, 0.8f, 1.0f"/>
+    </attributes>
+    <textures>
+      <texture name="ground.jpg" index="0"/>
+    </textures>
+  </material>
+</materials>

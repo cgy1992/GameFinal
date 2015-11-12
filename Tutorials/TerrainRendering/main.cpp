@@ -28,7 +28,7 @@ ISceneManager* setupScene(IDevice* device) {
 	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", "terrain-heightmap.raw",
 		3.0f, 0.2f, false, true, 50.0f);
 
-	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh, "gf/terrain_material");
+	ITerrainNode* terrainNode = smgr->addTerrainNode(terrainMesh, "sand_terrain_material");
 
 	/*
 	ITerrainMesh* terrainMesh = meshManager->createTerrainMesh("terrain", "terrain-heightmap.raw",
