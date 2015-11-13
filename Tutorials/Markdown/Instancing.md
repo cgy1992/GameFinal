@@ -68,8 +68,8 @@ Furthermore, we have to change the `input-layout` in the pipeline. We must inclu
 
 After finishing all these modifications, we can run the program now:
 
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/08-02.png)
 
-
-
+Even although we created so many trees in the scene, the program could run very smoothly.
 
 
