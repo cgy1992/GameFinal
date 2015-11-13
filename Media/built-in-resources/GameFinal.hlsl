@@ -185,8 +185,9 @@ struct SReturnGBuffers
 	float4 GBuffer3 : SV_TARGET3; 
 };
 
-
-
+#ifndef INSTANCE_WORLD
+#define INSTANCE_WORLD (vin.World)
+#endif
 
 /* @lightDir: from object to light.
    @return: if light can reach the object. */

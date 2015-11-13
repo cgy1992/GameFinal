@@ -1,0 +1,47 @@
+<materials>
+    <material name="roundtreeA/material_00">
+        <attributes>
+            <attribute name="ambient" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="diffuse" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <pipelines>
+          <pipeline name="tree_pipeline"/>
+          <pipeline name="tree_shadow_map" usage="shadow_map"/>
+        </pipelines>
+        <textures>
+          <texture name="roundtreebark.bmp"/>
+        </textures>
+    </material>
+    <material name="roundtreeA/material_01" prototype="roundtreeA/material_00">
+        <attributes>
+            <attribute name="ambient" value="1.400000, 1.400000, 1.400000, 1.000000"/>
+            <attribute name="diffuse" value="1.400000, 1.400000, 1.400000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <textures>
+            <texture name="roundtreetwig.png"/>
+        </textures>
+        <pipelines>
+          <pipeline name="tree_pipeline"/>
+          <pipeline name="tree_shadow_map" usage="shadow_map"/>
+        </pipelines>
+    </material>
+    <material name="roundtreeA/material_02" prototype="roundtreeA/material_00">
+        <attributes>
+            <attribute name="ambient" value="1.400000, 1.400000, 1.400000, 1.000000"/>
+            <attribute name="diffuse" value="1.400000, 1.400000, 1.400000, 1.000000"/>
+            <attribute name="specular" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+            <attribute name="emissive" value="0.000000, 0.000000, 0.000000, 1.000000"/>
+        </attributes>
+        <textures>
+            <texture name="roundtreebark.bmp"/>
+        </textures>
+      <pipelines>
+        <pipeline name="tree_pipeline"/>
+        <pipeline name="tree_shadow_map" usage="shadow_map"/>
+      </pipelines>
+    </material>
+</materials>
