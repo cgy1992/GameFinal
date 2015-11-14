@@ -152,6 +152,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HavokTutorial", "Tutorials\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CompositorTutorial", "Tutorials\CompositorTutorial\CompositorTutorial.vcxproj", "{16FEE52A-E439-40CB-BA36-0EE0108A7B90}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ComputeShaderTutorial", "Tutorials\ComputeShaderTutorial\ComputeShaderTutorial.vcxproj", "{4B94F490-B458-468B-863C-9EB038E15A86}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -290,6 +292,10 @@ Global
 		{16FEE52A-E439-40CB-BA36-0EE0108A7B90}.Debug|Win32.Build.0 = Debug|Win32
 		{16FEE52A-E439-40CB-BA36-0EE0108A7B90}.Release|Win32.ActiveCfg = Release|Win32
 		{16FEE52A-E439-40CB-BA36-0EE0108A7B90}.Release|Win32.Build.0 = Release|Win32
+		{4B94F490-B458-468B-863C-9EB038E15A86}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4B94F490-B458-468B-863C-9EB038E15A86}.Debug|Win32.Build.0 = Debug|Win32
+		{4B94F490-B458-468B-863C-9EB038E15A86}.Release|Win32.ActiveCfg = Release|Win32
+		{4B94F490-B458-468B-863C-9EB038E15A86}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -327,5 +333,6 @@ Global
 		{A253E444-FF7E-4497-8211-1434BFB1C6D7} = {BA99B0F4-18D0-447C-8438-245C98D17A71}
 		{6FE18474-434E-4322-8469-46E3BCFA94B2} = {BA99B0F4-18D0-447C-8438-245C98D17A71}
 		{16FEE52A-E439-40CB-BA36-0EE0108A7B90} = {BA99B0F4-18D0-447C-8438-245C98D17A71}
+		{4B94F490-B458-468B-863C-9EB038E15A86} = {BA99B0F4-18D0-447C-8438-245C98D17A71}
 	EndGlobalSection
 EndGlobal

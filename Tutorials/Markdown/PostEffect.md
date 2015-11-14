@@ -2,6 +2,8 @@
 
 Post effect is a kind of image processing. In essence, it is an color transformation for every pixel in the screen space. Each post effect in GameFinal corresponds to one **compositor** object. All the compositors must implement the ICompositor interface. If developers want to design their own post effect, they just need define a new class that inherits from ICompositor and implement the abstract methods. One compositor could be connected with another compositor, thus several compositors could be combined as a list. Just as the following picture shows, the output of the current compositor is the input of the next compositor:
 
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-04.png)
+
 You can add multiple compositors into your program. Be aware that the order in which you add them into the scene manager will affect the final effect on the screen:
 
 	smgr->addCompositor(compositor1);
@@ -40,23 +42,7 @@ Then we call the `ISceneManager::createCompositor` to create the `ICompositor` i
 
 Run the program, we could find the whole screen becomes fuzzy:
 
-
-## Motion Blur ##
-
-If the camera moves fast enough, the image that projects into player’s eye would become blurred. This phenomenon is called "motion blur". Motion blur is widely used in video games as well as movies in order to increase realism.
-
-The following code shows how to add motion blur:
-
-	SCompositorCreateParam param;
-	param.MotionBlur.SampleNum = 10;
-
-	ICompositor* compositor = smgr->createCompositor(ECT_MOTION_BLUR, param);
-	smgr->addCompositor(compositor);
-
-The only attribute we need care about is `SampleNum`, which affects how blurred the image should be. The larger this value is set, the more player's movements would affect the screen's blurness.
-
-Run the program, while you control the FPS camera frequently in a high speed, we'll notice the phenomenon:
-
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-02.png)
 
 ## Bloom ##
 
@@ -76,3 +62,22 @@ The `BlurPassCount` attribute indicates the number of blur passes. `BlurTexelDis
 
 Run the program, you would find those very bright regions would affect the pixels around them:
 
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-01.png)
+
+## Motion Blur ##
+
+If the camera moves fast enough, the image that projects into player’s eye would become blurred. This phenomenon is called "motion blur". Motion blur is widely used in video games as well as movies in order to increase realism.
+
+The following code shows how to add motion blur:
+
+	SCompositorCreateParam param;
+	param.MotionBlur.SampleNum = 10;
+
+	ICompositor* compositor = smgr->createCompositor(ECT_MOTION_BLUR, param);
+	smgr->addCompositor(compositor);
+
+The only attribute we need care about is `SampleNum`, which affects how blurred the image should be. The larger this value is set, the more player's movements would affect the screen's blurness.
+
+Run the program, while you control the FPS camera frequently in a high speed, we'll notice the phenomenon:
+
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-03.png)
