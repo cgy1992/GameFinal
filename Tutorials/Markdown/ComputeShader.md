@@ -111,7 +111,7 @@ Texture `inputTexture1` and `inputTexture2` are the input textures, which correp
 
 Then we call `IVideoDriver::runComputeShader` method to actually run a compute shader. It has four parameters. The first gives the shader's interface. The other three parameters specify how many blocks we are going to dispatch in x, y, z directons respectively.
 
-After this method returns, which means the compute shader returns, we start to copy the results from GPU to main memory:
+After that, we start to copy the results from GPU to main memory:
 
 	outputTexture->copyDataToAnotherTexture(copyTexture);
 	STextureData outputData;
@@ -131,9 +131,12 @@ We are calling the `copyDataToAnotherTexture` method on `outputTexture` to copy 
 		assert(math::FloatEqual(C[i], D[i]));
 	}
 
-Finally, we can check the correctness by comparing each element in C and D. Be aware that  
+Finally, we can check the correctness by comparing each element in C and D. Be aware that we use `math::FloatEqual` here instead of `==`. Because this method could tolerate a liitle error.
 
- 
+Run the program, from the information printed in the console, we can clearly see the computing by GPU is much faster than CPU: 
+
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/11-01.png)
+
 
 
 
