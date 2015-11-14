@@ -128,4 +128,4 @@ It guarantees that the physics system has been updated before the update for ren
 
 Run this demo, you will see many boxes falling down, bouncing on the ground and colliding with each other:
 
-
+![](https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/09-01.png)
