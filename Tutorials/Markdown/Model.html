@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Model</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+</head>
+<body>
+<h1>Model</h1>
+<p>GameFinal has its own mesh format with the suffix <code>.mesh</code>. The engine provides a command line tool that enables you to convert other formats to &quot;.mesh&quot; file.</p>
+<p>In this demo, we have prepared a obj file,'apartmentB.obj'. Now, let's convert this object file to a &quot;.mesh&quot; file. 
+Go to the directory that contains the &quot;MeshConverter.exe&quot;, then copy the obj file into this folder (You may need to copy the &quot;mtl&quot; file as well, &quot;apartmentB.mtl&quot;).</p>
+<p>Open your command window and go to this folder, then press the following command:</p>
+<pre><code>MeshConverter.exe &quot;apartmentB.obj&quot; -f &quot;p|n|tex&quot;
+</code></pre>
+
+<p>The string &quot;apartmentB.obj&quot; is the name of the model file. The string &quot;p|n|tex&quot; following &quot;-f&quot; specifies the vertex's format. &quot;p|n|tex&quot; indicates that each vertex includes position(p), normal vector(n) and texture coordinates(tex). If you want to add another tangent vector to each vertex, you could set the format as &quot;p|n|t|tex&quot;.Except for &quot;obj&quot; file, MeshGenerate also supports 3ds, dae, md2, md3, ms3d, X file and so on.</p>
+<p>If the program doesn't show any error message, it means you converted the file successfully:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/05-01.png" /></p>
+<p>You might have found that except for the mesh file &quot;apartmentB.mesh&quot;, several other files were generated, including a shader file &quot;apartmentB.hlsl&quot;, a pipeline file &quot;apartmentB.pipeline.xml&quot; and a material file &quot;apartmentB.material.xml&quot;. We need copy all these files into the &quot;./media&quot; folder. We also copy texture file &quot;apartmentB_tex.bmp&quot; into the &quot;./media&quot; folder.</p>
+<p>The C++ code that sets up the scene is shown here:</p>
+<pre><code>ISceneManager* setupScene(IDevice* device) {
+
+    // create scene manager
+    ISceneManager* smgr = device-&gt;createSceneManager();
+
+    // get mesh manager
+    IMeshManager* meshManager = IMeshManager::getInstance();
+
+    // set up ground.
+    ISimpleMesh* groundMesh = meshManager-&gt;createPlaneMesh(&quot;ground&quot;, 100.0f, 100.0f, 10, 10, 50, 50);
+    IMeshNode* groundNode = smgr-&gt;addMeshNode(groundMesh, &quot;ground_material&quot;, nullptr, true);
+
+    IModelMesh* apartmentMesh = meshManager-&gt;getModelMesh(&quot;apartmentB.mesh&quot;);
+    IMeshNode* apartmentNode = smgr-&gt;addModelMeshNode(apartmentMesh, nullptr, true, XMFLOAT3(0, 0, 0));
+
+    // add directional light
+    ILightNode* light = smgr-&gt;addDirectionalLight(1, nullptr, XMFLOAT3(5.0f, -5.0f, 2.0f));
+    light-&gt;setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
+    light-&gt;setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+    light-&gt;enableShadow(true);
+
+    apartmentNode-&gt;addShadow(1);
+
+    // create a camera node
+    ICameraNode* camera = smgr-&gt;addCameraNode(1, nullptr, XMFLOAT3(15.0f, 20.0f, -25.0f), 
+            XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
+    camera-&gt;setShadowRange(100.0f);
+
+    // set ambient in the environment.
+    smgr-&gt;setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+
+    return smgr;
+}
+</code></pre>
+
+<p>In C++ code, we can get a model mesh by calling <code>IMeshManager::getModelMesh</code>, then we call the <code>ISceneManager::addModelMeshNode</code> to add a model node into the scene at the position (0, 0, 0):</p>
+<pre><code>IModelMesh* apartmentMesh = meshManager-&gt;getModelMesh(&quot;apartmentB.mesh&quot;);
+IMeshNode* apartmentNode = smgr-&gt;addModelMeshNode(apartmentMesh, nullptr, true, XMFLOAT3(0, 0, 0));
+</code></pre>
+
+<p>We run the program, then we have already drawn the model on the screen successfully:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/05-02.png" /></p>
+<h2>Lighting the Model</h2>
+<p>Now the model is not affected by the light; so we have to change the material file that created by the &quot;MeshConverter.exe&quot;. </p>
+<p>Open the &quot;apartmentB.material.xml&quot;, then change the pipelines of &quot;apartmentB/material_01&quot; like this:</p>
+<pre><code>&lt;material name=&quot;apartmentB/material_01&quot;&gt;
+    &lt;attributes&gt;
+        &lt;attribute name=&quot;ambient&quot; value=&quot;0.200000, 0.200000, 0.200000, 1.000000&quot;/&gt;
+        &lt;attribute name=&quot;diffuse&quot; value=&quot;1.000000, 1.000000, 1.000000, 1.000000&quot;/&gt;
+        &lt;attribute name=&quot;specular&quot; value=&quot;0.200000, 0.200000, 0.200000, 1.000000&quot;/&gt;
+        &lt;attribute name=&quot;emissive&quot; value=&quot;0.000000, 0.000000, 0.000000, 1.000000&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;pipelines&gt;
+        &lt;pipeline name=&quot;gf/model_shadow_dirlight&quot;/&gt;
+        &lt;pipeline name=&quot;gf/model_shadow_map&quot; usage=&quot;shadow_map&quot;/&gt;
+    &lt;/pipelines&gt;
+    &lt;textures&gt;
+        &lt;texture name=&quot;apartmentB_tex.bmp&quot;/&gt;
+    &lt;/textures&gt;
+&lt;/material&gt;
+</code></pre>
+
+<p>Both <code>gf/model_shadow_dirlight</code> and <code>gf/model_shadow_map</code> are built in pipelines that render a model under a directional light with shadow. Besides, we could change the <code>attributes</code> here: in this demo, we change the &quot;ambient&quot; to (0.3, 0.3, 0.3, 1), and set its emissive value to all zeros.</p>
+<p>Then run the program, we have found that the building is lighted by the directional light now:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/05-03.png" /></p>
+<h2>Skeleton Animation</h2>
+<p>We can create meshes that contain skeleton animation in the same way as static mesh. When the mesh generator detects the original model has skeleton, it will put all the skeletons and animations into the &quot;.mesh&quot; file. </p>
+<p>However, in order to get a mesh with skeletons, you have to call <code>IMeshManager::getAnimatedMesh</code> method instead of <code>getModelMesh</code> method. To create animated mesh node, you need to <code>ISceneManager::addAnimatedMeshNode</code> method, just like this:</p>
+<pre><code>IAnimatedMesh* animMesh = meshManager-&gt;getAnimatedMesh(&quot;lxq.mesh&quot;);
+IAnimatedMeshNode* animNode = smgr-&gt;addAnimatedMeshNode(animMesh, nullptr, false, XMFLOAT3(0, 0, -10.0f),
+    XMFLOAT3(0, 0, 0), XMFLOAT3(0.1f, 0.1f, 0.1f));
+</code></pre>
+
+<p>In addition, we have to animate this object manually by calling <code>IAnimatedMeshNode::addTime</code> method every frame. You pass in a time value as its parameter; in this way, we can control the speed of the animation:</p>
+<pre><code>animNode-&gt;addTime(dt * 3000.0f);
+</code></pre>
+
+<p>The final effect:</p>
+<p><img src="https://github.com/woyaofacai/GameFinal/blob/master/Tutorials/img/05-04.png?raw=true" /></p>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->

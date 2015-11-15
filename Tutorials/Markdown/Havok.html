@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Havok</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+</head>
+<body>
+<h1>Havok</h1>
+<p>Although GameFinal does not provide physics support, you can combine it with other well-known physics engines very convenietly. This tutorial will show you how to combine GameFinal engine with the famous physics engine, Havok, and begin adding some physics into your program.</p>
+<p>Each engine has its own structure to store and represent an object. In GameFinal, we use a <code>IMeshNode</code> to represent an object in the scene, while Havok uses <code>hkpRigidBody</code> to store a rigid object. Every program needs to maintain both of these two structures. In each frame, we need first update the state of those &quot;hkpRigidBodys&quot;, after that, we need to use the state and position of these rigid bodies to update those corresponding mesh nodes, which would be rendered afterward by GameFinal. So our program has to maintain which rigid body corresponds to which mesh node. In order to do that, we'd better put the two structures into one structure.</p>
+<p>In this tutorial, we create a class called <code>PhysicsCube</code>, which is an abstraction of a cube. This class contains two references, one is pointing to a <code>IMeshNode</code>, one is pointing to a <code>hkpRigidBody</code>:</p>
+<pre><code>class PhysicsCube
+{
+public:
+    PhysicsCube(IMeshNode* node, XMFLOAT3 halfExtends, XMFLOAT3 pos, 
+        bool bStatic, f32 restitution, f32 friction);
+    void update(f32 dt);
+
+private:
+    IMeshNode*              mMeshNode;
+    hkpRigidBody*           mRigidBody;
+}; 
+</code></pre>
+
+<p>The constructor of this class receives a <code>IMeshNode</code> interface and other physics parameters. In the constructor, we create a physics body based on these parameters:</p>
+<pre><code>PhysicsCube::PhysicsCube(IMeshNode* node, XMFLOAT3 halfExtends, XMFLOAT3 pos, 
+    bool bStatic, f32 restitution, f32 friction)
+:mMeshNode(node)
+{
+    hkpRigidBodyCinfo boxInfo;
+    hkVector4 halfBoxSize(halfExtends.x, halfExtends.y, halfExtends.z);
+    hkpBoxShape* boxShape = new hkpBoxShape(halfBoxSize, 0);
+
+    boxInfo.m_shape = boxShape;
+    boxInfo.m_position.set(pos.x, pos.y, pos.z);
+    boxInfo.m_restitution = restitution;
+    boxInfo.m_friction = friction;
+    boxInfo.m_motionType = (bStatic) ? hkpMotion::MOTION_FIXED : hkpMotion::MOTION_DYNAMIC;
+
+    hkReal boxMass =  10.0f;
+    hkMassProperties boxMassProperties;
+    hkpInertiaTensorComputer::computeBoxVolumeMassProperties(halfBoxSize, boxMass, boxMassProperties);
+    boxInfo.m_inertiaTensor = boxMassProperties.m_inertiaTensor;
+    boxInfo.m_centerOfMass = boxMassProperties.m_centerOfMass;
+    boxInfo.m_mass = boxMassProperties.m_mass;
+
+    mRigidBody = new hkpRigidBody(boxInfo);
+    boxShape-&gt;removeReference();
+
+    PhysicsEngine* engine = PhysicsEngine::getInstance();
+    engine-&gt;addRigidBody(mRigidBody);
+}
+</code></pre>
+
+<p>The code is clear if you're familiar with Havok engine. Firstly, we create a <code>hkpRigidBodyCinfo</code> structure and fill that structure with a cube's physics information, including its shape, position, friction, mass and so on. After that, we create the rigid body using this structure. Then we call <code>PhysicsEngine::add</code> method to add this rigid body to our physics system. The <code>PhysicsEngine</code> class is written by ourselves. Its function is quiet simple: it just initialize, update, and destory all the physics objects in the program. We will not show the implementations of this class here.</p>
+<p>The <code>update</code> method in the PhysicsCube is just get the state of rigid body, and then pass rigid body's position and oriention to the real mesh node:</p>
+<pre><code>void PhysicsCube::update(f32 dt)
+{
+    XMMATRIX M;
+    mRigidBody-&gt;getTransform().get4x4ColumnMajor(&amp;M._11);
+    mMeshNode-&gt;setTransform(M);
+}
+</code></pre>
+
+<p>We declare a vector of PhysicsCubes globally:</p>
+<pre><code>std::vector&lt;PhysicsCube*&gt; g_boxes;
+</code></pre>
+
+<p>Then we begin to create these PhysicsCube. As we will add so many cubes in the same scene, it's better to use instancing method supported by GameFinal. So firstly, we create a instance collection:</p>
+<pre><code>ISimpleMesh* boxMesh = IMeshManager::getInstance()-&gt;createCubeMesh(&quot;box1&quot;, boxSize, boxSize, boxSize);
+u32 boxNum = 300;
+IInstanceCollectionNode* collection = smgr-&gt;addInstanceCollectionNode(boxMesh, nullptr, boxNum, sizeof(XMFLOAT4));
+for (u32 i = 0; i &lt; boxNum; i++)
+{
+    addBoxInstance(smgr, boxMesh, collection);
+}
+collection-&gt;setMaterialName(&quot;multi_box_material&quot;);
+collection-&gt;addShadow(1);
+</code></pre>
+
+<p>Then we begin to implement <code>addBoxInstance</code> function. In this function, instead of simply creating a <code>IMeshNode</code>, we create a PhysicsCube object in which a rigid body is initialized and stored:</p>
+<pre><code>void addBoxInstance(ISceneManager* smgr, ISimpleMesh* mesh, IInstanceCollectionNode* collection)
+{
+    f32 x = math::RandomFloat(-20.0f, 20.0f);
+    f32 z = math::RandomFloat(-20.0f, 20.0f);
+    f32 y = math::RandomFloat(20.0f, 200.0f);
+
+    IInstanceNode* boxNode = collection-&gt;addInstance(false, XMFLOAT3(x, y, z), XMFLOAT3(0, 0, 0));
+    boxNode-&gt;addShadow(1);
+
+    f32 r = math::RandomFloat(0, 1.0f);
+    f32 g = math::RandomFloat(0, 1.0f);
+    f32 b = math::RandomFloat(0, 1.0f);
+
+    XMFLOAT4 color(r, g, b, 1.0f);
+    boxNode-&gt;setData(&amp;color);
+
+    XMFLOAT3 boxHalfSize(boxSize / 2, boxSize / 2, boxSize / 2);
+    PhysicsCube* cube = new PhysicsCube(boxNode, boxHalfSize, XMFLOAT3(x, y, z), false, 0.5f, 0.5f);
+    g_boxes.push_back(cube);
+}
+</code></pre>
+
+<p>For each instance node, we firstly create a <code>IInstanceNode</code> interface at a random position. Notice that we also give each cube a random color by calling <code>IInstanceNode::setData</code> method. After that, we create the PhysicsCube object and put it into the <code>g_boxes</code> vector. The program would only maintains this vector and uses it to update the states of these cubes.</p>
+<p>In order to update the physics system every frame, we create a function called <code>updatePhysics</code>:</p>
+<pre><code>void updatePhysics(f32 dt)
+{
+    if (dt &gt; 0)
+    {
+        PhysicsEngine* engine = PhysicsEngine::getInstance();
+        engine-&gt;update(dt);
+        for (u32 i = 0; i &lt; g_boxes.size(); i++)
+        {
+            g_boxes[i]-&gt;update(dt);
+        }
+    }
+}
+</code></pre>
+
+<p>This function firstly updates the whole physics system. Remember that we have already put those rigid bodies into the PhysicsEngine, so they would be updated in this calling. Then we step through all the elements in the g_boxes and call the <code>update</code> method in the PhysicsCube class.</p>
+<p>In the game loop, before we call the update method on <code>ISceneManager</code>, we need to firstly call this <code>updatePhysics</code> function:</p>
+<pre><code>    updatePhysics(dt);
+    smgr-&gt;update(dt);
+</code></pre>
+
+<p>It guarantees that the physics system has been updated before the update for rendering.</p>
+<p>Run this demo, you will see many boxes falling down, bouncing on the ground and colliding with each other:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/09-01.png" /></p>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PostEffect</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+</head>
+<body>
+<h1>Post Effect</h1>
+<p>Post effect is a kind of image processing. In essence, it is an color transformation for every pixel in the screen space. Each post effect in GameFinal corresponds to one <strong>compositor</strong> object. All the compositors must implement the ICompositor interface. If developers want to design their own post effect, they just need define a new class that inherits from ICompositor and implement the abstract methods. One compositor could be connected with another compositor, thus several compositors could be combined as a list. Just as the following picture shows, the output of the current compositor is the input of the next compositor:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-04.png" /></p>
+<p>You can add multiple compositors into your program. Be aware that the order in which you add them into the scene manager will affect the final effect on the screen:</p>
+<pre><code>smgr-&gt;addCompositor(compositor1);
+smgr-&gt;addCompositor(compositor2);
+smgr-&gt;addCompositor(compositor3);
+</code></pre>
+
+<p>We can define our post effect by creating a new class that implements the <code>ICompositor</code> interface:</p>
+<pre><code>class MyCompositor : public ICompositor
+{
+    virtual void render(ISceneManager* smgr, bool lastCompositor) 
+    {
+        // TODO: Do your post effect's processing
+    }
+};
+</code></pre>
+
+<p>The only pure virtual method in ICompositor is <code>render</code> method. Your class must implement this abstract method. It receives two parameters: the first one is the scene manager; the second parameter <code>lastCompositor</code> indicates whether this compositor is the last one in the compositor chain. If it is the last one, you might like writing the rendering result directly into the backbuffer rather than a texture render target.</p>
+<h2>Blur</h2>
+<p>GameFinal provides us with several built-in post effects. We can add them directly in our program without writing too complicated code. Firstly, let's try the blurring effect. In order to create a built-in compositor, we call <code>ISceneManager::createCompositor</code> method which returns a <code>ICompositor</code> inferface:</p>
+<pre><code>SCompositorCreateParam param;
+param.Blur.Algorithm = SCompositorCreateParam::EBLUR_GAUSSIAN;
+param.Blur.TexelDistance = 2.0f;
+param.Blur.PassCount = 5;
+
+ICompositor* compositor = smgr-&gt;createCompositor(ECT_BLUR, param);
+smgr-&gt;addCompositor(compositor);
+</code></pre>
+
+<p>Firstly, we initialize a <code>SCompositorCreateParam</code> structure. If we want to create a blur effect, we need to fill its <code>Blur</code> attribute. The <code>param.Blur.Algorithm</code> specifies which blur algorithm we want to use. Here we set it <code>SCompositorCreateParam::EBLUR_GAUSSIAN</code>, which means we would like to use gaussian blur. The <code>TexelDistance</code> indicates the distance between neighbouring texels that we'll blur. The <code>PassCount</code> means how many blur passes there would be in the compositor. The larger it is, the more fuzzy the final image will be.</p>
+<p>Then we call the <code>ISceneManager::createCompositor</code> to create the <code>ICompositor</code> interface. Notice the first parameter indicates what kind of post effect you would like to create. Here we set it to <code>ECT_BLUR</code>, which means we'll create a blur effect. Then we call <code>addCompositor</code> to add this compositor to the chain.</p>
+<p>Run the program, we could find the whole screen becomes fuzzy:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-02.png" /></p>
+<h2>Bloom</h2>
+<p>Bloom is another post effect that changes light and shade contrast of image. When a pixel is illuminated by a very bright light, it will extend its brightness to its neighbouring pixels. To create a bloom effect, we need to care more attributes in the <code>SCompositorCreateParam</code> structure:</p>
+<pre><code>SCompositorCreateParam param;
+param.Bloom.BlurPassCount = 4;
+param.Bloom.BlurTexelDistance = 2.0f;
+param.Bloom.BrightnessThreshold = 0.7f;
+param.Bloom.BlurTextureWidth = 400;
+param.Bloom.BlurTextureHeight = 300;
+
+ICompositor* compositor = smgr-&gt;createCompositor(ECT_BLOOM, param);
+smgr-&gt;addCompositor(compositor);
+</code></pre>
+
+<p>The <code>BlurPassCount</code> attribute indicates the number of blur passes. <code>BlurTexelDistance</code> has the same meaning in Blur effect. <code>BrightnessThreshold</code> gives a threshold: the engine would only highlight the region whose brightness is above this threshold value. <code>BlurTextureWidth</code> and <code>BlurTextureHeight</code> specifies the size of temporary render target used in blurring process.</p>
+<p>Run the program, you would find those very bright regions would affect the pixels around them:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-01.png" /></p>
+<h2>Motion Blur</h2>
+<p>If the camera moves fast enough, the image that projects into player’s eye would become blurred. This phenomenon is called &quot;motion blur&quot;. Motion blur is widely used in video games as well as movies in order to increase realism.</p>
+<p>The following code shows how to add motion blur:</p>
+<pre><code>SCompositorCreateParam param;
+param.MotionBlur.SampleNum = 10;
+
+ICompositor* compositor = smgr-&gt;createCompositor(ECT_MOTION_BLUR, param);
+smgr-&gt;addCompositor(compositor);
+</code></pre>
+
+<p>The only attribute we need care about is <code>SampleNum</code>, which affects how blurred the image should be. The larger this value is set, the more player's movements would affect the screen's blurness.</p>
+<p>Run the program, while you control the FPS camera frequently in a high speed, we'll notice the phenomenon:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-03.png" /></p>
+
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->
