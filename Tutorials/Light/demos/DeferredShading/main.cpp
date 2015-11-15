@@ -28,12 +28,17 @@ ISceneManager* setupScene(IDevice* device) {
 	IMeshNode* teapot = smgr->addModelMeshNode(teapotMesh, nullptr, true, XMFLOAT3(1.2f, 0, -1.0f));
 	teapot->setMaterialName("teapot_material");
 
-	// add point light
-	ILightNode* light = smgr->addPointLight(1, nullptr, false, XMFLOAT3(0, 4.0f, 0), 100);
-	light->setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
-	light->setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
-	light->setAttenuation(1.0f, 0.05f, 0);
-	light->enableShadow(true);
+	// add 100 point light
+	for (u32 i = 0; i < 100; i++) {
+		XMFLOAT3 pos(math::RandomFloat(-20.0, 20.0f), math::RandomFloat(3.0, 10.0f), math::RandomFloat(-20.0, 20.0f));
+		XMFLOAT4 diffuse(math::RandomFloat(0, 0.3f), math::RandomFloat(0, 0.3f), math::RandomFloat(0, 0.3f), 1.0f);
+		XMFLOAT4 specular(math::RandomFloat(0, 0.3f), math::RandomFloat(0, 0.3f), math::RandomFloat(0, 0.3f), 32.0f);
+
+		ILightNode* light = smgr->addPointLight(i, nullptr, false, pos, 20.0f);
+		light->setSpecular(specular);
+		light->setDiffuse(diffuse);
+		light->setAttenuation(1.0f, 0.05f, 0);
+	}
 
 	sphereNode->addShadow(1);
 	boxNode->addShadow(1);
@@ -53,11 +58,8 @@ ISceneManager* setupScene(IDevice* device) {
 
 int main()
 {
-	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 4;
-	settings.MultiSamplingQuality = 32;
 
-	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
+	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600);
 	IVideoDriver* driver = device->getVideoDriver();
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
@@ -65,7 +67,7 @@ int main()
 	IInputDriver* input = device->getInputDriver();
 
 	ISceneManager* smgr = setupScene(device);
-
+	driver->setDeferredShading(true);
 	ITimer* timer = device->getTimer();
 	timer->reset();
 
