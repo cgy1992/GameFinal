@@ -1,9 +1,11 @@
 GameFinal
 =========
 
-GameFinal is a next-generation 3D game engine. It is being developed and not finished.
+GameFinal is a next-generation 3D game engine, whose aim is to make 3D game development easier.
 
-The rendering part of the engine is based on DX11. Maybe DX9, DX10, OpenGL support will be added in the future.
+You can download the precompiled SDK and view the complete documents from the engine website:
+
+<a href="http://gamefinal.sinaapp.com" target="_blank">http://gamefinal.sinaapp.com</a>
 
 <b>screenshots:</b>
 
