@@ -112,7 +112,7 @@ private:
 	bool						mDeferredShading;
 
 	ITimer*						mTimer;
-	ICameraNode*				mCamera;
+	IFpsCameraNode*				mCamera;
 	ITerrainNode*				mTerrainNode;
 	ILightNode*					mDirectionalLightNode;
 	

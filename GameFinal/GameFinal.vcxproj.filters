@@ -584,10 +584,10 @@
     <ClInclude Include="CDI8MouseDevice.h">
       <Filter>src\input\DirectInput</Filter>
     </ClInclude>
-    <ClInclude Include="IGrasslandNode.h">
+    <ClInclude Include="CGrassLand.h">
       <Filter>src\effect\scenery</Filter>
     </ClInclude>
-    <ClInclude Include="CGrassLand.h">
+    <ClInclude Include="CReflectionPlane.h">
       <Filter>src\effect\scenery</Filter>
     </ClInclude>
   </ItemGroup>
@@ -839,6 +839,9 @@
       <Filter>src\input\DirectInput</Filter>
     </ClCompile>
     <ClCompile Include="CGrassLand.cpp">
+      <Filter>src\effect\scenery</Filter>
+    </ClCompile>
+    <ClCompile Include="CReflectionPlane.cpp">
       <Filter>src\effect\scenery</Filter>
     </ClCompile>
   </ItemGroup>

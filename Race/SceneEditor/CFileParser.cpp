@@ -59,7 +59,7 @@ SSceneFileHeader CFileParser::ReadFileHeader(FILE* fp)
 	scene->UpdateGlobalLighting();
 
 	// set camera
-	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, header.CameraPosition);
+	IFpsCameraNode* camera = smgr->addFpsCameraNode(1, nullptr, header.CameraPosition);
 	camera->look(header.CameraLook);
 	camera->setShadowRange(300.0f);
 	scene->mCamera = camera;

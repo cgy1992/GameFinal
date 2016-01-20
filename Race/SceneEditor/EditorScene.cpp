@@ -82,7 +82,6 @@ void EditorScene::setupInitialScene()
 	mPointLightCollectionNode->setVisible(false);
 
 	mSceneManager->update(0);
-	
 
 	IVideoDriver* driver = IVideoDriver::getInstance();
 	mVideoDriver->setDeferredShading(true);
@@ -107,7 +106,7 @@ void EditorScene::setupInitialScene()
 		mCamera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 30.0f, -4.0f),
 			XMFLOAT3(0, 30.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
 		mCamera->setShadowRange(300.0f);
-
+		mCamera->enableAutoUpdate(false);
 		mVideoDriver->setDeferredShading(true);
 		mDeferredShading = true;
 	}

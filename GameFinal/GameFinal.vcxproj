@@ -141,6 +141,7 @@
     <ClInclude Include="CPipeline.h" />
     <ClInclude Include="CD3D11Shader.h" />
     <ClInclude Include="CPointLightNode.h" />
+    <ClInclude Include="CReflectionPlane.h" />
     <ClInclude Include="CResourceFactory.h" />
     <ClInclude Include="CResourceGroupManager.h" />
     <ClInclude Include="CResourceLoader.h" />
@@ -177,13 +178,13 @@
     <ClInclude Include="ICameraNode.h" />
     <ClInclude Include="ICompositor.h" />
     <ClInclude Include="ICompositorFactory.h" />
-    <ClInclude Include="IGrasslandNode.h" />
     <ClInclude Include="IInputDriver.h" />
     <ClInclude Include="IInstanceMeshBuffer.h" />
     <ClInclude Include="IInstanceCollectionNode.h" />
     <ClInclude Include="IInstanceNode.h" />
     <ClInclude Include="IKeyboardDevice.h" />
     <ClInclude Include="IMouseDevice.h" />
+    <ClInclude Include="IReflectionPlane.h" />
     <ClInclude Include="IRenderableBuffer.h" />
     <ClInclude Include="ITexture2DArray.h" />
     <ClInclude Include="ITextureCube.h" />
@@ -286,6 +287,7 @@
     <ClCompile Include="CModelMeshNode.cpp" />
     <ClCompile Include="CMotionBlurCompositor.cpp" />
     <ClCompile Include="CPointLightNode.cpp" />
+    <ClCompile Include="CReflectionPlane.cpp" />
     <ClCompile Include="CResourceFactory.cpp" />
     <ClCompile Include="CResourceGroupManager.cpp" />
     <ClCompile Include="CResourceLoader.cpp" />

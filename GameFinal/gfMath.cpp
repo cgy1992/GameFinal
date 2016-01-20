@@ -280,7 +280,19 @@ namespace gf
 
 		}
 
-		
+		/*
+		XMFLOAT3 ComputeMirrorPointAboutPlane(const XMFLOAT4& plane, const XMFLOAT3& p)
+		{
+			XMVECTOR plane_v = XMLoadFloat4(&plane);
+			XMVECTOR p_v = XMVectorSet(p.x, p.y, p.z, 1.0);
+			XMVECTOR dot_v = XMVector4Dot(plane_v, p_v);
+
+			XMVECTOR mirror_v = XMVectorMultiplyAdd(-2.0f * dot_v, plane_v, p_v);
+			XMFLOAT3 mirror_point;
+			XMStoreFloat3(&mirror_point, mirror_v);
+			return mirror_point;
+		}
+		*/
 
 	}
 }
