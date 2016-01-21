@@ -11,6 +11,7 @@
       <pipeline name="gf/geometry_shadow_pointlight"/>
       <pipeline name="gf/geometry_shadow_map" usage="shadow_map"/>
       <pipeline name="gf/geometry_point_shadow_map" usage="point_shadow_map"/>
+      <pipeline name="gf/geometry_defer" usage="defer"/>
     </pipelines>
   </material>
     
@@ -25,6 +26,7 @@
     </textures>
     <pipelines>
       <pipeline name="gf/geometry_texture_shadow_pointlight"/>
+      <pipeline name="gf/geometry_texture_defer" usage="defer"/>
     </pipelines>
   </material>
 

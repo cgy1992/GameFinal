@@ -265,6 +265,7 @@ namespace gf
 		const static int MAX_CAMERA_COUNT = 64;
 		const static int EMPTY_CAMERA_ID = 64;
 		const static int SHADOW_CAMERA_ID = 63;
+		const static int REFLECT_CAMERA_ID = 62;
 
 	protected:
 		IDevice*				mDevice;

@@ -262,6 +262,7 @@ namespace gf
 		ICameraNode*					mActiveCamera;
 		u32								mActiveCameraId;
 		ICameraNode*					mShadowMapCamera;
+		ICameraNode*					mReflectCamera;
 
 		u32								mRenderedMeshNum;
 

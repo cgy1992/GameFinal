@@ -590,6 +590,9 @@
     <ClInclude Include="CReflectionPlane.h">
       <Filter>src\effect\scenery</Filter>
     </ClInclude>
+    <ClInclude Include="IReflectionPlane.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">

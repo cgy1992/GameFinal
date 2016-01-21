@@ -228,6 +228,9 @@ namespace gf
 			XMStoreFloat3(&mirror_point, mirror_v);
 			return mirror_point;
 		}
+
+		
+
 	}
 }
 

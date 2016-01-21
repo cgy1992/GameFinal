@@ -3,6 +3,7 @@
 
 #include "IReferenceCounted.h"
 #include "ICameraNode.h"
+#include "ISceneManager.h"
 
 namespace gf
 {

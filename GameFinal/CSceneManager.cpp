@@ -26,6 +26,7 @@ namespace gf
 		, mQuadMeshNode(nullptr)
 		, mDefaultOctree(nullptr)
 		, mShadowMapCamera(nullptr)
+		, mReflectCamera(nullptr)
 		, mAmbient(0.5f, 0.5f, 0.5f, 1.0f)
 		, mCurrentShadowLightID(0)
 		, mDeferredShadingPipeline(nullptr)
@@ -44,6 +45,8 @@ namespace gf
 		mCameraNodes.fill(nullptr);
 		
 		mShadowMapCamera = this->addCameraNode(SHADOW_CAMERA_ID);
+
+		mReflectCamera = this->addCameraNode(REFLECT_CAMERA_ID);
 
 		// create shadow map camera
 		//mShadowMapCamera = this->addCameraNode(SHADOW_CAMERA_ID, nullptr, XMFLOAT3(0, 0, 0),
@@ -417,9 +420,9 @@ namespace gf
 		setActiveCamera(mShadowMapCamera);
 		SViewport preViewport = mVideoDriver->getViewport();
 
-		//IRenderTarget* preRenderTarget = mVideoDriver->getRenderTarget();
-		//IDepthStencilSurface* preDepthStencilSurface = mVideoDriver->getDepthStencilSurface();
-		
+		IRenderTarget* preRenderTarget = mVideoDriver->getRenderTarget();
+		IDepthStencilSurface* preDepthStencilSurface = mVideoDriver->getDepthStencilSurface();
+
 		mVideoDriver->clearShader(EST_PIXEL_SHADER);
 		mVideoDriver->setRenderTargetAndDepthStencil(nullptr, nullptr);
 
@@ -435,7 +438,8 @@ namespace gf
 		
 		mVideoDriver->setPipelineUsage(EPU_FORWARD);
 		mVideoDriver->setViewport(preViewport);
-		mVideoDriver->setDefaultRenderTargetAndDepthStencil();
+		//mVideoDriver->setDefaultRenderTargetAndDepthStencil();
+		mVideoDriver->setRenderTargetAndDepthStencil(preRenderTarget, preDepthStencilSurface);
 		setActiveCamera(activeCamera);
 	}
 
@@ -454,7 +458,7 @@ namespace gf
 		{
 			if (mVideoDriver->isDeferredShading())
 			{
-				drawDeferredShading(mVideoDriver->getDefaultRenderTarget());
+				drawDeferredShading(mVideoDriver->getRenderTarget());
 			}
 			else
 			{
