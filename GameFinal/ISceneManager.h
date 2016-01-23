@@ -19,7 +19,7 @@
 #include "ILightNode.h"
 #include "IInstanceNode.h"
 #include "IInstanceCollectionNode.h"
-
+#include "IReflectionPlane.h"
 
 namespace gf
 {
@@ -40,11 +40,15 @@ namespace gf
 
 		virtual void drawAll() = 0;
 
+		virtual void drawPass() = 0;
+
 		virtual void draw(u32 tag) = 0;
 
 		virtual void draw(ISceneNode* node) = 0;
 
 		virtual void drawShadowMap(ILightNode* light) = 0;
+
+		virtual void drawReflectionMaps() = 0;
 
 		IDevice* getDevice()
 		{
@@ -170,6 +174,12 @@ namespace gf
 			f32 nearZ = 1.0f,
 			f32 farZ = 1000.0f,
 			f32 aspectRatio = -1.0f) = 0;
+
+		virtual IReflectionPlane* addReflectionPlane(u32 id,
+			XMFLOAT4 plane, f32 planeSizeX, f32 planeSizeZ, 
+			u32 mapWidth = 0, u32 mapHeight = 0) = 0;
+
+		virtual IReflectionPlane* getReflectionPlane(u32 id) = 0;
 
 		virtual void setSkyDome(ITextureCube* cubeTexture) = 0;
 

@@ -30,7 +30,9 @@ namespace gf
 
 	CReflectionPlane::~CReflectionPlane()
 	{
-
+		if (mReflectMapTexture) {
+			ReleaseReferenceCounted(mReflectMapTexture);
+		}
 	}
 
 	void CReflectionPlane::render(ICameraNode* viewCamera)
@@ -59,7 +61,13 @@ namespace gf
 		ICameraNode* reflectCamera = mSceneManager->getActiveCameraNode();
 
 		reflectCamera->setPosition(rpos);
-		reflectCamera->look(rlook);
+		reflectCamera->look(rlook, XMFLOAT3(0, 1, 0));
+		reflectCamera->updateAbsoluteTransformation();
+
+		// store the view and proj matrix
+		mViewMatrix = reflectCamera->getViewMatrix();
+		mProjMatrix = reflectCamera->getProjMatrix();
+		mViewProjMatrix = reflectCamera->getViewProjMatrix();
 
 		ITextureManager* tmgr = ITextureManager::getInstance();
 
@@ -73,11 +81,13 @@ namespace gf
 			mReflectMapTexture = pRenderTarget->getTexture();
 		}
 
+		IRenderTarget* target = mReflectMapTexture->getRenderTarget();
 		IVideoDriver* driver = IVideoDriver::getInstance();
+		target->clear(driver->getClearColor());
 		driver->clearDepthStencil(1.0f, 0);
 		driver->setRenderTarget(mReflectMapTexture->getRenderTarget());
-		
 
+		mSceneManager->drawPass();
 	}
 
 	

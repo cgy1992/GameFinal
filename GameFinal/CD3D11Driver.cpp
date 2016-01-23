@@ -23,6 +23,7 @@ namespace gf
 	CD3D11Driver::CD3D11Driver(IDevice* device)
 		:mDevice(device)
 		, md3dDebug(nullptr)
+		, mClearColor(0, 0, 0, 1.0f)
 	{
 		
 	}
@@ -416,6 +417,12 @@ namespace gf
 		u8 stencilValue)
 	{
 		//md3dDeviceContext->ClearRenderTargetView(mDefaultRenderTargetView, clearColor);
+
+		// save clear color
+		mClearColor.x = clearColor[0];
+		mClearColor.y = clearColor[1];
+		mClearColor.z = clearColor[2];
+		mClearColor.w = clearColor[3];
 
 		UINT clearFlag = 0;
 		if (zBuffer) clearFlag |= D3D11_CLEAR_DEPTH;

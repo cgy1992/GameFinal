@@ -20,6 +20,12 @@ namespace gf
 		}
 	}
 
+	void CD3D11RenderTarget::clear(XMFLOAT4 color)
+	{
+		f32 rgba[4] = { color.x, color.y, color.z, color.w };
+		clear(rgba);
+	}
+
 	bool CD3D11RenderTarget::create(ITexture* texture, ID3D11Texture2D* pTexture2D, 
 		ID3D11ShaderResourceView* d3dShaderResourceView,
 		u32 width, u32 height, E_GI_FORMAT format)

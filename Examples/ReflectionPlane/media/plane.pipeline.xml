@@ -1,0 +1,22 @@
+<pipelines>
+  <pipeline name="plane_pipeline" prototype="gf/geometry_texture_shadow_pointlight">
+    <shaders>
+      <vertex-shader file="plane.hlsl" main="vs_main">
+        
+      </vertex-shader>
+      <pixel-shader file="plane.hlsl" main="point_light_ps_main">
+        <variable name="gReflectionMap" value="texture" index="1"></variable>  
+      </pixel-shader>
+    </shaders>
+
+    <samplers>
+  <sampler name="gRelectionSampleState"
+                 addressU="border"
+                 addressV="border"
+                 filter="MIN_MAG_MIP_LINEAR"
+                 border-color="0.0f, 0.0f, 0.0f, 0.0f"/>
+    </samplers>
+  </pipeline>
+  
+</pipelines>
+

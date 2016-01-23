@@ -19,6 +19,8 @@ namespace gf
 
 		virtual void clear(const f32 color[]) = 0;
 
+		virtual void clear(XMFLOAT4 color) = 0;
+
 		virtual void clear() = 0;
 
 		virtual void apply(E_SHADER_TYPE shaderType, u32 slot) = 0;

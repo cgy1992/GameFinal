@@ -15,6 +15,7 @@
 #include "CDirectionalLightNode.h"
 #include "CPointLightNode.h"
 #include "CInstanceCollectionNode.h"
+#include "CReflectionPlane.h"
 
 namespace gf
 {
@@ -43,7 +44,8 @@ namespace gf
 		IResourceFactory* pResourceFactory = mVideoDriver->getResourceFactory();
 
 		mCameraNodes.fill(nullptr);
-		
+		mReflectionPlanes.fill(nullptr);
+
 		mShadowMapCamera = this->addCameraNode(SHADOW_CAMERA_ID);
 
 		mReflectCamera = this->addCameraNode(REFLECT_CAMERA_ID);
@@ -51,9 +53,9 @@ namespace gf
 		// create shadow map camera
 		//mShadowMapCamera = this->addCameraNode(SHADOW_CAMERA_ID, nullptr, XMFLOAT3(0, 0, 0),
 		//	XMFLOAT3(0, 0, 0.5), XMFLOAT3(0, 1.0f, 0), false, XM_PIDIV4, 0, 1000.0f);
-		
+
 		mActiveCameraId = EMPTY_CAMERA_ID;
-		
+
 		// create default octree.
 		mDefaultOctree = this->addOctreeManagerNode(nullptr, aabb.Extents.x * 2.0f, aabb.Extents.y * 2.0f,
 			aabb.Extents.z * 2.0f, aabb.Center, 8);
@@ -64,10 +66,10 @@ namespace gf
 		//setTileBasedDeferredShadingCS(nullptr);
 		//setDeferredShadingPipeline(nullptr);
 	}
-	
+
 	void CSceneManager::init()
 	{
-		
+
 	}
 
 	CSceneManager::~CSceneManager()
@@ -131,7 +133,7 @@ namespace gf
 		if (!material) {
 			GF_PRINT_CONSOLE_INFO("Material '%s' cound not be found.\n", materialName.c_str());
 		}
-		return this->addMeshNode(mesh, material, parent, bStatic, 
+		return this->addMeshNode(mesh, material, parent, bStatic,
 			position, rotation, scale);
 	}
 
@@ -169,7 +171,7 @@ namespace gf
 
 		IAnimatedMeshNode* node = new CAnimatedMeshNode(nullptr, this, bStatic, mesh, position, rotation, scale);
 		parent->addChild(node);
-		
+
 		return node;
 	}
 
@@ -218,7 +220,7 @@ namespace gf
 		return node;
 	}
 
-	
+
 	ITerrainNode* CSceneManager::addTerrainNode(
 		ITerrainMesh* mesh,
 		const std::string& materialName,
@@ -231,6 +233,42 @@ namespace gf
 		}
 
 		return this->addTerrainNode(mesh, material, parent, position);
+	}
+
+	IReflectionPlane* CSceneManager::addReflectionPlane(u32 id,
+		XMFLOAT4 planeEquation, f32 planeSizeX, f32 planeSizeZ,
+		u32 mapWidth, u32 mapHeight)
+	{
+		static u32 maxPlaneCount = mReflectionPlanes.size();
+		if (id <= 0 || id >= maxPlaneCount)
+		{
+			GF_PRINT_CONSOLE_INFO("The reflection plane's id must be between 1 and %d.\n", 0, maxPlaneCount - 1);
+			return nullptr;
+		}
+
+		if (mReflectionPlanes[id])
+		{
+			GF_PRINT_CONSOLE_INFO("The plane with id %d already existed!\n", id);
+			return nullptr;
+		}
+
+		IReflectionPlane* plane = new CReflectionPlane(this, id, planeEquation,
+			planeSizeX, planeSizeZ, mapWidth, mapHeight);
+
+		mReflectionPlanes[id] = plane;
+		return plane;
+	}
+
+	IReflectionPlane* CSceneManager::getReflectionPlane(u32 id)
+	{
+		static u32 maxPlaneCount = mReflectionPlanes.size();
+		if (id <= 0 || id >= maxPlaneCount)
+		{
+			GF_PRINT_CONSOLE_INFO("The reflection plane's id must be between 1 and %d.\n", 0, maxPlaneCount - 1);
+			return nullptr;
+		}
+
+		return mReflectionPlanes[id];
 	}
 
 	void CSceneManager::collectMeshNodeShaders(IMeshNode* node)
@@ -312,7 +350,7 @@ namespace gf
 		{
 			frustum = camera->getFrustum(node->getFarCullingDistance());
 		}
-		
+
 		if (math::IntersectOrientedBoxFrustum(obb, frustum) == math::EIS_OUTSIDE)
 			return true;
 
@@ -326,7 +364,7 @@ namespace gf
 		//mSecondsDelta = static_cast<f32>(delta)* 0.001f;
 
 		ITextureManager::getInstance()->updateTemporaryTextures(delta);
-		
+
 		ICameraNode* camera = getActiveCameraNode();
 		if (camera && camera->getCameraType() == ECAT_FPS_CAMERA) {
 			CFpsCameraNode* fpsCamera = dynamic_cast<CFpsCameraNode*>(camera);
@@ -435,7 +473,7 @@ namespace gf
 				light->generateShadowMap(activeCamera);
 			}
 		}
-		
+
 		mVideoDriver->setPipelineUsage(EPU_FORWARD);
 		mVideoDriver->setViewport(preViewport);
 		//mVideoDriver->setDefaultRenderTargetAndDepthStencil();
@@ -450,7 +488,42 @@ namespace gf
 		draw(mDefaultOctree);
 	}
 
+	void CSceneManager::drawReflectionMaps()
+	{
+		IRenderTarget* preRenderTarget = mVideoDriver->getRenderTarget();
+		mVideoDriver->setRenderTarget(nullptr);
+
+		ICameraNode* viewCamera = getActiveCameraNode();
+
+		mReflectCamera->setPerspectiveProjection(viewCamera->isPerspectiveProjection());
+		mReflectCamera->setAspectRatio(viewCamera->getAspectRatio());
+		mReflectCamera->setFovAngle(viewCamera->getFovAngle());
+		mReflectCamera->setNearZ(viewCamera->getNearZ());
+		mReflectCamera->setFarZ(viewCamera->getFarZ());
+		mReflectCamera->setViewWidth(viewCamera->getViewWidth());
+		mReflectCamera->setViewHeight(viewCamera->getViewHeight());
+		
+
+		setActiveCamera(mReflectCamera);
+
+		for (u32 i = 0; i < mReflectionPlanes.size(); i++) {
+			IReflectionPlane* plane = mReflectionPlanes[i];
+			if (plane) {
+				plane->render(viewCamera);
+			}
+		}
+	
+		setActiveCamera(viewCamera);
+		mVideoDriver->setRenderTarget(preRenderTarget);
+		mVideoDriver->clearDepthStencil(1.0f, 0);
+	}
+
 	void CSceneManager::drawAll()
+	{
+		drawPass();
+	}
+
+	void CSceneManager::drawPass()
 	{
 		drawShadowMaps();
 
@@ -717,6 +790,7 @@ namespace gf
 				material.setTexture(0, outputTexture);
 				quad->setMaterial(&material);
 				draw(quad);
+				quad->setMaterial(nullptr);
 			}
 			else {
 				std::string postProcessPipelineName = "gf/deferred_anti_aliasing_post_process";
@@ -727,6 +801,7 @@ namespace gf
 				material.setTexture(2, gbuffers[0]->getTexture());
 				quad->setMaterial(&material);
 				draw(quad);
+				quad->setMaterial(nullptr);
 			}
 
 			mVideoDriver->setDepthStencilSurface(depthStencilSurface);

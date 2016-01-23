@@ -240,6 +240,8 @@ namespace gf
 
 		u32 getBackBufferHeight() const { return  mBackBufferHeight; }
 
+		virtual XMFLOAT4 getClearColor() const = 0;
+
 		_DECLARE_SINGLETON_INSTANCE(IVideoDriver);
 
 	public:

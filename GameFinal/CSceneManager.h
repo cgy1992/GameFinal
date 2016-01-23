@@ -2,6 +2,8 @@
 #define __CSCENEMANAGER_H__
 
 #include "ISceneManager.h"
+#include "IReflectionPlane.h"
+
 namespace gf
 {
 
@@ -37,7 +39,11 @@ namespace gf
 
 		virtual void drawShadowMap(ILightNode* light);
 
+		virtual void drawReflectionMaps();
+
 		virtual void drawAll();
+
+		virtual void drawPass();
 
 		virtual void draw(ISceneNode* node);
 
@@ -143,6 +149,12 @@ namespace gf
 			f32 nearZ = 1.0f,
 			f32 farZ = 1000.0f,
 			f32 aspectRatio = -1.0f);
+
+		virtual IReflectionPlane* addReflectionPlane(u32 id,
+			XMFLOAT4 plane, f32 planeSizeX, f32 planeSizeZ,
+			u32 mapWidth = 0, u32 mapHeight = 0);
+
+		virtual IReflectionPlane* getReflectionPlane(u32 id);
 
 		virtual IOctreeManager* addOctreeManagerNode(ISceneNode* parent,
 			f32 width,
@@ -258,6 +270,7 @@ namespace gf
 
 		std::list<ITerrainNode*>		mTerrainNodes;
 		std::array<ICameraNode*, 65>	mCameraNodes;
+		std::array<IReflectionPlane*, 65>	mReflectionPlanes;
 
 		ICameraNode*					mActiveCamera;
 		u32								mActiveCameraId;

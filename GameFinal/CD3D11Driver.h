@@ -171,6 +171,8 @@ namespace gf
 
 		virtual void resetTextures(E_SHADER_TYPE shaderType = EST_UNDEFINED_SHADER);
 
+		virtual XMFLOAT4 getClearColor() const { return mClearColor; }
+
 		virtual ~CD3D11Driver();
 
 	private:
@@ -198,7 +200,7 @@ namespace gf
 
 		ID3D11Debug*				md3dDebug;
 
-		
+		XMFLOAT4					mClearColor;
 
 	public:
 		/* this member is to store the current state of d3d11 driver context. */

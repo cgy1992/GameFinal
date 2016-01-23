@@ -2,6 +2,7 @@
 #define __REFLECTION_CLASS_H__
 
 #include "IReflectionPlane.h"
+#include "ISceneManager.h"
 
 namespace gf
 {
@@ -11,10 +12,30 @@ namespace gf
 		CReflectionPlane(ISceneManager* smgr, u32 id,
 			XMFLOAT4 plane, f32 sizeX, f32 sizeZ,
 			f32 mapWidth, f32 mapHeight);
-		
+
 		~CReflectionPlane();
 
-		void render(ICameraNode* camera);
+		virtual void render(ICameraNode* camera);
+
+		virtual ITexture* getReflectionMap()
+		{
+			return mReflectMapTexture;
+		}
+
+		virtual XMFLOAT4X4 getViewMatrix() const
+		{
+			return mViewMatrix;
+		}
+
+		virtual XMFLOAT4X4 getProjMatrix() const
+		{
+			return mProjMatrix;
+		}
+
+		virtual XMFLOAT4X4 getViewProjMatrix() const
+		{
+			return mViewProjMatrix;
+		}
 
 	private:
 		u32				mId;
@@ -27,6 +48,10 @@ namespace gf
 		f32				mMapHeight;
 
 		ITexture*		mReflectMapTexture;
+
+		XMFLOAT4X4		mViewMatrix;
+		XMFLOAT4X4		mProjMatrix;
+		XMFLOAT4X4		mViewProjMatrix;
 
 	};
 }
