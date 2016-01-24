@@ -374,8 +374,10 @@ namespace gf
 		// update skydome position
 		if (mSkyDomeNode && camera)
 		{
+			mDefaultOctree->removeSceneNode(mSkyDomeNode);
 			XMFLOAT3 pos = camera->getPosition();
 			mSkyDomeNode->setPosition(pos.x, pos.y, pos.z);
+			mDefaultOctree->addSceneNodeToOctree(mSkyDomeNode);
 		}
 
 		// remove all dynamic nodes from octree.
@@ -525,6 +527,18 @@ namespace gf
 
 	void CSceneManager::drawPass()
 	{
+		// adjust the skydome's position
+		// update skydome position
+		ICameraNode* camera = getActiveCameraNode();
+		if (mSkyDomeNode && camera)
+		{
+			mDefaultOctree->removeSceneNode(mSkyDomeNode);
+			XMFLOAT3 pos = camera->getPosition();
+			mSkyDomeNode->setPosition(pos.x, pos.y, pos.z);
+			mSkyDomeNode->updateAbsoluteTransformation();
+			mDefaultOctree->addSceneNodeToOctree(mSkyDomeNode);
+		}
+
 		drawShadowMaps();
 
 		if (mCompositors.empty())

@@ -5,7 +5,9 @@
         
       </vertex-shader>
       <pixel-shader file="plane.hlsl" main="point_light_ps_main">
-        <variable name="gReflectionMap" value="texture" index="1"></variable>  
+        <variable name="gReflectionMap" value="texture" index="2"></variable> 
+        <variable name="gTexture" value="texture" index="0"/>
+        <variable name="gNormalMap" value="texture" index="1"/>
       </pixel-shader>
     </shaders>
 

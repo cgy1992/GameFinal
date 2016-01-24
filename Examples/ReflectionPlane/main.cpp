@@ -42,7 +42,7 @@ ISceneManager* setupScene(IDevice* device) {
 	// create a fps camera node
 	IFpsCameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
 		XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
-	camera->setStandHeight(5.0f);
+//	camera->setStandHeight(5.0f);
 
 	//ICameraNode* camera = smgr->addCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
 	//	XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
@@ -61,7 +61,7 @@ int main()
 	settings.MultiSamplingCount = 1;
 	settings.MultiSamplingQuality = 0;
 
-	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
+	IDevice* device = createDevice(EDT_DIRECT3D11, 1024, 768, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
@@ -69,6 +69,9 @@ int main()
 	IInputDriver* input = device->getInputDriver();
 
 	ISceneManager* smgr = setupScene(device);
+
+	smgr->setSkyDome("Snow.dds");
+
 
 	IReflectionPlane* plane = smgr->addReflectionPlane(1,
 		XMFLOAT4(0, 1.0f, 0, 0), 100, 100);
@@ -87,12 +90,12 @@ int main()
 		smgr->update(dt);
 		driver->beginScene(true, true, color);
 		
-		groundMtrl->setTexture(1, NULL);
+		groundMtrl->setTexture(2, NULL);
 
 		smgr->drawReflectionMaps();
 
 		//groundMtrl->setTexture(1, ITextureManager::getInstance()->get("floor.dds"));
-		groundMtrl->setTexture(1, plane->getReflectionMap());
+		groundMtrl->setTexture(2, plane->getReflectionMap());
 		std::string varname = "gReflectionMatrix";
 		XMFLOAT4X4 M = plane->getViewProjMatrix();
 		groundMtrl->getPipeline(0)->setMatrix(varname, M, false);

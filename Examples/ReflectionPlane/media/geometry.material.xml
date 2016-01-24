@@ -19,10 +19,11 @@
     <attributes>
       <attribute name="ambient" value="0.5f, 0.5f, 0.5f, 1.0f"/>
       <attribute name="diffuse" value="0.5f, 0.5f, 0.5f, 1.0f"/>
-      <attribute name="specular" value="0.05f, 0.05f, 0.05f, 32.0f"/>
+      <attribute name="specular" value="1.0f, 1.0f, 1.0f, 32.0f"/>
     </attributes>
     <textures>
       <texture name="floor.dds" index="0"></texture>
+      <texture name="floor_NRM.png" index="1"/>
     </textures>
     <pipelines>
       <pipeline name="plane_pipeline"/>
