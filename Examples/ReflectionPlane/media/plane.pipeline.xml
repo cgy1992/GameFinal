@@ -2,12 +2,13 @@
   <pipeline name="plane_pipeline" prototype="gf/geometry_texture_shadow_pointlight">
     <shaders>
       <vertex-shader file="plane.hlsl" main="vs_main">
-        
+        <variable name="gReflectionMatrix" value="m_ReflectionMatrix"/>
       </vertex-shader>
       <pixel-shader file="plane.hlsl" main="point_light_ps_main">
         <variable name="gReflectionMap" value="texture" index="2"></variable> 
         <variable name="gTexture" value="texture" index="0"/>
         <variable name="gNormalMap" value="texture" index="1"/>
+        
       </pixel-shader>
     </shaders>
 

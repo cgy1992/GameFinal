@@ -16,6 +16,7 @@
 #include "CPointLightNode.h"
 #include "CInstanceCollectionNode.h"
 #include "CReflectionPlane.h"
+#include "CReflectionMediator.h"
 
 namespace gf
 {
@@ -65,6 +66,7 @@ namespace gf
 
 		//setTileBasedDeferredShadingCS(nullptr);
 		//setDeferredShadingPipeline(nullptr);
+		mReflectionMediator = new CReflectionMediator();
 	}
 
 	void CSceneManager::init()
@@ -74,6 +76,14 @@ namespace gf
 
 	CSceneManager::~CSceneManager()
 	{
+		// remove reflection planes
+		for (u32 i = 0; i < mReflectionPlanes.size(); i++) {
+			IReflectionPlane* plane = mReflectionPlanes[i];
+			if (plane) {
+				ReleaseReferenceCounted(plane);
+			}
+		}
+
 		//mDefaultOctree->update();
 		mDefaultOctree->destroy();
 
@@ -236,8 +246,13 @@ namespace gf
 	}
 
 	IReflectionPlane* CSceneManager::addReflectionPlane(u32 id,
-		XMFLOAT4 planeEquation, f32 planeSizeX, f32 planeSizeZ,
-		u32 mapWidth, u32 mapHeight)
+		f32 planeSizeX,
+		f32 planeSizeZ,
+		XMFLOAT3 pos,
+		XMFLOAT3 normal,
+		XMFLOAT3 tangent,
+		u32 mapWidth,
+		u32 mapHeight)
 	{
 		static u32 maxPlaneCount = mReflectionPlanes.size();
 		if (id <= 0 || id >= maxPlaneCount)
@@ -252,8 +267,9 @@ namespace gf
 			return nullptr;
 		}
 
-		IReflectionPlane* plane = new CReflectionPlane(this, id, planeEquation,
-			planeSizeX, planeSizeZ, mapWidth, mapHeight);
+		IReflectionPlane* plane = new CReflectionPlane(this, id,
+			pos, normal, tangent, 
+			XMFLOAT2(planeSizeX, planeSizeZ), mapWidth, mapHeight);
 
 		mReflectionPlanes[id] = plane;
 		return plane;

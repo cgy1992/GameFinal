@@ -60,6 +60,7 @@ namespace gf
 			mName = material.mName;
 			mSortCode = material.mSortCode;
 			mAttributes = material.mAttributes;
+			mMatrixAttributes = material.mMatrixAttributes;
 
 			for (u32 i = 0; i < EPU_COUNT; i++)
 			{
@@ -205,6 +206,11 @@ namespace gf
 			mAttributes[name] = value;
 		}
 
+		void setAttribute(const std::string& name, XMFLOAT4X4 value) 
+		{
+			mMatrixAttributes[name] = value;
+		}
+
 		XMFLOAT4 getAttribute(const std::string& name) const
 		{
 			auto it = mAttributes.find(name);
@@ -225,13 +231,25 @@ namespace gf
 
 		bool hasAttribute(const std::string& name) const
 		{
-			return mAttributes.find(name) != mAttributes.end();
+			return mAttributes.find(name) != mAttributes.end()
+				|| mMatrixAttributes.find(name) != mMatrixAttributes.end();
 		}
 
 		bool getAttribute(const std::string& name, XMFLOAT4& val) const
 		{
 			auto it = mAttributes.find(name);
 			if (it != mAttributes.end())
+			{
+				val = it->second;
+				return true;
+			}
+			return false;
+		}
+
+		bool getAttribute(const std::string& name, XMFLOAT4X4& val) const 
+		{
+			auto it = mMatrixAttributes.find(name);
+			if (it != mMatrixAttributes.end())
 			{
 				val = it->second;
 				return true;
@@ -252,6 +270,7 @@ namespace gf
 		IPipeline*								mPipelines[EPU_COUNT];
 		ITexture*								mTextures[MAX_TEXTURE_COUNT];
 		std::map<std::string, XMFLOAT4>			mAttributes;
+		std::map<std::string, XMFLOAT4X4>		mMatrixAttributes;
 	};
 
 

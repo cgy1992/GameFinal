@@ -10,8 +10,11 @@ namespace gf
 	{
 	public:
 		CReflectionPlane(ISceneManager* smgr, u32 id,
-			XMFLOAT4 plane, f32 sizeX, f32 sizeZ,
-			f32 mapWidth, f32 mapHeight);
+			XMFLOAT3 pos,
+			XMFLOAT3 normal,
+			XMFLOAT3 tangent,
+			XMFLOAT2 size,
+			u32 mapWidth, u32 mapHeight);
 
 		~CReflectionPlane();
 
@@ -37,11 +40,42 @@ namespace gf
 			return mViewProjMatrix;
 		}
 
+		virtual XMFLOAT3 getPosition() const 
+		{
+			return mPosition;
+		}
+
+		virtual XMFLOAT4 getPlaneEquation() const
+		{
+			return mPlaneEquation;
+		}
+
+		virtual XMFLOAT2 getSize() const
+		{
+			return mPlaneSize;
+		}
+
+		virtual XMFLOAT3 getTangent() const
+		{
+			return mTangent;
+		}
+
+		virtual u32 getId() const
+		{
+			return mId;
+		}
+
+		virtual math::SOrientedBox getOBB() const;
+
+
 	private:
 		u32				mId;
 		XMFLOAT4		mPlaneEquation;
-		f32				mPlaneSizeX;
-		f32				mPlaneSizeZ;
+		XMFLOAT3		mPosition;
+		XMFLOAT3		mTangent;
+		XMFLOAT3		mNormal;
+		XMFLOAT3		mBinormal;
+		XMFLOAT2		mPlaneSize;
 		ISceneManager*	mSceneManager;
 
 		f32				mMapWidth;

@@ -141,6 +141,7 @@
     <ClInclude Include="CPipeline.h" />
     <ClInclude Include="CD3D11Shader.h" />
     <ClInclude Include="CPointLightNode.h" />
+    <ClInclude Include="CReflectionMediator.h" />
     <ClInclude Include="CReflectionPlane.h" />
     <ClInclude Include="CResourceFactory.h" />
     <ClInclude Include="CResourceGroupManager.h" />
@@ -184,6 +185,7 @@
     <ClInclude Include="IInstanceNode.h" />
     <ClInclude Include="IKeyboardDevice.h" />
     <ClInclude Include="IMouseDevice.h" />
+    <ClInclude Include="IReflectionMediator.h" />
     <ClInclude Include="IReflectionPlane.h" />
     <ClInclude Include="IRenderableBuffer.h" />
     <ClInclude Include="ITexture2DArray.h" />
@@ -342,6 +344,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="CReflectionMediator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Media\built-in-resources\post_process.hlsl">

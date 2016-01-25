@@ -593,6 +593,12 @@
     <ClInclude Include="IReflectionPlane.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="CReflectionMediator.h">
+      <Filter>src\effect\scenery</Filter>
+    </ClInclude>
+    <ClInclude Include="IReflectionMediator.h">
+      <Filter>src\effect\scenery</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -845,6 +851,9 @@
       <Filter>src\effect\scenery</Filter>
     </ClCompile>
     <ClCompile Include="CReflectionPlane.cpp">
+      <Filter>src\effect\scenery</Filter>
+    </ClCompile>
+    <ClCompile Include="CReflectionMediator.cpp">
       <Filter>src\effect\scenery</Filter>
     </ClCompile>
   </ItemGroup>

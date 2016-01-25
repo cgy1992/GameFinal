@@ -5,7 +5,7 @@ cbuffer cbPerFrame
 	
 };
 
-cbuffer cbPerObject
+cbuffer cbPerObject2
 {
 	float4x4 gReflectionMatrix;
 };

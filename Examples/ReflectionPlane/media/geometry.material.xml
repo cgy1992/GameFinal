@@ -30,6 +30,8 @@
       <pipeline name="gf/geometry_texture_defer" usage="defer"/>
     </pipelines>
   </material>
+  
+  <material name="ground_material2" prototype="ground_material"/>
 
   <material name="box_material" prototype="sphere_material">
     <attributes>

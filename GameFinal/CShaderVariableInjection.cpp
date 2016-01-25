@@ -373,9 +373,14 @@ namespace gf
 		case ESAVT_MATERIAL_ATTRIBUTE:
 		{
 										 XMFLOAT4 val;
+										 XMFLOAT4X4 mat;
 										 if (material->getAttribute(var.MaterialAttributeName, val))
 										 {
 											 shader->setAttribute(var.VariableName, val, ignoreIfAlreadyUpdate);
+										 }
+										 else if (material->getAttribute(var.MaterialAttributeName, mat)) 
+										 {
+											 shader->setMatrix(var.VariableName, mat, ignoreIfAlreadyUpdate);
 										 }
 		}
 			break;

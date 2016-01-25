@@ -2,16 +2,17 @@
 #define __CSCENEMANAGER_H__
 
 #include "ISceneManager.h"
-#include "IReflectionPlane.h"
 
 namespace gf
 {
+	class CReflectionMediator;
 
 	class CSceneManager : public ISceneManager
 	{
 		friend class CDirectionalLightNode;
 		friend class CPointLightNode;
 		friend class CTerrainNode;
+		
 
 	public:
 
@@ -151,8 +152,13 @@ namespace gf
 			f32 aspectRatio = -1.0f);
 
 		virtual IReflectionPlane* addReflectionPlane(u32 id,
-			XMFLOAT4 plane, f32 planeSizeX, f32 planeSizeZ,
-			u32 mapWidth = 0, u32 mapHeight = 0);
+			f32 planeSizeX,
+			f32 planeSizeZ,
+			XMFLOAT3 pos = XMFLOAT3(0, 0, 0),
+			XMFLOAT3 normal = XMFLOAT3(0, 1.0f, 0),
+			XMFLOAT3 tangent = XMFLOAT3(1.0f, 0, 0),
+			u32 mapWidth = 0,
+			u32 mapHeight = 0);
 
 		virtual IReflectionPlane* getReflectionPlane(u32 id);
 
@@ -270,7 +276,7 @@ namespace gf
 
 		std::list<ITerrainNode*>		mTerrainNodes;
 		std::array<ICameraNode*, 65>	mCameraNodes;
-		std::array<IReflectionPlane*, 65>	mReflectionPlanes;
+		
 
 		ICameraNode*					mActiveCamera;
 		u32								mActiveCameraId;
@@ -301,6 +307,10 @@ namespace gf
 		bool							mRenderingDeferredQuad;
 
 		SLightsInDeferredShading		mDeferredShadingLights;
+
+		std::array<IReflectionPlane*, 65>	mReflectionPlanes;
+		CReflectionMediator					mReflectionMediator;
+		
 	};
 }
 

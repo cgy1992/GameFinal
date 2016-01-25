@@ -11,9 +11,7 @@ ISceneManager* setupScene(IDevice* device) {
 	// get mesh manager
 	IMeshManager* meshManager = IMeshManager::getInstance();
 
-	// set up ground.
-	ISimpleMesh* groundMesh = meshManager->createPlaneMesh("ground", 100.0f, 100.0f, 10, 10, 50, 50);
-	IMeshNode* groundNode = smgr->addMeshNode(groundMesh, "ground_material", nullptr, true);
+	
 
 	// create a sphere
 	ISimpleMesh* sphereMesh = meshManager->createSphereMesh("sphere", 1.0f, 100, 100);
@@ -72,16 +70,30 @@ int main()
 
 	smgr->setSkyDome("Snow.dds");
 
+	IMeshManager* meshManager = IMeshManager::getInstance();
 
-	IReflectionPlane* plane = smgr->addReflectionPlane(1,
-		XMFLOAT4(0, 1.0f, 0, 0), 100, 100);
+	// set up ground.
+	ISimpleMesh* groundMesh = meshManager->createPlaneMesh("ground", 100.0f, 100.0f, 10, 10, 50, 50);
 
-	IMaterial* groundMtrl = IMaterialManager::getInstance()->get("ground_material");
+	IMeshNode* groundNode1 = smgr->addMeshNode(groundMesh, "ground_material", nullptr, true,
+		XMFLOAT3(0, 0, 0));
+
+	IMeshNode* groundNode2 = smgr->addMeshNode(groundMesh, "ground_material2", nullptr, true,
+		XMFLOAT3(0, 0, 10.0f), XMFLOAT3(-XM_PI / 2, 0, 0));
+
+	IReflectionPlane* plane1 = smgr->addReflectionPlane(1,
+		100, 100); 
+
+	IReflectionPlane* plane2 = smgr->addReflectionPlane(2,
+		100, 100, XMFLOAT3(0, 0, 10.0f), XMFLOAT3(0, 0, -1.0f));
+
+	IMaterial* groundMtrl1 = IMaterialManager::getInstance()->get("ground_material");
+	IMaterial* groundMtrl2 = IMaterialManager::getInstance()->get("ground_material2");
 
 	ITimer* timer = device->getTimer();
 	timer->reset();
 
-	const f32 color[] = { 0, 0.2f, 0.4f, 1.0f };
+	const f32 color[] = { 1.0, 0.0f, 0.0f, 1.0f };
 	while (device->run()) {
 		float dt = timer->tick();
 		if (input->keyDown(GVK_ESCAPE))
@@ -90,15 +102,23 @@ int main()
 		smgr->update(dt);
 		driver->beginScene(true, true, color);
 		
-		groundMtrl->setTexture(2, NULL);
+		groundMtrl1->setTexture(2, NULL);
+		groundMtrl2->setTexture(2, NULL);
 
 		smgr->drawReflectionMaps();
 
 		//groundMtrl->setTexture(1, ITextureManager::getInstance()->get("floor.dds"));
-		groundMtrl->setTexture(2, plane->getReflectionMap());
+		groundMtrl1->setTexture(2, plane1->getReflectionMap());
+		groundMtrl2->setTexture(2, plane2->getReflectionMap());
+
 		std::string varname = "gReflectionMatrix";
-		XMFLOAT4X4 M = plane->getViewProjMatrix();
-		groundMtrl->getPipeline(0)->setMatrix(varname, M, false);
+		XMFLOAT4X4 M1 = plane1->getViewProjMatrix();
+		XMFLOAT4X4 M2 = plane2->getViewProjMatrix();
+
+		groundMtrl1->setAttribute("ReflectionMatrix", M1);
+		groundMtrl2->setAttribute("ReflectionMatrix", M2);
+
+	//	groundMtrl1->getPipeline(0)->setMatrix(varname, M2, false);
 
 		smgr->drawAll();
 		driver->endScene();

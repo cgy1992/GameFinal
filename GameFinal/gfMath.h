@@ -170,6 +170,18 @@ namespace gf
 				+ (a.z - b.z) * (a.z - b.z);
 		}
 
+		inline f32 VectorDot(const XMFLOAT3& a, const XMFLOAT3& b) {
+			return a.x * b.x + a.y * b.y + a.z * b.z;
+		}
+
+		inline XMFLOAT3 VectorNormalize(const XMFLOAT3& n) {
+			XMVECTOR v = XMLoadFloat3(&n);
+			v = XMVector3Normalize(v);
+			XMFLOAT3 vec;
+			XMStoreFloat3(&vec, v); 
+			return vec;
+		}
+
 		inline XMFLOAT3 GetNormalizedVector(f32 x, f32 y, f32 z)
 		{
 			XMVECTOR v = XMVectorSet(x, y, z, 0);

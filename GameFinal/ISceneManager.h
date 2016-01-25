@@ -176,8 +176,13 @@ namespace gf
 			f32 aspectRatio = -1.0f) = 0;
 
 		virtual IReflectionPlane* addReflectionPlane(u32 id,
-			XMFLOAT4 plane, f32 planeSizeX, f32 planeSizeZ, 
-			u32 mapWidth = 0, u32 mapHeight = 0) = 0;
+			f32 planeSizeX, 
+			f32 planeSizeZ, 
+			XMFLOAT3 pos = XMFLOAT3(0, 0, 0),
+			XMFLOAT3 normal = XMFLOAT3(0, 1.0f, 0),
+			XMFLOAT3 tangent = XMFLOAT3(1.0f, 0, 0),
+			u32 mapWidth = 0, 
+			u32 mapHeight = 0) = 0;
 
 		virtual IReflectionPlane* getReflectionPlane(u32 id) = 0;
 
