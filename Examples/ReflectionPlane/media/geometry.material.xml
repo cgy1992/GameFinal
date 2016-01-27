@@ -27,6 +27,7 @@
     </textures>
     <pipelines>
       <pipeline name="plane_pipeline"/>
+      <pipeline name="plane_reflect_pipeline" reflect="true"/>
       <pipeline name="gf/geometry_texture_defer" usage="defer"/>
     </pipelines>
   </material>

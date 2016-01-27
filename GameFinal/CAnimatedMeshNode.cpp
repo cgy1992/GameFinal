@@ -229,4 +229,27 @@ namespace gf
 		else
 			mMesh->getAbsoluteBoneTransforms(mRelativeBoneTransforms, mAbsoluteBoneTransforms);
 	}
+
+	IReflectionPlane* CAnimatedMeshNode::getReflectionPlane()
+	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		return mediator->getReflectionPlane(this);
+	}
+
+	void CAnimatedMeshNode::setReflectionPlane(IReflectionPlane* plane)
+	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		mediator->setMapping(this, plane);
+	}
+
+	CAnimatedMeshNode::~CAnimatedMeshNode()
+	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		mediator->removeMapping(this);
+
+		ReleaseReferenceCounted(mMesh);
+		ReleaseListElementCounted(mMaterials);
+	}
+
 }
+

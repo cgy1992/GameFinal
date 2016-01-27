@@ -30,11 +30,7 @@ namespace gf
 			}
 		}
 
-		virtual ~CModelMeshNode()
-		{
-			ReleaseReferenceCounted(mMesh);
-			ReleaseListElementCounted(mMaterials);
-		}
+		virtual ~CModelMeshNode();
 
 		virtual bool setMaterial(u32 subset, IMaterial* material);
 
@@ -73,6 +69,10 @@ namespace gf
 		}
 
 		virtual IMesh* getMesh() const { return mMesh; }
+
+		virtual void setReflectionPlane(IReflectionPlane* plane);
+
+		virtual IReflectionPlane* getReflectionPlane();
 
 	private:
 

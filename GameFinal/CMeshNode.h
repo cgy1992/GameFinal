@@ -27,11 +27,7 @@ namespace gf
 			AddReferenceCounted(mMaterial);
 		}
 
-		virtual ~CMeshNode()
-		{
-			ReleaseReferenceCounted(mMesh);
-			ReleaseReferenceCounted(mMaterial);
-		}
+		virtual ~CMeshNode();
 
 
 		virtual void render(E_PIPELINE_USAGE usage);
@@ -87,6 +83,10 @@ namespace gf
 		}
 
 		virtual IMesh* getMesh() const { return mMesh; }
+
+		virtual void setReflectionPlane(IReflectionPlane* plane);
+
+		virtual IReflectionPlane* getReflectionPlane();
 
 	private:
 		ISimpleMesh*			mMesh;

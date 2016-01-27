@@ -6,6 +6,8 @@
 
 namespace gf
 {
+	class CReflectionMediator;
+
 	class CReflectionPlane : public IReflectionPlane
 	{
 	public:
@@ -14,7 +16,8 @@ namespace gf
 			XMFLOAT3 normal,
 			XMFLOAT3 tangent,
 			XMFLOAT2 size,
-			u32 mapWidth, u32 mapHeight);
+			u32 mapWidth, 
+			u32 mapHeight);
 
 		~CReflectionPlane();
 
@@ -67,6 +70,10 @@ namespace gf
 
 		virtual math::SOrientedBox getOBB() const;
 
+		virtual ISceneManager* getSceneManager()
+		{
+			return mSceneManager;
+		}
 
 	private:
 		u32				mId;
@@ -86,7 +93,6 @@ namespace gf
 		XMFLOAT4X4		mViewMatrix;
 		XMFLOAT4X4		mProjMatrix;
 		XMFLOAT4X4		mViewProjMatrix;
-
 	};
 }
 

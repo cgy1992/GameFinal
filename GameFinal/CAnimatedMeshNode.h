@@ -46,11 +46,7 @@ namespace gf
 			mCurrAnimationId = 0;
 		}
 
-		virtual ~CAnimatedMeshNode()
-		{
-			ReleaseReferenceCounted(mMesh);
-			ReleaseListElementCounted(mMaterials);
-		}
+		virtual ~CAnimatedMeshNode();
 
 		virtual bool setMaterialName(const std::string& name);
 
@@ -93,6 +89,10 @@ namespace gf
 		}
 
 		virtual IMesh* getMesh() const { return mMesh; }
+
+		virtual void setReflectionPlane(IReflectionPlane* plane);
+
+		virtual IReflectionPlane* getReflectionPlane();
 
 	private:
 		void updateSubsetBones(const std::vector<SModelSubsetBone>& bones);

@@ -4,6 +4,12 @@
 
 namespace gf
 {
+	CReflectionMediator::CReflectionMediator(ISceneManager* smgr)
+		:mSceneManager(smgr)
+	{
+		
+	}
+
 	void CReflectionMediator::setMapping(IMeshNode* meshNode, IReflectionPlane* plane)
 	{
 		mMeshReflectionMappings[meshNode] = plane->getId();
@@ -32,5 +38,25 @@ namespace gf
 		
 		return nullptr;
 	}
+
+	void CReflectionMediator::removeMappings(u32 id)
+	{
+		auto it = this->mMeshReflectionMappings.begin();
+		while (it != mMeshReflectionMappings.end()) {
+			if (it->second == id) {
+				auto it2 = it;
+				it++;
+				mMeshReflectionMappings.erase(it2);
+			}
+			else
+			{
+				it++;
+			}
+		}
+
+	}
+
+
+
 }
 

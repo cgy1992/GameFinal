@@ -5,8 +5,6 @@
 
 namespace gf
 {
-	class CReflectionMediator;
-
 	class CSceneManager : public ISceneManager
 	{
 		friend class CDirectionalLightNode;
@@ -259,6 +257,10 @@ namespace gf
 
 		virtual bool getHeightOnTerrain(f32 x, f32 z, f32& height) const;
 
+		virtual IReflectionMediator* getReflectionMediator() { return mReflectionMediator; }
+
+		virtual bool isRenderingReflectionMaps() { return mRenderingReflectionMap; }
+
 	private:
 
 		void collectMeshNodeShaders(IMeshNode* node);
@@ -309,7 +311,8 @@ namespace gf
 		SLightsInDeferredShading		mDeferredShadingLights;
 
 		std::array<IReflectionPlane*, 65>	mReflectionPlanes;
-		CReflectionMediator					mReflectionMediator;
+		IReflectionMediator*				mReflectionMediator;
+		bool								mRenderingReflectionMap;
 		
 	};
 }

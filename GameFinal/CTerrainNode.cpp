@@ -3,6 +3,7 @@
 #include "CShaderVariableInjection.h"
 #include "CSceneManager.h"
 #include "CGrassLand.h"
+#include "IReflectionMediator.h"
 
 namespace gf
 {
@@ -98,6 +99,9 @@ namespace gf
 			}
 		}
 
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		mediator->removeMapping(this);
+
 		ReleaseReferenceCounted(mMesh);
 		ReleaseReferenceCounted(mMaterial);
 	}
@@ -145,6 +149,18 @@ namespace gf
 		if (mGrassLand)
 			mGrassLand->update(dt);
 		ITerrainNode::update(dt);
+	}
+
+	void CTerrainNode::setReflectionPlane(IReflectionPlane* plane)
+	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		mediator->setMapping(this, plane);
+	}
+
+	IReflectionPlane* CTerrainNode::getReflectionPlane()
+	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		return mediator->getReflectionPlane(this);
 	}
 
 }

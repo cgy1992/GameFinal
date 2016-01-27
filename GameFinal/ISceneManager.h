@@ -20,6 +20,7 @@
 #include "IInstanceNode.h"
 #include "IInstanceCollectionNode.h"
 #include "IReflectionPlane.h"
+#include "IReflectionMediator.h"
 
 namespace gf
 {
@@ -274,6 +275,10 @@ namespace gf
 			bool 	useAlphaChannelOfTexture = false) = 0;
 
 		virtual bool getHeightOnTerrain(f32 x, f32 z, f32& height) const = 0;
+
+		virtual IReflectionMediator* getReflectionMediator() = 0;
+
+		virtual bool isRenderingReflectionMaps() = 0;
 
 	public:
 		const static int MAX_LIGHT_COUNT = 1024;

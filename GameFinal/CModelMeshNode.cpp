@@ -138,5 +138,26 @@ namespace gf
 		mSortCode = ((u64)mRenderOrder << 56) | ((u64)meshCode << 48) | pipeCode;
 	}
 
+	void CModelMeshNode::setReflectionPlane(IReflectionPlane* plane)
+	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		mediator->setMapping(this, plane);
+	}
+
+	IReflectionPlane* CModelMeshNode::getReflectionPlane()
+	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		return mediator->getReflectionPlane(this);
+	}
+
+	CModelMeshNode::~CModelMeshNode()
+	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		mediator->removeMapping(this);
+
+		ReleaseReferenceCounted(mMesh);
+		ReleaseListElementCounted(mMaterials);
+	}
+
 }
 

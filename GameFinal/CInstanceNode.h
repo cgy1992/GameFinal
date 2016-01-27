@@ -52,6 +52,10 @@ namespace gf
 
 		virtual IMesh* getMesh() const;
 
+		virtual void setReflectionPlane(IReflectionPlane* plane) {}
+
+		virtual IReflectionPlane* getReflectionPlane() { return nullptr; }
+
 	private:
 		u8*					mInstanceData;
 	};

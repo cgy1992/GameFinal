@@ -51,6 +51,8 @@ namespace gf
 
 		bool			getBoolValue(const char* s, bool& value) const;
 
+		bool			getBoolValue(const char* s) const;
+
 		bool			getMaskValue(const char* s, u32& value) const;
 
 		/* this function just tell the char is a valid charactor to form a float. */

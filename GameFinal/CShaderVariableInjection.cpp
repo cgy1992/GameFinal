@@ -426,7 +426,7 @@ namespace gf
 	}
 
 
-	void CShaderVariableInjection::injectSceneInfo(const SShaderAutoVariable& var, 
+	void CShaderVariableInjection::injectSceneInfo(const SShaderAutoVariable& var,
 		ISceneNode* node, IPipeline* pipeline, IShader* shader)
 	{
 		if (!shader)
@@ -521,7 +521,7 @@ namespace gf
 					lightDataArray.resize(lightCount);
 					for (u32 i = 0; i < lightCount; i++)
 						lights[i]->getLightData(&lightDataArray[i]);
-					
+
 					lightCount = shader->setArray(var.VariableName,
 						(void*)&lightDataArray[0], lightCount, sizeof(SPointLight), ignoreIfAlreadyUpdate);
 				}
@@ -542,7 +542,7 @@ namespace gf
 				u32 i = 0;
 				for (auto it = lights.begin(); it != lights.end(); it++, i++)
 					(*it)->getLightData(&lightDataArray[i]);
-				
+
 				lightCount = shader->setArray(var.VariableName,
 					(void*)&lightDataArray[0], lightCount, sizeof(SDirectionalLight), ignoreIfAlreadyUpdate);
 			}
@@ -615,6 +615,42 @@ namespace gf
 			IMeshNode* skyNode = sceneManager->getSkyNode();
 			ITexture* skyTexture = skyNode->getMaterial()->getTexture(0);
 			shader->setTexture(var.VariableName, skyTexture);
+		}
+		else if (var.Type == ESAVT_REFLECTION_PLANE_TEXTURE)
+		{
+			if (node->getNodeType() & ESNT_MESH)
+			{
+				IMeshNode* meshNode = (IMeshNode*)node;
+				IReflectionPlane* plane = meshNode->getReflectionPlane();
+				if (plane && plane->getReflectionMap()) {
+					// the reflection map must not be set as render target
+					IRenderTarget* target = IVideoDriver::getInstance()->getRenderTarget();
+					if (!target || target->getTexture() != plane->getReflectionMap())
+						shader->setTexture(var.VariableName, plane->getReflectionMap());;
+				}
+			}
+		}
+		else if (var.Type == ESAVT_REFLECTION_PLANE_VIEW)
+		{
+			if (node->getNodeType() & ESNT_MESH)
+			{
+				IMeshNode* meshNode = (IMeshNode*)node;
+				IReflectionPlane* plane = meshNode->getReflectionPlane();
+				if (plane) {
+					shader->setMatrix(var.VariableName, plane->getViewMatrix(), ignoreIfAlreadyUpdate);
+				}
+			}
+		}
+		else if (var.Type == ESAVT_REFLECTION_PLANE_TRANSFORM)
+		{
+			if (node->getNodeType() & ESNT_MESH)
+			{
+				IMeshNode* meshNode = (IMeshNode*)node;
+				IReflectionPlane* plane = meshNode->getReflectionPlane();
+				if (plane) {
+					shader->setMatrix(var.VariableName, plane->getViewProjMatrix(), ignoreIfAlreadyUpdate);
+				}
+			}
 		}
 	}
 

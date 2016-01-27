@@ -87,6 +87,9 @@ int main()
 	IReflectionPlane* plane2 = smgr->addReflectionPlane(2,
 		100, 100, XMFLOAT3(0, 0, 10.0f), XMFLOAT3(0, 0, -1.0f));
 
+	groundNode1->setReflectionPlane(plane1);
+	groundNode2->setReflectionPlane(plane2);
+
 	IMaterial* groundMtrl1 = IMaterialManager::getInstance()->get("ground_material");
 	IMaterial* groundMtrl2 = IMaterialManager::getInstance()->get("ground_material2");
 
@@ -102,21 +105,21 @@ int main()
 		smgr->update(dt);
 		driver->beginScene(true, true, color);
 		
-		groundMtrl1->setTexture(2, NULL);
-		groundMtrl2->setTexture(2, NULL);
+		//groundMtrl1->setTexture(2, NULL);
+		//groundMtrl2->setTexture(2, NULL);
 
 		smgr->drawReflectionMaps();
 
 		//groundMtrl->setTexture(1, ITextureManager::getInstance()->get("floor.dds"));
-		groundMtrl1->setTexture(2, plane1->getReflectionMap());
-		groundMtrl2->setTexture(2, plane2->getReflectionMap());
+		//groundMtrl1->setTexture(2, plane1->getReflectionMap());
+		//groundMtrl2->setTexture(2, plane2->getReflectionMap());
 
-		std::string varname = "gReflectionMatrix";
-		XMFLOAT4X4 M1 = plane1->getViewProjMatrix();
-		XMFLOAT4X4 M2 = plane2->getViewProjMatrix();
+		//std::string varname = "gReflectionMatrix";
+		//XMFLOAT4X4 M1 = plane1->getViewProjMatrix();
+		//XMFLOAT4X4 M2 = plane2->getViewProjMatrix();
 
-		groundMtrl1->setAttribute("ReflectionMatrix", M1);
-		groundMtrl2->setAttribute("ReflectionMatrix", M2);
+		//groundMtrl1->setAttribute("ReflectionMatrix", M1);
+		//groundMtrl2->setAttribute("ReflectionMatrix", M2);
 
 	//	groundMtrl1->getPipeline(0)->setMatrix(varname, M2, false);
 

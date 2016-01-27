@@ -109,6 +109,10 @@ namespace gf
 
 		virtual void update(f32 dt);
 
+		virtual void setReflectionPlane(IReflectionPlane* plane);
+
+		virtual IReflectionPlane* getReflectionPlane();
+
 	private:
 		ITerrainMesh*			mMesh;
 		IMaterial*				mMaterial;

@@ -7,6 +7,7 @@
 #include "IMaterial.h"
 #include "ILightNode.h"
 #include "IOctreeNode.h"
+#include "IReflectionPlane.h"
 
 namespace gf
 {
@@ -143,6 +144,10 @@ namespace gf
 		}
 
 		virtual IMesh* getMesh() const = 0;
+
+		virtual void setReflectionPlane(IReflectionPlane* plane) = 0;
+
+		virtual IReflectionPlane* getReflectionPlane() = 0;
 
 	protected:
 		math::SOrientedBox				mOBB;

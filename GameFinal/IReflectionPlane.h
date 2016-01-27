@@ -34,6 +34,8 @@ namespace gf
 
 		virtual math::SOrientedBox getOBB() const = 0;
 
+		virtual ISceneManager* getSceneManager() = 0;
+
 	};
 }
 

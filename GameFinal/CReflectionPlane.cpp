@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CReflectionPlane.h"
+#include "CReflectionMediator.h"
 
 namespace gf
 {
@@ -10,7 +11,8 @@ namespace gf
 		XMFLOAT3 normal,
 		XMFLOAT3 tangent,
 		XMFLOAT2 size,
-		u32 mapWidth, u32 mapHeight)
+		u32 mapWidth, 
+		u32 mapHeight)
 		: mSceneManager(smgr)
 		, mId(id)
 		, mPlaneSize(size)
@@ -48,6 +50,8 @@ namespace gf
 	{
 		ITextureManager::getInstance()->destroy(mReflectMapTexture);
 		mReflectMapTexture = NULL;
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		mediator->removeMappings(mId);
 	}
 
 	void CReflectionPlane::render(ICameraNode* viewCamera)
@@ -126,7 +130,6 @@ namespace gf
 		return obb;
 	}
 
-	
 
 }
 

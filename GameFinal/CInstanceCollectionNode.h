@@ -70,6 +70,10 @@ namespace gf
 
 		virtual IMesh* getMesh() const { return mMesh; }
 
+		virtual void setReflectionPlane(IReflectionPlane* plane);
+
+		virtual IReflectionPlane* getReflectionPlane();
+
 		virtual ~CInstanceCollectionNode();
 
 	protected:

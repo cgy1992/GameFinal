@@ -61,6 +61,9 @@ namespace gf
 
 	CInstanceCollectionNode::~CInstanceCollectionNode()
 	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		mediator->removeMapping(this);
+
 		free(mInstancesData);
 		ReleaseReferenceCounted(mInstanceBuffer);
 		ReleaseReferenceCounted(mMeshNode);
@@ -189,7 +192,17 @@ namespace gf
 		return mSceneManager->getAabb();
 	}
 
+	void CInstanceCollectionNode::setReflectionPlane(IReflectionPlane* plane)
+	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		mediator->setMapping(this, plane);
+	}
 
+	IReflectionPlane* CInstanceCollectionNode::getReflectionPlane()
+	{
+		IReflectionMediator* mediator = mSceneManager->getReflectionMediator();
+		return mediator->getReflectionPlane(this);
+	}
 }
 
 

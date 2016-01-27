@@ -34,6 +34,7 @@ namespace gf
 		, mDeferredShadingPipeline(nullptr)
 		, mTileBasedDeferredShadingCS(nullptr)
 		, mRenderingDeferredQuad(false)
+		, mRenderingReflectionMap(false)
 	{
 		//get Video Driver object
 		mVideoDriver = device->getVideoDriver();
@@ -66,7 +67,8 @@ namespace gf
 
 		//setTileBasedDeferredShadingCS(nullptr);
 		//setDeferredShadingPipeline(nullptr);
-		mReflectionMediator = new CReflectionMediator();
+
+		mReflectionMediator = new CReflectionMediator(this);
 	}
 
 	void CSceneManager::init()
@@ -92,6 +94,8 @@ namespace gf
 
 		ReleaseReferenceCounted(mQuadMeshNode);
 		ReleaseListElementCounted(mCompositors);
+
+		ReleaseReferenceCounted(mReflectionMediator);
 	}
 
 	ISceneNode* CSceneManager::addEmptyNode(
@@ -508,6 +512,7 @@ namespace gf
 
 	void CSceneManager::drawReflectionMaps()
 	{
+		mRenderingReflectionMap = true;
 		IRenderTarget* preRenderTarget = mVideoDriver->getRenderTarget();
 		mVideoDriver->setRenderTarget(nullptr);
 
@@ -534,6 +539,7 @@ namespace gf
 		setActiveCamera(viewCamera);
 		mVideoDriver->setRenderTarget(preRenderTarget);
 		mVideoDriver->clearDepthStencil(1.0f, 0);
+		mRenderingReflectionMap = false;
 	}
 
 	void CSceneManager::drawAll()

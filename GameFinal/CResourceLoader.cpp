@@ -275,7 +275,7 @@ namespace gf
 			{
 				GF_PRINT_CONSOLE_INFO("The pipeline named '%s' doesn't exist in material '%s' (file location: %s).\n",
 					pipelineName.c_str(), createParams.Name.c_str(), fullpath.c_str());
-				return false;
+				//return false;
 			}
 
 			pipelines[usage] = pipeline;

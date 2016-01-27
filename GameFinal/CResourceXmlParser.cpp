@@ -82,6 +82,9 @@ namespace gf
 		mShaderVariableMapping["dir_lights_num"] = SShaderVariableAttribute(ESAVT_DIRECTIONAL_LIGHTS_NUM, EUF_PER_FRAME);
 		mShaderVariableMapping["spot_lights"] = SShaderVariableAttribute(ESAVT_NEAR_SPOT_LIGHTS, EUF_PER_OBJECT);
 		mShaderVariableMapping["spot_lights_num"] = SShaderVariableAttribute(ESAVT_NEAR_SPOT_LIGHTS_NUM, EUF_PER_OBJECT);
+		mShaderVariableMapping["reflection_texture"] = SShaderVariableAttribute(ESAVT_REFLECTION_PLANE_TEXTURE, EUF_PER_OBJECT);
+		mShaderVariableMapping["reflection_transform"] = SShaderVariableAttribute(ESAVT_REFLECTION_PLANE_TRANSFORM, EUF_PER_OBJECT);
+		mShaderVariableMapping["reflection_view_matrix"] = SShaderVariableAttribute(ESAVT_REFLECTION_PLANE_VIEW, EUF_PER_OBJECT);
 
 		mShaderVariableMapping["light"] = SShaderVariableAttribute(ESAVT_LIGHT, EUF_PER_FRAME);
 		mShaderVariableMapping["material_color"] = SShaderVariableAttribute(ESAVT_MATERIAL_COLOR, EUF_PER_OBJECT);
@@ -847,6 +850,15 @@ namespace gf
 		return false;
 	}
 
+	bool CResourceXmlParser::getBoolValue(const char* s) const
+	{
+		if (_stricmp(s, "true") == 0)
+		{
+			return true;
+		}
+		return false;
+	}
+
 	bool CResourceXmlParser::getMaskValue(const char* s, u32& value) const
 	{
 		/* 像STENCIL_READ_MASK等掩码，用户可能指定10进制或16进制的值，
@@ -1333,7 +1345,13 @@ namespace gf
 		{
 			SMaterialPipelineParam param;
 			param.Name = pipelineName;
-			param.Usage = getPipelineUsage(node->Attribute("usage"));
+			u32 reflectMask = 0;
+			const char* reflect_str = node->Attribute("reflect");
+			if (reflect_str && getBoolValue(reflect_str)) {
+				reflectMask = 0x08;
+			}
+			
+			param.Usage = (E_PIPELINE_USAGE)(getPipelineUsage(node->Attribute("usage")) | reflectMask);
 			createParams.addPipeline(param);
 		}
 		return false;
