@@ -1,0 +1,283 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>GameFinal Engine</title>
+		<link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="html/main.css" type="text/css" rel="stylesheet" />
+		<!--<link href="html/markdown.css" type="text/css" ref="stylesheet" />-->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="../bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="html/main.js"></script>
+		<link href="html/prism.css" rel="stylesheet" />
+		<script src="html/prism.js"></script>
+	</head>
+	<body>
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+          <div class="container">
+              <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="brand" href="../index.html">GameFinal</a>
+              <div class="nav-collapse collapse">
+                  <ul class="nav">
+                      <li class="">
+                          <a href="../index.html">Home</a>
+                      </li>
+                      <li class="">
+                          <a href="../download.html">Download</a>
+                      </li>
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                              <li><a href="chapter1.html">01 Configuration</a></li>
+                              <li><a href="chapter2.html">02 First Program</a></li>
+                              <li><a href="chapter3.html">03 Material</a></li>
+                              <li><a href="chapter4.html">04 Camera</a></li>
+                              <li><a href="chapter5.html">05 Lighting</a></li>
+                              <li><a href="chapter6.html">06 Model</a></li>
+                              <li><a href="chapter7.html">07 Shader</a></li>
+                              <li><a href="chapter8.html">08 Terrain</a></li>
+                              <li><a href="chapter9.html">09 Instancing</a></li>
+                              <li><a href="chapter10.html">10 Havok</a></li>
+                              <li><a href="chapter11.html">11 Post Effect</a></li>
+                              <li><a href="chapter12.html">12 Compute Shader</a></li>
+                          </ul>
+                      </li>
+                      <li class="">
+                          <a href="../about.html">Contact</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+    </div>
+	<div class="main_div">
+		<div class="tutorial_nav">
+			<p style="color: #6F0101; font-weight: bold; font-size: 1.4em; padding: 5px;">Tutorials</p>
+			<div class="tutorial_link"><a href="chapter1.html">01 Configuration</a></div>
+			<div class="tutorial_link"><a href="chapter2.html">02 First Program</a></div>
+			<div class="tutorial_link"><a href="chapter3.html">03 Material</a></div>
+			<div class="tutorial_link"><a href="chapter4.html">04 Camera</a></div>
+			<div class="tutorial_link"><a href="chapter5.html">05 Lighting</a></div>
+			<div class="tutorial_link"><a href="chapter6.html">06 Model</a></div>
+			<div class="tutorial_link"><a href="chapter7.html" class="current_tutorial_link">07 Shader</a></div>
+			<div class="tutorial_link"><a href="chapter8.html">08 Terrain</a></div>
+			<div class="tutorial_link"><a href="chapter9.html">09 Instancing</a></div>
+			<div class="tutorial_link"><a href="chapter10.html">10 Havok</a></div>
+			<div class="tutorial_link"><a href="chapter11.html">11 Post Effect</a></div>
+			<div class="tutorial_link"><a href="chapter12.html">12 Compute Shader</a></div>
+		</div>
+		<div class="tutorial_content">
+<h1>Shader</h1>
+<p>So far, we have only tried those built-in pipelines. In this tutorial, we are going to write our own shaders and pipelines to realize more complicated effects.</p>
+<h2>Pipeline definition</h2>
+<p>A pipeline is represented by a <code>IPipeline</code> interface in GameFinal; however, you'll rarelly use this interface directly in your development; because a pipeline can also be defined in a xml file separately. A typical pipeline's definition looks like this:</p>
+<pre><code class="language-markup">&lt;pipeline name=&quot;xxx&quot;&gt;
+    &lt;primitive-type value=&quot;...&quot;/&gt;
+    &lt;input-layout&gt;
+        &lt;element semantic=&quot;POSITION&quot; format=&quot;float3&quot;/&gt;
+        ...
+    &lt;/input-layout&gt;
+    &lt;shaders&gt;
+        &lt;vertex-shader file=&quot;xxx.hlsl&quot; main=&quot;VS&quot;&gt;...&lt;/vertex-shader&gt;
+        &lt;hull-shader file=&quot;xxx.hlsl&quot; main=&quot;HS&quot;&gt;...&lt;/hull-shader&gt;
+        &lt;domain-shader file=&quot;xxx.hlsl&quot; main=&quot;DS&quot;&gt;...&lt;/domain-shader&gt;
+        &lt;geometry-shader file=&quot;xxx.hlsl&quot; main=&quot;GS&quot;&gt;...&lt;/geometry-shader&gt;
+        &lt;pixel-shader file=&quot;xxx.hlsl&quot; main=&quot;PS&quot;&gt;...&lt;/pixel-shader&gt;
+    &lt;/shaders&gt;
+    &lt;render-states&gt;
+        ...
+    &lt;/render-states&gt;
+    &lt;samplers&gt;
+        ....
+    &lt;samplers&gt;
+&lt;/pipeline&gt;
+</code></pre>
+
+<p>The pipeline file' name must be ended with <code>.pipeline</code> or <code>pipeline.xml</code>. A pipeline must have a name, which is its identifier in the program, it also include a few sub-tags:</p>
+<ul>
+<li><strong>primitive-type</strong>: the type of the primitive, if we don't include this tag explicitly, its default type is triangle list.</li>
+<li><strong>input-layout</strong>: defines the format of each vertex and includes several <code>&lt;element&gt;</code> tag.</li>
+<li><strong>shaders</strong>: include several different sub-tag, which defines different stage of the rendering process.</li>
+<li><strong>render-states</strong>: include different render state settings here, each of them is represented as a <code>&lt;render-state</code> sub-tag.</li>
+<li><strong>sampler</strong>: include the texture samplers that might be used in shaders.</li>
+</ul>
+<h2>First Shader</h2>
+<p>Let's write our first shader, to apply a normal map to the ground. Normal map can make the objects look more realistic, especially those under specular lighting.</p>
+<p>Firstly, create a shader file named <code>first_shader.hlsl</code> under <code>./media</code> folder, and type in the following code:</p>
+<pre><code class="language-cpp">cbuffer cbPerFrame
+{
+    SPointLight gPointLight;
+};
+
+SamplerState gSampleState;
+
+Texture2D gTexture;
+Texture2D gNormalMap;
+
+struct VertexIn
+{
+    float3 PosL     : POSITION;
+    float3 Normal   : NORMAL;
+    float3 Tangent  : TANGENT;
+    float2 Tex      : TEXCOORD;
+};
+
+struct VertexOut
+{
+    float4 PosH     : SV_POSITION;
+    float3 PosW     : POSITION;
+    float3 Normal   : NORMAL; 
+    float3 Tangent  : TANGENT;
+    float2 Tex      : TEXCOORD;
+};
+
+VertexOut vs_main(VertexIn vin)
+{
+    VertexOut vout;
+    float4 PosW = mul(float4(vin.PosL, 1.0f), GF_WORLD);
+    vout.PosH = mul(PosW, GF_VIEW_PROJ);
+    vout.PosW = PosW.xyz;
+    vout.Normal = mul(vin.Normal, (float3x3)GF_WORLD);
+    vout.Tangent = mul(vin.Tangent, (float3x3)GF_WORLD);
+    vout.Tex = vin.Tex;
+    return vout;
+}
+
+float4 ground_ps_main(VertexOut pin) : SV_TARGET
+{   
+    float3 normal = normalize(pin.Normal);
+    float3 normalMapSample = gNormalMap.Sample(gSampleState, pin.Tex);
+    // sample the normal map and create the new normal vector
+    normal = NormalSampleToWorldSpace(normalMapSample, normal, pin.Tangent);
+
+    float4 diffuse;
+    float4 specular;
+    float4 texColor = gTexture.Sample(gSampleState, pin.Tex);
+
+    float3 lightDir;
+    ComputeIrradianceOfPointLight(pin.PosW, gPointLight, lightDir, diffuse, specular);
+    PhoneShading(pin.PosW, lightDir, normal, diffuse, specular, GF_MTRL_SPECULAR.w);
+
+    float shadowFactor = CalcPointLightShadowFactor(1, gPointLight.Position, GF_SHADOW_SOFTNESS);
+    return GF_AMBIENT * GF_MTRL_AMBIENT * texColor + GF_MTRL_EMISSIVE + 
+        diffuse * GF_MTRL_DIFFUSE * texColor * shadowFactor + 
+        specular * GF_MTRL_SPECULAR * shadowFactor;
+}
+</code></pre>
+
+<p>The shader file contains two functions: <code>vs_main</code> and <code>ground_ps_main</code>, which are the entry points of vertex shader and pixel shader respectively. Notice that in this file, there are some variables appeared that we didn't declare, such as <code>GF_WORLD</code> and <code>GF_MTRL_DIFFUSE</code>. These are the built-in variables and will be set by the engine automatically during the program's running. <code>GF_WORLD</code> means the matrix of world transformation, <code>GF_VIEW_PROJ</code> means the combination of view transformation and projection transformation.  <code>GF_MTRL_AMBIENT</code>, <code>GF_MTRL_DIFFUSE</code>, <code>GF_MTRL_EMISSIVE</code>, <code>GF_MTRL_SPECULAR</code> and <code>GF_SHADOW_SOFTNESS</code> are the attributes defined in material file: &quot;ambient&quot;, &quot;diffuse&quot;, &quot;emissive&quot;, &quot;specular&quot; and &quot;shadow_softness&quot; respectively.</p>
+<p>We call some built-in functions that the engine provides for us. The <code>ComputeIrradianceOfPointLight</code> could compute the irradiance at a specific point under a point light. Then we call <code>PhoneShading</code> function to apply Phong shading model to this pixel. In order to determine whether the pixel is in the shadow, we call <code>CalcPointLightShadowFactor</code> whose first parameter is the id of the point light, second parameter is the light's position and third parameter is the &quot;shadow_softness&quot;. </p>
+<p>Then we create a pipeline file named <code>first.pipeline.xml</code> under the <code>./media</code> folder, you can name it whatever you like, which does not matter in development. In this file, you define a new pipeline:</p>
+<pre><code class="language-markup">&lt;pipelines&gt;
+  &lt;pipeline name=&quot;ground_pipeline&quot;&gt;
+    &lt;input-layout&gt;
+      &lt;element semantic=&quot;POSITION&quot; format=&quot;float3&quot;&gt;&lt;/element&gt;
+      &lt;element semantic=&quot;NORMAL&quot; format=&quot;float3&quot;&gt;&lt;/element&gt;
+      &lt;element semantic=&quot;TANGENT&quot; format=&quot;float3&quot;&gt;&lt;/element&gt;
+      &lt;element semantic=&quot;TEXCOORD&quot; format=&quot;float2&quot;&gt;&lt;/element&gt;
+    &lt;/input-layout&gt;
+    &lt;shaders&gt;
+      &lt;vertex-shader file=&quot;first_shader.hlsl&quot; main=&quot;vs_main&quot;/&gt;
+      &lt;pixel-shader file=&quot;first_shader.hlsl&quot; main=&quot;ground_ps_main&quot;&gt;
+        &lt;variable name=&quot;gPointLight&quot; value=&quot;light&quot; index=&quot;1&quot;/&gt;
+        &lt;variable name=&quot;gTexture&quot; value=&quot;texture&quot; index=&quot;0&quot;/&gt;
+        &lt;variable name=&quot;gNormalMap&quot; value=&quot;texture&quot; index=&quot;1&quot;/&gt;
+      &lt;/pixel-shader&gt;
+    &lt;/shaders&gt;
+    &lt;samplers&gt;
+      &lt;sampler name=&quot;gSampleState&quot;
+                 addressU=&quot;wrap&quot;
+                 addressV=&quot;wrap&quot;
+                 filter=&quot;MIN_MAG_MIP_LINEAR&quot;
+                 border-color=&quot;0.0f, 0.0f, 0.0f, 0.0f&quot;/&gt;
+    &lt;/samplers&gt;
+  &lt;/pipeline&gt;
+&lt;/pipelines&gt;
+</code></pre>
+
+<p>You can see that the new pipeline's name is &quot;ground_pipeline&quot;. We specify both vertex-shader and pixel-shader. The &quot;file&quot; attribute in <code>vertex-shader</code> and <code>pixel-shader</code> tag specifies the shader file's name, and the &quot;main&quot; attribute specifies the name of entry point function. Under the &quot;pixel_shader&quot; tag, we add three variables which all come up in our shader file. &quot;gPointLight&quot; is a light source (specified by the &quot;value&quot; attribute) and its id is 1 (&quot;index&quot; attribute). Then we declare &quot;gTexture&quot; is a texture which at index 0 in the material and &quot;gNormalMap&quot; is a texture at index 1. Besides these, we finally define a texture sampler named &quot;gSampleState&quot;.</p>
+<p>Next, we open the material file and modify the ground's material:</p>
+<pre><code  class="language-markup">  &lt;material name=&quot;ground_material&quot; prototype=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;1.0f, 1.0f, 1.0f, 32.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;textures&gt;
+      &lt;texture name=&quot;floor.dds&quot; index=&quot;0&quot;/&gt;
+      &lt;texture name=&quot;floor_NRM.png&quot; index=&quot;1&quot;/&gt;
+    &lt;/textures&gt;
+    &lt;pipelines&gt;
+      &lt;pipeline name=&quot;ground_pipeline&quot;/&gt;
+    &lt;/pipelines&gt;
+  &lt;/material&gt;
+</code></pre>
+
+<p>We change pipeline to &quot;ground<em>pipeline&quot; which is defined by ourselves previously. We put the texture &quot;floor.dds&quot; at index 0 and &quot;floor</em>NRM.png&quot; at index 1, which keep consistent with the corresponding variables declared in pipeline. At last, don't forget copy the normal map image to &quot;./media&quot; directory. Run this program, we can see the ground looks more realistic under specular lighting now:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/06-01.png" /></p>
+<h2>Environment Mapping</h2>
+<p>The second example is about environment mapping. GameFinal allows us to set a sky dome by calling <code>ISceneManager::setSkyDome</code> method. Usually, it receives a cube map's file name as its parameter:</p>
+<pre><code class="language-markup">smgr-&gt;setSkyDome(&quot;Snow.dds&quot;);
+</code></pre>
+
+<p>&quot;Snow.dds&quot; is a cube map that we have prepared and is put into &quot;./media&quot; folder.</p>
+<p>Let's add another function in the <code>first_shader.hlsl</code> as the three objects' pixel shader. They can share the same vertex shader with the ground. So we don't need to write a separate one for them:</p>
+<pre><code class="language-cpp">float4 object_ps_main(VertexOut pin) : SV_TARGET
+{
+    float3 normal = normalize(pin.Normal);
+    float4 diffuse;
+    float4 specular;
+
+    float3 viewDir = normalize(pin.PosW - GF_CAMERA_POS);
+    float3 reflectDir = normalize(reflect(viewDir, normal));
+    float4 texColor = GF_SKY_TEXTURE.Sample(gSampleState, reflectDir);
+
+    float3 lightDir;
+    ComputeIrradianceOfPointLight(pin.PosW, gPointLight, lightDir, diffuse, specular);
+
+    PhoneShading(pin.PosW, lightDir, normal, diffuse, specular, GF_MTRL_SPECULAR.w);
+
+    float shadowFactor = CalcPointLightShadowFactor(1, gPointLight.Position, GF_SHADOW_SOFTNESS);
+    return GF_AMBIENT * GF_MTRL_AMBIENT * texColor + GF_MTRL_EMISSIVE + 
+        diffuse * GF_MTRL_DIFFUSE * texColor * shadowFactor + 
+        specular * GF_MTRL_SPECULAR * shadowFactor;
+}
+</code></pre>
+
+<p>In this pixel shader code, we sample the sky dome's texture, which is represented by <code>GF_SKY_TEXTURE</code>. It is also a built-in variable and will be set automatically during the game running. </p>
+<p>Then we add another pipeline in <code>first.pipeline.xml</code>:</p>
+<pre><code class="language-markup">&lt;pipeline name=&quot;static_object_pipeline&quot; prototype=&quot;ground_pipeline&quot;&gt;
+    &lt;shaders&gt;
+        &lt;pixel-shader main=&quot;object_ps_main&quot;/&gt;
+    &lt;/shaders&gt;
+&lt;/pipeline&gt;
+</code></pre>
+
+<p>Notice that we specify a <code>prototype</code> attribute here, which has the similar meaning in material definition. In this example, it will inherit nearly all the attributes from <code>ground_pipeline</code>, which we have defined previously. The only thing we need to change is the pixel shader's entry point.</p>
+<p>Remember to change the material file:</p>
+<pre><code class="language-markup">&lt;material name=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      ...
+    &lt;/attributes&gt;
+    &lt;pipelines&gt;
+        &lt;!--&lt;pipeline name=&quot;gf/geometry_shadow_pointlight&quot;/&gt; --&gt;
+        &lt;pipeline name=&quot;static_object_pipeline&quot;/&gt;
+        &lt;pipeline name=&quot;gf/geometry_shadow_map&quot; usage=&quot;shadow_map&quot;/&gt;
+        &lt;pipeline name=&quot;gf/geometry_point_shadow_map&quot; usage=&quot;point_shadow_map&quot;/&gt;
+    &lt;/pipelines&gt;
+&lt;/material&gt;
+</code></pre>
+
+<p>Here we change the pipeline from a built-in one to <code>static_object_pipeline</code>, which has been defined in the previous step. Now, start running the program:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/06-02.png" /></p>
+	</div>
+
+	</div>
+</body>
+</html>

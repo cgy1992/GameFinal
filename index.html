@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>GameFinal Engine</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+      <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+      <style type="text/css">
+      .hero {
+        padding-bottom: 10px;
+          background-image:-webkit-linear-gradient(to top, white, #cccccc);
+          background-image:linear-gradient(to top,white,#cccccc);
+      }
+
+      .feature_row .span4 {
+        background-color: rgb(238, 238, 238)
+      }
+
+      .big_logo
+      {
+          text-align: center;
+          margin: auto;
+          padding-top : 30px;
+          padding-bottom: 10px;
+      }
+          .subtitle
+          {
+              color: #535353;
+              padding-top: 1.0em;
+              padding-bottom: 0.6em;
+              font-size: 24px;
+          }
+
+      .feature_title
+      {
+          font-size: 20px;
+      }
+
+          .home_button
+          {
+              margin: 4px;
+          }
+
+      .news_left
+      {
+          margin-right: 30px;
+          margin-left: 10px;
+      }
+
+          .news_right
+          {
+              margin-right: 10px;
+              margin-left: 30px;
+          }
+
+          .news_heading
+          {
+              font-size: 24px;
+          }
+
+          .news_date
+          {
+              color : #719e40;
+              font-size: 16px;
+              margin: 0px;
+              padding: 0px;
+          }
+
+          .latest_news
+          {
+              color: #719e40;
+              font-size: 36px;
+              margin-top: 30px;
+          }
+
+          .bottom_padding
+          {
+              margin: 100px;
+              width: 300px;
+          }
+
+    </style>
+  </head>
+  <body>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+          <div class="container">
+              <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="brand" href="./index.html">GameFinal</a>
+              <div class="nav-collapse collapse">
+                  <ul class="nav">
+                      <li class="active">
+                          <a href="./index.html">Home</a>
+                      </li>
+                      <li class="">
+                          <a href="./download.html">Download</a>
+                      </li>
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                              <li><a href="tutorials/chapter1.html">01 Configuration</a></li>
+                              <li><a href="tutorials/chapter2.html">02 First Program</a></li>
+                              <li><a href="tutorials/chapter3.html">03 Material</a></li>
+                              <li><a href="tutorials/chapter4.html">04 Camera</a></li>
+                              <li><a href="tutorials/chapter5.html">05 Lighting</a></li>
+                              <li><a href="tutorials/chapter6.html">06 Model</a></li>
+                              <li><a href="tutorials/chapter7.html">07 Shader</a></li>
+                              <li><a href="tutorials/chapter8.html">08 Terrain</a></li>
+                              <li><a href="tutorials/chapter9.html">09 Instancing</a></li>
+                              <li><a href="tutorials/chapter10.html">10 Havok</a></li>
+                              <li><a href="tutorials/chapter11.html">11 Post Effect</a></li>
+                              <li><a href="tutorials/chapter12.html">12 Compute Shader</a></li>
+                          </ul>
+                      </li>
+                      <li class="">
+                          <a href="./about.html">Contact</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <div class="hero-unit hero">
+      <div class="container text-center">
+          <img class="big_logo" src="image/engine_name1.png"/>
+          <p class="text-center subtitle">Write 3D Game in an Easier Way</p>
+          <p class="text-center">
+              <a class="btn btn-large home_button" href="https://github.com/woyaofacai/GameFinal" target="_blank">
+                  <i class="fa fa-github fa-lg"></i> View on GitHub
+              </a>
+              <a class="btn btn-large btn-primary home_button" href="./download.html">
+                  <i class="fa fa-download fa-lg"></i> Download Now
+              </a>
+              <a class="btn btn-large btn-warning home_button" href="tutorials/chapter1.html">
+                  <i class="fa fa-book fa-lg"></i> View Tutorials
+              </a>
+          </p>
+      </div>
+  </div>
+
+
+  <div class="container">
+
+      <ul class="thumbnails">
+
+          <li class="span4">
+            <div class="thumbnail">
+              <img src="image/feature1.png" class="img-rounded">
+              <h3 class="text-center feature_title">For Many Kinds of Games</h3>
+              <p>GameFinal is an open-source but very powerful game engine.
+                  It is not limited to a specific kind of game development.
+                  You can make whatever you like.
+              From exciting PFS game to fast racing game, from classical RPG to small indie game.</p>
+            </div>
+          </li>
+
+          <li class="span4">
+            <div class="thumbnail">
+            <img src="image/feature2.png" class="img-rounded">
+            <h3 class="text-center feature_title">Easy Shader Programming</h3>
+            <p>Although GameFinal provides lots of useful built-in shaders and materials, it also gives
+            freedom to write your own shaders. GameFinal allows you to get rid of the complicated graphics programming
+                and use more friendly interfaces.
+            </p>
+            <div>
+          </li>
+          <li class="span4">
+            <div class="thumbnail">
+             <img src="image/feature3.png" class="img-rounded">
+             <h3 class="text-center feature_title">Character Animation</h3>
+            <p>GameFinal supports many different formats of 3D models. You can convert them to a special format which
+            has faster loading and rendering performance. GameFinal also supports skeleton animations and helps you manage
+            the complex animations.</p>
+            </div>
+          </li>
+      </ul>
+      <ul class="thumbnails">
+          <li class="span4">
+            <div class="thumbnail">
+              <img src="image/feature4.png" class="img-rounded">
+              <h3 class="text-center feature_title">Real-time Lighting</h3>
+              <p>GameFinal not only has realistic lighting effects, but also allows you to add many real-time
+                  light sources into the scene. Even though you add thousands of dynamic lights,
+                  GameFinal will ensure the game running in a high performance.
+              </p>
+            </div>
+          </li>
+
+          <li class="span4">
+            <div class="thumbnail">
+            <img src="image/feature5.png" class="img-rounded">
+            <h3 class="text-center feature_title">Outdoor Rendering</h3>
+            <p>
+                Although outdoor rendering is a performance killer in many games, GameFinal can
+                render magnificent outdoor scenery in a high performance no matter how large-scale your scene is.
+                You just put all your energies in the design of the game world.
+            </p>
+            <div>
+          </li>
+          <li class="span4">
+            <div class="thumbnail">
+             <img src="image/feature6.png" class="img-rounded">
+             <h3 class="text-center feature_title">Geometry Complexity</h3>
+            <p>The engine uses efficient algorithm to do the scene management and has many strategies to
+            accelerate the mesh rendering. You're allowed to add hundreds and even thousands of objects into the scene
+            without noticing the performance loss.</p>
+            </div>
+          </li>
+      </ul>
+
+      <h1 class="latest_news">Latest News</h1>
+
+      <hr/>
+
+      <div class="news_row">
+          <div class="span6 news_left">
+              <h2 class="news_heading">Engine Publishing and Presentation</span></h2>
+              <h3 class="news_date">May 18, 2015</h3>
+              <p>The GameFinal, the new open-source 3D game engine, was released to all the developers in May 18, 2015.
+                  An publishing presentation was held in the east campus of Sun Yat-sen University(SYSU), Guangzhou, China.
+                  Many students, software developers, as well as professors in CMU and SYSU attended the conference.
+                  The engine's author, Edison Gao, gave a brief introduction to GameFinal's architectures. Wenjun Li,
+                  the president of SYSU Software School, spoke highly of GameFinal: "This is a pretty interesting project and
+                  reflects many next-gen features" Wenjun Li said.
+                  <a href="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Downloads/GameFinal_Presentation.ppt">Download PPT of the presentation.</a>
+              </p>
+          </div>
+          <div class="news_right">
+              <img src="image/conference1.jpg" class="img-rounded">
+          </div>
+      </div>
+
+      <hr/>
+
+      <div class="news_row">
+          <div class="span5 news_left">
+              <img src="image/scene_editor.png" class="img-rounded">
+          </div>
+          <div class="span6 news_right">
+              <h2 class="news_heading">Scene Editor and Physics Editor's Trial Version Published</span></h2>
+              <p>
+                  GameFinal is trying to provide game developers with powerful and complete tool chains.
+                  For this purpose, a scene editor was released. Developers and designers are able to design the scene
+                  and level of the game completely in the scene editor even without writing any code; thus they can put
+                  more energies on the game design rather than a large number of programming interfaces. A physics editor
+                  is also provided for developers to bind physics to objects. Because these two editors are still in beta test,
+                  they are not included in the download zip. Users can download a trial version from github.
+              </p>
+          </div>
+      </div>
+
+      <hr/>
+      <div class="bottom_padding">
+            &nbsp;
+      </div>
+
+  </div>
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>

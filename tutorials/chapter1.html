@@ -1,0 +1,137 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>GameFinal Engine</title>
+    <link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="html/main.css" type="text/css" rel="stylesheet" />
+    <!--<link href="html/markdown.css" type="text/css" ref="stylesheet" />-->
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="html/main.js"></script>
+    <link href="html/prism.css" rel="stylesheet" />
+    <script src="html/prism.js"></script>
+</head>
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="../index.html">GameFinal</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <li class="">
+                        <a href="../index.html">Home</a>
+                    </li>
+                    <li class="">
+                        <a href="../download.html">Download</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="chapter1.html">01 Configuration</a></li>
+                            <li><a href="chapter2.html">02 First Program</a></li>
+                            <li><a href="chapter3.html">03 Material</a></li>
+                            <li><a href="chapter4.html">04 Camera</a></li>
+                            <li><a href="chapter5.html">05 Lighting</a></li>
+                            <li><a href="chapter6.html">06 Model</a></li>
+                            <li><a href="chapter7.html">07 Shader</a></li>
+                            <li><a href="chapter8.html">08 Terrain</a></li>
+                            <li><a href="chapter9.html">09 Instancing</a></li>
+                            <li><a href="chapter10.html">10 Havok</a></li>
+                            <li><a href="chapter11.html">11 Post Effect</a></li>
+                            <li><a href="chapter12.html">12 Compute Shader</a></li>
+                        </ul>
+                    </li>
+                    <li class="">
+                        <a href="../about.html">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+	<div class="main_div">
+		<div class="tutorial_nav">
+			<p style="color: #6F0101; font-weight: bold; font-size: 1.4em; padding: 5px;">Tutorials</p>
+			<div class="tutorial_link"><a href="chapter1.html" class="current_tutorial_link">01 Configuration</a></div>
+			<div class="tutorial_link"><a href="chapter2.html">02 First Program</a></div>
+			<div class="tutorial_link"><a href="chapter3.html">03 Material</a></div>
+			<div class="tutorial_link"><a href="chapter4.html">04 Camera</a></div>
+			<div class="tutorial_link"><a href="chapter5.html">05 Lighting</a></div>
+			<div class="tutorial_link"><a href="chapter6.html">06 Model</a></div>
+			<div class="tutorial_link"><a href="chapter7.html">07 Shader</a></div>
+			<div class="tutorial_link"><a href="chapter8.html">08 Terrain</a></div>
+			<div class="tutorial_link"><a href="chapter9.html">09 Instancing</a></div>
+			<div class="tutorial_link"><a href="chapter10.html">10 Havok</a></div>
+			<div class="tutorial_link"><a href="chapter11.html">11 Post Effect</a></div>
+			<div class="tutorial_link"><a href="chapter12.html">12 Compute Shader</a></div>
+		</div>
+		<div class="tutorial_content">
+		<h1>Configuration</h1>
+		<p>The first tutorial will tell how to configure the required development enviroment. This is the first step to write a GameFinal program.</p>
+		<p>First of all, we need to download the engine and decompress the zip file. Assume that we have now unzipped it under
+			the <code>D:\</code> directory. Open the engine folder, we'll find the following sub folders:</p>
+		<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/00-05.png" /></p>
+		<ul>
+			<li><strong>bin:</strong> contains the dll file that is required when running the program.</li>
+			<li><strong>include:</strong> the cpp header files required during developement.</li>
+			<li><strong>lib:</strong> the lib file that is needed when compiling and linking the program.</li>
+			<li><strong>built-in-resources:</strong> some built-in resource files. Usually, we need them in our development.</li>
+			<li><strong>tools:</strong> contains the mesh generator that is used to convert different models into a &quot;.mesh&quot; file.</li>
+		</ul>
+		<p>We recommand you to use Visual Studio 2012 or 2013 to do the development. Open Visual Studio, we create a new project, just an empty project.</p>
+		<p>Then click the <code>Project</code> menu, select the <code>Properties</code> menu item. A property window will pop up. From the left list in the popup window, we select <code>Configuration Properties-&gt;VC++ Directories</code>, then we need to modify two configurations under this selection: <code>Include Directories</code> and <code>Library Directories</code>:</p>
+		<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/00-02.png" /></p>
+		<p>We add a new directory in the <code>Include Directories</code>: &quot;D:\gamefinal<em>1.0.0</em>vc11\include&quot;, it points to the <code>include</code> folder under the engine folder.</p>
+		<p>We add a new directory in the <code>Library Directories</code>: &quot;D:\gamefinal<em>1.0.0</em>vc11\lib\debug&quot;, it points to the <code>lib/debug</code> folder under the engine folder. If you are going to run the program in release mode, you can change it to <code>lib/release</code> folder.</p>
+		<p>At most times, we need to use some built-in resources, so now we'd better to copy the whole <code>built-in-resources</code>  folder under our project directory. </p>
+		<p>Now, let's add a new cpp file (&quot;main.cpp&quot;) in our project, and type in the following code in the cpp file:</p>
+<pre><code class="language-cpp">#include &lt;GameFinal.h&gt;
+#pragma comment(lib, &quot;GameFinal.lib&quot;)
+
+using namespace gf;
+
+int main()
+{
+    IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600);
+    IVideoDriver* driver = device-&gt;getVideoDriver();
+    ISceneManager* smgr = device-&gt;createSceneManager();
+
+    ITimer* timer = device-&gt;getTimer();
+    timer-&gt;reset();
+
+    const f32 color[] = { 0, 0, 0, 1.0f };
+    while (device-&gt;run()) {
+        driver-&gt;beginScene(true, true, color);
+
+        float dt = timer-&gt;tick();
+        smgr-&gt;update(dt);
+        smgr-&gt;drawAll();
+
+        driver-&gt;endScene();
+    }
+
+    smgr-&gt;destroy();
+    device-&gt;drop();
+    return 0;
+}
+</code></pre>
+
+		<p>Then we try to compile and run this program immediately. However, a error window pops up, saying that the program is not able to find <code>GameFinal.dll</code> file:</p>
+		<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/00-03.png" /></p>
+		<p>So we copy the &quot;GameFinal.dll&quot; from the <code>bin/debug</code> folder to your solution's &quot;Debug&quot; directory. This &quot;Debug&quot; folder is created automatically when you're running the program the first time. If you are developing in release mode, you can copy the dll file from <code>bin/release</code> folder into the &quot;Release&quot; directory under your solution directory.</p>
+		<p>Now, try to run the program again. If you can see a console and a window with a black background are showing on the screen, it means you succeed and GameFinal works now!</p>
+		<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/00-04.png" /></p>
+
+	</div>
+
+	</div>
+</body>
+</html>

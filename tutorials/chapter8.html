@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>GameFinal Engine</title>
+		<link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="html/main.css" type="text/css" rel="stylesheet" />
+		<!--<link href="html/markdown.css" type="text/css" ref="stylesheet" />-->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="../bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="html/main.js"></script>
+		<link href="html/prism.css" rel="stylesheet" />
+		<script src="html/prism.js"></script>
+	</head>
+	<body>
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="../index.html">GameFinal</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="">
+                <a href="../index.html">Home</a>
+              </li>
+              <li class="">
+                <a href="../download.html">Download</a>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="chapter1.html">01 Configuration</a></li>
+                  <li><a href="chapter2.html">02 First Program</a></li>
+                  <li><a href="chapter3.html">03 Material</a></li>
+                  <li><a href="chapter4.html">04 Camera</a></li>
+                  <li><a href="chapter5.html">05 Lighting</a></li>
+                  <li><a href="chapter6.html">06 Model</a></li>
+                  <li><a href="chapter7.html">07 Shader</a></li>
+                  <li><a href="chapter8.html">08 Terrain</a></li>
+                  <li><a href="chapter9.html">09 Instancing</a></li>
+                  <li><a href="chapter10.html">10 Havok</a></li>
+                  <li><a href="chapter11.html">11 Post Effect</a></li>
+                  <li><a href="chapter12.html">12 Compute Shader</a></li>
+                </ul>
+              </li>
+              <li class="">
+                <a href="../about.html">Contact</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+	<div class="main_div">
+		<div class="tutorial_nav">
+			<p style="color: #6F0101; font-weight: bold; font-size: 1.4em; padding: 5px;">Tutorials</p>
+			<div class="tutorial_link"><a href="chapter1.html">01 Configuration</a></div>
+			<div class="tutorial_link"><a href="chapter2.html">02 First Program</a></div>
+			<div class="tutorial_link"><a href="chapter3.html">03 Material</a></div>
+			<div class="tutorial_link"><a href="chapter4.html">04 Camera</a></div>
+			<div class="tutorial_link"><a href="chapter5.html">05 Lighting</a></div>
+			<div class="tutorial_link"><a href="chapter6.html">06 Model</a></div>
+			<div class="tutorial_link"><a href="chapter7.html">07 Shader</a></div>
+			<div class="tutorial_link"><a href="chapter8.html" class="current_tutorial_link">08 Terrain</a></div>
+			<div class="tutorial_link"><a href="chapter9.html">09 Instancing</a></div>
+			<div class="tutorial_link"><a href="chapter10.html">10 Havok</a></div>
+			<div class="tutorial_link"><a href="chapter11.html">11 Post Effect</a></div>
+			<div class="tutorial_link"><a href="chapter12.html">12 Compute Shader</a></div>
+		</div>
+		<div class="tutorial_content">
+<h1>Terrain</h1>
+<p>Terrain is widely used in many different kinds of video games as well as other 3D applications. This tutorial will tell you how to use the built-in terrain system in GameFinal in game applications. With the help of GameFinal engine, you can render a realistic landscape in your game only with a few lines of code.</p>
+<p>First of all, we need to prepare a height map file in <code>.raw</code> format. Each pixel's value in this heigh map corresponds to a height on the landscape. Then we need to create a <code>ITerrainMesh</code> by calling the <code>IMeshManager::createTerrainMesh</code> method.</p>
+<pre><code class="language-cpp">// create terrain mesh
+ITerrainMesh* terrainMesh = meshManager-&gt;createTerrainMesh(&quot;terrain&quot;, &quot;terrain-heightmap.raw&quot;,
+    3.0f, 0.2f, false, true, 50.0f);
+</code></pre>
+
+<p>There are many parameters: the first parameter is an unique mesh name in the application. The second parameter is the height map file's name. The third one is the horizontal distance between two neighbouring vertexs in the mesh. The fourth parameter is the height scale; the default range in the height map is 0-255, we can change the range by this parameter. The fifth figures out whether you will use tessellation in the mesh. The sixth parameter specifies whether you would like to create normal vector for each vertex in the mesh. The last parameter is the texcoord scale: here we set its value to 50.0f, which means the range of u,v is 0.0f-50.0f.</p>
+<p>After we create the terrain mesh, in order to show the terrain in the scene, we have to add a terrain node to the scene manager by calling <code>ISceneManager::addTerrainNode</code>:</p>
+<pre><code class="language-cpp">ITerrainNode* terrainNode = smgr-&gt;addTerrainNode(terrainMesh, &quot;gf/terrain_material&quot;);
+</code></pre>
+
+<p>The first parameter specifies the terrain mesh that we have created previously. The second parameter is the material that we will use to render the terrain; here we set it to <code>gf/terrain_material</code>, which is a built-in material.</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/07-01.png" /></p>
+<p>If you have added a FPS camera in the scene, you'll realize that you can walk on the terrain very smoothly without writing any other controlling code.</p>
+<h2>Define Terrain Material</h2>
+<p>The built-in terrain material <code>gf/terrain_material</code>. If you want to define your own terrain material, you can inherit the built-in material every easily and modify some attributes in it.</p>
+<p>Now, we add create a new material called &quot;sand<em>terrain</em>material&quot; like this:</p>
+<pre><code class="language-markup">&lt;materials&gt;
+  &lt;material name=&quot;sand_terrain_material&quot; prototype=&quot;gf/terrain_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.3f, 0.3f, 0.3f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;1.0f, 1.0f, 0.8f, 1.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;textures&gt;
+      &lt;texture name=&quot;ground.jpg&quot; index=&quot;0&quot;/&gt;
+    &lt;/textures&gt;
+  &lt;/material&gt;
+&lt;/materials&gt;
+</code></pre>
+
+<p>Here we set its prototype to &quot;gf/terrain_material&quot;, which means we will inherit all attributes from the built-in material. Then we modify the ambient and diffuse color as well as the texture. Then remember to change the material in our program:</p>
+<pre><code class="language-cpp">ITerrainNode* terrainNode = smgr-&gt;addTerrainNode(terrainMesh, &quot;sand_terrain_material&quot;);
+</code></pre>
+
+<p>Then run the program, we could find the change:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/07-02.png" /></p>
+<h2>Tessellated Terrain</h2>
+<p>DirectX11 supports tessellation on the GPU, which allows you to save more space and performance while rendering terrain. In GameFinal, you can render a tessellated terrain very easily just by setting a few parameters.</p>
+<p>When creating the terrain mesh, we have to create a tessellated mesh. Notice that this time we set its fifth parameter to &quot;true&quot;:</p>
+<pre><code class="language-cpp">ITerrainMesh* terrainMesh = meshManager-&gt;createTerrainMesh(&quot;terrain&quot;, &quot;terrain-heightmap.raw&quot;,
+    3.0f, 0.3f, true, false, 50.0f);
+</code></pre>
+
+<p>Then we have to change its material to <code>gf/tess_terrain_material</code>, which is another built-in material applying for tessellated terrain:</p>
+<pre><code class="language-cpp">ITerrainNode* terrainNode = smgr-&gt;addTerrainNode(terrainMesh, &quot;gf/tess_terrain_material&quot;);
+</code></pre>
+
+<p>Remember that you can also define your own material by inheriting from the `gf/tess<em>terrain</em>material&quot;.</p>
+<h2>Add Vegetation</h2>
+<p>So far we have created a broad but barren land. Now let's add some a layer of grass on the terrain.</p>
+<p>To achieve this, just add one line of code:</p>
+<pre><code class="language-cpp">terrainNode-&gt;addGrassLand(5000 * 64, 10.0f, 10.0f, &quot;gf/grassland_material&quot;);
+</code></pre>
+
+<p>The first parameter is the total number of blades you want to plant on the terrain. The second the third parameters specify the width and height of each blade. The fourth specifies the material you want to use. Here it is a built-in material, <code>gf/grassland_material</code>. This method also has three other parameters, by which you can specify the pitch numbers on the terrain, the amplitude of the blades and the wind's direction.</p>
+<p>Run the program, we could notice the grass blades are waving in the wind:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/07-04.png" /></p>
+	</div>
+
+	</div>
+</body>
+</html>

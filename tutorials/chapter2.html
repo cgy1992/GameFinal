@@ -1,0 +1,303 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>GameFinal Engine</title>
+		<link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="html/main.css" type="text/css" rel="stylesheet" />
+		<!--<link href="html/markdown.css" type="text/css" ref="stylesheet" />-->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="../bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="html/main.js"></script>
+		<link href="html/prism.css" rel="stylesheet" />
+		<script src="html/prism.js"></script>
+	</head>
+	<body>
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+          <div class="container">
+              <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="brand" href="../index.html">GameFinal</a>
+              <div class="nav-collapse collapse">
+                  <ul class="nav">
+                      <li class="">
+                          <a href="../index.html">Home</a>
+                      </li>
+                      <li class="">
+                          <a href="../download.html">Download</a>
+                      </li>
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                              <li><a href="chapter1.html">01 Configuration</a></li>
+                              <li><a href="chapter2.html">02 First Program</a></li>
+                              <li><a href="chapter3.html">03 Material</a></li>
+                              <li><a href="chapter4.html">04 Camera</a></li>
+                              <li><a href="chapter5.html">05 Lighting</a></li>
+                              <li><a href="chapter6.html">06 Model</a></li>
+                              <li><a href="chapter7.html">07 Shader</a></li>
+                              <li><a href="chapter8.html">08 Terrain</a></li>
+                              <li><a href="chapter9.html">09 Instancing</a></li>
+                              <li><a href="chapter10.html">10 Havok</a></li>
+                              <li><a href="chapter11.html">11 Post Effect</a></li>
+                              <li><a href="chapter12.html">12 Compute Shader</a></li>
+                          </ul>
+                      </li>
+                      <li class="">
+                          <a href="../about.html">Contact</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+    </div>
+	<div class="main_div">
+		<div class="tutorial_nav">
+			<p style="color: #6F0101; font-weight: bold; font-size: 1.4em; padding: 5px;">Tutorials</p>
+			<div class="tutorial_link"><a href="chapter1.html">01 Configuration</a></div>
+			<div class="tutorial_link"><a href="chapter2.html" class="current_tutorial_link">02 First Program</a></div>
+			<div class="tutorial_link"><a href="chapter3.html">03 Material</a></div>
+			<div class="tutorial_link"><a href="chapter4.html">04 Camera</a></div>
+			<div class="tutorial_link"><a href="chapter5.html">05 Lighting</a></div>
+			<div class="tutorial_link"><a href="chapter6.html">06 Model</a></div>
+			<div class="tutorial_link"><a href="chapter7.html">07 Shader</a></div>
+			<div class="tutorial_link"><a href="chapter8.html">08 Terrain</a></div>
+			<div class="tutorial_link"><a href="chapter9.html">09 Instancing</a></div>
+			<div class="tutorial_link"><a href="chapter10.html">10 Havok</a></div>
+			<div class="tutorial_link"><a href="chapter11.html">11 Post Effect</a></div>
+			<div class="tutorial_link"><a href="chapter12.html">12 Compute Shader</a></div>
+		</div>
+		<div class="tutorial_content">
+<h1>First Program</h1>
+<p>Let's look at what we were writing in the previous tutorial.</p>
+<pre><code class="language-cpp">int main()
+{
+    IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600);
+    IVideoDriver* driver = device-&gt;getVideoDriver();
+    ISceneManager* smgr = device-&gt;createSceneManager();
+
+    ITimer* timer = device-&gt;getTimer();
+    timer-&gt;reset();
+
+    const f32 color[] = { 0, 0, 0, 1.0f };
+    while (device-&gt;run()) {
+        driver-&gt;beginScene(true, true, color);
+
+        float dt = timer-&gt;tick();
+        smgr-&gt;update(dt);
+        smgr-&gt;drawAll();
+
+        driver-&gt;endScene();
+    }
+
+    smgr-&gt;destroy();
+    device-&gt;drop();
+    return 0;
+}
+</code></pre>
+
+<p>The first function we called is <code>createDevice</code> under <code>gf::</code> namespace. This method returns a <code>IDevice</code> interface. Every GameFinal Application must have a device interface, which maintains the state of the window and other components in the game. The first parameter of this function represents which renderer you want to use. Here we set this to <code>EDT_DIRECT3D11</code>, which means we would like DirectX11 renderer. The second and third parameters represent the width and height of the window respectively. </p>
+<p>This function contains other parameters that have default values. For instance, if you're planning to support anti-aliasing, you might want to use multi-sampling in your game like this:</p>
+<pre><code class="language-cpp">SDeviceContextSettings settings;
+settings.MultiSamplingCount = 4;
+settings.MultiSamplingQuality = 32;
+IDevice* device = createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
+</code></pre>
+
+<p>The second line in the main function gets a <code>IVideoDriver</code> interface, which you can regard as an abstraction of your display device:</p>
+<pre><code class="language-cpp">IVideoDriver* driver = device-&gt;getVideoDriver();
+</code></pre>
+
+<p>The third line creates a scene manager, which is represented as a <code>ISceneManager</code> interface:</p>
+<pre><code class="language-cpp">IVideoDriver* driver = device-&gt;getVideoDriver();
+</code></pre>
+
+<p>However, in this program, we put nothing into the scene, so we didn't add anything to this scene manager.</p>
+<p>The we get a timer from the <code>IDevice</code> interface and reset its value. Remember to reset a timer before the actual game loop begins:</p>
+<pre><code class="language-cpp">ITimer* timer = device-&gt;getTimer();
+timer-&gt;reset();
+</code></pre>
+
+<p>After all these preparations, the program enters the game loop:</p>
+<pre><code class="language-cpp">while (device-&gt;run()) {
+    float dt = timer-&gt;tick();
+    smgr-&gt;update(dt);
+    driver-&gt;beginScene(true, true, color);        
+    smgr-&gt;drawAll();
+    driver-&gt;endScene();
+}
+</code></pre>
+
+<p>Inside the game loop, we first call <code>timer-&gt;tick()</code>. This method would return the elapsed seconds between this calling and previous calling. Then we call <code>smgr-&gt;update(dt)</code> to update all the objects in the scene. Then we begin  to do the rendering: all the rendering work should be put between <code>beginScene</code> and <code>endScene</code>. We just call <code>smgr-&gt;drawAll()</code> to render all the objects in the scene, though in this program there is nothing to render in the scene.</p>
+<p>Let's try to modify the value of the third parameter of <code>beginScene</code> method:</p>
+<pre><code class="language-cpp">const f32 color[] = { 1.0f, 0, 0, 1.0f };
+</code></pre>
+
+<p>Then re-run the program, the engine now uses red to flush the screen's buffer.</p>
+<h2>Manage Resources</h2>
+<p>Every game has to manager lots of resources. In GameFinal, we don't need to give the full path for every resource file every time you need to load a resource.  
+</p>
+<p>Firstly, we create a new file called <code>Resources.cfg</code> under the project's folder. Then copy the <code>built-in-resources</code> folder to project's folder. Open this <code>Resources.cfg</code> in any text editor and add the following text:</p>
+<pre><code>[BUILT-IN]
+FileSystem=./built-in-resources
+</code></pre>
+
+<p>The word inside the bracket gives the name of a <code>resource group</code>. All the lines following this word belong to the same group. Here the group is called <code>BUILT-IN</code>. Then we add a path to the group(<code>./built-in-resources</code>). During the game's running, all the files under this folder could be detected automatically. For example, we can write <code>teapot.mesh</code> for short instead of giving the full path <code>./built-in-resources</code> now in program.</p>
+<p>In code, we use <code>IResourceGroupManager</code> interface to manage all the resources:</p>
+<pre><code class="language-cpp">IResourceGroupManager* resourceGroupManager = driver-&gt;getResourceGroupManager();
+resourceGroupManager-&gt;init(&quot;Resources.cfg&quot;);
+</code></pre>
+
+<p>Here we call <code>init</code> method to initialize all the resources defined in the <code>Resources.cgf</code>. The engine indexes and  maintains those resources. </p>
+<h2>Draw Something</h2>
+<p>Let's begin to draw something on the screen. We're going to set up a scene containing a sphere object on the ground.</p>
+<p>After creating the scene manager, we add a mesh node representing the ground to the scene manager:</p>
+<pre><code class="language-cpp">// create ground's material
+SMaterial groundMaterial;
+groundMaterial.setAttribute(&quot;ambient&quot;, XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
+groundMaterial.setAttribute(&quot;diffuse&quot;, XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
+groundMaterial.setAttribute(&quot;specular&quot;, XMFLOAT4(0.05f, 0.05f, 0.05f, 32.0f));
+groundMaterial.setAttribute(&quot;emissive&quot;, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+groundMaterial.setPipeline(&quot;gf/geometry_dirlight&quot;);
+
+// create ground's mesh
+ISimpleMesh* groundMesh = meshManager-&gt;createPlaneMesh(&quot;ground&quot;, 100.0f, 100.0f, 10, 10);
+
+// add a mesh node to the scene manager
+IMeshNode* groundNode = smgr-&gt;addMeshNode(groundMesh, &amp;groundMaterial, nullptr, true);
+</code></pre>
+
+<p>Firstly, we need to define the ground's material by a <code>SMaterial</code> structure. We call the <code>setAttribute</code> function to set its four attributes: ambient, diffuse, specular, emissive. These values define how much light would be reflected by the surface. Then we call <code>setPipeline</code> to set the pipeline this material would like to use. A pipeline defines the whole process of how the engine would render an object on the screen. Here we set its value as <code>gf/geometry_dirlight</code>, which is a built-in pipeline provided by the engine. </p>
+<p>Then we call the <code>meshManager-&gt;createPlaneMesh</code> to create a plane mesh:</p>
+<pre><code>ISimpleMesh* groundMesh = meshManager-&gt;createPlaneMesh(&quot;ground&quot;, 100.0f, 100.0f, 10, 10);
+</code></pre>
+
+<p>The first parameter is the mesh's name. You can name it whatever you like here. The second and third parameters are the length and width of the plane. The fourth and fifth parameters define how many tiles (10 * 10) inside the plane. </p>
+<p>After we create the mesh, we add a node with this mesh into the scene:</p>
+<pre><code>IMeshNode* groundNode = smgr-&gt;addMeshNode(groundMesh, &amp;groundMaterial, nullptr, true);
+</code></pre>
+
+<p>We call the <code>smgr-&gt;addMeshNode</code> method to create a mesh node. The first parameter represents the mesh that we have created. The material <code>groundMaterial</code> that we have created are passed as its second parameter. The third parameter defines the node's parent, <code>nullptr</code> means its parent is the scene manager. The fourth parameter defines whether it is a static node. <code>Static</code> means the object will never move during the game.</p>
+<p>Then we add a sphere object in the same way:</p>
+<pre><code class="language-cpp">// create sphere's material
+SMaterial sphereMaterial;
+sphereMaterial.setAttribute(&quot;ambient&quot;, XMFLOAT4(0.7f, 0.5f, 0.1f, 1.0f));
+sphereMaterial.setAttribute(&quot;diffuse&quot;, XMFLOAT4(1.0f, 0.9f, 0.17f, 1.0f));
+sphereMaterial.setAttribute(&quot;specular&quot;, XMFLOAT4(0.5f, 0.5f, 0.5f, 32.0f));
+sphereMaterial.setAttribute(&quot;emissive&quot;, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+sphereMaterial.setPipeline(&quot;gf/geometry_dirlight&quot;);
+
+ISimpleMesh* sphereMesh = meshManager-&gt;createSphereMesh(&quot;sphere&quot;, 1.0f, 100, 100);
+IMeshNode* sphereNode = smgr-&gt;addMeshNode(sphereMesh, &amp;sphereMaterial, nullptr, true, XMFLOAT3(0, 1.0f, 0));
+</code></pre>
+
+<p>The sphere's radius is set to 1.0f, and we put it in the position of <code>(0, 1.0f, 0)</code>; so the sphere touches the ground precisely.</p>
+<p>Although we finished adding geometries into scene, it is not enough; because so far we didn't add any light source into the scene. So now we begin creating a directional light:</p>
+<pre><code class="language-cpp">ILightNode* light = smgr-&gt;addDirectionalLight(1, nullptr, XMFLOAT3(1.0f, -1.0f, 1.0f));
+light-&gt;setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
+light-&gt;setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+</code></pre>
+
+<p>The first parameter of <code>addDirectionalLight</code> is the id of light. Here the light's id is 1. The direction of the light is given as <code>(5.0f, -5.0f, 2.0f)</code>. We also call <code>setSpecular</code> and <code>setDiffuse</code> method to set the light's diffuse and specular color. </p>
+<p>Usually, we want to add some environmental light. We can do this by calling <code>setAmbient</code> method:</p>
+<pre><code class="language-cpp">smgr-&gt;setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+</code></pre>
+
+<p>The last thing is to add a camera which gives the position and orientation of the player's eyes.</p>
+<pre><code class="language-cpp">ICameraNode* camera = smgr-&gt;addCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
+    XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
+</code></pre>
+
+<p>The first parameter is the camera's id. Here we put the camera in the position of <code>(0, 1.0f, -6.0)</code>. The target position that the camera looks at is given as <code>(0, 1.0f, 0)</code>. The ups vector of the camera is <code>(0, 1, 0)</code>.</p>
+<p>Finally, we compile and run our program, we could see the window:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/199694ecea56b119e69d5c18e625473fc3b0a7b8/Tutorials/img/01-01.png" /></p>
+<p>The entire code is given at last:)</p>
+<pre><code class="language-cpp">#include &lt;GameFinal.h&gt;
+
+#pragma comment(lib, &quot;GameFinal.lib&quot;)
+#pragma comment(lib, &quot;winmm.lib&quot;)
+
+using namespace gf;
+
+int main()
+{
+    IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600);
+    IVideoDriver* driver = device-&gt;getVideoDriver();
+
+    ISceneManager* smgr = device-&gt;createSceneManager();
+
+    IResourceGroupManager* resourceGroupManager = driver-&gt;getResourceGroupManager();
+    resourceGroupManager-&gt;init(&quot;Resources.cfg&quot;);
+
+    // get mesh manager.
+    IMeshManager* meshManager = driver-&gt;getMeshManager();
+
+    // set up ground.
+    // create ground's material
+    SMaterial groundMaterial;
+    groundMaterial.setAttribute(&quot;ambient&quot;, XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
+    groundMaterial.setAttribute(&quot;diffuse&quot;, XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
+    groundMaterial.setAttribute(&quot;specular&quot;, XMFLOAT4(0.05f, 0.05f, 0.05f, 32.0f));
+    groundMaterial.setAttribute(&quot;emissive&quot;, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+    groundMaterial.setPipeline(&quot;gf/geometry_dirlight&quot;);
+
+    // create ground's mesh
+    ISimpleMesh* groundMesh = meshManager-&gt;createPlaneMesh(&quot;ground&quot;, 100.0f, 100.0f, 10, 10);
+
+    // add a mesh node to the scene manager
+    IMeshNode* groundNode = smgr-&gt;addMeshNode(groundMesh, &amp;groundMaterial, nullptr, true);
+
+    // create sphere's material
+    SMaterial sphereMaterial;
+    sphereMaterial.setAttribute(&quot;ambient&quot;, XMFLOAT4(0.7f, 0.5f, 0.1f, 1.0f));
+    sphereMaterial.setAttribute(&quot;diffuse&quot;, XMFLOAT4(1.0f, 0.9f, 0.17f, 1.0f));
+    sphereMaterial.setAttribute(&quot;specular&quot;, XMFLOAT4(0.5f, 0.5f, 0.5f, 32.0f));
+    sphereMaterial.setAttribute(&quot;emissive&quot;, XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f));
+    sphereMaterial.setPipeline(&quot;gf/geometry_dirlight&quot;);
+
+    ISimpleMesh* sphereMesh = meshManager-&gt;createSphereMesh(&quot;sphere&quot;, 1.0f, 100, 100);
+    IMeshNode* sphereNode = smgr-&gt;addMeshNode(sphereMesh, &amp;sphereMaterial, nullptr, true, 
+                        XMFLOAT3(0, 1.0f, 0));
+
+    // add directional light
+    ILightNode* light = smgr-&gt;addDirectionalLight(1, nullptr, XMFLOAT3(5.0f, -5.0f, 2.0f));
+    light-&gt;setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
+    light-&gt;setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+
+    // set scene's environmental light 
+    smgr-&gt;setAmbient(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+
+    // create camera
+    ICameraNode* camera = smgr-&gt;addCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f), 
+        XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
+
+    ITimer* timer = device-&gt;getTimer();
+    timer-&gt;reset();
+
+    const f32 color[] = { 0, 0, 0, 1.0f };
+    while (device-&gt;run()) {
+
+        float dt = timer-&gt;tick();
+        smgr-&gt;update(dt);
+        driver-&gt;beginScene(true, true, color);
+        smgr-&gt;drawAll();
+        driver-&gt;endScene();
+    }
+
+    smgr-&gt;destroy();
+    device-&gt;drop();
+
+    return 0;
+}
+</code></pre>
+
+		</div>
+
+	</div>
+</body>
+</html>

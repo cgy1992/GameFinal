@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>GameFinal Engine</title>
+		<link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="html/main.css" type="text/css" rel="stylesheet" />
+		<!--<link href="html/markdown.css" type="text/css" ref="stylesheet" />-->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="../bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="html/main.js"></script>
+		<link href="html/prism.css" rel="stylesheet" />
+		<script src="html/prism.js"></script>
+	</head>
+	<body>
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+          <div class="container">
+              <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="brand" href="../index.html">GameFinal</a>
+              <div class="nav-collapse collapse">
+                  <ul class="nav">
+                      <li class="">
+                          <a href="../index.html">Home</a>
+                      </li>
+                      <li class="">
+                          <a href="../download.html">Download</a>
+                      </li>
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                              <li><a href="chapter1.html">01 Configuration</a></li>
+                              <li><a href="chapter2.html">02 First Program</a></li>
+                              <li><a href="chapter3.html">03 Material</a></li>
+                              <li><a href="chapter4.html">04 Camera</a></li>
+                              <li><a href="chapter5.html">05 Lighting</a></li>
+                              <li><a href="chapter6.html">06 Model</a></li>
+                              <li><a href="chapter7.html">07 Shader</a></li>
+                              <li><a href="chapter8.html">08 Terrain</a></li>
+                              <li><a href="chapter9.html">09 Instancing</a></li>
+                              <li><a href="chapter10.html">10 Havok</a></li>
+                              <li><a href="chapter11.html">11 Post Effect</a></li>
+                              <li><a href="chapter12.html">12 Compute Shader</a></li>
+                          </ul>
+                      </li>
+                      <li class="">
+                          <a href="../about.html">Contact</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+    </div>
+	<div class="main_div">
+		<div class="tutorial_nav">
+			<p style="color: #6F0101; font-weight: bold; font-size: 1.4em; padding: 5px;">Tutorials</p>
+			<div class="tutorial_link"><a href="chapter1.html">01 Configuration</a></div>
+			<div class="tutorial_link"><a href="chapter2.html">02 First Program</a></div>
+			<div class="tutorial_link"><a href="chapter3.html">03 Material</a></div>
+			<div class="tutorial_link"><a href="chapter4.html">04 Camera</a></div>
+			<div class="tutorial_link"><a href="chapter5.html">05 Lighting</a></div>
+			<div class="tutorial_link"><a href="chapter6.html">06 Model</a></div>
+			<div class="tutorial_link"><a href="chapter7.html">07 Shader</a></div>
+			<div class="tutorial_link"><a href="chapter8.html">08 Terrain</a></div>
+			<div class="tutorial_link"><a href="chapter9.html" class="current_tutorial_link">09 Instancing</a></div>
+			<div class="tutorial_link"><a href="chapter10.html">10 Havok</a></div>
+			<div class="tutorial_link"><a href="chapter11.html">11 Post Effect</a></div>
+			<div class="tutorial_link"><a href="chapter12.html">12 Compute Shader</a></div>
+		</div>
+		<div class="tutorial_content">
+<h1>Instancing</h1>
+<p>This tutorial will tell you how to render many many meshes in the same scene with the help of instancing. Instancing is a new feature that allows developers to render multiple objects in the same call, and thus save the performance. GameFinal supports instancing in a simple way, you can create many instances of the same mesh in the scene and the scene manager will help to manage those instances. In this tutorial, we would plant many trees on the terrain we created in the previous tutorial.</p>
+<pre><code class="language-cpp">IModelMesh* treeMesh = meshManager-&gt;getModelMesh(&quot;roundtreeA.mesh&quot;);
+IInstanceCollectionNode* collection = smgr-&gt;addInstanceCollectionNode(treeMesh, nullptr, 300, 0);
+
+for (u32 i = 0; i &lt; 300; i++) {
+    addTreeInstance(collection, terrainMesh);
+}
+
+collection-&gt;addShadow(1);
+</code></pre>
+
+<p>The program first loads the tree mesh and get a <code>IMeshMesh</code>. Then we need to to create a <code>IInstanceCollectionNode</code> interface. This interface is the root of all the instances and manages those instances under it. In order to create this interface, we call the <code>ISceneManager::addInstanceCollectionNode</code>. We pass the tree mesh as its first parameter. Then all the instances under this instance collection would share this mesh. The second parameter is the node's parent, <code>nullptr</code> means the scene manager. The third parameter specifies the maximum number of instances under the collection node. The fourth parameter specifies the extra space the engine would allocate for each vertex. Here we set it to 0.</p>
+<p>Then we use a <code>for</code> loop to add 300 instances of trees to the collection node. The <code>addTreeInstance</code> function is defined like this:</p>
+<pre><code class="language-cpp">void addTreeInstance(IInstanceCollectionNode* collection, ITerrainMesh* terrain)
+{
+    const static f32 range = 200;
+    f32 x = math::RandomFloat(-range, range);
+    f32 z = math::RandomFloat(-range, range);
+    f32 y = terrain-&gt;getHeight(x, z);
+
+    IInstanceNode* treeNode = collection-&gt;addInstance(true, XMFLOAT3(x, y, z));
+    treeNode-&gt;addShadow(1);
+}
+</code></pre>
+
+<p>We put the tree at a random position on the terrain. We call the <code>IInstanceCollectionNode::addInstance</code> to add the instance into the collection node. The first parameter specifies whether it is static. The second parameter specifies the instance's position.</p>
+<p>In addition, we need make a few modifications in the shader code. First, the structure of vertex should be changed:</p>
+<pre><code class="language-cpp">struct VertexIn
+{
+    float3 PosL     : POSITION;
+    float3 Normal   : NORMAL;
+    float2 Tex      : TEXCOORD;
+    GF_DECLARE_INTANCES_VERTEX   // must add this when using instancing
+};
+</code></pre>
+
+<p>You may notice that at end of the VertexIn structure, we add a built-in macro <code>GF_DECLARE_INTANCES_VERTEX</code>. Then in the vertex shader, we have to replace <code>GF_WORLD</code> with the <code>INSTANCE_WORLD</code>:</p>
+<pre><code class="language-cpp">VertexOut vs_main(VertexIn vin)
+{
+    VertexOut vout;
+    float4 PosW = mul(float4(vin.PosL, 1.0f), INSTANCE_WORLD);
+    vout.Normal = mul(vin.Normal, (float3x3)INSTANCE_WORLD);
+    vout.PosH = mul(PosW, GF_VIEW_PROJ);
+    vout.PosW = PosW.xyz;
+    vout.Tex = vin.Tex;
+    return vout;
+}
+</code></pre>
+
+<p>Furthermore, we have to change the <code>input-layout</code> in the pipeline. We must include the positon of each instance , namely the world transformation, into each vertex. We define the pipeline like this:</p>
+<pre><code class="language-markup">&lt;pipeline name=&quot;tree_pipeline&quot;&gt;
+    &lt;input-layout&gt;
+        &lt;element semantic=&quot;POSITION&quot; format=&quot;float3&quot;/&gt;
+        &lt;element semantic=&quot;NORMAL&quot; format=&quot;float3&quot;/&gt;
+        &lt;element semantic=&quot;TEXCOORD&quot; format=&quot;float2&quot;/&gt;
+        &lt;element semantic=&quot;WORLD&quot; index=&quot;0&quot; format=&quot;float4&quot; slot=&quot;1&quot; instance=&quot;true&quot; instance-rate=&quot;1&quot;/&gt;
+        &lt;element semantic=&quot;WORLD&quot; index=&quot;1&quot; format=&quot;float4&quot; slot=&quot;1&quot; instance=&quot;true&quot; instance-rate=&quot;1&quot;/&gt;
+        &lt;element semantic=&quot;WORLD&quot; index=&quot;2&quot; format=&quot;float4&quot; slot=&quot;1&quot; instance=&quot;true&quot; instance-rate=&quot;1&quot;/&gt;
+        &lt;element semantic=&quot;WORLD&quot; index=&quot;3&quot; format=&quot;float4&quot; slot=&quot;1&quot; instance=&quot;true&quot; instance-rate=&quot;1&quot;/&gt;
+    &lt;/input-layout&gt;
+    .....
+&lt;/pipeline&gt;
+</code></pre>
+
+<p>After finishing all these modifications, we can run the program now:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/08-02.png" /></p>
+<p>Even although we created so many trees in the scene, the program could run very smoothly.</p>
+
+	</div>
+
+	</div>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>GameFinal Engine</title>
+		<link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="html/main.css" type="text/css" rel="stylesheet" />
+		<!--<link href="html/markdown.css" type="text/css" ref="stylesheet" />-->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="../bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="html/main.js"></script>
+		<link href="html/prism.css" rel="stylesheet" />
+		<script src="html/prism.js"></script>
+	</head>
+	<body>
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+          <div class="container">
+              <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="brand" href="../index.html">GameFinal</a>
+              <div class="nav-collapse collapse">
+                  <ul class="nav">
+                      <li class="">
+                          <a href="../index.html">Home</a>
+                      </li>
+                      <li class="">
+                          <a href="../download.html">Download</a>
+                      </li>
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                              <li><a href="chapter1.html">01 Configuration</a></li>
+                              <li><a href="chapter2.html">02 First Program</a></li>
+                              <li><a href="chapter3.html">03 Material</a></li>
+                              <li><a href="chapter4.html">04 Camera</a></li>
+                              <li><a href="chapter5.html">05 Lighting</a></li>
+                              <li><a href="chapter6.html">06 Model</a></li>
+                              <li><a href="chapter7.html">07 Shader</a></li>
+                              <li><a href="chapter8.html">08 Terrain</a></li>
+                              <li><a href="chapter9.html">09 Instancing</a></li>
+                              <li><a href="chapter10.html">10 Havok</a></li>
+                              <li><a href="chapter11.html">11 Post Effect</a></li>
+                              <li><a href="chapter12.html">12 Compute Shader</a></li>
+                          </ul>
+                      </li>
+                      <li class="">
+                          <a href="../about.html">Contact</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+    </div>
+	<div class="main_div">
+		<div class="tutorial_nav">
+			<p style="color: #6F0101; font-weight: bold; font-size: 1.4em; padding: 5px;">Tutorials</p>
+			<div class="tutorial_link"><a href="chapter1.html">01 Configuration</a></div>
+			<div class="tutorial_link"><a href="chapter2.html">02 First Program</a></div>
+			<div class="tutorial_link"><a href="chapter3.html">03 Material</a></div>
+			<div class="tutorial_link"><a href="chapter4.html">04 Camera</a></div>
+			<div class="tutorial_link"><a href="chapter5.html" class="current_tutorial_link">05 Lighting</a></div>
+			<div class="tutorial_link"><a href="chapter6.html">06 Model</a></div>
+			<div class="tutorial_link"><a href="chapter7.html">07 Shader</a></div>
+			<div class="tutorial_link"><a href="chapter8.html">08 Terrain</a></div>
+			<div class="tutorial_link"><a href="chapter9.html">09 Instancing</a></div>
+			<div class="tutorial_link"><a href="chapter10.html">10 Havok</a></div>
+			<div class="tutorial_link"><a href="chapter11.html">11 Post Effect</a></div>
+			<div class="tutorial_link"><a href="chapter12.html">12 Compute Shader</a></div>
+		</div>
+		<div class="tutorial_content">
+<h1>Lighting</h1>
+<p>This tutorial will show how to set light sources' attributes, cast shadows, and deferred shading.</p>
+<h2>Add Shadow</h2>
+<p>Now, let's add shadows in the scene. If we want a light source to cast shadows, then we need to call the <code>enableShadow</code> method of <code>ILightNode</code> interface:</p>
+<pre><code class="language-cpp">light-&gt;enableShadow(true);
+</code></pre>
+
+<p>Then we decide those objects that will cast shadows and call the <code>addShadow</code> method on those objects. In our program, the sphere, cubebox and teapot will all cast shadow:</p>
+<pre><code class="language-cpp">sphereNode-&gt;addShadow(1);
+boxNode-&gt;addShadow(1);
+teapot-&gt;addShadow(1);
+</code></pre>
+
+<p>When calling the <code>addShadow</code> method, we pass in the identifier of the light source that will cast shadow.</p>
+<p>We also do some optimization by ignoring the shadow that is too far away. We call <code>setShadowRange</code> to set a distance value. The shadow that is further than this distance would not be rendered. In our program, we set this value to 100.0f:</p>
+<pre><code class="language-cpp">camera-&gt;setShadowRange(100.0f);
+</code></pre>
+
+<p>The materials also need to be modified. All the objects including ground will receive shadow on their surfaces. </p>
+<pre><code class="language-markup">&lt;material name=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.7f, 0.5f, 0.1f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;1.0f, 0.9f, 0.17f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;0.5f, 0.5f, 0.5f, 32.0f&quot;/&gt;
+      &lt;attribute name=&quot;emissive&quot; value=&quot;0.0f, 0.0f, 0.0f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;shadow_softness&quot; value=&quot;8.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;pipelines&gt;
+      &lt;pipeline name=&quot;gf/geometry_shadow_dirlight&quot;/&gt;
+      &lt;pipeline name=&quot;gf/geometry_shadow_map&quot; usage=&quot;shadow_map&quot;/&gt;
+    &lt;/pipelines&gt;
+&lt;/material&gt;
+</code></pre>
+
+<p>We change the pipeline from &quot;gf/geometry_dirlight&quot; to &quot;gf/geometry_shadow_dirlight&quot;. This is a built-in pipeline which will decrease the illumination in light's shadow. We add another pipeline with the name &quot;geometry_shadow_map&quot; with the usage &quot;shadow_map&quot;. The pipeline with the &quot;shadow_map&quot; usage would render the shadow map. Usually, we don't need to change it, just use the built in pipeline(&quot;gf/geometry_shadow_map&quot;). In addition, we add a new attribute called &quot;shadow_softness&quot; and set its value to 8.0f. This value would determine how soft the shadow's edge will be. </p>
+<p>Then we change the pipeline in &quot;ground_material&quot; to &quot;gf/geometry_texture_shadow_dirlight&quot;:</p>
+<pre><code class="language-markup">&lt;material name=&quot;ground_material&quot; prototype=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;0.05f, 0.05f, 0.05f, 32.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;textures&gt;
+      &lt;texture name=&quot;floor.dds&quot; index=&quot;0&quot;&gt;&lt;/texture&gt;
+    &lt;/textures&gt;
+    &lt;pipelines&gt;
+      &lt;pipeline name=&quot;gf/geometry_texture_shadow_dirlight&quot;/&gt;
+    &lt;/pipelines&gt;
+&lt;/material&gt;
+</code></pre>
+
+<p>Finally, we run the program and can notice the directional light's shadow:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/04-01.png" /> </p>
+<h2>Point Light</h2>
+<p>Now, let's try to replace the directional light with a point light. A point light has no unique direction, it emits its energy in a given position to all the directions. We create a point light by calling <code>ISceneManager::addPointLight</code> method:</p>
+<pre><code class="language-cpp">ILightNode* light = smgr-&gt;addPointLight(1, nullptr, false, XMFLOAT3(0, 4.0f, 0), 100);
+light-&gt;setSpecular(XMFLOAT4(1.0f, 1.0, 1.0f, 32.0f));
+light-&gt;setDiffuse(XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f));
+light-&gt;setAttenuation(1.0f, 0.05f, 0);
+light-&gt;enableShadow(true);
+</code></pre>
+
+<p>Notice that instead of specifying a direction, we give it a position (0, 4.0, 0), and set its range to 100. Those pixels that are outside this range would not be illuminated. We call <code>setAttenuation</code> to set the point light' attenuation coefficients. These three values specify how the light intensity changes over distance.</p>
+<p>Then we change the material file to let objects receive point light's energy.</p>
+<pre><code class="language-markup">&lt;material name=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+        &lt;attribute name=&quot;ambient&quot; value=&quot;0.7f, 0.5f, 0.1f, 1.0f&quot;/&gt;
+        &lt;attribute name=&quot;diffuse&quot; value=&quot;1.0f, 0.9f, 0.17f, 1.0f&quot;/&gt;
+        &lt;attribute name=&quot;specular&quot; value=&quot;0.5f, 0.5f, 0.5f, 32.0f&quot;/&gt;
+        &lt;attribute name=&quot;emissive&quot; value=&quot;0.0f, 0.0f, 0.0f, 1.0f&quot;/&gt;
+        &lt;attribute name=&quot;shadow_softness&quot; value=&quot;8.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;pipelines&gt;
+        &lt;pipeline name=&quot;gf/geometry_shadow_pointlight&quot;/&gt;
+        &lt;pipeline name=&quot;gf/geometry_shadow_map&quot; usage=&quot;shadow_map&quot;/&gt;
+        &lt;pipeline name=&quot;gf/geometry_point_shadow_map&quot; usage=&quot;point_shadow_map&quot;/&gt;
+    &lt;/pipelines&gt;
+&lt;/material&gt;
+&lt;material name=&quot;ground_material&quot; prototype=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+        &lt;attribute name=&quot;ambient&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+        &lt;attribute name=&quot;diffuse&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+        &lt;attribute name=&quot;specular&quot; value=&quot;0.05f, 0.05f, 0.05f, 32.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;textures&gt;
+        &lt;texture name=&quot;floor.dds&quot; index=&quot;0&quot;&gt;&lt;/texture&gt;
+    &lt;/textures&gt;
+    &lt;pipelines&gt;
+        &lt;pipeline name=&quot;gf/geometry_texture_shadow_pointlight&quot;/&gt;
+    &lt;/pipelines&gt;
+&lt;/material&gt;
+</code></pre>
+
+<p>This time, We take a built-in built-in pipeline <code>geometry_shadow_pointlight</code>, which renders those objects under a point light and also draws the shadow of the light source. In addition, we add another built-in pipeline named <code>gf/geometry_point_shadow_map</code>. This pipeline is reponsible for rendering the point light's shadow map, so we must set the <code>usage</code> attribute to <code>point_shadow_map</code>.</p>
+<p>After running the program, we could find the whole scene is affected by a point light now:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/04-02.png" /></p>
+<h2>Deferred Shading</h2>
+<p>Let's try to switch to another shading algorithm - deferred shading. If you want to put many light sources in the scene, then you'd better try deferred shading because of its better performance and ease of use.</p>
+<p>Now, let's add 100 point lights into the scene, giving them random positions and colors:</p>
+<pre><code class="language-cpp">// add 100 point lights
+for (u32 i = 0; i &lt; 100; i++) {
+    XMFLOAT3 pos(math::RandomFloat(-20.0, 20.0f), math::RandomFloat(3.0, 10.0f), math::RandomFloat(-20.0, 20.0f));
+    XMFLOAT4 diffuse(math::RandomFloat(0, 0.3f), math::RandomFloat(0, 0.3f), math::RandomFloat(0, 0.3f), 1.0f);
+    XMFLOAT4 specular(math::RandomFloat(0, 0.3f), math::RandomFloat(0, 0.3f), math::RandomFloat(0, 0.3f), 32.0f);
+
+    ILightNode* light = smgr-&gt;addPointLight(i, nullptr, false, pos, 20.0f);
+    light-&gt;setSpecular(specular);
+    light-&gt;setDiffuse(diffuse);
+    light-&gt;setAttenuation(1.0f, 0.05f, 0);
+}
+</code></pre>
+
+<p>In order to use deferred shading, we need to firstly call <code>ISceneManager::setDeferredShading</code> and set its parameter to <code>true</code>. </p>
+<pre><code class="language-cpp">    driver-&gt;setDeferredShading(true);
+</code></pre>
+
+<p>Then we modify the material file, add another pipeline with the usage of <code>defer</code> to each material:</p>
+<pre><code class="language-markup">&lt;material name=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.7f, 0.5f, 0.1f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;1.0f, 0.9f, 0.17f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;0.5f, 0.5f, 0.5f, 32.0f&quot;/&gt;
+      &lt;attribute name=&quot;emissive&quot; value=&quot;0.0f, 0.0f, 0.0f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;shadow_softness&quot; value=&quot;8.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;pipelines&gt;
+      &lt;pipeline name=&quot;gf/geometry_shadow_pointlight&quot;/&gt;
+      &lt;pipeline name=&quot;gf/geometry_shadow_map&quot; usage=&quot;shadow_map&quot;/&gt;
+      &lt;pipeline name=&quot;gf/geometry_point_shadow_map&quot; usage=&quot;point_shadow_map&quot;/&gt;
+      &lt;pipeline name=&quot;gf/geometry_defer&quot; usage=&quot;defer&quot;/&gt;
+    &lt;/pipelines&gt;
+    &lt;/material&gt;
+
+    &lt;material name=&quot;ground_material&quot; prototype=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;0.05f, 0.05f, 0.05f, 32.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;textures&gt;
+      &lt;texture name=&quot;floor.dds&quot; index=&quot;0&quot;&gt;&lt;/texture&gt;
+    &lt;/textures&gt;
+    &lt;pipelines&gt;
+      &lt;pipeline name=&quot;gf/geometry_texture_shadow_pointlight&quot;/&gt;
+      &lt;pipeline name=&quot;gf/geometry_texture_defer&quot; usage=&quot;defer&quot;/&gt;
+    &lt;/pipelines&gt;
+&lt;/material&gt;
+</code></pre>
+
+<p>The pipeline with <code>defer</code> usage specifies how to write the objects' information into G-Buffer; here, we set it to <code>gf/geometry_defer</code> and <code>gf/geometry_texture_defer</code>. Both are built-in pipelines. In this demonstration, we could safely delete all those pipelines except these two &quot;defer&quot; pipelines.</p>
+<p>Then run the program, we could found that because there are 100 light sources in total, the whole scene becomes very bright:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/04-03.png" /></p>
+
+	</div>
+
+	</div>
+</body>
+</html>

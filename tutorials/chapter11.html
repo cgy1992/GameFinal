@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>GameFinal Engine</title>
+		<link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="html/main.css" type="text/css" rel="stylesheet" />
+		<!--<link href="html/markdown.css" type="text/css" ref="stylesheet" />-->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="../bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="html/main.js"></script>
+		<link href="html/prism.css" rel="stylesheet" />
+		<script src="html/prism.js"></script>
+	</head>
+	<body>
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="../index.html">GameFinal</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="">
+                <a href="../index.html">Home</a>
+              </li>
+              <li class="">
+                <a href="../download.html">Download</a>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="chapter1.html">01 Configuration</a></li>
+                  <li><a href="chapter2.html">02 First Program</a></li>
+                  <li><a href="chapter3.html">03 Material</a></li>
+                  <li><a href="chapter4.html">04 Camera</a></li>
+                  <li><a href="chapter5.html">05 Lighting</a></li>
+                  <li><a href="chapter6.html">06 Model</a></li>
+                  <li><a href="chapter7.html">07 Shader</a></li>
+                  <li><a href="chapter8.html">08 Terrain</a></li>
+                  <li><a href="chapter9.html">09 Instancing</a></li>
+                  <li><a href="chapter10.html">10 Havok</a></li>
+                  <li><a href="chapter11.html">11 Post Effect</a></li>
+                  <li><a href="chapter12.html">12 Compute Shader</a></li>
+                </ul>
+              </li>
+              <li class="">
+                <a href="../about.html">Contact</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+	<div class="main_div">
+		<div class="tutorial_nav">
+			<p style="color: #6F0101; font-weight: bold; font-size: 1.4em; padding: 5px;">Tutorials</p>
+			<div class="tutorial_link"><a href="chapter1.html">01 Configuration</a></div>
+			<div class="tutorial_link"><a href="chapter2.html">02 First Program</a></div>
+			<div class="tutorial_link"><a href="chapter3.html">03 Material</a></div>
+			<div class="tutorial_link"><a href="chapter4.html">04 Camera</a></div>
+			<div class="tutorial_link"><a href="chapter5.html">05 Lighting</a></div>
+			<div class="tutorial_link"><a href="chapter6.html">06 Model</a></div>
+			<div class="tutorial_link"><a href="chapter7.html">07 Shader</a></div>
+			<div class="tutorial_link"><a href="chapter8.html">08 Terrain</a></div>
+			<div class="tutorial_link"><a href="chapter9.html">09 Instancing</a></div>
+			<div class="tutorial_link"><a href="chapter10.html">10 Havok</a></div>
+			<div class="tutorial_link"><a href="chapter11.html" class="current_tutorial_link">11 Post Effect</a></div>
+			<div class="tutorial_link"><a href="chapter12.html">12 Compute Shader</a></div>
+		</div>
+		<div class="tutorial_content">
+<h1>Post Effect</h1>
+<p>Post effect is a kind of image processing. In essence, it is an color transformation for every pixel in the screen space. Each post effect in GameFinal corresponds to one <strong>compositor</strong> object. All the compositors must implement the ICompositor interface. If developers want to design their own post effect, they just need define a new class that inherits from ICompositor and implement the abstract methods. One compositor could be connected with another compositor, thus several compositors could be combined as a list. Just as the following picture shows, the output of the current compositor is the input of the next compositor:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-04.png" /></p>
+<p>You can add multiple compositors into your program. Be aware that the order in which you add them into the scene manager will affect the final effect on the screen:</p>
+<pre><code class="language-cpp">smgr-&gt;addCompositor(compositor1);
+smgr-&gt;addCompositor(compositor2);
+smgr-&gt;addCompositor(compositor3);
+</code></pre>
+
+<p>We can define our post effect by creating a new class that implements the <code>ICompositor</code> interface:</p>
+<pre><code class="language-cpp">class MyCompositor : public ICompositor
+{
+    virtual void render(ISceneManager* smgr, bool lastCompositor) 
+    {
+        // TODO: Do your post effect's processing
+    }
+};
+</code></pre>
+
+<p>The only pure virtual method in ICompositor is <code>render</code> method. Your class must implement this abstract method. It receives two parameters: the first one is the scene manager; the second parameter <code>lastCompositor</code> indicates whether this compositor is the last one in the compositor chain. If it is the last one, you might like writing the rendering result directly into the backbuffer rather than a texture render target.</p>
+<h2>Blur</h2>
+<p>GameFinal provides us with several built-in post effects. We can add them directly in our program without writing too complicated code. Firstly, let's try the blurring effect. In order to create a built-in compositor, we call <code>ISceneManager::createCompositor</code> method which returns a <code>ICompositor</code> inferface:</p>
+<pre><code class="language-cpp">SCompositorCreateParam param;
+param.Blur.Algorithm = SCompositorCreateParam::EBLUR_GAUSSIAN;
+param.Blur.TexelDistance = 2.0f;
+param.Blur.PassCount = 5;
+
+ICompositor* compositor = smgr-&gt;createCompositor(ECT_BLUR, param);
+smgr-&gt;addCompositor(compositor);
+</code></pre>
+
+<p>Firstly, we initialize a <code>SCompositorCreateParam</code> structure. If we want to create a blur effect, we need to fill its <code>Blur</code> attribute. The <code>param.Blur.Algorithm</code> specifies which blur algorithm we want to use. Here we set it <code>SCompositorCreateParam::EBLUR_GAUSSIAN</code>, which means we would like to use gaussian blur. The <code>TexelDistance</code> indicates the distance between neighbouring texels that we'll blur. The <code>PassCount</code> means how many blur passes there would be in the compositor. The larger it is, the more fuzzy the final image will be.</p>
+<p>Then we call the <code>ISceneManager::createCompositor</code> to create the <code>ICompositor</code> interface. Notice the first parameter indicates what kind of post effect you would like to create. Here we set it to <code>ECT_BLUR</code>, which means we'll create a blur effect. Then we call <code>addCompositor</code> to add this compositor to the chain.</p>
+<p>Run the program, we could find the whole screen becomes fuzzy:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-02.png" /></p>
+<h2>Bloom</h2>
+<p>Bloom is another post effect that changes light and shade contrast of image. When a pixel is illuminated by a very bright light, it will extend its brightness to its neighbouring pixels. To create a bloom effect, we need to care more attributes in the <code>SCompositorCreateParam</code> structure:</p>
+<pre><code class="language-cpp">SCompositorCreateParam param;
+param.Bloom.BlurPassCount = 4;
+param.Bloom.BlurTexelDistance = 2.0f;
+param.Bloom.BrightnessThreshold = 0.7f;
+param.Bloom.BlurTextureWidth = 400;
+param.Bloom.BlurTextureHeight = 300;
+
+ICompositor* compositor = smgr-&gt;createCompositor(ECT_BLOOM, param);
+smgr-&gt;addCompositor(compositor);
+</code></pre>
+
+<p>The <code>BlurPassCount</code> attribute indicates the number of blur passes. <code>BlurTexelDistance</code> has the same meaning in Blur effect. <code>BrightnessThreshold</code> gives a threshold: the engine would only highlight the region whose brightness is above this threshold value. <code>BlurTextureWidth</code> and <code>BlurTextureHeight</code> specifies the size of temporary render target used in blurring process.</p>
+<p>Run the program, you would find those very bright regions would affect the pixels around them:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-01.png" /></p>
+<h2>Motion Blur</h2>
+<p>If the camera moves fast enough, the image that projects into player’s eye would become blurred. This phenomenon is called &quot;motion blur&quot;. Motion blur is widely used in video games as well as movies in order to increase realism.</p>
+<p>The following code shows how to add motion blur:</p>
+<pre><code class="language-cpp">SCompositorCreateParam param;
+param.MotionBlur.SampleNum = 10;
+
+ICompositor* compositor = smgr-&gt;createCompositor(ECT_MOTION_BLUR, param);
+smgr-&gt;addCompositor(compositor);
+</code></pre>
+
+<p>The only attribute we need care about is <code>SampleNum</code>, which affects how blurred the image should be. The larger this value is set, the more player's movements would affect the screen's blurness.</p>
+<p>Run the program, while you control the FPS camera frequently in a high speed, we'll notice the phenomenon:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/10-03.png" /></p>
+
+	</div>
+
+	</div>
+</body>
+</html>

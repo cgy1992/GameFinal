@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>GameFinal Engine</title>
+		<link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="html/main.css" type="text/css" rel="stylesheet" />
+		<!--<link href="html/markdown.css" type="text/css" ref="stylesheet" />-->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="../bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="html/main.js"></script>
+		<link href="html/prism.css" rel="stylesheet" />
+		<script src="html/prism.js"></script>
+	</head>
+	<body>
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+          <div class="container">
+              <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="brand" href="../index.html">GameFinal</a>
+              <div class="nav-collapse collapse">
+                  <ul class="nav">
+                      <li class="">
+                          <a href="../index.html">Home</a>
+                      </li>
+                      <li class="">
+                          <a href="../download.html">Download</a>
+                      </li>
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                              <li><a href="chapter1.html">01 Configuration</a></li>
+                              <li><a href="chapter2.html">02 First Program</a></li>
+                              <li><a href="chapter3.html">03 Material</a></li>
+                              <li><a href="chapter4.html">04 Camera</a></li>
+                              <li><a href="chapter5.html">05 Lighting</a></li>
+                              <li><a href="chapter6.html">06 Model</a></li>
+                              <li><a href="chapter7.html">07 Shader</a></li>
+                              <li><a href="chapter8.html">08 Terrain</a></li>
+                              <li><a href="chapter9.html">09 Instancing</a></li>
+                              <li><a href="chapter10.html">10 Havok</a></li>
+                              <li><a href="chapter11.html">11 Post Effect</a></li>
+                              <li><a href="chapter12.html">12 Compute Shader</a></li>
+                          </ul>
+                      </li>
+                      <li class="">
+                          <a href="../about.html">Contact</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+    </div>
+	<div class="main_div">
+		<div class="tutorial_nav">
+			<p style="color: #6F0101; font-weight: bold; font-size: 1.4em; padding: 5px;">Tutorials</p>
+			<div class="tutorial_link"><a href="chapter1.html">01 Configuration</a></div>
+			<div class="tutorial_link"><a href="chapter2.html">02 First Program</a></div>
+			<div class="tutorial_link"><a href="chapter3.html">03 Material</a></div>
+			<div class="tutorial_link"><a href="chapter4.html">04 Camera</a></div>
+			<div class="tutorial_link"><a href="chapter5.html">05 Lighting</a></div>
+			<div class="tutorial_link"><a href="chapter6.html">06 Model</a></div>
+			<div class="tutorial_link"><a href="chapter7.html">07 Shader</a></div>
+			<div class="tutorial_link"><a href="chapter8.html">08 Terrain</a></div>
+			<div class="tutorial_link"><a href="chapter9.html">09 Instancing</a></div>
+			<div class="tutorial_link"><a href="chapter10.html">10 Havok</a></div>
+			<div class="tutorial_link"><a href="chapter11.html">11 Post Effect</a></div>
+			<div class="tutorial_link"><a href="chapter12.html" class="current_tutorial_link">12 Compute Shader</a></div>
+		</div>
+		<div class="tutorial_content">
+<h1>Compute Shader</h1>
+<p>GPGPU is a new trend in software development, especially those systems that has high parallelism but requires high performance. GameFinal provides a series of convenient interfaces for developers to use the DirectX11's compute shader. This tutorial will show you how to use compute shader to muiltiply two matrices.</p>
+<p>Firstly, we create a HLSL file, &quot;matmul.hlsl&quot;, and define a compute shader in it:</p>
+<pre><code class="language-cpp">Texture2D&lt;float&gt; gInputA;
+Texture2D&lt;float&gt; gInputB;
+RWTexture2D&lt;float&gt; gOutput;
+
+#define MAX_DIMENSIION 512
+#define BLOCK_SIZE 8
+#define BLOCK_NUM (MAX_DIMENSIION/BLOCK_SIZE)
+
+groupshared float cacheInputA[MAX_DIMENSIION][BLOCK_SIZE];
+groupshared float cacheInputB[BLOCK_SIZE][MAX_DIMENSIION];
+
+[numthreads(BLOCK_SIZE, BLOCK_SIZE, 1)]
+void cs_main(int3 dispatchThreadID : SV_DispatchThreadID,
+    int3  groundThreadID : SV_GroupThreadID)
+{
+    // fill row cache
+    for(int i = 0; i &lt; BLOCK_NUM; i++)
+    {
+        cacheInputA[groundThreadID.x + i * BLOCK_SIZE][groundThreadID.y] =
+            gInputA[int2(groundThreadID.x + i * BLOCK_SIZE, dispatchThreadID.y)];
+    }
+
+    // fill col cache
+    for(int i = 0; i &lt; BLOCK_NUM; i++)
+    {
+        cacheInputB[groundThreadID.x][groundThreadID.y + i * BLOCK_SIZE] = 
+            gInputB[int2(dispatchThreadID.x, groundThreadID.y + i * BLOCK_SIZE)];
+    }
+
+    GroupMemoryBarrierWithGroupSync();
+
+    float sum = 0;
+    for(int k = 0; k &lt; MAX_DIMENSIION; k++)
+    {
+        sum += cacheInputA[k][groundThreadID.y] * cacheInputB[groundThreadID.x][k];
+    }
+
+    gOutput[dispatchThreadID.xy] = sum;
+}
+</code></pre>
+
+<p>The 3-dimension vector after keyword <code>numthreads</code> specifies the size of each block. Here we set (8, 8, 1), which means 8*8*1 threads in each block. We also use groupshared memory to improve performance. The threads within the same block could visit the groupshared memory. The two input matrices are stored in two textures <code>gInputA</code> and <code>gInputB</code>. The output of this compute shader will be written into <code>gOutput</code>.</p>
+<p>In order to load this compute shader in C++ code, we need to call <code>IShaderManager::load</code> method:</p>
+<pre><code class="language-cpp">IShaderManager* shaderMgr = driver-&gt;getShaderManager();
+IShader* shader = shaderMgr-&gt;load(EST_COMPUTE_SHADER, &quot;matmul.hlsl&quot;, &quot;cs_main&quot;);
+</code></pre>
+
+<p>The first parameter specifies what's kind of shader would be loaded. Here <code>EST_COMPUTE_SHADER</code> means it's a compute shader. The second and the third parameters receive the name of the shader file and the shader's entry point.</p>
+<p>Then let's initialize two input matrices:</p>
+<pre><code class="language-cpp">const u32 dimension = 512;
+const u32 sq_dimension = dimension * dimension;
+std::vector&lt;f32&gt; A(sq_dimension);
+std::vector&lt;f32&gt; B(sq_dimension);
+std::vector&lt;f32&gt; C(sq_dimension);
+std::vector&lt;f32&gt; D(sq_dimension);
+
+// init data
+for (u32 i = 0; i &lt; sq_dimension; i++)
+{
+    A[i] = math::RandomFloat(0, 10.0f);
+    B[i] = math::RandomFloat(0, 10.0f);
+}
+</code></pre>
+
+<p>We create 4 vector with the same size. The first two, A and B, will store the initial values in the two input matrices. The C vector receives the results of multiplication calculated by the compute shader. The D vector saves the results calculated by CPU. We can check the correctness by comparing C and D.</p>
+<p>The code that calculates the values in D is quite simple:</p>
+<pre><code class="language-cpp">for (u32 i = 0; i &lt; dimension; i++)
+{
+    for (u32 j = 0; j &lt; dimension; j++)
+    {
+        f32 sum = 0;
+        for (u32 k = 0; k &lt; dimension; k++)
+        {
+            sum += A[i * dimension + k] * B[k * dimension + j];
+        }
+        D[i * dimension + j] = sum;
+    }
+}
+</code></pre>
+
+<p>Before calling the compute shader, we need to put the values A and B into two textures; so we create the following four textures:</p>
+<pre><code class="language-cpp">ITexture* inputTexture1 = textureManager-&gt;createTexture2D(&quot;input1&quot;, dimension, dimension,
+    ETBT_SHADER_RESOURCE, &amp;A[0], 1, EGF_R32_FLOAT, 0);
+
+ITexture* inputTexture2 = textureManager-&gt;createTexture2D(&quot;input2&quot;, dimension, dimension,
+    ETBT_SHADER_RESOURCE, &amp;B[0], 1, EGF_R32_FLOAT, 0);
+
+ITexture* outputTexture = textureManager-&gt;createTexture2D(&quot;output&quot;, dimension, dimension,
+    ETBT_UNORDERED_ACCESS, nullptr, 1, EGF_R32_FLOAT, 0);
+
+ITexture* copyTexture = textureManager-&gt;createTexture2D(&quot;copy&quot;, dimension, dimension,
+    ETBT_CPU_ACCESS_READ, nullptr, 1, EGF_R32_FLOAT, 0);
+
+shader-&gt;setTexture(&quot;gInputA&quot;, inputTexture1);
+shader-&gt;setTexture(&quot;gInputB&quot;, inputTexture2);
+shader-&gt;setTexture(&quot;gOutput&quot;, outputTexture);
+</code></pre>
+
+<p>Texture <code>inputTexture1</code> and <code>inputTexture2</code> are the input textures, which correpond the <code>gInputA</code> and <code>gInputB</code> in the shader respectively. Notice that we pass the address of the first element in A and B as a parameter of <code>createTexture2D</code> method, which means the textures will be initialized with the values in A and B respectively. The <code>outputTexture</code> texture is used to store the output of the compute shader. Another texture, <code>copyTexture</code> is used to copy the values from <code>outputTexture</code> to main memory. Because our program cannot read values from a texture in GPU. Then we call <code>setTexture</code> on shader to associate these textures with the variables in shader.</p>
+<pre><code class="language-cpp">u32 blockNum = dimension / 8;
+driver-&gt;runComputeShader(shader, blockNum, blockNum, 1);
+</code></pre>
+
+<p>Then we call <code>IVideoDriver::runComputeShader</code> method to actually run a compute shader. It has four parameters. The first gives the shader's interface. The other three parameters specify how many blocks we are going to dispatch in x, y, z directons respectively.</p>
+<p>After that, we start to copy the results from GPU to main memory:</p>
+<pre><code class="language-cpp">outputTexture-&gt;copyDataToAnotherTexture(copyTexture);
+STextureData outputData;
+copyTexture-&gt;lock(ETLT_READ, &amp;outputData);
+u8* data = (u8*)outputData.Data;
+for (u32 i = 0; i &lt; dimension; i++)
+{
+    // copy each row.
+    memcpy(&amp;C[i * dimension], data + outputData.RowPitch * i, dimension * sizeof(f32));
+}
+copyTexture-&gt;unlock();
+</code></pre>
+
+<p>We are calling the <code>copyDataToAnotherTexture</code> method on <code>outputTexture</code> to copy all the data from <code>outputTexture</code> to <code>copyTexture</code>. Then we lock the <code>copyTexture</code> and begin to copy each row in this texture into the C vector. When finishing copy, we call the <code>unlock</code> method.</p>
+<pre><code class="language-cpp">for (u32 i = 0; i &lt; sq_dimension; i++)
+{
+    assert(math::FloatEqual(C[i], D[i]));
+}
+</code></pre>
+
+<p>Finally, we can check the correctness by comparing each element in C and D. Be aware that we use <code>math::FloatEqual</code> here instead of <code>==</code>. Because this method could tolerate a liitle error.</p>
+<p>Run the program, from the information printed in the console, we can clearly see the computing by GPU is much faster than CPU: </p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/11-01.png" /></p>
+
+	</div>
+
+	</div>
+</body>
+</html>

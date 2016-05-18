@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>GameFinal Engine</title>
+		<link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="html/main.css" type="text/css" rel="stylesheet" />
+		<!--<link href="html/markdown.css" type="text/css" ref="stylesheet" />-->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="../bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="html/main.js"></script>
+		<link href="html/prism.css" rel="stylesheet" />
+		<script src="html/prism.js"></script>
+	</head>
+	<body>
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+          <div class="container">
+              <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+              <a class="brand" href="../index.html">GameFinal</a>
+              <div class="nav-collapse collapse">
+                  <ul class="nav">
+                      <li class="">
+                          <a href="../index.html">Home</a>
+                      </li>
+                      <li class="">
+                          <a href="../download.html">Download</a>
+                      </li>
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                          <ul class="dropdown-menu">
+                              <li><a href="chapter1.html">01 Configuration</a></li>
+                              <li><a href="chapter2.html">02 First Program</a></li>
+                              <li><a href="chapter3.html">03 Material</a></li>
+                              <li><a href="chapter4.html">04 Camera</a></li>
+                              <li><a href="chapter5.html">05 Lighting</a></li>
+                              <li><a href="chapter6.html">06 Model</a></li>
+                              <li><a href="chapter7.html">07 Shader</a></li>
+                              <li><a href="chapter8.html">08 Terrain</a></li>
+                              <li><a href="chapter9.html">09 Instancing</a></li>
+                              <li><a href="chapter10.html">10 Havok</a></li>
+                              <li><a href="chapter11.html">11 Post Effect</a></li>
+                              <li><a href="chapter12.html">12 Compute Shader</a></li>
+                          </ul>
+                      </li>
+                      <li class="">
+                          <a href="../about.html">Contact</a>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+      </div>
+    </div>
+	<div class="main_div">
+		<div class="tutorial_nav">
+			<p style="color: #6F0101; font-weight: bold; font-size: 1.4em; padding: 5px;">Tutorials</p>
+			<div class="tutorial_link"><a href="chapter1.html">01 Configuration</a></div>
+			<div class="tutorial_link"><a href="chapter2.html">02 First Program</a></div>
+			<div class="tutorial_link"><a href="chapter3.html">03 Material</a></div>
+			<div class="tutorial_link"><a href="chapter4.html" class="current_tutorial_link">04 Camera</a></div>
+			<div class="tutorial_link"><a href="chapter5.html">05 Lighting</a></div>
+			<div class="tutorial_link"><a href="chapter6.html">06 Model</a></div>
+			<div class="tutorial_link"><a href="chapter7.html">07 Shader</a></div>
+			<div class="tutorial_link"><a href="chapter8.html">08 Terrain</a></div>
+			<div class="tutorial_link"><a href="chapter9.html">09 Instancing</a></div>
+			<div class="tutorial_link"><a href="chapter10.html">10 Havok</a></div>
+			<div class="tutorial_link"><a href="chapter11.html">11 Post Effect</a></div>
+			<div class="tutorial_link"><a href="chapter12.html">12 Compute Shader</a></div>
+		</div>
+		<div class="tutorial_content">
+<h1>Camera</h1>
+<p>We can set camera's other attributes, including the distance to the near plane or the far plane, field-of-view, etc, by calling the setter method of <code>ICameraNode</code> interface. For example:</p>
+<pre><code class="language-cpp">camera-&gt;setFovAngle(3.1415f / 3);  // set field-of-view to PI/3 (60 degrees)
+camera-&gt;setNearZ(1.0f);  // set the distance to the near clipping plane
+camera-&gt;setFarZ(300.0f); // set the distance to the far clipping plane
+</code></pre>
+
+<h2>Input Device</h2>
+<p>In order to let players control a game, we must be able to get access to the computer input devices: mouse and keyboard. The computer input device is abstracted as <code>IInputDriver</code> interface, which could be got by calling <code>IDevice::getInputDriver</code>:</p>
+<pre><code class="language-cpp">IInputDriver* input = device-&gt;getInputDriver();
+</code></pre>
+
+<p>Then we are able to get the states of mouse and keyboard; for example, we check whether we have pressed a specific key. If we pressed ESC key, then the program should exit:</p>
+<pre><code class="language-cpp">while (device-&gt;run()) {
+    // if we press ESC, then exit the game loop.
+    if (input-&gt;keyDown(GVK_ESCAPE))
+        break;
+
+    float dt = timer-&gt;tick();
+    smgr-&gt;update(dt);
+    driver-&gt;beginScene(true, true, color);
+    smgr-&gt;drawAll();
+    driver-&gt;endScene();
+}
+</code></pre>
+
+<h2>Control Camera</h2>
+<p>A camera owns three axes (right, up, front) to define its orientations. <code>ICameraNode</code> interface provides the methods to rotate around any axis, or move forward or backward along any axis. The following piece of code allows players to move the camera when they press the direction keys on their keyboards:</p>
+<pre><code class="language-cpp">while (device-&gt;run()) {
+    // if we press ESC, then exit the game loop.
+    if (input-&gt;keyDown(GVK_ESCAPE))
+        break;
+
+    float dt = timer-&gt;tick();
+
+    if (input-&gt;isPressed(GVK_UP))
+        camera-&gt;walk(2.0f * dt); // move forward
+    if (input-&gt;isPressed(GVK_DOWN))
+        camera-&gt;walk(-2.0f * dt); // move backward
+    if (input-&gt;isPressed(GVK_LEFT))
+        camera-&gt;strafe(-1.0f * dt); // move left
+    if (input-&gt;isPressed(GVK_RIGHT))
+        camera-&gt;strafe(1.0f * dt); // move right
+
+    smgr-&gt;update(dt);
+    driver-&gt;beginScene(true, true, color);
+    smgr-&gt;drawAll();
+    driver-&gt;endScene();
+}
+</code></pre>
+
+<h2>FPS Camera</h2>
+<p>GameFinal also provides a FPS camera. FPS Camera is widely used in first person shooting game, and many other first person adventure, acting or RPG games. FPS Camera is represented as a <code>IFpsCameraNode</code> interface, instead of using <code>ISceneManager::addCameraNode</code> method, we need call <code>ISceneManager::addFpsCameraNode</code> to build a fps camera:</p>
+<pre><code class="language-cpp">IFpsCameraNode* camera = smgr-&gt;addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
+    XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
+</code></pre>
+
+<p>The parameters' meanings are the same with <code>addCameraNode</code>; however, this time we create a FPS Camera. You needn't add any extra code to control the camera. Just run the program, and you'll find that you can press 'W','A','S','D' to make movements, move your mouse to change the orientation, and press Left-CTRL to creep and SPACE to jump:</p>
+<p><img src="https://github.com/woyaofacai/GameFinal/blob/master/Tutorials/img/03-01.png?raw=true" /></p>
+<p>You can modify the key-action mapping of FPS camera. For example, if you want to use direction keys to make movements instead of using 'W','A','S','D', you can set this before the game loop:</p>
+<pre><code class="language-cpp">camera-&gt;setActionMapping(EFCA_MOVE_LEFT, GVK_LEFT);
+camera-&gt;setActionMapping(EFCA_MOVE_RIGHT, GVK_RIGHT);
+camera-&gt;setActionMapping(EFCA_MOVE_FORWARD, GVK_UP);
+camera-&gt;setActionMapping(EFCA_MOVE_BACK, GVK_DOWN);
+</code></pre>
+	</div>
+
+	</div>
+</body>
+</html>

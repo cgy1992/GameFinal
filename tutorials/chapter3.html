@@ -1,0 +1,203 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>GameFinal Engine</title>
+		<link href="../bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+		<link href="html/main.css" type="text/css" rel="stylesheet" />
+		<!--<link href="html/markdown.css" type="text/css" ref="stylesheet" />-->
+		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="../bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="html/main.js"></script>
+		<link href="html/prism.css" rel="stylesheet" />
+		<script src="html/prism.js"></script>
+	</head>
+	<body>
+
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="../index.html">GameFinal</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="">
+                <a href="../index.html">Home</a>
+              </li>
+              <li class="">
+                <a href="../download.html">Download</a>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tutorials<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="chapter1.html">01 Configuration</a></li>
+                  <li><a href="chapter2.html">02 First Program</a></li>
+                  <li><a href="chapter3.html">03 Material</a></li>
+                  <li><a href="chapter4.html">04 Camera</a></li>
+                  <li><a href="chapter5.html">05 Lighting</a></li>
+                  <li><a href="chapter6.html">06 Model</a></li>
+                  <li><a href="chapter7.html">07 Shader</a></li>
+                  <li><a href="chapter8.html">08 Terrain</a></li>
+                  <li><a href="chapter9.html">09 Instancing</a></li>
+                  <li><a href="chapter10.html">10 Havok</a></li>
+                  <li><a href="chapter11.html">11 Post Effect</a></li>
+                  <li><a href="chapter12.html">12 Compute Shader</a></li>
+                </ul>
+              </li>
+              <li class="">
+                <a href="../about.html">Contact</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+	<div class="main_div">
+		<div class="tutorial_nav">
+			<p style="color: #6F0101; font-weight: bold; font-size: 1.4em; padding: 5px;">Tutorials</p>
+			<div class="tutorial_link"><a href="chapter1.html">01 Configuration</a></div>
+			<div class="tutorial_link"><a href="chapter2.html">02 First Program</a></div>
+			<div class="tutorial_link"><a href="chapter3.html" class="current_tutorial_link">03 Material</a></div>
+			<div class="tutorial_link"><a href="chapter4.html">04 Camera</a></div>
+			<div class="tutorial_link"><a href="chapter5.html">05 Lighting</a></div>
+			<div class="tutorial_link"><a href="chapter6.html">06 Model</a></div>
+			<div class="tutorial_link"><a href="chapter7.html">07 Shader</a></div>
+			<div class="tutorial_link"><a href="chapter8.html">08 Terrain</a></div>
+			<div class="tutorial_link"><a href="chapter9.html">09 Instancing</a></div>
+			<div class="tutorial_link"><a href="chapter10.html">10 Havok</a></div>
+			<div class="tutorial_link"><a href="chapter11.html">11 Post Effect</a></div>
+			<div class="tutorial_link"><a href="chapter12.html">12 Compute Shader</a></div>
+		</div>
+		<div class="tutorial_content">
+<h1>Material</h1>
+<p>One drawback in previous tuturial is that we hardcoded too much in the program. This tutorial will teach how to define materials in separate xml files.</p>
+<p>First, create a new folder called 'media' under our project's folder. We'll put all user-defined resources inside this folder. Then edit the <code>Resources.cfg</code> and add the following lines:</p>
+<pre><code>[General]
+FileSystem=./media
+</code></pre>
+
+<p>We create a new resource group called 'General', and add the path <code>./media</code> to this group.</p>
+<p>Secondly, we created a new file named <code>geometry.material.xml</code> under the <code>./media</code> folder. Notice that the file's name must end with the specific suffix, <code>.material</code> or <code>.material.xml</code>; because the engine determines the category of resources based on the suffix. Meeting this requirement, you can name this file whatever you like.</p>
+<p>Open 'geometry.material.xml' in any editor, and type in the following XML:</p>
+<pre><code class="language-markup">&lt;materials&gt;
+  &lt;material name=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.7f, 0.5f, 0.1f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;1.0f, 0.9f, 0.17f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;0.5f, 0.5f, 0.5f, 32.0f&quot;/&gt;
+      &lt;attribute name=&quot;emissive&quot; value=&quot;0.0f, 0.0f, 0.0f, 1.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;pipelines&gt;
+      &lt;pipeline name=&quot;gf/geometry_dirlight&quot;/&gt;
+    &lt;/pipelines&gt;
+  &lt;/material&gt;
+
+  &lt;material name=&quot;ground_material&quot; prototype=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;0.05f, 0.05f, 0.05f, 32.0f&quot;/&gt;
+    &lt;/attributes&gt;
+  &lt;/material&gt;
+
+  &lt;material name=&quot;box_material&quot; prototype=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.1f,  0.4f, 0.6f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;0.23f, 0.7f, 0.96f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;0.5f, 0.5f, 0.5f, 32.0f&quot;/&gt;
+    &lt;/attributes&gt;  
+  &lt;/material&gt;
+
+  &lt;material name=&quot;teapot_material&quot; prototype=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.6f,  0.1f, 0.02f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;0.96f, 0.15f, 0.01f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;0.5f, 0.5f, 0.5f, 32.0f&quot;/&gt;
+    &lt;/attributes&gt;
+  &lt;/material&gt;
+&lt;/materials&gt;
+</code></pre>
+
+<p>In this file, we defined four different materials. In our C++ code, when we want to create the sphere using the first material, we just write the following very concise code:</p>
+<pre><code class="language-cpp">ISimpleMesh* sphereMesh = meshManager-&gt;createSphereMesh(&quot;sphere&quot;, 1.0f, 100, 100);
+IMeshNode* sphereNode = smgr-&gt;addMeshNode(sphereMesh, &quot;sphere_material&quot;, nullptr, true, XMFLOAT3(-1.2f, 1.0f, 0));
+</code></pre>
+
+<p>Instead of passing a <code>IMaterial*</code>, this time we pass the material's name (&quot;sphere_material&quot;) as the second parameter of <code>addMeshNode</code>. The material's name corresponds to the 'name' attribute of <code>&lt;material&gt;</code> tag in the material xml file:</p>
+<pre><code class="language-cpp">&lt;material name=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.7f, 0.5f, 0.1f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;1.0f, 0.9f, 0.17f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;0.5f, 0.5f, 0.5f, 32.0f&quot;/&gt;
+      &lt;attribute name=&quot;emissive&quot; value=&quot;0.0f, 0.0f, 0.0f, 1.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;pipelines&gt;
+      &lt;pipeline name=&quot;gf/geometry_dirlight&quot;/&gt;
+    &lt;/pipelines&gt;
+&lt;/material&gt;
+</code></pre>
+
+<p>In the xml file, we specify four attributes for the material: ambient, diffuse, specular, emissive; as well as a pipeline named 'gf/geometry_dirlight'. These attributes' meanings and values are the same as the previous tutorial.</p>
+<p>You may notice that in the second material's definition, &quot;ground_material&quot;, there seems no emissive attribute as well as pipeline. However, we added another attribute called <code>prototype</code> to the <code>&lt;material&gt;</code> tag:</p>
+<pre><code class="language-markup">&lt;material name=&quot;ground_material&quot; prototype=&quot;sphere_material&quot;&gt;
+</code></pre>
+
+<p>We set its prototype to &quot;sphere_material&quot;, which means that this new material would inherit all the attributes from one another material(in this example, it is &quot;sphere_material&quot;) unless we modify their values. Except for those inherited values, we could add new attributes to the new material. In our example, we modified its ambient, diffuse and emissive values.</p>
+<p>After that, we created the other two materials in XML: &quot;box_material&quot; and &quot;teapot_material&quot;</p>
+<p>In our C++, except for the sphere, we created a plane, a cube box and a teapot using those materials defined in XML:</p>
+<pre><code class="language-cpp">// set up ground.
+ISimpleMesh* groundMesh = meshManager-&gt;createPlaneMesh(&quot;ground&quot;, 100.0f, 100.0f, 10, 10);
+IMeshNode* groundNode = smgr-&gt;addMeshNode(groundMesh, &quot;ground_material&quot;, nullptr, true);
+
+// create a sphere
+ISimpleMesh* sphereMesh = meshManager-&gt;createSphereMesh(&quot;sphere&quot;, 1.0f, 100, 100);
+IMeshNode* sphereNode = smgr-&gt;addMeshNode(sphereMesh, &quot;sphere_material&quot;, nullptr, true, XMFLOAT3(-1.2f, 1.0f, 0));
+
+// create a box
+ISimpleMesh* boxMesh = meshManager-&gt;createCubeMesh(&quot;box&quot;, 1.2f, 3.0f, 1.2f);
+IMeshNode* boxNode = smgr-&gt;addMeshNode(boxMesh, &quot;box_material&quot;, nullptr, true, XMFLOAT3(1.0f, 1.5f, 1.0f));
+
+// create a teapot
+IModelMesh* teapotMesh = meshManager-&gt;getModelMesh(&quot;teapot.mesh&quot;);
+IMeshNode* teapot = smgr-&gt;addModelMeshNode(teapotMesh, nullptr, true, XMFLOAT3(1.2f, 0, -1.0f));
+teapot-&gt;setMaterialName(&quot;teapot_material&quot;);
+</code></pre>
+
+<p>The we run the program, the final effect is like this:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/05663b210f74139df702d4cd0bf9fc5e01cbb2ef/Tutorials/img/02-01.png" /></p>
+<h2>Add Textures</h2>
+<p>Let's add texture to the ground. Firstly, copy a image file (&quot;floor.dds&quot;) to the &quot;./media&quot; folder. Then open and  modify the &quot;geometry.material.xml&quot;, add a texture tag to the &quot;ground_material&quot;.</p>
+<pre><code class="language-markup">&lt;material name=&quot;ground_material&quot; prototype=&quot;sphere_material&quot;&gt;
+    &lt;attributes&gt;
+      &lt;attribute name=&quot;ambient&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;diffuse&quot; value=&quot;0.5f, 0.5f, 0.5f, 1.0f&quot;/&gt;
+      &lt;attribute name=&quot;specular&quot; value=&quot;0.05f, 0.05f, 0.05f, 32.0f&quot;/&gt;
+    &lt;/attributes&gt;
+    &lt;textures&gt;
+        &lt;!-- add the texture at the index of 0 --&gt;        
+        &lt;texture name=&quot;floor.dds&quot; index=&quot;0&quot;&gt;&lt;/texture&gt;
+    &lt;/textures&gt;
+    &lt;pipelines&gt;
+        &lt;pipeline name=&quot;gf/geometry_texture_dirlight&quot;/&gt;
+    &lt;/pipelines&gt;
+&lt;/material&gt;
+</code></pre>
+
+<p>In addition, we changed the pipeline to another built-in pipeline, <code>gf/geometry_texture_dirlight</code>, which applies the specific texture to the object's surface.</p>
+<p>Then we change the C++ code that created the plane mesh:</p>
+<pre><code class="language-cpp">ISimpleMesh* groundMesh = meshManager-&gt;createPlaneMesh(&quot;ground&quot;, 100.0f, 100.0f, 10, 10, 50, 50);
+</code></pre>
+
+<p>The last two parameters of <code>createPlaneMesh</code> specify how many times the texture repeats across the plane in u,v directions.</p>
+<p>The final effect after applying texture is like this:</p>
+<p><img src="https://raw.githubusercontent.com/woyaofacai/GameFinal/master/Tutorials/img/02-02.png" /></p>
+
+	</div>
+
+	</div>
+</body>
+</html>
