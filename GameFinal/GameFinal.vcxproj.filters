@@ -599,6 +599,24 @@
     <ClInclude Include="IReflectionMediator.h">
       <Filter>src\effect\scenery</Filter>
     </ClInclude>
+    <ClInclude Include="IThreadPool.h">
+      <Filter>src\Util\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CThreadPool.h">
+      <Filter>src\Util\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockQueue.h">
+      <Filter>src\Util\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="IAsyncTask.h">
+      <Filter>src\Util\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CThreadPoolWorker.h">
+      <Filter>src\Util\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="CJobSet.h">
+      <Filter>src\Util\Class</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -855,6 +873,12 @@
     </ClCompile>
     <ClCompile Include="CReflectionMediator.cpp">
       <Filter>src\effect\scenery</Filter>
+    </ClCompile>
+    <ClCompile Include="CThreadPool.cpp">
+      <Filter>src\Util\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CThreadPoolWorker.cpp">
+      <Filter>src\Util\Class</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -28,6 +28,7 @@
 #include "ILightNode.h"
 #include "gfEnums.h"
 #include "IInputDriver.h"
+#include "IThreadPool.h"
 #include "xnacollision/xnacollision.h"
 
 #ifndef GAMEFINAL_H

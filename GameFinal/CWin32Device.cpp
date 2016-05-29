@@ -4,6 +4,7 @@
 #include "CSceneManager.h"
 #include "CWin32Timer.h"
 #include "CDInput8Driver.h"
+#include "CThreadPool.h"
 #include <iostream>
 
 namespace gf
@@ -28,6 +29,11 @@ namespace gf
 	CWin32Device::~CWin32Device()
 	{
 		//ReleaseReferenceCounted(mSceneManager);
+		if (mThreadPool) {
+			mThreadPool->stop();
+			delete mThreadPool;
+		}
+
 		ReleaseReferenceCounted(mVideoDriver);
 		ReleaseReferenceCounted(mInputDriver);
 	}
@@ -168,6 +174,12 @@ namespace gf
 		// create timer
 		mTimer = new CWin32Timer;
 		mTimer->reset();
+
+		// create thread pool
+		if (m_CreationParams.ThreadPoolLimit > 0) {
+			mThreadPool = new CThreadPool(m_CreationParams.ThreadPoolLimit);
+			mThreadPool->start();
+		}
 
 		return S_OK;
 	}

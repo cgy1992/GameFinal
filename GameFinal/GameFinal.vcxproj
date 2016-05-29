@@ -88,6 +88,7 @@
     <ClInclude Include="CAnimatedMeshNode.h" />
     <ClInclude Include="CAnimatedMesh.h" />
     <ClInclude Include="CBillboardCollectionMesh.h" />
+    <ClInclude Include="BlockQueue.h" />
     <ClInclude Include="CBloomCompositor.h" />
     <ClInclude Include="CBlurCompositor.h" />
     <ClInclude Include="CCompositor.h" />
@@ -129,6 +130,7 @@
     <ClInclude Include="CInputLayoutManager.h" />
     <ClInclude Include="CInstanceCollectionNode.h" />
     <ClInclude Include="CInstanceNode.h" />
+    <ClInclude Include="CJobSet.h" />
     <ClInclude Include="CLightNode.h" />
     <ClInclude Include="CMaterialManager.h" />
     <ClInclude Include="CMeshManager.h" />
@@ -160,6 +162,8 @@
     <ClInclude Include="CTerrainMesh.h" />
     <ClInclude Include="CTerrainNode.h" />
     <ClInclude Include="CTextureManager.h" />
+    <ClInclude Include="CThreadPool.h" />
+    <ClInclude Include="CThreadPoolWorker.h" />
     <ClInclude Include="CWin32Device.h" />
     <ClInclude Include="CWin32Timer.h" />
     <ClInclude Include="D3DUtil.h" />
@@ -174,6 +178,7 @@
     <ClInclude Include="gfUtil.h" />
     <ClInclude Include="IAnimatedMeshNode.h" />
     <ClInclude Include="IAnimatedMesh.h" />
+    <ClInclude Include="IAsyncTask.h" />
     <ClInclude Include="IBillboardCollectionMesh.h" />
     <ClInclude Include="IBuffer.h" />
     <ClInclude Include="ICameraNode.h" />
@@ -232,6 +237,7 @@
     <ClInclude Include="ITexture.h" />
     <ClInclude Include="ITexture3D.h" />
     <ClInclude Include="ITextureManager.h" />
+    <ClInclude Include="IThreadPool.h" />
     <ClInclude Include="ITimer.h" />
     <ClInclude Include="IVideoDriver.h" />
     <ClInclude Include="gfMath.h" />
@@ -315,6 +321,8 @@
     <ClCompile Include="CTerrainMesh.cpp" />
     <ClCompile Include="CTerrainNode.cpp" />
     <ClCompile Include="CTextureManager.cpp" />
+    <ClCompile Include="CThreadPool.cpp" />
+    <ClCompile Include="CThreadPoolWorker.cpp" />
     <ClCompile Include="CWin32Device.cpp" />
     <ClCompile Include="CWin32Timer.cpp" />
     <ClCompile Include="D3DUtil.cpp" />

@@ -12,6 +12,7 @@ namespace gf
 	class IVideoDriver;
 	class ISceneManager;
 	class IInputDriver;
+	class IThreadPool;
 
 	enum E_WINDOW_STYLE
 	{
@@ -51,6 +52,7 @@ namespace gf
 		void*					WindowsProcedure;
 		bool					CreateInputDriver; // create the input driver. If user wants to use his own input IO library, set this to false.
 		E_INPUT_DRIVER_TYPE		InputDriverType; // input-driver type, default is DirectInput8 Driver
+		u32						ThreadPoolLimit; // the number of threads in thread pool, 0 means no thread pool.
 
 		SDeviceContextSettings()
 		{
@@ -64,6 +66,8 @@ namespace gf
 
 			CreateInputDriver = true;
 			InputDriverType = EIDT_AUTO;
+
+			ThreadPoolLimit = 0;
 		}
 	};
 
@@ -89,6 +93,7 @@ namespace gf
 
 		bool			CreateInputDriver;
 
+		u32				ThreadPoolLimit;
 		SCreationParameters()
 		{
 			VideoDriverType = EDT_DIRECT3D11;
@@ -108,6 +113,8 @@ namespace gf
 			MultiSamplingCount = 1;
 			MultiSamplingQuality = 0;
 			WindowsProcedure = nullptr;
+
+			ThreadPoolLimit = 0;
 		}
 	};
 
@@ -120,6 +127,7 @@ namespace gf
 			:m_CreationParams(params)
 			, mVideoDriver(nullptr)
 			, mInputDriver(nullptr)
+			, mThreadPool(nullptr)
 			, mTimer(nullptr)
 		{
 
@@ -176,6 +184,11 @@ namespace gf
 			return mTimer;
 		}
 
+		virtual IThreadPool* getThreadPool()
+		{
+			return mThreadPool;
+		}
+
 		virtual ~IDevice()
 		{
 
@@ -192,6 +205,8 @@ namespace gf
 		SCreationParameters		m_CreationParams;
 		IVideoDriver*			mVideoDriver;
 		IInputDriver*			mInputDriver;
+
+		IThreadPool*			mThreadPool;
 
 		//ISceneManager*			mSceneManager;
 		ITimer*					mTimer;

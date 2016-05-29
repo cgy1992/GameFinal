@@ -34,6 +34,7 @@ namespace gf
 		
 		creationParams.InputDriverType = settings.InputDriverType;
 		creationParams.CreateInputDriver = settings.CreateInputDriver;
+		creationParams.ThreadPoolLimit = settings.ThreadPoolLimit;
 
 		if (settings.BackBufferWidth == 0)
 			creationParams.BackBufferWidth = width;
