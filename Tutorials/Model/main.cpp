@@ -6,7 +6,7 @@
 using namespace gf;
 IAnimatedMeshNode* animNode;
 
-ISceneManager* setupScene(IDevice* device) {
+ISceneManager* setupScene(IApplication* device) {
 
 	// create scene manager
 	ISceneManager* smgr = device->createSceneManager();
@@ -50,7 +50,7 @@ int main()
 	settings.MultiSamplingCount = 4;
 	settings.MultiSamplingQuality = 32;
 
-	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
+	IApplication* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
 	IInputDriver* input = device->getInputDriver();
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();

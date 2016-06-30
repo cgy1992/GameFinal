@@ -4,7 +4,7 @@
 #include "RaceScene.h"
 #include "GameController.h"
 
-LoadingScene::LoadingScene(IDevice* device, IVideoDriver* driver)
+LoadingScene::LoadingScene(IApplication* device, IVideoDriver* driver)
 :Scene(device, driver)
 {
 	mFinishLoading = false;

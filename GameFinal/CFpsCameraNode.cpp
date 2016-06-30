@@ -372,10 +372,10 @@ namespace gf
 
 			// keep the cursor in a stationary position.
 			// get the midpoint inside the game window
-			IDevice* device = IDevice::getInstance();
-			u32 curorPosX = device->getClientWidth() / 2;
-			u32 curorPosY = device->getClientHeight() / 2;
-			device->clientToScreen(curorPosX, curorPosY);
+			//IApplication* device = IApplication::getInstance();
+			//u32 curorPosX = device->getClientWidth() / 2;
+			//u32 curorPosY = device->getClientHeight() / 2;
+			//device->clientToScreen(curorPosX, curorPosY);
 			//::SetCursorPos(curorPosX, curorPosY);
 
 			pitch(mRotateSpeed * y * delta);

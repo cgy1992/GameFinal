@@ -23,7 +23,7 @@ namespace gf
 		virtual ~CDI8MouseDevice();
 
 	private:
-		IDirectInputDevice8*		mdiDevice;
+		IDirectInputDevice8*		mdIApplication;
 		HANDLE						mEvent;
 		RECT						mCageRect;
 		bool						mKeys[4];

@@ -36,40 +36,35 @@ f32 getFps(float dt)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 1;
-	settings.MultiSamplingQuality = 0;
-	settings.WindowsProcedure = EditorWindow::WndProc;
+	SAppSettings settings;
+	settings.Graphics.MultiSamplingCount = 1;
+	settings.Graphics.MultiSamplingQuality = 0;
+	settings.Window.WindowsProcedure = EditorWindow::WndProc;
 
 	EditorWindow* window = new EditorWindow(SCREEN_WIDTH, SCREEN_HEIGHT);
 	EditorWindow::_setInstance(window);
 
-	IDevice* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
+	IApplication* device = gf::createApp(settings);
 	IVideoDriver* driver = device->getVideoDriver();
 	EditorScene* scene = new EditorScene(device);
 	EditorScene::_setInstance(scene);
-	
 
 	scene->setupInitialScene();
 	window->init();
 
-	ITimer* timer = device->getTimer();
-	timer->reset();
-	char caption[200];
-	while (device->run())
-	{
+	device->setUpdateCallback([driver, scene, device](float dt)->bool{
+		char caption[200];
 		const float clearColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 		driver->beginScene(true, true, clearColor);
-
-		f32 dt = timer->tick();
 		scene->update(dt);
 		scene->drawAll();
-
 		driver->endScene();
-
 		sprintf(caption, "FPS:%f", getFps(dt));
 		device->setWindowCaption(caption);
-	}
+		return true;
+	});
+
+	device->run();
 
 	delete scene;
 	device->drop();

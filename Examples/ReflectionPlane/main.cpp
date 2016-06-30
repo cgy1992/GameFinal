@@ -1,9 +1,11 @@
 #include <GameFinal.h>
+
 #pragma comment(lib, "GameFinal.lib")
+#pragma comment(lib, "winmm.lib")
 
 using namespace gf;
 
-ISceneManager* setupScene(IDevice* device) {
+ISceneManager* setupScene(IApplication* device) {
 
 	// create scene manager
 	ISceneManager* smgr = device->createSceneManager();
@@ -11,7 +13,7 @@ ISceneManager* setupScene(IDevice* device) {
 	// get mesh manager
 	IMeshManager* meshManager = IMeshManager::getInstance();
 
-	
+
 
 	// create a sphere
 	ISimpleMesh* sphereMesh = meshManager->createSphereMesh("sphere", 1.0f, 100, 100);
@@ -40,7 +42,7 @@ ISceneManager* setupScene(IDevice* device) {
 	// create a fps camera node
 	IFpsCameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
 		XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
-//	camera->setStandHeight(5.0f);
+	//	camera->setStandHeight(5.0f);
 
 	//ICameraNode* camera = smgr->addCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -6.0f),
 	//	XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0));
@@ -55,11 +57,12 @@ ISceneManager* setupScene(IDevice* device) {
 
 int main()
 {
-	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 1;
-	settings.MultiSamplingQuality = 0;
+	SAppSettings settings;
+	//settings.Window.Style = EWS_FULLSCREEN | EWS_FULLRESOLUTION;
+	settings.Window.Width = 1024;
+	settings.Window.Height = 768;
 
-	IDevice* device = createDevice(EDT_DIRECT3D11, 1024, 768, EWS_NONE, true, settings);
+	IApplication* device = gf::createApp(settings);
 	IVideoDriver* driver = device->getVideoDriver();
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
@@ -82,7 +85,7 @@ int main()
 		XMFLOAT3(0, 0, 10.0f), XMFLOAT3(-XM_PI / 2, 0, 0));
 
 	IReflectionPlane* plane1 = smgr->addReflectionPlane(1,
-		100, 100); 
+		100, 100);
 
 	IReflectionPlane* plane2 = smgr->addReflectionPlane(2,
 		100, 100, XMFLOAT3(0, 0, 10.0f), XMFLOAT3(0, 0, -1.0f));
@@ -93,39 +96,23 @@ int main()
 	IMaterial* groundMtrl1 = IMaterialManager::getInstance()->get("ground_material");
 	IMaterial* groundMtrl2 = IMaterialManager::getInstance()->get("ground_material2");
 
-	ITimer* timer = device->getTimer();
-	timer->reset();
-
-	const f32 color[] = { 1.0, 0.0f, 0.0f, 1.0f };
-	while (device->run()) {
-		float dt = timer->tick();
+	device->setUpdateCallback([input, smgr, driver](float dt)->bool{
+		const f32 color[] = { 1.0, 0.0f, 0.0f, 1.0f };
 		if (input->keyDown(GVK_ESCAPE))
-			break;
+			return false;
 
 		smgr->update(dt);
 		driver->beginScene(true, true, color);
-		
-		//groundMtrl1->setTexture(2, NULL);
-		//groundMtrl2->setTexture(2, NULL);
 
 		smgr->drawReflectionMaps();
 
-		//groundMtrl->setTexture(1, ITextureManager::getInstance()->get("floor.dds"));
-		//groundMtrl1->setTexture(2, plane1->getReflectionMap());
-		//groundMtrl2->setTexture(2, plane2->getReflectionMap());
-
-		//std::string varname = "gReflectionMatrix";
-		//XMFLOAT4X4 M1 = plane1->getViewProjMatrix();
-		//XMFLOAT4X4 M2 = plane2->getViewProjMatrix();
-
-		//groundMtrl1->setAttribute("ReflectionMatrix", M1);
-		//groundMtrl2->setAttribute("ReflectionMatrix", M2);
-
-	//	groundMtrl1->getPipeline(0)->setMatrix(varname, M2, false);
-
 		smgr->drawAll();
 		driver->endScene();
-	}
+
+		return true;
+	});
+
+	device->run();
 
 	smgr->destroy();
 	device->drop();

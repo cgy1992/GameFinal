@@ -41,8 +41,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Qt\Qt5.6.0(x86)\5.6\msvc2013\include;C:\Qt\Qt5.6.0(x86)\5.6\msvc2013\include\QtWidgets;C:\Qt\Qt5.6.0(x86)\5.6\msvc2013\include\QtGui;C:\Qt\Qt5.6.0(x86)\5.6\msvc2013\include\QtANGLE;C:\Qt\Qt5.6.0(x86)\5.6\msvc2013\include\QtCore;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;C:\Qt\Qt5.6.0(x86)\5.6\msvc2013\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClInclude Include="CAnimatedMeshNode.h" />
     <ClInclude Include="CAnimatedMesh.h" />
+    <ClInclude Include="CBaseApp.h" />
     <ClInclude Include="CBillboardCollectionMesh.h" />
     <ClInclude Include="BlockQueue.h" />
     <ClInclude Include="CBloomCompositor.h" />
@@ -127,6 +128,7 @@
     <ClInclude Include="CFpsCameraNode.h" />
     <ClInclude Include="CGeometryCreator.h" />
     <ClInclude Include="CGrassLand.h" />
+    <ClInclude Include="CInputDriverFactory.h" />
     <ClInclude Include="CInputLayoutManager.h" />
     <ClInclude Include="CInstanceCollectionNode.h" />
     <ClInclude Include="CInstanceNode.h" />
@@ -143,6 +145,9 @@
     <ClInclude Include="CPipeline.h" />
     <ClInclude Include="CD3D11Shader.h" />
     <ClInclude Include="CPointLightNode.h" />
+    <ClInclude Include="CQt5App.h" />
+    <ClInclude Include="CQt5RenderWidget.h" />
+    <ClInclude Include="CQt5Window.h" />
     <ClInclude Include="CReflectionMediator.h" />
     <ClInclude Include="CReflectionPlane.h" />
     <ClInclude Include="CResourceFactory.h" />
@@ -159,13 +164,15 @@
     <ClInclude Include="CSimpleMesh.h" />
     <ClInclude Include="CSortCodeAllocator.h" />
     <ClInclude Include="COctreeManager.h" />
+    <ClInclude Include="CVideoDriverFactory.h" />
     <ClInclude Include="CTerrainMesh.h" />
     <ClInclude Include="CTerrainNode.h" />
     <ClInclude Include="CTextureManager.h" />
     <ClInclude Include="CThreadPool.h" />
     <ClInclude Include="CThreadPoolWorker.h" />
-    <ClInclude Include="CWin32Device.h" />
+    <ClInclude Include="CWin32App.h" />
     <ClInclude Include="CWin32Timer.h" />
+    <ClInclude Include="CWin32Window.h" />
     <ClInclude Include="D3DUtil.h" />
     <ClInclude Include="EMemoryUsage.h" />
     <ClInclude Include="gfEnums.h" />
@@ -185,6 +192,7 @@
     <ClInclude Include="ICompositor.h" />
     <ClInclude Include="ICompositorFactory.h" />
     <ClInclude Include="IInputDriver.h" />
+    <ClInclude Include="IInputDriverFactory.h" />
     <ClInclude Include="IInstanceMeshBuffer.h" />
     <ClInclude Include="IInstanceCollectionNode.h" />
     <ClInclude Include="IInstanceNode.h" />
@@ -193,10 +201,11 @@
     <ClInclude Include="IReflectionMediator.h" />
     <ClInclude Include="IReflectionPlane.h" />
     <ClInclude Include="IRenderableBuffer.h" />
+    <ClInclude Include="IVideoDriverFactory.h" />
     <ClInclude Include="ITexture2DArray.h" />
     <ClInclude Include="ITextureCube.h" />
     <ClInclude Include="IDepthStencilSurface.h" />
-    <ClInclude Include="IDevice.h" />
+    <ClInclude Include="IApplication.h" />
     <ClInclude Include="IFpsCameraNode.h" />
     <ClInclude Include="IGeometryCreator.h" />
     <ClInclude Include="IInputLayout.h" />
@@ -242,6 +251,7 @@
     <ClInclude Include="IVideoDriver.h" />
     <ClInclude Include="gfMath.h" />
     <ClInclude Include="IMaterial.h" />
+    <ClInclude Include="IWindow.h" />
     <ClInclude Include="SAxisAlignedBox.h" />
     <ClInclude Include="SReferenceCounted.h" />
     <ClInclude Include="stdafx.h" />
@@ -252,6 +262,7 @@
   <ItemGroup>
     <ClCompile Include="CAnimatedMesh.cpp" />
     <ClCompile Include="CAnimatedMeshNode.cpp" />
+    <ClCompile Include="CBaseApp.cpp" />
     <ClCompile Include="CBillboardCollectionMesh.cpp" />
     <ClCompile Include="CBloomCompositor.cpp" />
     <ClCompile Include="CBlurCompositor.cpp" />
@@ -286,6 +297,7 @@
     <ClCompile Include="CDirectionalLightNode.cpp" />
     <ClCompile Include="CFpsCameraNode.cpp" />
     <ClCompile Include="CGrassLand.cpp" />
+    <ClCompile Include="CInputDriverFactory.cpp" />
     <ClCompile Include="CInputLayoutManager.cpp" />
     <ClCompile Include="CInstanceCollectionNode.cpp" />
     <ClCompile Include="CInstanceNode.cpp" />
@@ -295,6 +307,9 @@
     <ClCompile Include="CModelMeshNode.cpp" />
     <ClCompile Include="CMotionBlurCompositor.cpp" />
     <ClCompile Include="CPointLightNode.cpp" />
+    <ClCompile Include="CQt5App.cpp" />
+    <ClCompile Include="CQt5RenderWidget.cpp" />
+    <ClCompile Include="CQt5Window.cpp" />
     <ClCompile Include="CReflectionPlane.cpp" />
     <ClCompile Include="CResourceFactory.cpp" />
     <ClCompile Include="CResourceGroupManager.cpp" />
@@ -323,8 +338,10 @@
     <ClCompile Include="CTextureManager.cpp" />
     <ClCompile Include="CThreadPool.cpp" />
     <ClCompile Include="CThreadPoolWorker.cpp" />
-    <ClCompile Include="CWin32Device.cpp" />
+    <ClCompile Include="CVideoDriverFactory.cpp" />
+    <ClCompile Include="CWin32App.cpp" />
     <ClCompile Include="CWin32Timer.cpp" />
+    <ClCompile Include="CWin32Window.cpp" />
     <ClCompile Include="D3DUtil.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>

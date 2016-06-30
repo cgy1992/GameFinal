@@ -33,7 +33,7 @@ LRESULT CALLBACK EditorWindow::WindowsProcedure(HWND hwnd, UINT msg, WPARAM wPar
 	static HINSTANCE hInst = GetModuleHandle(NULL);
 	HWND hBufferHwnd;
 	char s[100];
-	IDevice* device;
+	IApplication* device;
 	int cxClient, cyClient;
 	EditorScene* scene = EditorScene::getInstance();
 	switch (msg)
@@ -176,11 +176,11 @@ bool EditorWindow::CheckMouseInScene(int xPos, int yPos)
 
 void EditorWindow::OnSize(int cxClient, int cyClient)
 {
-	IDevice* device = IDevice::getInstance();
+	IApplication* device = IApplication::getInstance();
 	EditorScene* scene = EditorScene::getInstance();
 	if (scene)
 	{
-		HWND hBufferHwnd = (HWND)IDevice::getInstance()->getCreationParameters().BackBufferWindowHandle;
+		HWND hBufferHwnd = (HWND)IApplication::getInstance()->getSettings().Window.BackBufferWindowHandle;
 		if (hBufferHwnd)
 		{
 			mBufferWndWidth = cxClient - LEFT_SUB_WINDOW_WIDTH - RIGHT_SUB_WINDOW_WIDTH;

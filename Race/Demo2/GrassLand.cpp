@@ -69,7 +69,7 @@ void GrassLand::update(f32 dt)
 	mMaterial->setAttribute("GrassWidth", mGrassSize.x);
 	mMaterial->setAttribute("GrassHeight", mGrassSize.y);
 
-	ITimer* timer = IDevice::getInstance()->getTimer();
+	ITimer* timer = IApplication::getInstance()->getTimer();
 	//u32 milliseconds = timer->getElapseTime();
 	f32 sec = timer->getElapseTime();
 

@@ -84,9 +84,9 @@ namespace gf
 		};
 
 	public:
-		CD3D11Driver(IDevice* device);
+		CD3D11Driver(IApplication* device);
 
-		bool init(SCreationParameters& createParam);
+		bool init(SAppSettings& settings);
 
 		virtual void beginScene(
 			bool zBuffer,
@@ -182,7 +182,7 @@ namespace gf
 		bool setupGBuffer();
 
 		HWND						mHwnd;
-		IDevice*					mDevice;
+		IApplication*					mDevice;
 		IDXGISwapChain*				md3dSwapChain;
 		ID3D11Device*				md3dDevice;
 		ID3D11DeviceContext*		md3dDeviceContext;

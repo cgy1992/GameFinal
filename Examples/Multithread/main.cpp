@@ -19,16 +19,29 @@ static void job_proc(int id, double* sum) {
 	*sum = s;
 }
 
+
+IVideoDriver* driver;
+SceneManager* smgr;
+
+bool game_update(f32 dt) {
+	driver->beginScene(true, true, color);
+	smgr->update(dt);
+	smgr->drawAll();
+	driver->endScene();
+}
+
 int main()
 {
 	SDeviceContextSettings settings;
 	settings.MultiSamplingCount = 4;
 	settings.MultiSamplingQuality = 32;
 	settings.ThreadPoolLimit = 4;
-	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
+	IApplication* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
 
-	IVideoDriver* driver = device->getVideoDriver();
-	ISceneManager* smgr = device->createSceneManager();
+	driver = device->getVideoDriver();
+	smgr = device->createSceneManager();
+
+	// washington mount
 
 	ITimer* timer = device->getTimer();
 	timer->reset();
@@ -50,6 +63,8 @@ int main()
 		}
 		printf("pi = %f \n", sum);
 	});
+
+	device->setUpdateCallback();
 
 	const f32 color[] = { 0, 0, 0, 1.0f };
 	while (device->run()) {

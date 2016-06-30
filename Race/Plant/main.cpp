@@ -23,7 +23,7 @@ void buildGrassLand(ISceneManager* smgr);
 
 GrassLand* g_grassLand = nullptr;
 
-void setCaption(IDevice* device, ISceneManager* sceneManager, float dt);
+void setCaption(IApplication* device, ISceneManager* sceneManager, float dt);
 
 f32 getFps(float dt)
 {
@@ -47,7 +47,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	settings.MultiSamplingCount = 4;
 	settings.MultiSamplingQuality = 32;
 
-	IDevice* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
+	IApplication* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
 
 	math::SAxisAlignedBox aabb;
@@ -213,7 +213,7 @@ void buildGrassLand(ISceneManager* smgr)
 	g_grassLand = new GrassLand(smgr, terrainNode, v, range * 2, XMFLOAT2(grassWidth, grassHeight));
 }
 
-void setCaption(IDevice* device, ISceneManager* sceneManager, float dt)
+void setCaption(IApplication* device, ISceneManager* sceneManager, float dt)
 {
 	IInputDriver* inputDriver = IInputDriver::getInstance();
 	IKeyboardDevice* keyboard = inputDriver->getKeyboard();

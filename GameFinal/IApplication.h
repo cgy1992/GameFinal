@@ -1,10 +1,11 @@
-#ifndef IDEVICE_H
-#define IDEVICE_H
+#ifndef IApplication_H
+#define IApplication_H
 
 #include "gfTypes.h"
 #include "gfUtil.h"
 #include "ITimer.h"
 #include "gfMath.h"
+#include <functional>
 
 namespace gf
 {
@@ -23,6 +24,7 @@ namespace gf
 
 	enum E_VIDEO_DRIVER_TYPE
 	{
+		EDT_UNKNOWN,
 		EDT_DIRECT3D11,
 		EDT_DIRECT3D10,
 		EDT_EIRECT3D9,
@@ -36,11 +38,110 @@ namespace gf
 		EIDT_DIRECTINPUT8,
 	};
 
-	
+	enum E_APP_TYPE
+	{
+		EAP_WIN32,
+		EAP_QT5,
+	};
+
+
 
 	// This is used as the parameters of the createDevice function by the user 
 	//typedef LRESULT(CALLBACK* WNDPROC) (HWND, UINT, WPARAM, LPARAM);
 	//typedef u32 (CALLBACK* WNDPROC)(HWND, UINT, WPARAM, LPARAM);
+
+	struct SWindowSettings
+	{
+		u32			Width;
+		u32			Height;
+		u32			Style;
+		u32			ParentHandle;
+		u32			FrameWindowHandle;
+		u32			BackBufferWindowHandle;
+		void*		ParentWindowPtr;
+		void*		FrameWindowPtr;
+		void*		BackBufferWindowPtr;
+		void*		WindowsProcedure;
+
+		SWindowSettings()
+		{
+			Width = 800;
+			Height = 600;
+			Style = EWS_NONE;
+			ParentHandle = 0;
+			FrameWindowHandle = 0;
+			BackBufferWindowHandle = 0;
+			WindowsProcedure = NULL;
+			ParentWindowPtr = nullptr;
+			FrameWindowPtr = nullptr;
+			BackBufferWindowPtr = nullptr;
+		}
+	};
+
+	struct SGraphicsSettings
+	{
+		E_VIDEO_DRIVER_TYPE		Driver;
+		u32						DepthBits;
+		u32						StencilBits;
+		u32						MultiSamplingCount;
+		u32						MultiSamplingQuality;
+		u32						BackBufferWidth;
+		u32						BackBufferHeight;
+		bool					VsyncEnabled;
+
+		SGraphicsSettings() 
+		{
+			Driver = EDT_UNKNOWN;
+			DepthBits = 24;
+			StencilBits = 8;
+			MultiSamplingCount = 1;
+			MultiSamplingQuality = 0;
+			BackBufferHeight = 0;
+			BackBufferWidth = 0;
+			VsyncEnabled = false;
+		}
+	};
+
+	struct SThreadSettings
+	{
+		u32						ThreadPoolLimit; // the number of threads in thread pool, 0 means no thread pool.
+		SThreadSettings() {
+			ThreadPoolLimit = 0;
+		}
+	};
+
+	struct SInputSettings
+	{
+		bool					CreateDriver; // create the input driver. If user wants to use his own input IO library, set this to false.
+		E_INPUT_DRIVER_TYPE		Driver; // input-driver type, default is DirectInput8 Driver
+		
+		SInputSettings() 
+		{
+			CreateDriver = true;
+			Driver = EIDT_AUTO;
+		}
+	};
+
+	struct SAppSettings
+	{
+		E_APP_TYPE			AppType;
+		SWindowSettings		Window;
+		SGraphicsSettings	Graphics;
+		SInputSettings		Input;
+		SThreadSettings		Thread;
+
+		SAppSettings()
+		{
+#ifdef _WIN32
+			AppType = EAP_WIN32;
+#else
+			AppType = EAP_QT5;
+#endif // _WIN32
+			
+		}
+	};
+
+	/*
 	struct SDeviceContextSettings
 	{
 		u32						DepthBits;
@@ -84,7 +185,6 @@ namespace gf
 		u32				FrameWindowHandle;
 		u32				BackBufferWindowHandle;
 
-		/* fields below are from SDeviceContextSettings*/
 		u32				DepthBits;
 		u32				StencilBits;
 		u32				MultiSamplingCount;
@@ -117,27 +217,38 @@ namespace gf
 			ThreadPoolLimit = 0;
 		}
 	};
+	*/
 
+	typedef std::function<bool(f32)> AppUpdateCallbackFunction;
 
+	class IWindow;
 
-	class IDevice : public IReferenceCounted
+	class IApplication : public IReferenceCounted
 	{
+
 	public:
-		IDevice(SCreationParameters& params) 
-			:m_CreationParams(params)
+		IApplication(const SAppSettings& params) 
+			: mSettings(params)
+			, mWindow(nullptr)
 			, mVideoDriver(nullptr)
 			, mInputDriver(nullptr)
 			, mThreadPool(nullptr)
 			, mTimer(nullptr)
+			, mStopped(false)
 		{
 
 		}
 
-		virtual bool run() = 0;
-
-		const SCreationParameters& getCreationParameters() const
+		virtual void setUpdateCallback(AppUpdateCallbackFunction func)
 		{
-			return m_CreationParams;
+			mUpdateCallback = func;
+		}
+
+		virtual void run() = 0;
+
+		const SAppSettings& getSettings() const
+		{
+			return mSettings;
 		}
 
 		IVideoDriver*	getVideoDriver()
@@ -156,28 +267,17 @@ namespace gf
 
 		u32 getClientWidth() const
 		{
-			return m_CreationParams.ClientWidth;
+			return mSettings.Window.Width;
 		}
 
 		u32 getClientHeight() const
 		{
-			return m_CreationParams.ClientHeight;
+			return mSettings.Window.Height;
 		}
 
-		virtual void setWindowCaption(const char* caption) = 0;
-
-		u32 getClientWidth()
-		{
-			return m_CreationParams.ClientWidth;
-		}
-
-		u32 getClientHeight()
-		{
-			return m_CreationParams.ClientHeight;
-		}
-
-		virtual void clientToScreen(u32& x, u32& y) const = 0;
-		virtual void screenToClient(u32& x, u32& y) const = 0;
+		virtual void setWindowTitle(const std::string& caption) = 0;
+		virtual void clientToScreen(int& x, int& y) const = 0;
+		virtual void screenToClient(int& x, int& y) const = 0;
 
 		virtual ITimer* getTimer() const
 		{
@@ -189,7 +289,11 @@ namespace gf
 			return mThreadPool;
 		}
 
-		virtual ~IDevice()
+		virtual void getMousePos(int& x, int& y) const = 0;
+
+		IWindow* getWindow() { return mWindow; }
+
+		virtual ~IApplication()
 		{
 
 		}
@@ -199,19 +303,23 @@ namespace gf
 			return mProcessPath;
 		}
 
-		_DECLARE_SINGLETON_INSTANCE(IDevice);
+		_DECLARE_SINGLETON_INSTANCE(IApplication);
 
 	protected:
-		SCreationParameters		m_CreationParams;
+		SAppSettings			mSettings;
+		// SCreationParameters		m_CreationParams;
 		IVideoDriver*			mVideoDriver;
 		IInputDriver*			mInputDriver;
 
 		IThreadPool*			mThreadPool;
 
+		IWindow*				mWindow;
+
 		//ISceneManager*			mSceneManager;
 		ITimer*					mTimer;
 		char					mProcessPath[MAX_PATH + 1];
-
+		AppUpdateCallbackFunction	mUpdateCallback;
+		bool						mStopped;
 	};
 
 }

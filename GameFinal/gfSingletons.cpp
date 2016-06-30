@@ -9,13 +9,13 @@
 #include "IInputLayoutManager.h"
 #include "IResourceGroupManager.h"
 #include "IGeometryCreator.h"
-#include "IDevice.h"
+#include "IApplication.h"
 #include "IVideoDriver.h"
 #include "IInputDriver.h"
 
 namespace gf
 {
-	//_DEFINE_SINGLETON_INSTANCE(IDevice);
+	//_DEFINE_SINGLETON_INSTANCE(IApplication);
 	_DEFINE_SINGLETON_INSTANCE(ITextureManager);
 	_DEFINE_SINGLETON_INSTANCE(ISamplerManager);
 	_DEFINE_SINGLETON_INSTANCE(IShaderManager);
@@ -30,7 +30,7 @@ namespace gf
 	_DEFINE_SINGLETON_INSTANCE(IInputLayoutManager);
 	_DEFINE_SINGLETON_INSTANCE(IModelFileParser);
 	_DEFINE_SINGLETON_INSTANCE(IGeometryCreator);
-	_DEFINE_SINGLETON_INSTANCE(IDevice);
+	_DEFINE_SINGLETON_INSTANCE(IApplication);
 	_DEFINE_SINGLETON_INSTANCE(IVideoDriver);
 	_DEFINE_SINGLETON_INSTANCE(IInputDriver);
 

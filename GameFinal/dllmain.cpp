@@ -11,6 +11,11 @@
 #pragma comment(lib, "winmm.lib")
 #pragma comment(lib, "dinput8.lib")
 
+#pragma comment(lib, "qtmaind.lib")
+#pragma comment(lib, "Qt5Widgetsd.lib")
+#pragma comment(lib, "Qt5Guid.lib")
+#pragma comment(lib, "Qt5Cored.lib")
+
 #else
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "d3dx11.lib")

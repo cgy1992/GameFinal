@@ -63,12 +63,12 @@ void CEditorWindow::init()
 
 void CEditorWindow::OnSize(int cxClient, int cyClient)
 {
-	IDevice* device = IDevice::getInstance();
+	IApplication* device = IApplication::getInstance();
 	CEditorScene* scene = CEditorScene::getInstance();
 
 	if (scene)
 	{
-		HWND hBufferHwnd = (HWND)IDevice::getInstance()->getCreationParameters().BackBufferWindowHandle;
+		HWND hBufferHwnd = (HWND)IApplication::getInstance()->getCreationParameters().BackBufferWindowHandle;
 		if (hBufferHwnd)
 		{
 			mBufferWndWidth = cxClient - RIGHT_SUB_WINDOW_WIDTH;

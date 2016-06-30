@@ -22,11 +22,11 @@ namespace gf
 		, mReflectMapTexture(nullptr)
 	{
 		if (mMapWidth == 0) {
-			mMapWidth = IDevice::getInstance()->getClientWidth();
+			mMapWidth = IApplication::getInstance()->getClientWidth();
 		}
 
 		if (mMapHeight == 0) {
-			mMapHeight = IDevice::getInstance()->getClientHeight();
+			mMapHeight = IApplication::getInstance()->getClientHeight();
 		}
 
 		mNormal = math::VectorNormalize(normal);

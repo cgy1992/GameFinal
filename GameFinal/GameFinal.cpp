@@ -2,8 +2,10 @@
 //
 
 #include "stdafx.h"
+#include "CBaseApp.h"
 #include "GameFinal.h"
-#include "CWin32Device.h"
+#include "CWin32App.h"
+#include "CQt5App.h"
 
 namespace gf
 {
@@ -16,7 +18,50 @@ namespace gf
 		return 42;
 	}
 
-	GAMEFINAL_API IDevice* createDevice(E_VIDEO_DRIVER_TYPE driverType, u32 width, u32 height, u32 style, bool vsync, const SDeviceContextSettings& settings)
+	GAMEFINAL_API IApplication* createApp(SAppSettings settings)
+	{
+		if (settings.Graphics.BackBufferWidth == 0)
+			settings.Graphics.BackBufferWidth = settings.Window.Width;
+
+		if (settings.Graphics.BackBufferHeight == 0)
+			settings.Graphics.BackBufferHeight = settings.Window.Height;
+
+		CBaseApp* app = new CBaseApp(settings);
+		IApplication::_setInstance(app);
+		app->init();
+		return app;
+
+		/*
+		if (settings.AppType == EAP_WIN32) {
+			CWin32App* app = new CWin32App(settings);
+			IApplication::_setInstance(app);
+			HRESULT hr = app->init();
+			if (FAILED(hr)) {
+				delete app;
+				IApplication::_setInstance(nullptr);
+				return nullptr;
+			}
+			return app;
+		}
+		else if (settings.AppType == EAP_QT5) {
+			CQt5App* app = new CQt5App(settings);
+			IApplication::_setInstance(app);
+			bool hr = app->init();
+			if (!(hr)) {
+				delete app;
+				IApplication::_setInstance(nullptr);
+				return nullptr;
+			}
+			return app;
+		}
+		else {
+			return nullptr;
+		}
+		*/
+	}
+
+	/*
+	GAMEFINAL_API IApplication* createDevice(E_VIDEO_DRIVER_TYPE driverType, u32 width, u32 height, u32 style, bool vsync, const SDeviceContextSettings& settings)
 	{
 		SCreationParameters creationParams;
 		creationParams.ClientWidth = width;
@@ -42,14 +87,15 @@ namespace gf
 		if (settings.BackBufferHeight == 0)
 			creationParams.BackBufferHeight = height;
 
-		CWin32Device* device = new CWin32Device(creationParams);
+		CWin32App* device = new CWin32App(creationParams);
 		HRESULT hr = device->init();
 		if (FAILED(hr))
 			return NULL;
 
-		IDevice::_setInstance(device);
+		IApplication::_setInstance(device);
 
 		return device;
 	}
+	*/
 }
 

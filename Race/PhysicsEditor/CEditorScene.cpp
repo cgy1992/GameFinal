@@ -4,7 +4,7 @@
 
 CEditorScene* CEditorScene::_instance = nullptr;
 
-CEditorScene::CEditorScene(IDevice* device)
+CEditorScene::CEditorScene(IApplication* device)
 :mDevice(device)
 , mSceneManager(nullptr)
 , mCamera(nullptr)

@@ -7,7 +7,7 @@ class CEditorScene
 	friend class CXmlFileManager;
 
 public:
-	CEditorScene(IDevice* device);
+	CEditorScene(IApplication* device);
 	void setupInitialScene();
 	~CEditorScene();
 	static void _setInstance(CEditorScene* scene) { _instance = scene; }
@@ -27,7 +27,7 @@ public:
 private:
 
 	static CEditorScene*		_instance;
-	IDevice*					mDevice;
+	IApplication*					mDevice;
 	IVideoDriver*				mVideoDriver;
 	ITextureManager*			mTextureManager;
 	IResourceGroupManager*		mResourceGroupManager;

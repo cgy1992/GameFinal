@@ -6,7 +6,7 @@ using namespace gf;
 class Scene
 {
 public:
-	Scene(IDevice* device, IVideoDriver* driver);
+	Scene(IApplication* device, IVideoDriver* driver);
 	
 	virtual void Enter() = 0;
 	virtual void Update(float dt) = 0;
@@ -16,7 +16,7 @@ public:
 	virtual ~Scene();
 protected:
 	ISceneManager*		mSceneManager;
-	IDevice*			mDevice;
+	IApplication*			mDevice;
 	IVideoDriver*		mVideoDriver;
 
 };

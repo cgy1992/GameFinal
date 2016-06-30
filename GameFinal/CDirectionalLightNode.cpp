@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CDirectionalLightNode.h"
 #include "CSceneManager.h"
-#include "IDevice.h"
+#include "IApplication.h"
 
 namespace gf
 {
@@ -14,8 +14,8 @@ namespace gf
 		setDirection(direction);
 		mInsideFrustum = true;
 
-		mShadowMapWidth = IDevice::getInstance()->getClientWidth();
-		mShadowMapHeight = IDevice::getInstance()->getClientHeight();
+		mShadowMapWidth = IApplication::getInstance()->getClientWidth();
+		mShadowMapHeight = IApplication::getInstance()->getClientHeight();
 	}
 
 

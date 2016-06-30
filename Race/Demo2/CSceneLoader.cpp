@@ -17,7 +17,7 @@ bool CSceneLoader::load(const char* filename, RaceScene* scene, SPhysicalLoading
 	if (!fp)
 		return false;
 
-	IDevice* device = IDevice::getInstance();
+	IApplication* device = IApplication::getInstance();
 	IVideoDriver* driver = IVideoDriver::getInstance();
 	IShaderManager* shaderManager = IShaderManager::getInstance();
 	ITextureManager* textureManager = ITextureManager::getInstance();

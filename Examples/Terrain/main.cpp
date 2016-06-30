@@ -38,7 +38,7 @@ int main()
 	settings.MultiSamplingCount = 4;
 	settings.MultiSamplingQuality = 32;
 
-	IDevice* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
+	IApplication* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager* smgr = device->createSceneManager();
 	IMeshManager* meshManager = driver->getMeshManager();

@@ -7,7 +7,7 @@ using namespace gf;
 
 int main()
 {
-	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600);
+	IApplication* device = createDevice(EDT_DIRECT3D11, 800, 600);
 	IVideoDriver* driver = device->getVideoDriver();
 	
 	ISceneManager* smgr = device->createSceneManager();

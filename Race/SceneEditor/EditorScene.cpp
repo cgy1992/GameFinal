@@ -14,7 +14,7 @@ u32 EditorScene::getNextNodeSequence()
 	return ++nodeSequenceNumber;
 }
 
-EditorScene::EditorScene(IDevice* device)
+EditorScene::EditorScene(IApplication* device)
 :mDevice(device)
 , mSceneManager(nullptr)
 , mGroundSize(300.0f)

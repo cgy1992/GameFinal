@@ -6,7 +6,7 @@ using namespace gf;
 
 int main()
 {
-	IDevice* device = gf::createDevice(EDT_DIRECT3D11, 800, 600);
+	IApplication* device = gf::createDevice(EDT_DIRECT3D11, 800, 600);
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager* smgr = device->createSceneManager();
 

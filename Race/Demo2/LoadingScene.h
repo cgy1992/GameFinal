@@ -9,7 +9,7 @@ class RaceScene;
 class LoadingScene : public Scene
 {
 public:
-	LoadingScene(IDevice* device, IVideoDriver* driver);
+	LoadingScene(IApplication* device, IVideoDriver* driver);
 	
 	virtual void Enter();
 	virtual void Update(float dt);

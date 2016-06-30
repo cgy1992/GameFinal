@@ -60,21 +60,45 @@ f32 getFps(float dt)
 	return fps;
 }
 
+IApplication* device;
+IVideoDriver* driver;
+ISceneManager* smgr; 
+ICameraNode* camera;
+
+bool game_update(f32 dt) {
+	char caption[200];
+	const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	driver->beginScene(true, true, clearColor);
+
+	updatePhysics(dt);
+	updateCamera(camera, dt);
+
+	smgr->update(dt);
+	smgr->drawAll();
+	driver->endScene();
+
+	sprintf_s(caption, "FPS:%f", getFps(dt));
+	device->setWindowCaption(caption);
+	return true;
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	srand(time(0));
+	SAppSettings settings;
+	settings.Graphics.MultiSamplingCount = 8;
+	settings.Graphics.MultiSamplingQuality = 32;
+	settings.Window.Width = 400;
+	settings.Window.Height = 300;
 
-	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 4;
-	settings.MultiSamplingQuality = 32;
-
-	IDevice* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
-	IVideoDriver* driver = device->getVideoDriver();
+	//IApplication* device = gf::createDevice(EDT_DIRECT3D11, SCREEN_WIDTH, SCREEN_HEIGHT, EWS_NONE, true, settings);
+	device = gf::createApp(settings);
+	driver = device->getVideoDriver();
 
 	math::SAxisAlignedBox aabb;
 	aabb.Center = XMFLOAT3(0, 10.0f, 0);
 	aabb.Extents = XMFLOAT3(500.0f, 500.0f, 500.0f);
-	ISceneManager* smgr = device->createSceneManager(aabb);
+	smgr = device->createSceneManager(aabb);
 	IMeshManager* meshManager = driver->getMeshManager();
 	IMaterialManager* materialManager = driver->getMaterialManager();
 	ITextureManager* textureManager = driver->getTextureManager();
@@ -83,9 +107,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	resourceGroupManager->init("Resources.cfg");
 
 	PhysicsEngine::getInstance();
-
 	setupPhysics(smgr);
-
 	// create ground
 	
 	ISimpleMesh* groundMesh = meshManager->createPlaneMesh("ground", groundSize, groundSize, 10, 10, 30.0f, 30.0f);
@@ -107,7 +129,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	light->setShadowMapSize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	light->setShadowCameraOrthographicSize(100.0f, 100.0f);
 	light->enableShadow(true);
-	ICameraNode* camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
+	camera = smgr->addFpsCameraNode(1, nullptr, XMFLOAT3(0, 1.0f, -4.0f), XMFLOAT3(0, 1.0f, 0.0f), XMFLOAT3(0, 1.0f, 0), true);
 	camera->setPosition(XMFLOAT3(0, 20.0f, -40.0f));
 	camera->lookAt(XMFLOAT3(0, 0, 0));
 	camera->setNearZ(1.0f);
@@ -117,13 +139,15 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	updateLightDirection(10.0f, light);
 
-	char caption[200];
-
 	ITimer* timer = device->getTimer();
 	timer->reset();
 
 	const f32 color2[] = { 1.0f, 0.0f, 0.0f, 1.0f };
 
+	device->setUpdateCallback(game_update);
+	device->run();
+
+	/*
 	while (device->run())
 	{
 		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -147,6 +171,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		//Sleep(10);
 	}
+	*/
 
 	//sphereMaterial.drop();
 	smgr->destroy();

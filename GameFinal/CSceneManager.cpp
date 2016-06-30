@@ -20,7 +20,7 @@
 
 namespace gf
 {
-	CSceneManager::CSceneManager(IDevice* device, const math::SAxisAlignedBox& aabb)
+	CSceneManager::CSceneManager(IApplication* device, const math::SAxisAlignedBox& aabb)
 		:ISceneManager(device, aabb)
 		//, mMillisecondsDelta(0)
 		, mSecondsDelta(0)
@@ -709,8 +709,8 @@ namespace gf
 			static SPointLight pointLightsData[maxPointsLightNum];
 			static SDirectionalLight dirLightsData[maxDirLightNum];
 
-			u32 screenWidth = IDevice::getInstance()->getClientWidth();
-			u32 screenHeight = IDevice::getInstance()->getClientHeight();
+			u32 screenWidth = IApplication::getInstance()->getClientWidth();
+			u32 screenHeight = IApplication::getInstance()->getClientHeight();
 			const u32 ColTileNum = ceil(((float)screenWidth / 16));
 			const u32 RowTileNum = ceil(((float)screenHeight / 16));
 

@@ -3,7 +3,7 @@
 
 #include "ILightNode.h"
 #include "ITextureCube.h"
-#include "IDevice.h"
+#include "IApplication.h"
 
 namespace gf
 {
@@ -21,7 +21,7 @@ namespace gf
 			mLightData.Range = range;
 			mLightData.Attenuations = XMFLOAT3(1.0f, 0, 0);
 
-			mShadowMapWidth = IDevice::getInstance()->getClientWidth();
+			mShadowMapWidth = IApplication::getInstance()->getClientWidth();
 			mShadowMapHeight = mShadowMapWidth;
 		}
 

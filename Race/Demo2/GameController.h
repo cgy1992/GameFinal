@@ -20,7 +20,7 @@ private:
 
 	u32				mScreenWidth;
 	u32				mScreenHeight;
-	IDevice*		mDevice;
+	IApplication*		mDevice;
 	IVideoDriver*	mVideoDriver;
 	ITimer*			mTimer;
 	Scene*			mCurrentScene;

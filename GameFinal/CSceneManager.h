@@ -28,7 +28,7 @@ namespace gf
 		};
 
 	public:
-		CSceneManager(IDevice* device, const math::SAxisAlignedBox& aabb);
+		CSceneManager(IApplication* device, const math::SAxisAlignedBox& aabb);
 
 		virtual ~CSceneManager();
 

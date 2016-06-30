@@ -753,7 +753,7 @@ namespace gf
 		bool ignoreIfAlreadyUpdate = (var.UpdateFrequency == EUF_PER_FRAME);
 
 		IVideoDriver* driver = IVideoDriver::getInstance();
-		IDevice* device = IDevice::getInstance();
+		IApplication* device = IApplication::getInstance();
 
 		switch (var.Type)
 		{

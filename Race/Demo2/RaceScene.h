@@ -10,7 +10,7 @@ class RaceScene : public Scene
 	friend class CSceneLoader;
 
 public:
-	RaceScene(IDevice* device, IVideoDriver* driver);
+	RaceScene(IApplication* device, IVideoDriver* driver);
 	~RaceScene();
 	virtual void Enter();
 	virtual void Update(float dt);

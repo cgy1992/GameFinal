@@ -1,21 +1,21 @@
 #ifndef D3D11DEIVCE_H
 #define D3D11DEIVCE_H
 
-#include "IDevice.h"
+#include "IApplication.h"
 #include "IVideoDriver.h"
 namespace gf
 {
 
 	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
-	class CWin32Device : public IDevice
+	class CWin32App : public IApplication
 	{
 	public:
-		CWin32Device(SCreationParameters& params);
+		CWin32App(const SAppSettings& params);
 
 		HRESULT init();
 
-		bool run();
+		virtual void run();
 
 		LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -29,9 +29,12 @@ namespace gf
 
 		virtual void screenToClient(u32& x, u32& y) const;
 
-		virtual ~CWin32Device();
+		virtual ~CWin32App();
 	private:
-		HWND			mHwnd;
+		//HWND			mHwnd;
+		HWND			m_hParentWnd;
+		HWND			m_hFrameWnd;
+		HWND			m_hBufferWnd;
 		HINSTANCE		m_hInstance;
 		WNDPROC			mDefinedWndProc;
 	};

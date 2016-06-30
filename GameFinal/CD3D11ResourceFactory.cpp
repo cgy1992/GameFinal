@@ -244,9 +244,9 @@ namespace gf
 		u32 multiSamplingQuality)
 	{
 		if (width == 0)
-			width = IDevice::getInstance()->getClientWidth();
+			width = IApplication::getInstance()->getClientWidth();
 		if (height == 0)
-			height = IDevice::getInstance()->getClientHeight();
+			height = IApplication::getInstance()->getClientHeight();
 
 		if (!multiSampling)
 		{
@@ -255,7 +255,7 @@ namespace gf
 		}
 		else if (multiSamplingCount == 0)
 		{
-			const SCreationParameters& param = IDevice::getInstance()->getCreationParameters();
+			const SCreationParameters& param = IApplication::getInstance()->getCreationParameters();
 			multiSamplingCount = param.MultiSamplingCount;
 			multiSamplingQuality = param.MultiSamplingQuality;
 		}

@@ -20,7 +20,7 @@
 
 namespace gf
 {
-	CD3D11Driver::CD3D11Driver(IDevice* device)
+	CD3D11Driver::CD3D11Driver(IApplication* device)
 		:mDevice(device)
 		, md3dDebug(nullptr)
 		, mClearColor(0, 0, 0, 1.0f)
@@ -28,7 +28,7 @@ namespace gf
 		
 	}
 
-	bool CD3D11Driver::init(SCreationParameters& createParam)
+	bool CD3D11Driver::init(SAppSettings& settings)
 	{
 		HRESULT result;
 		IDXGIFactory* factory;
@@ -48,8 +48,8 @@ namespace gf
 
 		// Create a DirectX graphics interface factory.
 
-		mBackBufferWidth = createParam.BackBufferWidth;
-		mBackBufferHeight = createParam.BackBufferHeight;
+		mBackBufferWidth = settings.Graphics.BackBufferWidth;
+		mBackBufferHeight = settings.Graphics.BackBufferHeight;
 
 		result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
 		if (FAILED(result))
@@ -96,9 +96,9 @@ namespace gf
 		// When a match is found store the numerator and denominator of the refresh rate for that monitor.
 		for (i = 0; i < numModes; i++)
 		{
-			if (displayModeList[i].Width == (unsigned int)createParam.BackBufferWidth)
+			if (displayModeList[i].Width == (unsigned int)settings.Graphics.BackBufferWidth)
 			{
-				if (displayModeList[i].Height == (unsigned int)createParam.BackBufferHeight)
+				if (displayModeList[i].Height == (unsigned int)settings.Graphics.BackBufferHeight)
 				{
 					numerator = displayModeList[i].RefreshRate.Numerator;
 					denominator = displayModeList[i].RefreshRate.Denominator;
@@ -182,14 +182,14 @@ namespace gf
 		ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
 
 		// Set the width and height of the back buffer.
-		swapChainDesc.BufferDesc.Width = createParam.BackBufferWidth;
-		swapChainDesc.BufferDesc.Height = createParam.BackBufferHeight;
+		swapChainDesc.BufferDesc.Width = settings.Graphics.BackBufferWidth;
+		swapChainDesc.BufferDesc.Height = settings.Graphics.BackBufferHeight;
 
 		// Set regular 32-bit surface for the back buffer.
 		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
 		// Set the refresh rate of the back buffer.
-		if (createParam.VsyncEnabled)
+		if (settings.Graphics.VsyncEnabled)
 		{
 			swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
 			swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
@@ -201,22 +201,22 @@ namespace gf
 		}
 
 		// Set multisampling.
-		if (createParam.MultiSamplingQuality == 0)
+		if (settings.Graphics.MultiSamplingQuality == 0)
 		{
 			swapChainDesc.SampleDesc.Count = 1;
 			swapChainDesc.SampleDesc.Quality = 0;
 
-			createParam.MultiSamplingCount = 1;
+			settings.Graphics.MultiSamplingCount = 1;
 		}
 		else
 		{
-			swapChainDesc.SampleDesc.Count = createParam.MultiSamplingCount;
+			swapChainDesc.SampleDesc.Count = settings.Graphics.MultiSamplingCount;
 			UINT numQualityLevels;
 			md3dDevice->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &numQualityLevels);
 
-			swapChainDesc.SampleDesc.Quality = min(numQualityLevels - 1, createParam.MultiSamplingQuality);
+			swapChainDesc.SampleDesc.Quality = min(numQualityLevels - 1, settings.Graphics.MultiSamplingQuality);
 
-			createParam.MultiSamplingQuality = swapChainDesc.SampleDesc.Quality;
+			settings.Graphics.MultiSamplingQuality = swapChainDesc.SampleDesc.Quality;
 		}
 		
 		// set member attributes of class
@@ -229,10 +229,10 @@ namespace gf
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 
 		// Set the handle for the window to render to.
-		swapChainDesc.OutputWindow = (HWND)createParam.BackBufferWindowHandle;
+		swapChainDesc.OutputWindow = (HWND)settings.Window.BackBufferWindowHandle;
 
 		// Set to full screen or windowed mode.
-		if (createParam.WindowStyle & EWS_FULLSCREEN)
+		if (settings.Window.Style & EWS_FULLSCREEN)
 		{
 			swapChainDesc.Windowed = false;
 		}
@@ -269,7 +269,7 @@ namespace gf
 		ReleaseCOM(backBuffer);
 
 		mDefaultRenderTarget = new CD3D11RenderTarget(md3dDevice, md3dDeviceContext, mDefaultRenderTargetView,
-			createParam.BackBufferWidth, createParam.BackBufferHeight);
+			settings.Graphics.BackBufferWidth, settings.Graphics.BackBufferHeight);
 
 		// Initialize the description of the depth buffer.
 		ZeroMemory(&depthBufferDesc, sizeof(depthBufferDesc));
@@ -328,12 +328,12 @@ namespace gf
 		//mResourceFactory->setResourceGroupManager(mResourceGroupManager);
 
 		// create default depth-stencil-buffer
-		bool multiSampling = (createParam.MultiSamplingCount > 1);
+		bool multiSampling = (settings.Graphics.MultiSamplingCount > 1);
 
 
 		mDepthStencilSurface = mTextureManager->createDepthStencilSurface("_default_depth_stencil_surface",
-			0, 0, createParam.DepthBits, createParam.StencilBits,
-			multiSampling, createParam.MultiSamplingCount, createParam.MultiSamplingQuality, true);
+			0, 0, settings.Graphics.DepthBits, settings.Graphics.StencilBits,
+			multiSampling, settings.Graphics.MultiSamplingCount, settings.Graphics.MultiSamplingQuality, true);
 
 		if (!mDepthStencilSurface)
 		{

@@ -15,7 +15,7 @@ public:
 	friend class CCreateLightNodeWindow;
 
 public:
-	EditorScene(IDevice* device);
+	EditorScene(IApplication* device);
 	~EditorScene();
 
 	void setupInitialScene();
@@ -101,7 +101,7 @@ private:
 	SLightNodeInfo* getIntersectPointLightInfo(u32 sx, u32 sy);
 
 	static EditorScene* _instance;
-	IDevice*					mDevice;
+	IApplication*					mDevice;
 	IVideoDriver*				mVideoDriver;
 	ITextureManager*			mTextureManager;
 	IResourceGroupManager*		mResourceGroupManager;

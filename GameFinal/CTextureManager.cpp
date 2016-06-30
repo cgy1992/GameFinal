@@ -5,7 +5,7 @@
 
 namespace gf
 {
-	CTextureManager::CTextureManager(IDevice* device, IResourceFactory* pResourceFactory)
+	CTextureManager::CTextureManager(IApplication* device, IResourceFactory* pResourceFactory)
 		:mDevice(device)
 		, mResourceFactory(pResourceFactory)
 	{
@@ -466,9 +466,9 @@ namespace gf
 	IRenderTarget* CTextureManager::getTempRenderTarget(u32 width /*= 0*/, u32 height /*= 0*/, E_GI_FORMAT format/*= EGF_R32G32B32A32_FLOAT*/)
 	{
 		if (width == 0)
-			width = (u32)IDevice::getInstance()->getClientWidth();
+			width = (u32)IApplication::getInstance()->getClientWidth();
 		if (height == 0)
-			height = (u32)IDevice::getInstance()->getClientHeight();
+			height = (u32)IApplication::getInstance()->getClientHeight();
 
 		// find the longest idled time, the header of this list.
 		if (!mIdledRenderTargets.empty())
@@ -519,9 +519,9 @@ namespace gf
 		u32 depthBits /* = 32 */, u32 stencilBits /* = 0 */)
 	{
 		if (width == 0)
-			width = (u32)IDevice::getInstance()->getClientWidth();
+			width = (u32)IApplication::getInstance()->getClientWidth();
 		if (height == 0)
-			height = (u32)IDevice::getInstance()->getClientHeight();
+			height = (u32)IApplication::getInstance()->getClientHeight();
 
 		// find the longest idled time, the header of this list.
 		if (!mIdledDepthStencilTextures.empty())

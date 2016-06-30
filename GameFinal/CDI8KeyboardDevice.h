@@ -24,7 +24,7 @@ namespace gf
 
 
 	private:
-		IDirectInputDevice8*		mdiDevice;
+		IDirectInputDevice8*		mdIApplication;
 		char						mKeys[256];
 		char						mPrevKeys[256];
 

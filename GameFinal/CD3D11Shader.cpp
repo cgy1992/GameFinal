@@ -88,7 +88,7 @@ namespace gf
 
 		const u32 MAX_CHAR_NUM = 3000 * 80;
 		IResourceGroupManager* rgmr = IResourceGroupManager::getInstance();
-		const char* szProcessPath = IDevice::getInstance()->getProcessPath();
+		const char* szProcessPath = IApplication::getInstance()->getProcessPath();
 
 		char pOriginData[MAX_CHAR_NUM] = { 0 };
 		memset(content, 0, sizeof(content));

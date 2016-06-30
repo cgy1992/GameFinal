@@ -3,7 +3,7 @@
 
 using namespace gf;
 
-ISceneManager* setupScene(IDevice* device) {
+ISceneManager* setupScene(IApplication* device) {
 
 	math::SAxisAlignedBox aabb;
 	aabb.Center = XMFLOAT3(0, 0.0f, 0);
@@ -58,7 +58,7 @@ int main()
 	settings.MultiSamplingCount = 4;
 	settings.MultiSamplingQuality = 32;
 
-	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
+	IApplication* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
 	IVideoDriver* driver = device->getVideoDriver();
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");

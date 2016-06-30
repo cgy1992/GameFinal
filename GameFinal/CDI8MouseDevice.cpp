@@ -9,7 +9,7 @@
 namespace gf
 {
 	CDI8MouseDevice::CDI8MouseDevice()
-		:mdiDevice(nullptr)
+		:mdIApplication(nullptr)
 	{
 		for (int i = 0; i < 4; i++) {
 			mKeys[i] = false;
@@ -26,7 +26,7 @@ namespace gf
 
 	CDI8MouseDevice::~CDI8MouseDevice()
 	{
-		ReleaseCOM(mdiDevice);
+		ReleaseCOM(mdIApplication);
 	}
 
 	bool CDI8MouseDevice::init(IDirectInput8* pDirectInput, HWND hwnd, const RECT& cageRect)
@@ -35,27 +35,27 @@ namespace gf
 		this->mMouseX = 0;
 		this->mMouseY = 0;
 
-		if (mdiDevice) {
-			mdiDevice->Unacquire();
-			ReleaseCOM(mdiDevice);
+		if (mdIApplication) {
+			mdIApplication->Unacquire();
+			ReleaseCOM(mdIApplication);
 		}
 
 		HRESULT hr;
 
-		hr = pDirectInput->CreateDevice(GUID_SysMouse, &mdiDevice, NULL);
+		hr = pDirectInput->CreateDevice(GUID_SysMouse, &mdIApplication, NULL);
 		if (FAILED(hr)) {
 			GF_PRINT_CONSOLE_INFO("Create Mouse device failed!\n");
 			return false;
 		}
 
-		hr = mdiDevice->SetDataFormat(&c_dfDIMouse);
+		hr = mdIApplication->SetDataFormat(&c_dfDIMouse);
 		if (FAILED(hr)) {
 			GF_PRINT_CONSOLE_INFO("Set Mouse data format failed!\n");
 			return false;
 		}
 
 		DWORD dwFlags = DISCL_FOREGROUND | DISCL_NONEXCLUSIVE;
-		hr = mdiDevice->SetCooperativeLevel(hwnd, dwFlags);
+		hr = mdIApplication->SetCooperativeLevel(hwnd, dwFlags);
 		if (FAILED(hr)) {
 			GF_PRINT_CONSOLE_INFO("SetCooplevel for mouse failed!\n");
 			return false;
@@ -67,7 +67,7 @@ namespace gf
 			return false;
 		}
 
-		hr = mdiDevice->SetEventNotification(mEvent);
+		hr = mdIApplication->SetEventNotification(mEvent);
 		if (FAILED(hr)) {
 			GF_PRINT_CONSOLE_INFO("SetEventNotification(Mouse) failed\n");
 			return false;
@@ -81,13 +81,13 @@ namespace gf
 		dipdw.diph.dwHow = DIPH_DEVICE;
 		dipdw.dwData = BUFFER_SIZE;
 
-		hr = mdiDevice->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+		hr = mdIApplication->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
 		if (FAILED(hr)) {
 			GF_PRINT_CONSOLE_INFO("SetProperty(Mouse) failed\n");
 			return false;
 		}
 
-		mdiDevice->Acquire();
+		mdIApplication->Acquire();
 		GF_PRINT_CONSOLE_INFO("Mouse device has been initialized.\n");
 		return true;
 	}
@@ -103,21 +103,21 @@ namespace gf
 		DIDEVICEOBJECTDATA data[BUFFER_SIZE];
 
 		HRESULT hr;
-		hr = mdiDevice->GetDeviceData(sizeof(DIDEVICEOBJECTDATA),
+		hr = mdIApplication->GetDeviceData(sizeof(DIDEVICEOBJECTDATA),
 			&data[0], &dwNum, 0);
 
 		if (FAILED(hr))
 		{
 			if ((hr == DIERR_NOTACQUIRED) || (hr == DIERR_INPUTLOST)) {
-				hr = mdiDevice->Acquire();
+				hr = mdIApplication->Acquire();
 				while (hr == DIERR_INPUTLOST)
-					hr = mdiDevice->Acquire();
+					hr = mdIApplication->Acquire();
 
 				if (hr == DIERR_OTHERAPPHASPRIO)
 					return;
 
 				if (SUCCEEDED(hr)) {
-					hr = mdiDevice->GetDeviceData(
+					hr = mdIApplication->GetDeviceData(
 						sizeof(DIDEVICEOBJECTDATA),
 						&data[0], &dwNum, 0);
 				}

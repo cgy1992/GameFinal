@@ -5,7 +5,7 @@
 
 using namespace gf;
 
-ISceneManager* setupScene(IDevice* device) {
+ISceneManager* setupScene(IApplication* device) {
 
 	// create scene manager
 	ISceneManager* smgr = device->createSceneManager();
@@ -46,7 +46,7 @@ ISceneManager* setupScene(IDevice* device) {
 
 int main()
 {
-	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600);
+	IApplication* device = createDevice(EDT_DIRECT3D11, 800, 600);
 	IVideoDriver* driver = device->getVideoDriver();
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");

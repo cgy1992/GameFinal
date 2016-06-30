@@ -1,4 +1,5 @@
 #include <GameFinal.h>
+#include <sstream>
 #pragma comment(lib, "GameFinal.lib")
 
 using namespace gf;
@@ -15,7 +16,7 @@ void addTreeInstance(IInstanceCollectionNode* collection, ITerrainMesh* terrain)
 	treeNode->addShadow(1);
 }
 
-ISceneManager* setupScene(IDevice* device) {
+ISceneManager* setupScene(IApplication* device) {
 
 	math::SAxisAlignedBox aabb;
 	aabb.Center = XMFLOAT3(0, 0.0f, 0);
@@ -66,37 +67,53 @@ ISceneManager* setupScene(IDevice* device) {
 
 	return smgr;
 }
+IApplication* device;
+IVideoDriver* driver;
+IInputDriver* input;
+ISceneManager* smgr;
+
+bool game_update(f32 dt) {
+	const f32 color[] = { 0, 0, 0, 1.0f };
+	if (input->keyDown(GVK_ESCAPE))
+		return false;
+
+	int mx, my, sx, sy;
+	device->getMousePos(mx, my);
+	sx = mx;
+	sy = my;
+	device->clientToScreen(sx, sy);
+
+	std::ostringstream ss;
+	ss << "x:" << mx << " y:" << my << " X:" << sx << " Y:" << sy;
+	std::string s = ss.str();
+	device->setWindowTitle(s);
+
+	smgr->update(dt);
+	driver->beginScene(true, true, color);
+	smgr->drawAll();
+	driver->endScene();
+	return true;
+}
 
 int main()
 {
-	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 4;
-	settings.MultiSamplingQuality = 32;
-
-	IDevice* device = createDevice(EDT_DIRECT3D11, 1024, 768, EWS_NONE, true, settings);
-	IVideoDriver* driver = device->getVideoDriver();
+	SAppSettings settings;
+	settings.AppType = EAP_WIN32;
+	device = createApp(settings);
+	driver = device->getVideoDriver();
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
 
-	IInputDriver* input = device->getInputDriver();
+	input = device->getInputDriver();
+	input->getMouse()->showCursor(true);
+	
+	smgr = setupScene(device);
+	//ITimer* timer = device->getTimer();
+	//timer->reset();
+	
+	device->setUpdateCallback(game_update);
+	device->run();
 
-	ISceneManager* smgr = setupScene(device);
-	ITimer* timer = device->getTimer();
-	timer->reset();
-
-	const f32 color[] = { 0, 0, 0, 1.0f };
-	while (device->run()) {
-
-		float dt = timer->tick();
-		if (input->keyDown(GVK_ESCAPE))
-			break;
-
-		smgr->update(dt);
-		driver->beginScene(true, true, color);
-		smgr->drawAll();
-		driver->endScene();
-
-	}
 
 	smgr->destroy();
 	device->drop();

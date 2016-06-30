@@ -91,7 +91,7 @@ namespace gf
 
 		}
 
-		virtual bool init(SCreationParameters& createParam) = 0;
+		//virtual bool init(SCreationParameters& createParam) = 0;
 
 		virtual void beginScene(
 			bool backBuffer,

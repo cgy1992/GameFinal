@@ -5,7 +5,7 @@
 #include "gfUtil.h"
 #include "gfRect.h"
 #include "IReferenceCounted.h"
-#include "IDevice.h"
+#include "IApplication.h"
 #include "IModelMeshNode.h"
 #include "IVideoDriver.h"
 #include "IGeometryCreator.h"
@@ -27,7 +27,7 @@ namespace gf
 	class ISceneManager : public ISceneNode
 	{
 	public:
-		ISceneManager(IDevice* device, const math::SAxisAlignedBox& aabb)
+		ISceneManager(IApplication* device, const math::SAxisAlignedBox& aabb)
 			:ISceneNode(nullptr, this, false)
 			, mVideoDriver(nullptr)
 			, mMaterialManager(nullptr)
@@ -51,7 +51,7 @@ namespace gf
 
 		virtual void drawReflectionMaps() = 0;
 
-		IDevice* getDevice()
+		IApplication* getDevice()
 		{
 			return mDevice;
 		}
@@ -288,7 +288,7 @@ namespace gf
 		const static int REFLECT_CAMERA_ID = 62;
 
 	protected:
-		IDevice*				mDevice;
+		IApplication*				mDevice;
 		IVideoDriver*			mVideoDriver;
 		IMaterialManager*		mMaterialManager;
 		math::SAxisAlignedBox	mAabb;

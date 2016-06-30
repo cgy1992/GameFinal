@@ -1,7 +1,7 @@
 #ifndef __TEXTURE_MANAGER_CLASS_H__
 #define __TEXTURE_MANAGER_CLASS_H__
 
-#include "IDevice.h"
+#include "IApplication.h"
 #include "ITextureManager.h"
 #include "IResourceFactory.h"
 #include "CSortCodeAllocator.h"
@@ -14,7 +14,7 @@ namespace gf
 	class CTextureManager : public ITextureManager
 	{
 	public:
-		CTextureManager(IDevice* device, IResourceFactory* pResourceFactory);
+		CTextureManager(IApplication* device, IResourceFactory* pResourceFactory);
 
 		virtual ~CTextureManager();
 
@@ -141,7 +141,7 @@ namespace gf
 		void createPointLightShadowMapJitterTexture();
 
 
-		IDevice*								mDevice;
+		IApplication*								mDevice;
 		IResourceFactory*						mResourceFactory;
 		std::map<std::string, ITexture*>		mTextureMap;
 		CSortCodeAllocator<255>					mCodeAllocator;

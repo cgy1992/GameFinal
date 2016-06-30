@@ -22,7 +22,7 @@ int main()
 	SDeviceContextSettings settings;
 	settings.MultiSamplingCount = 4;
 	settings.MultiSamplingQuality = 32;
-	IDevice* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
+	IApplication* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
 
 	IVideoDriver* driver = device->getVideoDriver();
 	ISceneManager* smgr = device->createSceneManager();

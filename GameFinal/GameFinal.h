@@ -17,7 +17,7 @@
 #include "gfUtil.h"
 #include "gfMath.h"
 #include "IReferenceCounted.h"
-#include "IDevice.h"
+#include "IApplication.h"
 #include "IVideoDriver.h"
 #include "IShader.h"
 #include "IShaderManager.h"
@@ -40,10 +40,13 @@ namespace gf
 
 	GAMEFINAL_API int fnGameFinal(void);
 
-	GAMEFINAL_API IDevice* createDevice(E_VIDEO_DRIVER_TYPE driver, u32 width, u32 height,
+	/*
+	GAMEFINAL_API IApplication* createDevice(E_VIDEO_DRIVER_TYPE driver, u32 width, u32 height,
 		u32 style = EWS_NONE, bool vsync = false,
 		const SDeviceContextSettings& settings = SDeviceContextSettings());
+		*/
 
+	GAMEFINAL_API IApplication* createApp(SAppSettings settings = SAppSettings());
 	
 }
 

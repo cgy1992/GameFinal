@@ -4,7 +4,7 @@
 #include "InputHandler.h"
 #include "PhysicsEngine.h"
 
-RaceScene::RaceScene(IDevice* device, IVideoDriver* driver)
+RaceScene::RaceScene(IApplication* device, IVideoDriver* driver)
 :Scene(device, driver)
 {
 	mDeferredShading = true;

@@ -123,6 +123,9 @@
     <Filter Include="src\effect\scenery">
       <UniqueIdentifier>{0b0258c1-d170-4929-a366-1eeddfc86b65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\input\Class">
+      <UniqueIdentifier>{000af83b-2f3d-4900-a356-dc82019769fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -213,12 +216,6 @@
       <Filter>src\ResourceManager\Interface</Filter>
     </ClInclude>
     <ClInclude Include="CSceneManager.h">
-      <Filter>src\Core\Class</Filter>
-    </ClInclude>
-    <ClInclude Include="IDevice.h">
-      <Filter>src\Core\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="CWin32Device.h">
       <Filter>src\Core\Class</Filter>
     </ClInclude>
     <ClInclude Include="CTextureManager.h">
@@ -617,6 +614,42 @@
     <ClInclude Include="CJobSet.h">
       <Filter>src\Util\Class</Filter>
     </ClInclude>
+    <ClInclude Include="IApplication.h">
+      <Filter>src\Core\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CWin32App.h">
+      <Filter>src\Core\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="CQt5App.h">
+      <Filter>src\Core\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="CQt5RenderWidget.h">
+      <Filter>src\Core\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="IVideoDriverFactory.h">
+      <Filter>src\Core\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CVideoDriverFactory.h">
+      <Filter>src\Core\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="IInputDriverFactory.h">
+      <Filter>src\input\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CInputDriverFactory.h">
+      <Filter>src\input\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="CBaseApp.h">
+      <Filter>src\Core\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="IWindow.h">
+      <Filter>src\Core\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CWin32Window.h">
+      <Filter>src\Core\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="CQt5Window.h">
+      <Filter>src\Core\Class</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">
@@ -636,9 +669,6 @@
     </ClCompile>
     <ClCompile Include="CD3D11Driver.cpp">
       <Filter>src\Core\Direct3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="CWin32Device.cpp">
-      <Filter>src\Core\Class</Filter>
     </ClCompile>
     <ClCompile Include="CSceneManager.cpp">
       <Filter>src\Core\Class</Filter>
@@ -879,6 +909,30 @@
     </ClCompile>
     <ClCompile Include="CThreadPoolWorker.cpp">
       <Filter>src\Util\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CWin32App.cpp">
+      <Filter>src\Core\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CQt5App.cpp">
+      <Filter>src\Core\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CVideoDriverFactory.cpp">
+      <Filter>src\Core\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CInputDriverFactory.cpp">
+      <Filter>src\input\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CBaseApp.cpp">
+      <Filter>src\Core\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CWin32Window.cpp">
+      <Filter>src\Core\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CQt5Window.cpp">
+      <Filter>src\Core\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CQt5RenderWidget.cpp">
+      <Filter>src\Core\Class</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
