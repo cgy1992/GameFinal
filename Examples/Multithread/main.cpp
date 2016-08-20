@@ -20,36 +20,19 @@ static void job_proc(int id, double* sum) {
 }
 
 
-IVideoDriver* driver;
-SceneManager* smgr;
-
-bool game_update(f32 dt) {
-	driver->beginScene(true, true, color);
-	smgr->update(dt);
-	smgr->drawAll();
-	driver->endScene();
-}
-
 int main()
 {
-	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 4;
-	settings.MultiSamplingQuality = 32;
-	settings.ThreadPoolLimit = 4;
-	IApplication* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
+	SAppSettings settings;
+	settings.Thread.ThreadPoolLimit = 4;
+	IApplication* app = createApp(settings);
 
-	driver = device->getVideoDriver();
-	smgr = device->createSceneManager();
-
-	// washington mount
-
-	ITimer* timer = device->getTimer();
-	timer->reset();
+	IVideoDriver* driver = app->getVideoDriver();
+	ISceneManager* smgr = app->createSceneManager();
 
 	step = 1.0 / (double)num_steps;
 	std::vector<double> sums(num_tasks);
 
-	IThreadPool* pool = device->getThreadPool();
+	IThreadPool* pool = app->getThreadPool();
 	SJobFunctionSet jobSet;
 
 	for (size_t i = 0; i < num_tasks; i++) {
@@ -64,21 +47,19 @@ int main()
 		printf("pi = %f \n", sum);
 	});
 
-	device->setUpdateCallback();
-
-	const f32 color[] = { 0, 0, 0, 1.0f };
-	while (device->run()) {
+	app->setUpdateCallback([app, driver, smgr](float dt)->bool{
+		const f32 color[] = { 0, 0, 0, 1.0f };
 		driver->beginScene(true, true, color);
-
-		float dt = timer->tick();
 		smgr->update(dt);
 		smgr->drawAll();
-
 		driver->endScene();
-	}
+		return true;
+	});
 
+	
+	app->run();
 	smgr->destroy();
-	device->drop();
+	app->drop();
 	return 0;
 }
 

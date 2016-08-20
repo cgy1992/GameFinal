@@ -29,10 +29,27 @@
 #include "gfEnums.h"
 #include "IInputDriver.h"
 #include "IThreadPool.h"
+#include "IFileSystem.h"
 #include "xnacollision/xnacollision.h"
 
 #ifndef GAMEFINAL_H
 #define GAMEFINAL_H
+
+#ifndef GF_PLATFORM
+// define all platforms
+#define GF_PLATFORM_WIN32			(1)
+#define GF_PLATFORM_LINUX			(2)
+#define GF_PLATFORM_MACOS			(3)
+#define GF_PLATFORM_ANDROID			(4)
+#define GF_PLATFORM_IOS				(5)
+#define GF_PLATFORM_PS4				(6)
+#define GF_PLATFORM_XONE			(7)
+
+#ifdef _WIN32
+#define GF_PLATFORM		GF_PLATFORM_WIN32
+#endif // _WIN32
+
+#endif
 
 namespace gf
 {

@@ -125,6 +125,7 @@
     <ClInclude Include="CDInput8Driver.h" />
     <ClInclude Include="CDirectionalLightNode.h" />
     <ClInclude Include="CEmptyNode.h" />
+    <ClInclude Include="CFileSystem.h" />
     <ClInclude Include="CFpsCameraNode.h" />
     <ClInclude Include="CGeometryCreator.h" />
     <ClInclude Include="CGrassLand.h" />
@@ -142,10 +143,10 @@
     <ClInclude Include="CModelMeshNode.h" />
     <ClInclude Include="CMotionBlurCompositor.h" />
     <ClInclude Include="COctreeNode.h" />
+    <ClInclude Include="ConcurrentMap.h" />
     <ClInclude Include="CPipeline.h" />
     <ClInclude Include="CD3D11Shader.h" />
     <ClInclude Include="CPointLightNode.h" />
-    <ClInclude Include="CQt5App.h" />
     <ClInclude Include="CQt5RenderWidget.h" />
     <ClInclude Include="CQt5Window.h" />
     <ClInclude Include="CReflectionMediator.h" />
@@ -170,7 +171,6 @@
     <ClInclude Include="CTextureManager.h" />
     <ClInclude Include="CThreadPool.h" />
     <ClInclude Include="CThreadPoolWorker.h" />
-    <ClInclude Include="CWin32App.h" />
     <ClInclude Include="CWin32Timer.h" />
     <ClInclude Include="CWin32Window.h" />
     <ClInclude Include="D3DUtil.h" />
@@ -191,6 +191,7 @@
     <ClInclude Include="ICameraNode.h" />
     <ClInclude Include="ICompositor.h" />
     <ClInclude Include="ICompositorFactory.h" />
+    <ClInclude Include="IFileSystem.h" />
     <ClInclude Include="IInputDriver.h" />
     <ClInclude Include="IInputDriverFactory.h" />
     <ClInclude Include="IInstanceMeshBuffer.h" />
@@ -295,6 +296,7 @@
     <ClCompile Include="CDI8MouseDevice.cpp" />
     <ClCompile Include="CDInput8Driver.cpp" />
     <ClCompile Include="CDirectionalLightNode.cpp" />
+    <ClCompile Include="CFileSystem.cpp" />
     <ClCompile Include="CFpsCameraNode.cpp" />
     <ClCompile Include="CGrassLand.cpp" />
     <ClCompile Include="CInputDriverFactory.cpp" />
@@ -307,7 +309,6 @@
     <ClCompile Include="CModelMeshNode.cpp" />
     <ClCompile Include="CMotionBlurCompositor.cpp" />
     <ClCompile Include="CPointLightNode.cpp" />
-    <ClCompile Include="CQt5App.cpp" />
     <ClCompile Include="CQt5RenderWidget.cpp" />
     <ClCompile Include="CQt5Window.cpp" />
     <ClCompile Include="CReflectionPlane.cpp" />
@@ -339,7 +340,6 @@
     <ClCompile Include="CThreadPool.cpp" />
     <ClCompile Include="CThreadPoolWorker.cpp" />
     <ClCompile Include="CVideoDriverFactory.cpp" />
-    <ClCompile Include="CWin32App.cpp" />
     <ClCompile Include="CWin32Timer.cpp" />
     <ClCompile Include="CWin32Window.cpp" />
     <ClCompile Include="D3DUtil.cpp" />

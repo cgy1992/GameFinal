@@ -30,34 +30,6 @@ namespace gf
 		IApplication::_setInstance(app);
 		app->init();
 		return app;
-
-		/*
-		if (settings.AppType == EAP_WIN32) {
-			CWin32App* app = new CWin32App(settings);
-			IApplication::_setInstance(app);
-			HRESULT hr = app->init();
-			if (FAILED(hr)) {
-				delete app;
-				IApplication::_setInstance(nullptr);
-				return nullptr;
-			}
-			return app;
-		}
-		else if (settings.AppType == EAP_QT5) {
-			CQt5App* app = new CQt5App(settings);
-			IApplication::_setInstance(app);
-			bool hr = app->init();
-			if (!(hr)) {
-				delete app;
-				IApplication::_setInstance(nullptr);
-				return nullptr;
-			}
-			return app;
-		}
-		else {
-			return nullptr;
-		}
-		*/
 	}
 
 	/*

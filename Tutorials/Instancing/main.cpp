@@ -101,12 +101,22 @@ int main()
 	settings.AppType = EAP_WIN32;
 	device = createApp(settings);
 	driver = device->getVideoDriver();
-	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
-	resourceGroupManager->init("Resources.cfg");
+//	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
+//	resourceGroupManager->init("Resources.cfg");
 
 	input = device->getInputDriver();
 	input->getMouse()->showCursor(true);
-	
+
+	IFileSystem* fs = device->getFileSystem();
+	std::cout << fs->isDirectory("./hello") << std::endl;
+	std::cout << fs->isDirectory("./media") << std::endl;
+
+	SFileInfoList list;
+	fs->listFilesInDir("./media", true, &list);
+	for (auto fi : list) {
+		std::cout << fi.Filename << " " << fi.UncompressedSize << " " << fi.Path << std::endl;
+	}
+
 	smgr = setupScene(device);
 	//ITimer* timer = device->getTimer();
 	//timer->reset();

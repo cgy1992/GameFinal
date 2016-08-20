@@ -14,6 +14,7 @@ namespace gf
 	class ISceneManager;
 	class IInputDriver;
 	class IThreadPool;
+	class IFileSystem;
 
 	enum E_WINDOW_STYLE
 	{
@@ -122,6 +123,16 @@ namespace gf
 		}
 	};
 
+	struct SResourceSettings
+	{
+		std::string  ConfigFile;
+		SResourceSettings()
+			:ConfigFile("Resources.cfg")
+		{
+
+		}
+	};
+
 	struct SAppSettings
 	{
 		E_APP_TYPE			AppType;
@@ -129,6 +140,7 @@ namespace gf
 		SGraphicsSettings	Graphics;
 		SInputSettings		Input;
 		SThreadSettings		Thread;
+		SResourceSettings	Resource;
 
 		SAppSettings()
 		{
@@ -220,6 +232,8 @@ namespace gf
 	*/
 
 	typedef std::function<bool(f32)> AppUpdateCallbackFunction;
+	typedef std::function<void()>	 AsyncFunction;
+	typedef std::vector<AsyncFunction>		AsyncFunctionList;
 
 	class IWindow;
 
@@ -293,6 +307,8 @@ namespace gf
 
 		IWindow* getWindow() { return mWindow; }
 
+		IFileSystem* getFileSystem() { return mFileSystem; }
+
 		virtual ~IApplication()
 		{
 
@@ -302,6 +318,11 @@ namespace gf
 		{
 			return mProcessPath;
 		}
+
+		virtual bool async(AsyncFunction cb) = 0;
+
+		virtual bool async(AsyncFunctionList& list, 
+			AsyncFunction finishCallback) = 0;
 
 		_DECLARE_SINGLETON_INSTANCE(IApplication);
 
@@ -314,6 +335,7 @@ namespace gf
 		IThreadPool*			mThreadPool;
 
 		IWindow*				mWindow;
+		IFileSystem*			mFileSystem;
 
 		//ISceneManager*			mSceneManager;
 		ITimer*					mTimer;

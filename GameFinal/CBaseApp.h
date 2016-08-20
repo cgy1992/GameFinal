@@ -32,6 +32,11 @@ namespace gf
 
 		virtual void getMousePos(int& x, int& y) const;
 
+		virtual bool async(AsyncFunction cb);
+
+		virtual bool async(AsyncFunctionList& list,
+			AsyncFunction finishCallback);
+
 	protected:
 		
 		IInputDriverFactory*			mInputDriverFactory;

@@ -141,9 +141,11 @@ namespace gf
 		void createPointLightShadowMapJitterTexture();
 
 
-		IApplication*								mDevice;
+		IApplication*							mDevice;
 		IResourceFactory*						mResourceFactory;
-		std::map<std::string, ITexture*>		mTextureMap;
+
+		
+		concurrency::concurrent_unordered_map<std::string, ITexture*>		mTextureMap;
 		CSortCodeAllocator<255>					mCodeAllocator;
 
 		struct STemporaryTextureInfo

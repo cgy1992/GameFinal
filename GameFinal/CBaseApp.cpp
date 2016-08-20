@@ -9,6 +9,7 @@
 #include "CWin32Timer.h"
 #include "CSceneManager.h"
 #include "CQt5Window.h"
+#include "CFileSystem.h"
 
 namespace gf
 {
@@ -27,6 +28,7 @@ namespace gf
 		
 		mInputDriverFactory = new CInputDriverFactory();
 		mVideoDriverFactory = new CVideoDriverFactory();
+		mFileSystem = new CFileSystem;
 	}
 
 	CBaseApp::~CBaseApp()
@@ -36,12 +38,12 @@ namespace gf
 			delete mThreadPool;
 		}
 
-
 		ReleaseReferenceCounted(mVideoDriver);
 		ReleaseReferenceCounted(mInputDriver);
 
 		ReleaseReferenceCounted(mWindow);
 
+		ReleaseReferenceCounted(mFileSystem);
 		ReleaseReferenceCounted(mInputDriverFactory);
 		ReleaseReferenceCounted(mVideoDriverFactory);
 	}
@@ -73,6 +75,10 @@ namespace gf
 			mThreadPool = new CThreadPool(mSettings.Thread.ThreadPoolLimit);
 			mThreadPool->start();
 		}
+
+		// init group resources
+		IResourceGroupManager* resourceGroupManager = mVideoDriver->getResourceGroupManager();
+		resourceGroupManager->init(mSettings.Resource.ConfigFile);
 	}
 
 	void CBaseApp::run()
@@ -123,5 +129,26 @@ namespace gf
 	{
 		mWindow->getMousePos(x, y);
 	}
+
+	bool CBaseApp::async(AsyncFunction cb)
+	{
+		if (!mThreadPool)
+			return false;
+
+		mThreadPool->addJob(cb);
+		return true;
+	}
+
+	bool CBaseApp::async(AsyncFunctionList& list, 
+		AsyncFunction finishCallback)
+	{
+		if (!mThreadPool)
+			return false;
+
+		mThreadPool->addJobs(list, finishCallback);
+		return true;
+	}
+
+
 
 }

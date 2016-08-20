@@ -617,12 +617,6 @@
     <ClInclude Include="IApplication.h">
       <Filter>src\Core\Interface</Filter>
     </ClInclude>
-    <ClInclude Include="CWin32App.h">
-      <Filter>src\Core\Class</Filter>
-    </ClInclude>
-    <ClInclude Include="CQt5App.h">
-      <Filter>src\Core\Class</Filter>
-    </ClInclude>
     <ClInclude Include="CQt5RenderWidget.h">
       <Filter>src\Core\Class</Filter>
     </ClInclude>
@@ -649,6 +643,15 @@
     </ClInclude>
     <ClInclude Include="CQt5Window.h">
       <Filter>src\Core\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="IFileSystem.h">
+      <Filter>src\Util\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="CFileSystem.h">
+      <Filter>src\Util\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="ConcurrentMap.h">
+      <Filter>src\Util\Class</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -910,12 +913,6 @@
     <ClCompile Include="CThreadPoolWorker.cpp">
       <Filter>src\Util\Class</Filter>
     </ClCompile>
-    <ClCompile Include="CWin32App.cpp">
-      <Filter>src\Core\Class</Filter>
-    </ClCompile>
-    <ClCompile Include="CQt5App.cpp">
-      <Filter>src\Core\Class</Filter>
-    </ClCompile>
     <ClCompile Include="CVideoDriverFactory.cpp">
       <Filter>src\Core\Class</Filter>
     </ClCompile>
@@ -933,6 +930,9 @@
     </ClCompile>
     <ClCompile Include="CQt5RenderWidget.cpp">
       <Filter>src\Core\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="CFileSystem.cpp">
+      <Filter>src\Util\Class</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
