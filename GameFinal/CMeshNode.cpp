@@ -4,9 +4,39 @@
 #include "gfMath.h"
 #include "ILightNode.h"
 #include "CShaderVariableInjection.h"
+#include "IInputLayoutManager.h"
 
 namespace gf
 {
+	CMeshNode::CMeshNode(ISceneNode* parent,
+		ISceneManager* smgr,
+		bool bStatic,
+		ISimpleMesh* mesh,
+		IMaterial* material /*= nullptr*/,
+		const XMFLOAT3& position /*= XMFLOAT3(0, 0, 0)*/,
+		const XMFLOAT3& rotation /*= XMFLOAT3(0, 0, 0)*/,
+		const XMFLOAT3& scale /*= XMFLOAT3(1.0f, 1.0f, 1.0f)*/)
+		:IMeshNode(parent, smgr, bStatic, position, rotation, scale)
+		, mMesh(mesh)
+		, mMaterial(material)
+	{
+		AddReferenceCounted(mMesh);
+		AddReferenceCounted(mMaterial);
+
+		if (mMesh) {
+			IInputLayoutManager* inputLayoutMgr = IInputLayoutManager::getInstance();
+			u32 vertexFormat = mMesh->getVertexFormat();
+			mInputLayout = inputLayoutMgr->get(vertexFormat);
+			if (!mInputLayout) {
+				IShader* vs = mMaterial->getPipeline(0)->getShader(EST_VERTEX_SHADER);
+				mInputLayout = inputLayoutMgr->create(vertexFormat, vs);
+			}
+
+			mMaterial->getPipeline(0)->setInputLayout(mInputLayout);
+			AddReferenceCounted(mInputLayout);
+		}
+	}
+
 	void CMeshNode::renderInstanced(E_PIPELINE_USAGE usage, u32 instanceCount, IMeshBuffer* instanceBuffer)
 	{
 		if (!mMaterial)
@@ -101,7 +131,10 @@ namespace gf
 
 		ReleaseReferenceCounted(mMesh);
 		ReleaseReferenceCounted(mMaterial);
+		ReleaseReferenceCounted(mInputLayout);
 	}
+
+
 
 }
 

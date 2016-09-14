@@ -29,11 +29,13 @@ namespace gf
 			AddReferenceCounted(mShaders[type]);
 		}
 
+		/*
 		if (!mInputLayout)
 		{
 			GF_PRINT_CONSOLE_INFO("ERROR: The input-layout is null in pipeline('%s')\n", name.c_str());
 			throw std::runtime_error("The input-layout is null");
 		}
+		*/
 
 		AddReferenceCounted(mInputLayout);
 	}

@@ -32,6 +32,22 @@ namespace gf
 			InstanceDataStepRate = 0;
 		}
 
+		SInputLayoutElement(
+			E_GI_FORMAT format, u32 offset, 
+			std::string semantic,
+			u32 index = 0, u32 slot = 0, 
+			bool instanced = false, u32 instanceDataStepRate = 0)
+			:SemanticName(semantic)
+			, SemanticIndex(index)
+			, Format(format)
+			, Offset(offset)
+			, Slot(slot)
+			, InstanceData(instanced)
+			, InstanceDataStepRate(instanceDataStepRate)
+		{
+			
+		}
+
 		bool operator==(const SInputLayoutElement& e) const
 		{
 			if (SemanticName != e.SemanticName ||

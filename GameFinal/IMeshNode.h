@@ -27,6 +27,7 @@ namespace gf
 			, mShadowFlag(0)
 			, mMultiInstanced(false)
 			, mFarCullingDist(0)
+			, mInputLayout(nullptr)
 		{
 			setRenderOrder(ERO_MESH);
 		}
@@ -159,6 +160,8 @@ namespace gf
 
 		/* 该node 是否是多实例的. */
 		bool							mMultiInstanced;
+
+		IInputLayout*					mInputLayout;
 	};
 
 

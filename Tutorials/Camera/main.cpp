@@ -59,37 +59,34 @@ ISceneManager* setupScene(IApplication* device) {
 
 int main()
 {
-	SDeviceContextSettings settings;
-	settings.MultiSamplingCount = 4;
-	settings.MultiSamplingQuality = 32;
+	SAppSettings settings;
+	settings.AppType = EAP_WIN32;
+	IApplication* app = createApp(settings);
 
-	IApplication* device = createDevice(EDT_DIRECT3D11, 800, 600, EWS_NONE, true, settings);
-	IVideoDriver* driver = device->getVideoDriver();
+	IVideoDriver* driver = app->getVideoDriver();
 	IResourceGroupManager* resourceGroupManager = driver->getResourceGroupManager();
 	resourceGroupManager->init("Resources.cfg");
 	
-	IInputDriver* input = device->getInputDriver();
+	IInputDriver* input = app->getInputDriver();
 
-	ISceneManager* smgr = setupScene(device);
+	ISceneManager* smgr = setupScene(app);
 
-	ITimer* timer = device->getTimer();
-	timer->reset();
-
-	const f32 color[] = { 0, 0, 0, 1.0f };
-	while (device->run()) {
-		// if we press ESC, then exit the game loop.
+	app->setUpdateCallback([input, smgr, driver](f32 dt)->bool{
+		const f32 color[] = { 0, 0, 0, 1.0f };
 		if (input->keyDown(GVK_ESCAPE))
-			break;
+			return false;
 
-		float dt = timer->tick();
 		smgr->update(dt);
 		driver->beginScene(true, true, color);
 		smgr->drawAll();
 		driver->endScene();
-	}
+		return true;
+	});
+
+	app->run();
 
 	smgr->destroy();
-	device->drop();
+	app->drop();
 
 	return 0;
 }

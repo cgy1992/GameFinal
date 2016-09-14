@@ -145,7 +145,7 @@ namespace gf
 		IResourceFactory*						mResourceFactory;
 
 		
-		concurrency::concurrent_unordered_map<std::string, ITexture*>		mTextureMap;
+		std::map<std::string, ITexture*>		mTextureMap;
 		CSortCodeAllocator<255>					mCodeAllocator;
 
 		struct STemporaryTextureInfo

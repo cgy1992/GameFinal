@@ -6,6 +6,7 @@
 #include "ITimer.h"
 #include "gfMath.h"
 #include <functional>
+#include <vector>
 
 namespace gf
 {

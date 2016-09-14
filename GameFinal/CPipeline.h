@@ -97,6 +97,11 @@ namespace gf
 			return mName;
 		}
 
+		virtual void setInputLayout(IInputLayout* inputLayout)
+		{
+			mInputLayout = inputLayout;
+		}
+
 	protected:
 		std::string			mName;
 		IShader*			mShaders[5];

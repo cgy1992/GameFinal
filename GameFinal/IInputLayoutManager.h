@@ -17,6 +17,10 @@ namespace gf
 
 		virtual IInputLayout* get(const std::vector<SInputLayoutElement>& elements) = 0;
 
+		virtual IInputLayout* get(u32 vertexFormat) = 0;
+
+		virtual IInputLayout* create(u32 vertexFormat, IShader* vertexShader) = 0;
+
 		_DECLARE_SINGLETON_INSTANCE(IInputLayoutManager);
 	};
 }

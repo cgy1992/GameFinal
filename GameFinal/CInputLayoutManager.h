@@ -23,6 +23,10 @@ namespace gf
 
 		virtual IInputLayout* get(const std::vector<SInputLayoutElement>& elements);
 
+		virtual IInputLayout* get(u32 vertexFormat);
+
+		virtual IInputLayout* create(u32 vertexFormat, IShader* vertexShader);
+
 		void destroyAll();
 
 		//virtual bool destroy(IInputLayout* inputlayout);
@@ -44,8 +48,9 @@ namespace gf
 	private:
 		IResourceFactory*									mResourceFactory;
 		CSortCodeAllocator<MAX_INPUT_LAYOUT_SORT_CODE>		mCodeAllocator;
+		std::unordered_map<u32, IInputLayout*>				mInputLayoutCache;
 
-		std::map<u32, std::list<IInputLayout*>>				mInputLayoutsCache;
+		//std::map<u32, std::list<IInputLayout*>>				mInputLayoutsCache;
 	};
 }
 #endif

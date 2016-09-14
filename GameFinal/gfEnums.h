@@ -60,6 +60,8 @@ namespace gf
 		EVF_TEXCOORD6 = (1 << 11),
 		EVF_TEXCOORD7 = (1 << 12),
 		EVF_SIZE = (1 << 13),
+		EVF_INSTANCED = (1 << 14),
+		EVF_INSTANCED_COLOR = (1 << 15),
 	};
 	
 	//orientation

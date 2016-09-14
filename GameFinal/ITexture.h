@@ -19,8 +19,6 @@ namespace gf
 		ETT_BUFFER,
 	};
 
-	
-
 	struct STextureData
 	{
 		void*		Data;

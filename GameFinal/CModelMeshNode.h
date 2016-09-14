@@ -77,7 +77,7 @@ namespace gf
 	private:
 
 		IModelMesh*						mMesh;
-
+		
 		std::vector<IMaterial*>			mMaterials;
 	};
 }

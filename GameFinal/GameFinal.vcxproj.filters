@@ -126,6 +126,9 @@
     <Filter Include="src\input\Class">
       <UniqueIdentifier>{000af83b-2f3d-4900-a356-dc82019769fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\doc">
+      <UniqueIdentifier>{a27d7d1d-643d-4b8b-acd7-7dc704c4a586}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

@@ -18,14 +18,7 @@ namespace gf
 			IMaterial* material = nullptr,
 			const XMFLOAT3& position = XMFLOAT3(0, 0, 0),
 			const XMFLOAT3& rotation = XMFLOAT3(0, 0, 0),
-			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f))
-			:IMeshNode(parent, smgr, bStatic, position, rotation, scale)
-			, mMesh(mesh)
-			, mMaterial(material)
-		{
-			AddReferenceCounted(mMesh);
-			AddReferenceCounted(mMaterial);
-		}
+			const XMFLOAT3& scale = XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 		virtual ~CMeshNode();
 

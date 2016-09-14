@@ -96,6 +96,7 @@ namespace gf
 		/* if the input-layout with the same layout has been created before, just get it.*/
 		IInputLayout* inputLayout = mInputlayoutManager->get(createParams.InputLayoutElements);
 		// if there is no input-layout with the same vertex formats. just create it.
+		/*
 		if (!inputLayout)
 		{
 			inputLayout = mInputlayoutManager->create(createParams.InputLayoutElements, vertexShader);
@@ -106,7 +107,7 @@ namespace gf
 				return false;
 			}
 		}
-
+		*/
 
 		/* create render state */
 		std::string rsname = createParams.Name + ".rs";

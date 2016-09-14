@@ -40,6 +40,8 @@
 #include <functional>
 #include <mmsystem.h>
 #include <concurrent_unordered_map.h>
+#include <unordered_map>
+#include <unordered_set>
 
 #define DIRECTINPUT_VERSION 0x0800 // avoid the warning
 #include <dinput.h>
