@@ -2,6 +2,7 @@
 #define __GF_MATH_HEADER__
 
 #include "xnacollision/xnacollision.h"
+#include "MathCommon.h"
 
 namespace gf
 {
@@ -193,10 +194,10 @@ namespace gf
 
 		XMMATRIX InverseTranspose(CXMMATRIX M);
 
-		inline bool FloatEqual(f32 a, f32 b, f32 elipson = 0.00001f)
+		/*inline bool FloatEqual(f32 a, f32 b, f32 elipson = 0.00001f)
 		{
 			return a - b <= elipson || a - b >= -elipson;
-		}
+		}*/
 
 		bool FloatArrayEqual(const f32 color1[], const f32 color2[], u32 elementCount = 4, f32 e = 0.00001f);
 

@@ -111,6 +111,9 @@ public:\
 
 #endif
 
+#ifndef EPSILON
+#define EPSILON (0.00001f)
+#endif
 
 /*
 #ifndef _DEFINE_RESOURCE_DESTORY_FUNCTIONS

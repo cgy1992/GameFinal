@@ -656,6 +656,24 @@
     <ClInclude Include="ConcurrentMap.h">
       <Filter>src\Util\Class</Filter>
     </ClInclude>
+    <ClInclude Include="large_bits.h">
+      <Filter>src\Util\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>src\Util\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="MathCommon.h">
+      <Filter>src\Util\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector4.h">
+      <Filter>src\Util\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>src\Util\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Matrix4x4.h">
+      <Filter>src\Util\Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CD3D11ResourceFactory.cpp">

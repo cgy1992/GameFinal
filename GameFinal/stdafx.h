@@ -42,6 +42,7 @@
 #include <concurrent_unordered_map.h>
 #include <unordered_map>
 #include <unordered_set>
+#include <sstream>
 
 #define DIRECTINPUT_VERSION 0x0800 // avoid the warning
 #include <dinput.h>
